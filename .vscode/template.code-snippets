@@ -12,12 +12,15 @@
       "Status: ${2|Accepted,Rejected,Deprecated,Superseded,Proposed,Accepted in principle|}",
       "",
       "### Context",
+      "",
       "$3",
       "",
       "### Decision", 
+      "",
       "$4",
       "",
       "### Consequences",
+      "",
       "$5"
     ]
   }
