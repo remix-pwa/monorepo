@@ -1,0 +1,24 @@
+// Sorry non-vscode users, I can't make this work for you. 🤣 
+{
+  "Markdown Decision Template": {
+    "prefix": "decision",
+    "scope": "markdown",
+    "description": "Automatically generate a decision template",
+    "body": [
+      "## ${1:${TM_FILENAME_BASE/\\d+-//}}",
+      "",
+      "Date: $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE",
+      "",
+      "Status: ${2|Accepted,Rejected,Deprecated,Superseded,Proposed,Accepted in principle|}",
+      "",
+      "### Context",
+      "$3",
+      "",
+      "### Decision", 
+      "$4",
+      "",
+      "### Consequences",
+      "$5"
+    ]
+  }
+}
