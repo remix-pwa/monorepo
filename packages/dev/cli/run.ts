@@ -1,1 +1,1 @@
-import { } from "inquirer"
+import inquirer from "inquirer"
