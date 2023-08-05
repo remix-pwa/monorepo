@@ -4,6 +4,7 @@
   "license": "MIT",
   "workspaces": [
     "packages/dev",
+    "packages/client",
     "packages/sw",
     "packages/worker-runtime",
     "packages/workbox-runtime"
