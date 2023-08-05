@@ -2,6 +2,7 @@
   "files": [],
   "references": [
     { "path": "packages/dev" },
+    { "path": "packages/client" },
     { "path": "packages/sw" },
     { "path": "packages/worker-runtime" },
     { "path": "packages/workbox-runtime" }
