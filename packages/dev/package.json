@@ -4,15 +4,13 @@
   "description": "",
   "license": "MIT",
   "sideEffects": false,
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
-  "module": "dist/esm/index.js",
   "engines": {
     "node": ">=14.0.0"
   },
-  "files": [
-    "dist/",
-    "LICENSE.md",
-    "README.md"
-  ]
+  "dependencies": {
+    "inquirer": "^8.2.6"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^9.0.3"
+  }
 }
