@@ -29,13 +29,7 @@ ${underline(whiteBright("Options:"))}
 --install                       Install dependencies after creating the project
 --no-install                    Skip the installation process
 --package-manager, --pm         Preferred package manager if your project is not using any
---cache                         Preferred \`Caching Strategy\` for the service worker. Either \`jit\` or \`pre\`
---features, --feat              \`Remix-Pwa\` features you want to include:
-                                - 'sw' for Service Workers
-                                - 'manifest' for Web Manifest
-                                - 'push' for Push Notifications
-                                - 'utils' for PWA Client Utilities
-                                - 'icons' for Development Icons
+--precache                      Wether you would like to utilise the precache feature
 --dir                           The location of your Remix \`app\` directory
 --help, -h                      Print this help message and exit
 --version, -v                   Print the CLI version and exit
@@ -60,15 +54,15 @@ export async function run(
       "--install": Boolean,
       "--no-install": Boolean,
       "--docs": Boolean,
-      "--cache": Boolean,
-      "--features": String,
+      "--precache": Boolean,
+      // "--features": String,
       "--dir": String,
       "--package-manager": String,
       // Aliases for aboves
       "-h": "--help",
       "-v": "--version",
       "--ts": "--typescript",
-      "--feat": "--features",
+      // "--feat": "--features",
       "--no-ts": "--no-typescript",
       "--js": "--no-typescript",
       "--pm": "--package-manager",
@@ -79,18 +73,53 @@ export async function run(
   );
 
   let input = args._;
+  let packageManager = (await detectPackageManager(projectDir)) ?? "npm";
 
-  if (args["--help"]) {
+  let flags: any = Object.entries(args).reduce((acc, [key, value]) => {
+    key = key.replace(/^--/, "");
+    acc[key] = value;
+    return acc;
+  }, {} as any);
+
+  if (flags.help) {
     console.log(helpText);
     return;
   }
 
-  if (args["--docs"]) {
+  if (flags.version) {
+    // Todo: Get the version from package.json - for remix-pwa
+    return;
+  }
+
+  if (flags.docs) {
     console.log("https://remix-pwa-docs.vercel.app");
     return;
   }
 
-  // Handle other flags here later
+  if (args["--ts"]) {
+    flags.typescript = true;
+  }
+
+  if (args["--no-typescript"] || args["--js"] || args["--no-ts"]) {
+    flags.typescript = false;
+  }
+
+  if (args["--no-workbox"]) {
+    flags.workbox = false;
+  }
+
+  if (args["--no-install"]) {
+    flags.install = false;
+  }
+
+  if (args["--pm"]) {
+    packageManager = args["--pm"];
+  }
+
+  if (args["--package-manager"]) {
+    //@ts-ignore
+    packageManager = args["--package-manager"];
+  }
 
   const cmd = input[0];
 
@@ -111,9 +140,7 @@ export async function run(
         );
       }
 
-      let packageManager = (await detectPackageManager(projectDir)) ?? "npm";
-
-      const answers = await inquirer
+      const inquiry = await inquirer
         .prompt<{
           lang: "Typescript" | "JavaScript";
           workbox: boolean;
@@ -143,7 +170,7 @@ export async function run(
             name: "precache",
             message: "Do you want to utilise precaching in this project?",
             default: false,
-            when: !args["--cache"],
+            when: !args["--precache"],
           },
           {
             type: "checkbox",
@@ -172,7 +199,7 @@ export async function run(
               },
             ],
             default: ["sw", "manifest"],
-            when: !args["--features"],
+            // when: !args["--features"],
           },
           {
             type: "input",
@@ -237,5 +264,33 @@ export async function run(
 
           throw err;
         });
+
+      const lang =
+        flags.typescript === false
+          ? "JavaScript"
+          : flags.typescript === true
+          ? "Typescript"
+          : null;
+
+      const workbox =
+        flags.workbox === false ? false : flags.workbox === true ? true : null;
+
+      const install =
+        flags.install === false ? false : flags.install === true ? true : null;
+
+      const precache = 
+        flags.precache === false ? false : flags.precache === true ? true : null;
+
+      const dir: string | null = flags.dir || null;
+
+      const initialChoices = {
+        ...(lang ? { lang } : {}),
+        ...(workbox ? { workbox } : {}),
+        ...(install ? { install } : {}),
+        ...(precache ? { precache } : {}),
+        ...(dir ? { dir } : {})
+      };
+
+      const answer = { ...inquiry, ...initialChoices };
   }
 }
