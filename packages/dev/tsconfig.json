@@ -1,19 +1,9 @@
 {
-  "include": [
-    "**/*.ts",
-    "package.json"
-  ],
-  "exclude": [
-    "dist",
-    "__tests__",
-    "node_modules"
-  ],
+  "include": ["**/*.ts", "package.json"],
+  "exclude": ["dist", "__tests__", "node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
-    "lib": [
-      "ES2020",
-      "ESNext"
-    ],
+    "lib": ["ES2020", "ESNext"],
     "target": "es2022",
     "module": "nodenext",
     // "composite": true,
@@ -28,9 +18,7 @@
     "rootDir": ".",
     "outDir": "dist/",
     "paths": {
-      "~/*": [
-        "compiler/*"
-      ]
+      "~/*": ["compiler/*"]
     }
   }
 }
