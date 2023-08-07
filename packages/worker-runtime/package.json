@@ -4,9 +4,9 @@
   "description": "",
   "license": "MIT",
   "sideEffects": false,
-  "main": "dist/index.js",
+  "main": "dist/service-worker.internal.js",
   "typings": "dist/index.d.ts",
-  "module": "dist/esm/index.js",
+  "module": "dist/esm/service-worker.internal.js",
   "engines": {
     "node": ">=14.0.0"
   },
