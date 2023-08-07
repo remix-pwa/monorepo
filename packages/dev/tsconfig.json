@@ -7,7 +7,6 @@
     "target": "es2022",
     "module": "nodenext",
     // "composite": true,
-    "moduleResolution": "node",
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,

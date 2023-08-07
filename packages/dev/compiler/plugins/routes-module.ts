@@ -1,6 +1,6 @@
-import { getRouteModuleExports } from "@remix-run/dev/dist/compiler/utils/routeExports";
+import { getRouteModuleExports } from "@remix-run/dev/dist/compiler/utils/routeExports.js";
 import { OnLoadArgs, OnLoadResult, OnResolveArgs, Plugin, PluginBuild } from "esbuild";
-import { ResolvedWorkerConfig } from "../utils/config";
+import { ResolvedWorkerConfig } from "../utils/config.js";
 const FILTER_REGEX = /\?worker$/;
 const NAMESPACE = "routes-module";
 

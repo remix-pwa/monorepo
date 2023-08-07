@@ -11,6 +11,7 @@ export default function sideEffectsPlugin(): Plugin {
       path: path.replace(FILTER_REGEX, ''),
       sideEffects: true,
     });
+    
     const onLoad = async () => ({ loader: 'js' } as OnLoadResult);
 
     build.onResolve({ filter: FILTER_REGEX }, onResolve);

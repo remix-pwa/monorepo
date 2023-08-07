@@ -15,6 +15,7 @@ const { NODE_ENV } = process.env;
 const TIME_LABEL = "💿 Built in";
 const MODE =
   NODE_ENV === "production" ? ServerMode.Production : ServerMode.Development;
+
 // note: leaving this at the moment until we have a the `cli` implementation.
 const { watch } = minimist(process.argv.slice(2));
 
@@ -68,8 +69,7 @@ function createEsbuildConfig(config: ResolvedWorkerConfig): BuildOptions {
 
 readConfig(path.resolve("./"), MODE).then((remixConfig) => {
   console.time(TIME_LABEL);
-  // @TODO: Support for multiple entry.worker.js files.
-  // We should run the esbuild for each entry.worker.js file.
+
   esbuild
     .context({
       ...createEsbuildConfig(remixConfig),
@@ -84,7 +84,7 @@ readConfig(path.resolve("./"), MODE).then((remixConfig) => {
         }
         await context.watch();
         console.timeEnd(TIME_LABEL);
-        console.log("Watching for changes in the service-worker");
+        console.log("Watching for changes in the service worker file...");
       } catch (error) {
         console.error(error);
       }

@@ -1,8 +1,8 @@
 import { jest } from '@jest/globals';
-import { findConfig, readConfig as _readConfig } from '@remix-run/dev/dist/config';
+import { findConfig, readConfig as _readConfig } from '@remix-run/dev/dist/config.js';
 import type { ResolvedRemixConfig } from '@remix-run/dev';
-import { ServerMode } from '@remix-run/dev/dist/config/serverModes';
-import readConfig from '../config';
+import { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';
+import readConfig from '../config.js';
 
 const REMIX_ROOT = '.';
 var mockWorkerConfigModule = jest.fn();
@@ -18,7 +18,8 @@ jest.mocked(_readConfig).mockResolvedValue({
   ignoredRouteFiles: ['**/.*'],
   serverPlatform: 'node',
   serverModuleFormat: 'cjs',
-} as unknown as ResolvedRemixConfig)
+} as unknown as ResolvedRemixConfig);
+
 jest.mocked(findConfig).mockReturnValue('./__test__/remix.config.ts');
 
 describe('readConfig', () => {
@@ -53,7 +54,7 @@ describe('readConfig', () => {
       workerName: 'sw.js',
       workerSourcemap: true,
     });
-    const { default: readConfig } = await import('../config');
+    const { default: readConfig } = await import('../config.js');
     const config = await readConfig(REMIX_ROOT, ServerMode.Test);
 
     expect(config).toEqual({

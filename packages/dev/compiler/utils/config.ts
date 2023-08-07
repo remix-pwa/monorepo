@@ -1,5 +1,5 @@
 import { findConfig, readConfig as _readConfig } from '@remix-run/dev/dist/config.js';
-import { ServerMode } from '@remix-run/dev/dist/config/serverModes';
+import { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';
 import type { AppConfig, ResolvedRemixConfig } from '@remix-run/dev';
 import { resolve } from 'node:path';
 
@@ -27,6 +27,7 @@ interface Config {
   */
   workerSourcemap?: boolean
 };
+
 export type WorkerConfig = AppConfig & Config;
 export type ResolvedWorkerConfig = ResolvedRemixConfig & Required<Config> & { entryWorkerFile: string };
 

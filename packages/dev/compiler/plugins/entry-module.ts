@@ -1,5 +1,5 @@
-import { ConfigRoute } from "@remix-run/dev/dist/config/routes";
-import { ResolvedWorkerConfig } from "../utils/config";
+import { ConfigRoute } from "@remix-run/dev/dist/config/routes.js";
+import { ResolvedWorkerConfig } from "../utils/config.js";
 import { OnLoadResult, OnResolveArgs, Plugin, PluginBuild } from "esbuild";
 
 const FILTER_REGEX = /@remix-sas\/build\/magic$/;
