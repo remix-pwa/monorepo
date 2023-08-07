@@ -128,6 +128,8 @@ export async function run(
       break;
     case "build":
       break;
+    case "push":
+      break; // A delayed todo: More or less init push api and a test server route
     case "init":
     case "new":
     case "create":
@@ -292,5 +294,7 @@ export async function run(
       };
 
       const answer = { ...inquiry, ...initialChoices };
+
+      // Todo: Run the create command 
   }
 }
