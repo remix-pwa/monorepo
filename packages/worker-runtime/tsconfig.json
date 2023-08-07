@@ -4,9 +4,8 @@
   "compilerOptions": {
     "lib": ["ES2020", "DOM.Iterable"],
     "target": "ES2020",
-    "module": "CommonJS",
+    "module": "NodeNext",
     "composite": true,
-    "moduleResolution": "node",
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
