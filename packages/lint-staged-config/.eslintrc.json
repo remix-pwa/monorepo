@@ -1,0 +1,13 @@
+{
+  "extends": ["@remix-pwa/eslint-config/node"],
+  "parser": "esprima",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "impliedStrict": true
+  },
+  "rules": {
+    "@typescript-eslint/no-var-requires": "off"
+  },
+  "root": true
+}

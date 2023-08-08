@@ -1,0 +1,13 @@
+{
+  "extends": ["./src/eslint-config-node.js"],
+  "parser": "esprima",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "script",
+    "impliedStrict": true
+  },
+  "rules": {
+    "@typescript-eslint/no-var-requires": "off"
+  },
+  "root": true
+}

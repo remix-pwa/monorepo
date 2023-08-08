@@ -1,0 +1,38 @@
+{
+  "name": "@remix-pwa/lint-staged-config",
+  "version": "0.0.0",
+  "description": "Lint-staged configurations for Remix PWA packages",
+  "private": true,
+  "license": "MIT",
+  "sideEffects": false,
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:remix-pwa/monorepo",
+    "directory": "packages/eslint-packages"
+  },
+  "engies": {
+    "node": ">=18.0.0"
+  },
+  "main": "index.js",
+  "files": [
+    "!*.test.js",
+    "CHANGELOG.md",
+    ".lintstagedrc.js",
+    "index.js",
+    "README.md"
+  ],
+  "scripts": {
+    "format": "prettier --write *.js",
+    "lint": "TIMING=1 eslint --fix *.js",
+    "test": "cross-env jest --colors --bail --detectOpenHandles --errorOnDeprecated --noStackTrace --forceExit --logHeapUsage --passWithNoTests"
+  },
+  "devDependencies": {
+    "@remix-pwa/eslint-config": "^0.0.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.46.0",
+    "jest": "^29.6.2",
+    "jest-extended": "^4.0.1",
+    "prettier": "^3.0.1"
+  }
+}

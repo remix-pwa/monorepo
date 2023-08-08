@@ -16,8 +16,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "cross-env NODE_ENV=development ts-node compiler/compiler.ts --watch",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "lint": "TIMING=1 eslint --fix src/",
+    "format": "prettier --write \"cli/**/*.ts\" \"compiler/**/*.ts\"",
+    "lint": "TIMING=1 eslint --fix cli/ compiler/",
     "test": "cross-env jest --preset ts-jest/presets/default-esm --env=node --colors"
   },
   "dependencies": {
@@ -31,6 +31,8 @@
     "minimist": "^1.2.8"
   },
   "devDependencies": {
+    "@remix-pwa/eslint-config": "^0.0.0",
+    "@remix-pwa/lint-staged-config": "^0.0.0",
     "@types/fs-extra": "^11.0.1",
     "@types/inquirer": "^9.0.3",
     "@types/jest": "^29.5.3",
