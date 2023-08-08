@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "include": ["."],
+  "compilerOptions": {
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "checkJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "Node",
+    "module": "ESNext",
+    "noEmit": true,
+    "strict": true,
+    "target": "ES2018"
+  }
+}
