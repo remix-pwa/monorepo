@@ -1,8 +1,8 @@
 import { jest } from '@jest/globals';
 import type { PluginBuild } from 'esbuild';
 
-import type { ResolvedWorkerConfig } from '../../utils/config';
-import entryModulePlugin from '../entry-module';
+import type { ResolvedWorkerConfig } from '../../utils/config.ts';
+import entryModulePlugin from '../entry-module.ts';
 
 describe('entryModulePlugin', () => {
   const config = {
