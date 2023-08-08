@@ -58,15 +58,6 @@ typings/
 # Output of 'npm pack'
 *.tgz
 
-# Yarn Integrity file & Yarn 2
-.yarn/*
-!.yarn/patches
-!.yarn/releases
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/versions
-.pnp.*
-
 # dotenv environment variables file
 .env
 .env.test
@@ -82,22 +73,6 @@ Icon
 # Thumbnails
 ._*
 
-# Files that might appear in the root of a volume
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
-.com.apple.timemachine.donotpresent
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
-
 # Husky
 .husky/_
 .husky/.gitignore
@@ -110,10 +85,6 @@ Temporary Items
 **/.env.development.local
 **/.env.test.local
 **/.env.production.local
-
-# Turborepo
-.turbo
-**/.turbo
 
 # build
 **/build
