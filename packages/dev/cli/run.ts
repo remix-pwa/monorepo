@@ -4,7 +4,7 @@ import { pathExists } from 'fs-extra';
 import inquirer from 'inquirer';
 import { resolve } from 'path';
 
-import { detectPackageManager } from './detectPkgManager';
+import { detectPackageManager } from './detectPkgManager.js';
 
 // Todo(ShafSpecs): Update this later
 const helpText = `
