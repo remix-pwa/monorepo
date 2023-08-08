@@ -14,21 +14,23 @@
   "type": "module",
   "scripts": {
     "lint-staged": "lint-staged",
-    "test": "npm run test --workspaces --if-present"
+    "test": "node ./scripts/run-test.js"
   },
-  "devDependencies": {
+  "dependencies": {
+    "@types/jest": "^29.5.3",
     "@types/node": "^20.4.7",
     "@types/semver": "^7.5.0",
     "husky": "^8.0.3",
+    "jest": "^29.6.2",
+    "jest-watch-select-projects": "^2.0.0",
     "lint-staged": "^13.2.3",
     "prettier": "^3.0.0",
     "prettier-plugin-organize-imports": "^3.2.3",
+    "semver": "^7.5.4",
+    "ts-jest": "^29.1.1",
     "typescript": "^5.1.6"
   },
   "engines": {
     "node": ">=18.0.0"
-  },
-  "dependencies": {
-    "semver": "^7.5.4"
   }
 }
