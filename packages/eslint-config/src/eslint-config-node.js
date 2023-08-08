@@ -33,6 +33,7 @@ module.exports = {
     ],
     strict: 'error',
     'sort-destructure-keys/sort-destructure-keys': 'error',
+    'import/no-unresolved': [2, { caseSensitive: false }],
   },
   overrides: [
     {
