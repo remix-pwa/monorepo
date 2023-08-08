@@ -5,7 +5,7 @@ module.exports = {
     '^.+\\.[tj]sx?$': [
       'ts-jest',
       {
-        useESM: true
+        useESM: true,
       },
     ],
   },
