@@ -5,6 +5,7 @@ import { pathExists } from 'fs-extra';
 import { resolve } from 'path';
 import { prompt } from 'enquirer';
 
+import * as commands from './commands.ts';
 import { detectPackageManager } from './detectPkgManager.ts';
 
 // Todo(ShafSpecs): Update this later
@@ -364,6 +365,8 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
       };
 
       const answer = { ...inquiry, ...initialChoices };
+
+      commands.init(answer);
 
     // Todo: Run the create command
   }
