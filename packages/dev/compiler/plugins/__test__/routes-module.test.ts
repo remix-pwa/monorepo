@@ -1,7 +1,8 @@
 import { jest } from '@jest/globals';
-import { PluginBuild } from 'esbuild';
-import { ResolvedWorkerConfig } from '../../utils/config';
-import { getRouteModuleExports } from "@remix-run/dev/dist/compiler/utils/routeExports";
+import { getRouteModuleExports } from '@remix-run/dev/dist/compiler/utils/routeExports.js';
+import type { PluginBuild } from 'esbuild';
+
+import type { ResolvedWorkerConfig } from '../../utils/config';
 
 jest.mock('@remix-run/dev/dist/compiler/utils/routeExports');
 
@@ -19,7 +20,7 @@ describe('routesModulesPlugin', () => {
     mockGetRouteModuleExports.mockReset();
   });
   afterAll(() => {
-    jest.unmock('@remix-run/dev/dist/compiler/utils/routeExports');
+    jest.unmock('@remix-run/dev/dist/compiler/utils/routeExports.js');
   });
 
   it('should return an esbuild plugin object', async () => {
@@ -72,8 +73,8 @@ describe('routesModulesPlugin', () => {
       'contents',
       expect.stringContaining(
         'export { workerAction, workerLoader } from "./routes/home.js";\n' +
-        '          export const hasWorkerAction = true;\n' +
-        '          export const hasWorkerLoader = true'
+          '          export const hasWorkerAction = true;\n' +
+          '          export const hasWorkerLoader = true'
       )
     );
     expect(result).not.toHaveProperty('contents', expect.stringContaining('otherExport'));

@@ -3,19 +3,29 @@
   "private": true,
   "license": "MIT",
   "workspaces": [
-    "packages/dev",
     "packages/client",
+    "packages/dev",
+    "packages/eslint-config",
+    "packages/lint-staged-config",
     "packages/sw",
-    "packages/worker-runtime",
-    "packages/workbox-runtime"
+    "packages/workbox-runtime",
+    "packages/worker-runtime"
   ],
+  "type": "module",
+  "scripts": {
+    "lint-staged": "lint-staged",
+    "test": "npm run test --workspaces --if-present"
+  },
   "devDependencies": {
     "@types/node": "^20.4.7",
     "@types/semver": "^7.5.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.3",
+    "prettier": "^3.0.0",
     "typescript": "^5.1.6"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "semver": "^7.5.4"

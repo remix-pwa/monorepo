@@ -1,7 +1,8 @@
 import { jest } from '@jest/globals';
+import type { PluginBuild } from 'esbuild';
+
+import type { ResolvedWorkerConfig } from '../../utils/config';
 import entryModulePlugin from '../entry-module';
-import { ResolvedWorkerConfig } from '../../utils/config';
-import { PluginBuild } from 'esbuild';
 
 describe('entryModulePlugin', () => {
   const config = {
@@ -59,17 +60,17 @@ describe('entryModulePlugin', () => {
       'contents',
       expect.stringContaining(
         '\n' +
-        "    import * as route0 from 'routes/home.js?worker';\n" +
-        "import * as route1 from 'routes/about.js?worker'\n" +
-        '\n' +
-        '    export const routes = [\n' +
-        '      { file: "routes/home.js", path: "/", module: route0, id: "home", parentId: "undefined", },\n' +
-        '{ file: "routes/about.js", path: "/about", module: route1, id: "about", parentId: "undefined", }\n' +
-        '    ];\n' +
-        '\n' +
-        "    import * as entryWorker from  'entry-worker.js?user';\n" +
-        '    export const entry = { module: entryWorker };\n' +
-        '    '
+          "    import * as route0 from 'routes/home.js?worker';\n" +
+          "import * as route1 from 'routes/about.js?worker'\n" +
+          '\n' +
+          '    export const routes = [\n' +
+          '      { file: "routes/home.js", path: "/", module: route0, id: "home", parentId: "undefined", },\n' +
+          '{ file: "routes/about.js", path: "/about", module: route1, id: "about", parentId: "undefined", }\n' +
+          '    ];\n' +
+          '\n' +
+          "    import * as entryWorker from  'entry-worker.js?user';\n" +
+          '    export const entry = { module: entryWorker };\n' +
+          '    '
       )
     );
   });
