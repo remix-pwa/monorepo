@@ -3,7 +3,7 @@ import type { ResolvedRemixConfig } from '@remix-run/dev';
 import { readConfig as _readConfig, findConfig } from '@remix-run/dev/dist/config.js';
 import { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';
 
-import readConfig from '../config';
+import readConfig from '../config.ts';
 
 const REMIX_ROOT = '.';
 
@@ -52,7 +52,7 @@ describe('readConfig', () => {
         },
       };
     });
-    const { default: readConfig } = await import('../config');
+    const { default: readConfig } = await import('../config.ts');
     const config = await readConfig(REMIX_ROOT, ServerMode.Test);
 
     expect(config).toEqual({
