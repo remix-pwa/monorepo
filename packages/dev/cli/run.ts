@@ -1,9 +1,9 @@
 /* eslint-disable no-case-declarations */
 import arg from 'arg';
-import { bold, magenta, red, underline, whiteBright } from 'colorette';
+import { bold, gray, green, magenta, red, underline, whiteBright } from 'colorette';
 import { pathExists } from 'fs-extra';
-import * as inquirer from 'inquirer';
 import { resolve } from 'path';
+import { prompt } from 'enquirer';
 
 import { detectPackageManager } from './detectPkgManager.ts';
 
@@ -54,14 +54,14 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
       '--no-install': Boolean,
       '--docs': Boolean,
       '--precache': Boolean,
-      // "--features": String,
+      // '--features': String,
       '--dir': String,
       '--package-manager': String,
       // Aliases for aboves
       '-h': '--help',
       '-v': '--version',
       '--ts': '--typescript',
-      // "--feat": "--features",
+      // '--feat': '--features',
       '--no-ts': '--no-typescript',
       '--js': '--no-typescript',
       '--pm': '--package-manager',
@@ -137,129 +137,215 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
         console.warn(red('This command is getting deprecated soon. Please use `create` instead.'));
       }
 
-      const inquiry = await inquirer.default
-        .prompt<{
-          lang: 'Typescript' | 'JavaScript';
-          workbox: boolean;
-          install: boolean;
-          precache: boolean;
-          features: PWAFeatures[];
-          dir: string;
-          packageManager: string;
-        }>([
-          {
-            type: 'list',
-            name: 'lang',
-            message: 'Is this a TypeScript or JavaScript project? Pick the opposite for chaos!',
-            when: !args['--typescript'] && !args['--no-typescript'],
-            choices: ['Typescript', 'JavaScript'],
+      // const featLookup: Record<PWAFeatures, string> = {
+      //   sw: 'Service Workers',
+      //   manifest: 'Web Manifest',
+      //   push: 'Push Notifications',
+      //   utils: 'PWA Client Utilities',
+      //   icons: 'Development Icons',
+      // };
+
+      // const feat: PWAFeatures[] | null =
+      //   (args['--features'] &&
+      //     args['--features']
+      //       .replace(/,\s/g, ',')
+      //       .split(',')
+      //       // @ts-ignore
+      //       .filter((elem: string) => typeof featLookup[elem] !== 'undefined')
+      //       // @ts-ignore
+      //       .map((feat: string) => featLookup[feat])) ||
+      //   null;
+
+      const inquiry = await prompt<{
+        lang: 'ts' | 'js';
+        workbox: boolean;
+        install: boolean;
+        precache: boolean;
+        features: PWAFeatures[];
+        dir: string;
+        packageManager: string;
+      }>([
+        {
+          type: 'list',
+          name: 'lang',
+          message: 'Is this a TypeScript or JavaScript project? Pick the opposite for chaos!',
+          skip: flags.typescript !== undefined,
+          choices: [
+            {
+              name: 'TypeScript',
+              value: 'ts',
+            },
+            {
+              name: 'JavaScript',
+              value: 'js',
+            },
+          ],
+        },
+        {
+          type: 'confirm',
+          name: 'workbox',
+          message: 'Do you want to integrate workbox into your project?',
+          initial: false,
+          skip: flags.workbox !== undefined,
+        },
+        {
+          type: 'confirm',
+          name: 'precache',
+          message: 'Do you want to utilise precaching in this project?',
+          initial: false,
+          skip: flags.precache !== undefined,
+        },
+        /**
+         * Passing skip option to multiselect throws an error below is the workaround
+         * until this get resolved https://github.com/enquirer/enquirer/issues/339
+         *
+         * But this syntax breaks the entire prompt. So, we are not using it for now.
+         */
+        // ...(feat === null
+        //   ? [
+        //       {
+        //         name: 'feat',
+        //         type: 'multiselect',
+        //         // @ts-ignore
+        //         hint: '(Use <space> to select, <return> to submit)',
+        //         message: "What features of remix-pwa do you need? Don't be afraid to pick all!",
+        //         indicator(state: any, choice: any) {
+        //           return choice.enabled ? ' ' + chalk.green('✔') : ' ' + chalk.gray('o');
+        //         },
+        //         choices: [
+        //           {
+        //             name: 'Service Workers',
+        //             value: 'sw',
+        //           },
+        //           {
+        //             name: 'Web Manifest',
+        //             value: 'manifest',
+        //           },
+        //           {
+        //             name: 'Push Notifications',
+        //             value: 'push',
+        //           },
+        //           {
+        //             name: 'PWA Client Utilities',
+        //             value: 'utils',
+        //           },
+        //           {
+        //             name: 'Development Icons',
+        //             value: 'icons',
+        //           },
+        //         ],
+        //         initialChoices: ['sw', 'manifest'],
+        //       },
+        //     ]
+        //   : []),
+        {
+          name: 'feat',
+          type: 'multiselect',
+          // @ts-ignore
+          hint: '(Use <space> to select, <return> to submit)',
+          message: "What features of remix-pwa do you need? Don't be afraid to pick all!",
+          indicator(_: any, choice: any) {
+            return choice.enabled ? ' ' + green('✔') : ' ' + gray('o');
           },
-          {
-            type: 'confirm',
-            name: 'workbox',
-            message: 'Do you want to integrate workbox into your project?',
-            default: false,
-            when: !args['--workbox'] && !args['--no-workbox'],
-          },
-          {
-            type: 'confirm',
-            name: 'precache',
-            message: 'Do you want to utilise precaching in this project?',
-            default: false,
-            when: !args['--precache'],
-          },
-          {
-            type: 'checkbox',
-            name: 'features',
-            message: 'What features do you want to include?',
-            choices: [
-              {
-                name: 'Service Workers',
-                value: 'sw',
-              },
-              {
-                name: 'Web Manifest',
-                value: 'manifest',
-              },
-              {
-                name: 'Push Notifications',
-                value: 'push',
-              },
-              {
-                name: 'PWA Client Utilities',
-                value: 'utils',
-              },
-              {
-                name: 'Development Icons',
-                value: 'icons',
-              },
-            ],
-            default: ['sw', 'manifest'],
-            // when: !args["--features"],
-          },
-          {
-            type: 'input',
-            name: 'dir',
-            message: 'Where is your Remix `app` directory located?',
-            default: 'app',
-            when: !args['--dir'],
-            validate(input: string, answers) {
-              if (input === '') {
+          choices: [
+            {
+              name: 'Service Workers',
+              value: 'sw',
+            },
+            {
+              name: 'Web Manifest',
+              value: 'manifest',
+            },
+            {
+              name: 'Push Notifications',
+              value: 'push',
+            },
+            {
+              name: 'PWA Client Utilities',
+              value: 'utils',
+            },
+            {
+              name: 'Development Icons',
+              value: 'icons',
+            },
+          ],
+          initialChoices: ['sw', 'manifest'],
+        },
+        {
+          type: 'input',
+          name: 'dir',
+          message: 'Where is your Remix `app` directory located?',
+          initial: 'app',
+          skip: flags.dir !== undefined,
+          validate(input: string) {
+            if (input === '') {
+              return 'Please enter a valid directory';
+            }
+
+            pathExists(resolve(projectDir, input)).then(exists => {
+              if (!exists) {
                 return 'Please enter a valid directory';
               }
+            });
 
-              pathExists(resolve(projectDir, input)).then(exists => {
-                if (!exists) {
-                  return 'Please enter a valid directory';
-                }
-              });
-
-              if (input.startsWith('/') || input.endsWith('/')) {
-                answers!.dir = input.replace(/^\/|\/$/g, '');
-              }
-
-              return true;
+            return true;
+          },
+          format(value) {
+            return value.replace(/^\/|\/$/g, '');
+          },
+        },
+        {
+          name: 'packageManager',
+          type: 'list',
+          message: 'What package manager do you use?',
+          // @ts-ignore This package is broken af
+          choices: [
+            {
+              name: 'Npm',
+              value: 'npm',
             },
-          },
-          {
-            type: 'list',
-            name: 'packageManager',
-            message: 'What package manager do you use?',
-            choices: ['npm', 'yarn', 'pnpm'],
-            default: 'npm',
-            when: !args['--package-manager'] && (await detectPackageManager(projectDir)) === undefined,
-          },
-          {
-            type: 'confirm',
-            name: 'install',
-            message: `Do you want to run ${packageManager} install?`,
-            default: true,
-            when: !args['--install'] && !args['--no-install'],
-          },
-        ])
-        .catch(err => {
-          if (err.isTtyError) {
-            console.error(
-              red(
-                "💥 Your terminal doesn't support interactivity! Prompt couldn't be rendered in the current environment"
-              )
-            );
+            {
+              name: 'Yarn',
+              value: 'yarn',
+            },
+            {
+              name: 'Pnpm',
+              value: 'pnpm',
+            },
+          ],
+          initial: 'npm',
+          skip: args['--package-manager'] !== undefined && (await detectPackageManager(projectDir)) !== undefined,
+        },
+        {
+          type: 'confirm',
+          name: 'install',
+          message: `Do you want to run ${packageManager} install?`,
+          initial: true,
+          skip: flags.install !== undefined,
+        },
+      ]).catch(err => {
+        if (err.isTtyError) {
+          console.error(
+            red(
+              "💥 Your terminal doesn't support interactivity! Prompt couldn't be rendered in the current environment"
+            )
+          );
 
-            return {
-              lang: 'Typescript',
-              workbox: false,
-              install: true,
-              precache: false,
-              features: ['sw', 'manifest'],
-              dir: 'app',
-              packageManager,
-            };
-          }
+          return {
+            lang: 'ts',
+            workbox: false,
+            install: true,
+            precache: false,
+            features: ['sw', 'manifest'],
+            dir: 'app',
+            packageManager,
+          };
+        }
 
-          throw err;
-        });
+        throw err;
+      });
 
-      const lang = flags.typescript === false ? 'JavaScript' : flags.typescript === true ? 'Typescript' : null;
+      const lang = flags.typescript === false ? 'js' : flags.typescript === true ? 'ts' : null;
 
       const workbox = flags.workbox === false ? false : flags.workbox === true ? true : null;
 
