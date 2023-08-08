@@ -8,6 +8,7 @@
     "module": "nodenext",
     // "composite": true,
     "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "skipLibCheck": true,

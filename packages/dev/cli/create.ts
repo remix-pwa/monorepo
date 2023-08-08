@@ -1,1 +1,1 @@
-export async function createPWA () {}
+export async function createPWA() {}

@@ -1,6 +1,6 @@
-import { findConfig, readConfig as _readConfig } from '@remix-run/dev/dist/config.js';
-import { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';
 import type { AppConfig, ResolvedRemixConfig } from '@remix-run/dev';
+import { readConfig as _readConfig, findConfig } from '@remix-run/dev/dist/config.js';
+import type { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';
 import { resolve } from 'node:path';
 
 const EXTENSIONS = ['.js', '.mjs', '.cjs'];
@@ -9,24 +9,24 @@ interface Config {
   /**
    * The path to the user custom worker implementation file.
    */
-  worker?: string,
+  worker?: string;
   /**
- * The file name of the final bundled worker file.
- */
-  workerName?: string,
+   * The file name of the final bundled worker file.
+   */
+  workerName?: string;
   /**
-  * Whether to minify the worker file.
-  */
-  workerMinify?: boolean,
+   * Whether to minify the worker file.
+   */
+  workerMinify?: boolean;
   /**
-  * The directory to write the worker file to.
-  */
-  workerBuildDirectory?: string,
+   * The directory to write the worker file to.
+   */
+  workerBuildDirectory?: string;
   /**
-  * Whether to generate a sourcemap for the worker file.
-  */
-  workerSourcemap?: boolean
-};
+   * Whether to generate a sourcemap for the worker file.
+   */
+  workerSourcemap?: boolean;
+}
 
 export type WorkerConfig = AppConfig & Config;
 export type ResolvedWorkerConfig = ResolvedRemixConfig & Required<Config> & { entryWorkerFile: string };
@@ -36,7 +36,9 @@ export type ResolvedWorkerConfig = ResolvedRemixConfig & Required<Config> & { en
  */
 export default async function readConfig(remixRoot: string, mode: ServerMode): Promise<ResolvedWorkerConfig> {
   const remixConfig = await _readConfig(remixRoot, mode);
-  const workerConfig = await import(findConfig(remixRoot, 'remix.config', EXTENSIONS) as string).then(m => m.default ?? m);
+  const workerConfig = await import(findConfig(remixRoot, 'remix.config', EXTENSIONS) as string).then(
+    m => m.default ?? m
+  );
 
   return {
     ...remixConfig,
