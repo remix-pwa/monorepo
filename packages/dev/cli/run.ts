@@ -2,7 +2,7 @@
 import arg from 'arg';
 import { bold, magenta, red, underline, whiteBright } from 'colorette';
 import { pathExists } from 'fs-extra';
-import inquirer from 'inquirer';
+import * as inquirer from 'inquirer';
 import { resolve } from 'path';
 
 import { detectPackageManager } from './detectPkgManager.ts';
@@ -137,7 +137,7 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
         console.warn(red('This command is getting deprecated soon. Please use `create` instead.'));
       }
 
-      const inquiry = await inquirer
+      const inquiry = await inquirer.default
         .prompt<{
           lang: 'Typescript' | 'JavaScript';
           workbox: boolean;
