@@ -4,15 +4,6 @@ import { run } from '../cli/run.ts';
 import { validate } from './utils/cli.ts';
 
 describe('CLI engine test suite', () => {
-  // describe('Argument test suite', () => {
-  //   it('should provide a warning when no argument is passed', () => {
-  //     const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-  //     // run([]); // error due to inquirer prompt. Todo: Fix this
-
-  //     expect(warn).toHaveBeenCalled();
-  //   });
-  // });
-
   describe('Input validation', () => {
     it('should return true when a valid directory is passed', () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,9 +14,9 @@ describe('CLI engine test suite', () => {
   });
 
   describe('Version flag test suite', () => {
-    it("should print the help text when the '--help' flag is passed", () => {
+    it("should print the help text when the '--help' flag is passed", async () => {
       const log = jest.spyOn(console, 'log').mockImplementation(() => {});
-      run(['--help']);
+      await run(['--help']);
 
       expect(log).toHaveBeenCalled();
       expect(log).toHaveBeenCalledWith(
@@ -39,9 +30,9 @@ A stand-alone package for integrating PWA solutions into Remix application.
   });
 
   describe('Documentation flag test suite', () => {
-    it("should print the help text when the '--docs' flag is passed", () => {
+    it("should print the help text when the '--docs' flag is passed", async () => {
       const log = jest.spyOn(console, 'log').mockImplementation(() => {});
-      run(['--docs']);
+      await run(['--docs']);
 
       expect(log).toHaveBeenCalled();
       expect(log).toHaveBeenCalledWith(expect.stringMatching('https://remix-pwa-docs.vercel.app'));
