@@ -5,7 +5,7 @@
     "baseUrl": ".",
     "lib": ["ES2020", "ESNext"],
     "target": "es2022",
-    "module": "nodenext",
+    "module": "NodeNext",
     // "composite": true,
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
