@@ -22,6 +22,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
     "prettier": "^3.0.0",
+    "prettier-plugin-organize-imports": "^3.2.3",
     "typescript": "^5.1.6"
   },
   "engines": {
