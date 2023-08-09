@@ -1,11 +1,11 @@
-import { jest } from '@jest/globals';
+import { describe, expect, test, vi } from 'vitest';
 
-import { run } from '../cli/run.ts';
-import { validate } from './utils/cli.ts';
+import { run } from '../cli/run.js';
+import { validate } from './utils/cli.js';
 
 describe('CLI engine test suite', () => {
   describe('Input validation', () => {
-    it('should return true when a valid directory is passed', () => {
+    test('should return true when a valid directory is passed', () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [isValid, _] = validate('__test__', {}, process.cwd());
 
@@ -14,8 +14,8 @@ describe('CLI engine test suite', () => {
   });
 
   describe('Version flag test suite', () => {
-    it("should print the help text when the '--help' flag is passed", async () => {
-      const log = jest.spyOn(console, 'log').mockImplementation(() => {});
+    test("should print the help text when the '--help' flag is passed", async () => {
+      const log = vi.spyOn(console, 'log').mockImplementation(() => {});
       await run(['--help']);
 
       expect(log).toHaveBeenCalled();
@@ -30,8 +30,8 @@ A stand-alone package for integrating PWA solutions into Remix application.
   });
 
   describe('Documentation flag test suite', () => {
-    it("should print the help text when the '--docs' flag is passed", async () => {
-      const log = jest.spyOn(console, 'log').mockImplementation(() => {});
+    test("should print the help text when the '--docs' flag is passed", async () => {
+      const log = vi.spyOn(console, 'log').mockImplementation(() => {});
       await run(['--docs']);
 
       expect(log).toHaveBeenCalled();
@@ -40,7 +40,7 @@ A stand-alone package for integrating PWA solutions into Remix application.
   });
 
   describe('Prompt Test Suite', () => {
-    it('1 is 1, I guess', () => {
+    test('1 is 1, I guess', () => {
       expect(1).toBe(1);
     });
   });

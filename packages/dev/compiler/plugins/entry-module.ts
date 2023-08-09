@@ -3,7 +3,7 @@ import type { OnLoadResult, OnResolveArgs, Plugin, PluginBuild } from 'esbuild';
 
 import type { ResolvedWorkerConfig } from '../utils/config.js';
 
-const FILTER_REGEX = /@remix-sas\/build\/magic$/;
+const FILTER_REGEX = /@remix-pwa\/dev\/worker-build$/;
 const NAMESPACE = 'entry-module';
 
 /**

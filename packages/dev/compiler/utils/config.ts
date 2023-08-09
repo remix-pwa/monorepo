@@ -1,7 +1,10 @@
 import type { AppConfig, ResolvedRemixConfig } from '@remix-run/dev';
 import { readConfig as _readConfig, findConfig } from '@remix-run/dev/dist/config.js';
 import type { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';
+import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
+
+const _require = createRequire(import.meta.url);
 
 const EXTENSIONS = ['.js', '.mjs', '.cjs'];
 
@@ -43,7 +46,7 @@ export default async function readConfig(remixRoot: string, mode: ServerMode): P
   return {
     ...remixConfig,
     entryWorkerFile: resolve(remixConfig.appDirectory, 'entry.worker.js'),
-    worker: workerConfig.worker ?? require.resolve('@remix-pwa/worker-runtime'),
+    worker: workerConfig.worker ?? _require.resolve('@remix-pwa/worker-runtime'),
     workerBuildDirectory: workerConfig.workerBuildDirectory ?? resolve('./public'),
     workerName: workerConfig.workerName ?? 'service-worker',
     workerMinify: workerConfig.workerMinify ?? false,

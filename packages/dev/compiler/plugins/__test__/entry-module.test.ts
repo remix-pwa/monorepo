@@ -1,8 +1,8 @@
-import { jest } from '@jest/globals';
 import type { PluginBuild } from 'esbuild';
+import { describe, expect, test, vi } from 'vitest';
 
-import type { ResolvedWorkerConfig } from '../../utils/config.ts';
-import entryModulePlugin from '../entry-module.ts';
+import type { ResolvedWorkerConfig } from '../../utils/config.js';
+import entryModulePlugin from '../entry-module.js';
 
 describe('entryModulePlugin', () => {
   const config = {
@@ -14,32 +14,32 @@ describe('entryModulePlugin', () => {
     },
   } as unknown as ResolvedWorkerConfig;
 
-  it('should return an esbuild plugin object', () => {
+  test('should return an esbuild plugin object', () => {
     const plugin = entryModulePlugin(config);
     expect(plugin).toHaveProperty('name', 'sw-entry-module');
     expect(plugin).toHaveProperty('setup');
   });
 
-  it('should transform the entry module if it matches the filter regex', async () => {
+  test('should transform the entry module if it matches the filter regex', async () => {
     const plugin = entryModulePlugin(config);
     const build = {
-      onResolve: jest.fn(),
-      onLoad: jest.fn(),
+      onResolve: vi.fn(),
+      onLoad: vi.fn(),
     } as unknown as PluginBuild;
     await plugin.setup(build);
-    expect(build.onResolve).toHaveBeenCalledWith({ filter: /@remix-sas\/build\/magic$/ }, expect.any(Function));
+    expect(build.onResolve).toHaveBeenCalledWith({ filter: /@remix-pwa\/dev\/worker-build$/ }, expect.any(Function));
     expect(build.onLoad).toHaveBeenCalledWith(
-      { filter: /@remix-sas\/build\/magic$/, namespace: 'entry-module' },
+      { filter: /@remix-pwa\/dev\/worker-build$/, namespace: 'entry-module' },
       expect.any(Function)
     );
   });
 
-  it('should inject the routes and entry worker into the entry module', async () => {
+  test('should inject the routes and entry worker into the entry module', async () => {
     const plugin = entryModulePlugin(config);
     const build = {
-      onResolve: jest.fn(),
-      onLoad: jest.fn(async ({ path }) => {
-        if (path === '/path/to/app/entry.js@remix-sas/build/magic') {
+      onResolve: vi.fn(),
+      onLoad: vi.fn(async ({ path }) => {
+        if (path === '/path/to/app/entry.js@remix-pwa/dev/worker-build') {
           return {
             contents: `
               import * as someOtherModule from './some-other-module';
@@ -54,7 +54,7 @@ describe('entryModulePlugin', () => {
     await plugin.setup(build);
     // @ts-ignore
     const onLoadCallback = build.onLoad.mock.calls[0][1];
-    const result = await onLoadCallback({ path: '/path/to/app/entry.js@remix-sas/build/magic' });
+    const result = await onLoadCallback({ path: '/path/to/app/entry.js@remix-pwa/dev/worker-build' });
 
     expect(result).toHaveProperty(
       'contents',

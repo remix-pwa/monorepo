@@ -1,5 +1,5 @@
 {
-  "extends": ["@remix-pwa/eslint-config/node"],
+  "extends": ["@remix-pwa/eslint-config"],
   "parser": "esprima",
   "parserOptions": {
     "ecmaVersion": "latest",

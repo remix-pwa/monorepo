@@ -1,17 +1,38 @@
 {
   "name": "@remix-pwa/worker-runtime",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.0.0",
+  "description": "A vanilla JavaScript worker runtime for remix service worker",
   "license": "MIT",
   "sideEffects": false,
-  "main": "dist/service-worker.internal.js",
-  "typings": "dist/index.d.ts",
-  "module": "dist/esm/service-worker.internal.js",
+  "main": "dist/src/service-worker.internal.js",
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   },
+  "type": "module",
   "files": [
     "dist/",
-    "README.md"
-  ]
+    "README.md",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "TIMING=1 eslint --fix src/",
+    "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
+  },
+  "dependencies": {
+    "@remix-run/router": "^1.7.2",
+    "@remix-run/server-runtime": "^1.19.1"
+  },
+  "devDependencies": {
+    "@remix-pwa/dev": "^0.0.0",
+    "@remix-pwa/eslint-config": "^0.0.0",
+    "@remix-pwa/lint-staged-config": "^0.0.0",
+    "@types/jest": "^29.5.3",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.46.0",
+    "prettier": "^3.0.1",
+    "typescript": "^5.1.6",
+    "vitest": "^0.34.1"
+  }
 }
