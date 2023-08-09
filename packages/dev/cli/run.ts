@@ -6,6 +6,7 @@ import { pathExists } from 'fs-extra';
 import { resolve } from 'path';
 
 import * as commands from './commands.js';
+import { FlagOptionType } from './create.js';
 import { detectPackageManager } from './detectPkgManager.js';
 
 // Todo(ShafSpecs): Update this later
@@ -38,7 +39,7 @@ ${underline(whiteBright('Options:'))}
 --version, -v                   Print the CLI version and exit
 --docs                          Print the link to the remix-pwa docs and exit`;
 
-type PWAFeatures = 'sw' | 'manifest' | 'push' | 'utils' | 'icons';
+export type PWAFeatures = 'sw' | 'manifest' | 'push' | 'utils' | 'icons';
 
 export async function run(argv: string[] = process.argv.slice(2), projectDir: string = process.cwd()) {
   // todo: Allow passing configs via CLI like minify build, worker path, etc.
@@ -364,10 +365,8 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
         ...(dir ? { dir } : {}),
       };
 
-      const answer = { ...inquiry, ...initialChoices };
+      const answer = { ...inquiry, ...initialChoices } as unknown as FlagOptionType;
 
-      commands.init(answer);
-
-    // Todo: Run the create command
+      commands.init(projectDir, answer);
   }
 }
