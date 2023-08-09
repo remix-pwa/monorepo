@@ -9,8 +9,8 @@ describe('entryModulePlugin', () => {
     appDirectory: '/path/to/app',
     entryWorkerFile: 'entry-worker.js',
     routes: {
-      '/': { id: 'home', file: 'routes/home.js', path: '/' },
-      '/about': { id: 'about', file: 'routes/about.js', path: '/about' },
+      '/': { id: '/', file: 'routes/home.js', path: '/' },
+      '/about': { id: '/about', file: 'routes/about.js', path: '/about' },
     },
   } as unknown as ResolvedWorkerConfig;
 
@@ -56,22 +56,38 @@ describe('entryModulePlugin', () => {
     const onLoadCallback = build.onLoad.mock.calls[0][1];
     const result = await onLoadCallback({ path: '/path/to/app/entry.js@remix-pwa/dev/worker-build' });
 
-    expect(result).toHaveProperty(
-      'contents',
-      expect.stringContaining(
-        '\n' +
-          "    import * as route0 from 'routes/home.js?worker';\n" +
-          "import * as route1 from 'routes/about.js?worker'\n" +
-          '\n' +
-          '    export const routes = [\n' +
-          '      { file: "routes/home.js", path: "/", module: route0, id: "home", parentId: "undefined", },\n' +
-          '{ file: "routes/about.js", path: "/about", module: route1, id: "about", parentId: "undefined", }\n' +
-          '    ];\n' +
-          '\n' +
-          "    import * as entryWorker from  'entry-worker.js?user';\n" +
-          '    export const entry = { module: entryWorker };\n' +
-          '    '
-      )
-    );
+    expect(result).toHaveProperty('contents');
+    expect(result.contents).toMatchInlineSnapshot(`
+      "
+          import * as route0 from 'routes/home.js?worker';
+      import * as route1 from 'routes/about.js?worker'
+
+          export const routes = {
+            \\"/\\": {
+                id: \\"/\\",
+                parentId: \\"undefined\\",
+                path: \\"/\\",
+                index: undefined,
+                caseSensitive: undefined,
+                module: route0,
+                hasWorkerAction: Boolean(route0.hasWorkerAction),
+                hasWorkerLoader: Boolean(route0.hasWorkerLoader),
+              },
+      \\"/about\\": {
+                id: \\"/about\\",
+                parentId: \\"undefined\\",
+                path: \\"/about\\",
+                index: undefined,
+                caseSensitive: undefined,
+                module: route1,
+                hasWorkerAction: Boolean(route1.hasWorkerAction),
+                hasWorkerLoader: Boolean(route1.hasWorkerLoader),
+              }
+          };
+
+          import * as entryWorker from  'entry-worker.js?user';
+          export const entry = { module: entryWorker };
+          "
+    `);
   });
 });

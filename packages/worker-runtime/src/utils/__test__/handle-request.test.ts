@@ -1,18 +1,18 @@
-import type { WorkerLoadContext, WorkerRoute } from '@remix-pwa/dev/worker-build.js';
+import type { WorkerLoadContext, WorkerRoute, WorkerRouteManifest } from '@remix-pwa/dev/worker-build.js';
 import { describe, expect, test, vi } from 'vitest';
 
 import { handleRequest } from '../handle-request.js';
 
 describe('handleRequest', () => {
   test('should handle loader requests', async () => {
-    const routes = [
-      {
+    const routes = {
+      route1: {
         id: 'route1',
         module: {
           workerLoader: vi.fn(() => Promise.resolve({ message: 'Hello, world!' })),
         },
       } as unknown as WorkerRoute,
-    ];
+    };
     const event = {
       request: new Request('https://example.com/route1?_data=route1'),
     } as FetchEvent;
@@ -26,14 +26,14 @@ describe('handleRequest', () => {
   });
 
   test('should handle action requests', async () => {
-    const routes = [
-      {
+    const routes = {
+      route1: {
         id: 'route1',
         module: {
           workerAction: vi.fn(() => Promise.resolve({ message: 'Hello, world!' })),
         },
       } as unknown as WorkerRoute,
-    ];
+    };
     const event = {
       request: new Request('https://example.com/route1?_data=route1&action=true', { method: 'POST' }),
     } as FetchEvent;
@@ -47,7 +47,7 @@ describe('handleRequest', () => {
   });
 
   test('should call the default handler for non-loader and non-action requests', async () => {
-    const routes = [] as Array<WorkerRoute>;
+    const routes = {} as WorkerRouteManifest;
     const event = {
       request: new Request('https://example.com/route2'),
     } as FetchEvent;
@@ -70,14 +70,14 @@ describe('handleRequest', () => {
   test('should call the error handler for errors', async () => {
     const error = new Error('Test error');
     const handler = vi.fn();
-    const routes = [
-      {
+    const routes = {
+      route1: {
         id: 'route1',
         module: {
           workerLoader: vi.fn(() => Promise.reject(error)),
         },
       } as unknown as WorkerRoute,
-    ];
+    };
     const event = {
       request: new Request('https://example.com/route1?_data=route1'),
     } as FetchEvent;

@@ -29,11 +29,16 @@ export interface WorkerRouteModule extends ServerRouteModule {
   workerAction?: WorkerActionFunction;
   workerLoader?: WorkerLoaderFunction;
 }
-export interface WorkerRoute extends ServerRoute {
+export interface WorkerRoute extends Omit<ServerRoute,"children"> {
   hasWorkerAction: boolean;
   hasWorkerLoader: boolean;
   module: WorkerRouteModule;
 }
+
+export interface WorkerRouteManifest {
+  [routeId: string]: WorkerRoute;
+}
+
 export interface WorkerEntryModule {
   defaultFetchHandler?: DefaultFetchHandler;
   handleError?: DefaultErrorHandler;
@@ -45,4 +50,5 @@ export interface BuildEntry {
 
 // These are the types that are actually exported by the virtual module.
 export const entry: BuildEntry = undefined!;
-export const routes: Array<WorkerRoute> = undefined!;
+export const routes: WorkerRouteManifest = undefined!;
+
