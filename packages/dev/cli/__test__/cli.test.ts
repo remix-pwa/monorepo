@@ -106,6 +106,8 @@ A stand-alone package for integrating PWA solutions into Remix application.
 
       rmSync('__mock-app/entry.worker.ts'); // cleanup
     });
+
+    test("")
   });
 });
 
