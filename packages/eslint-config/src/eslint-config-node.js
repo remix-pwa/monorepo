@@ -24,6 +24,7 @@ module.exports = {
   processor: 'disable/disable',
   rules: {
     '@typescript-eslint/consistent-type-imports': 'error',
+    '@typescript-eslint/ban-ts-comment': 'off',
     'import/order': [
       'error',
       {
@@ -33,6 +34,8 @@ module.exports = {
     ],
     strict: 'error',
     'sort-destructure-keys/sort-destructure-keys': 'error',
+    'import/no-unresolved': [2, { caseSensitive: false }],
+    '@typescript-eslint/no-explicit-any': 'off',
   },
   overrides: [
     {

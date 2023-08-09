@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import type { PluginBuild } from 'esbuild';
 
-import sideEffectsPlugin from '../side-effects';
+import sideEffectsPlugin from '../side-effects.ts';
 
 describe('sideEffectsPlugin', () => {
   it('should return an esbuild plugin object', () => {

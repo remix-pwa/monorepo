@@ -3,10 +3,10 @@
   "references": [
     { "path": "packages/client" },
     { "path": "packages/dev" },
-    { "path": "packages/eslint-config" }
-    { "path": "packages/lint-staged-config" }
+    { "path": "packages/eslint-config" },
+    { "path": "packages/lint-staged-config" },
     { "path": "packages/sw" },
     { "path": "packages/workbox-runtime" },
-    { "path": "packages/worker-runtime" },
+    { "path": "packages/worker-runtime" }
   ]
 }

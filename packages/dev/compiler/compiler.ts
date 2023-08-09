@@ -8,11 +8,11 @@ import esbuild from 'esbuild';
 import minimist from 'minimist';
 import path from 'node:path';
 
-import entryModulePlugin from './plugins/entry-module';
-import routesModulesPlugin from './plugins/routes-module';
-import sideEffectsPlugin from './plugins/side-effects';
-import type { ResolvedWorkerConfig } from './utils/config';
-import readConfig from './utils/config';
+import entryModulePlugin from './plugins/entry-module.ts';
+import routesModulesPlugin from './plugins/routes-module.ts';
+import sideEffectsPlugin from './plugins/side-effects.ts';
+import type { ResolvedWorkerConfig } from './utils/config.ts';
+import readConfig from './utils/config.ts';
 
 const { NODE_ENV } = process.env;
 const TIME_LABEL = '💿 Built in';

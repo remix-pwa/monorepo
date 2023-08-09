@@ -2,7 +2,7 @@ import { jest } from '@jest/globals';
 import { getRouteModuleExports } from '@remix-run/dev/dist/compiler/utils/routeExports.js';
 import type { PluginBuild } from 'esbuild';
 
-import type { ResolvedWorkerConfig } from '../../utils/config';
+import type { ResolvedWorkerConfig } from '../../utils/config.ts';
 
 jest.mock('@remix-run/dev/dist/compiler/utils/routeExports');
 
@@ -24,14 +24,14 @@ describe('routesModulesPlugin', () => {
   });
 
   it('should return an esbuild plugin object', async () => {
-    const { default: routesModulesPlugin } = await import('../routes-module');
+    const { default: routesModulesPlugin } = await import('../routes-module.ts');
     const plugin = routesModulesPlugin(config);
     expect(plugin).toHaveProperty('name', 'sw-routes-modules');
     expect(plugin).toHaveProperty('setup');
   });
 
   it('should transform modules that match the filter regex', async () => {
-    const { default: routesModulesPlugin } = await import('../routes-module');
+    const { default: routesModulesPlugin } = await import('../routes-module.ts');
     const plugin = routesModulesPlugin(config);
     const build = {
       onResolve: jest.fn(),
@@ -47,7 +47,7 @@ describe('routesModulesPlugin', () => {
 
   it('should generate a new module with workerAction and workerLoader exports', async () => {
     mockGetRouteModuleExports.mockResolvedValue(['default', 'workerAction', 'workerLoader']);
-    const { default: routesModulesPlugin } = await import('../routes-module');
+    const { default: routesModulesPlugin } = await import('../routes-module.ts');
     const plugin = routesModulesPlugin(config);
     const build = {
       onResolve: jest.fn(),
@@ -82,7 +82,7 @@ describe('routesModulesPlugin', () => {
 
   it('should not generate a new module if there are no workerAction or workerLoader exports', async () => {
     mockGetRouteModuleExports.mockResolvedValue(['default', 'action', 'loader']);
-    const { default: routesModulesPlugin } = await import('../routes-module');
+    const { default: routesModulesPlugin } = await import('../routes-module.ts');
     const plugin = routesModulesPlugin(config);
     const build = {
       onResolve: jest.fn(),
