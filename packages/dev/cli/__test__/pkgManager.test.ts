@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { detectPackageManager } from '../detectPkgManager.ts';
+import { detectPackageManager } from '../detectPkgManager.js';
 
 describe('Package Manager Test Suite', () => {
   test('should return undefined when no lock file is found', async () => {
