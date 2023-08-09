@@ -1,12 +1,12 @@
 /* eslint-disable no-case-declarations */
 import arg from 'arg';
 import { bold, gray, green, magenta, red, underline, whiteBright } from 'colorette';
+import { prompt } from 'enquirer';
 import { pathExists } from 'fs-extra';
 import { resolve } from 'path';
-import { prompt } from 'enquirer';
 
-import * as commands from './commands.ts';
-import { detectPackageManager } from './detectPkgManager.ts';
+import * as commands from './commands.js';
+import { detectPackageManager } from './detectPkgManager.js';
 
 // Todo(ShafSpecs): Update this later
 const helpText = `

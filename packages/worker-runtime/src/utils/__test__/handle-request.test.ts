@@ -1,5 +1,5 @@
-import { describe, expect, test, vi } from 'vitest';
 import type { WorkerLoadContext, WorkerRoute } from '@remix-pwa/dev/worker-build.js';
+import { describe, expect, test, vi } from 'vitest';
 
 import { handleRequest } from '../handle-request.js';
 

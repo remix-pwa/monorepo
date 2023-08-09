@@ -1,5 +1,5 @@
-import { describe, expect, test } from 'vitest';
 import type { WorkerLoadContext } from '@remix-pwa/dev/worker-build.js';
+import { describe, expect, test } from 'vitest';
 
 import {
   clone,

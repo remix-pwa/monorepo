@@ -1,5 +1,5 @@
-import { describe, expect, test } from 'vitest';
 import { ErrorResponse } from '@remix-run/router';
+import { describe, expect, test } from 'vitest';
 
 import { errorResponseToJson } from '../response.js';
 

@@ -1,5 +1,5 @@
-import { expect, test, expectTypeOf } from 'vitest';
 import eslint from 'eslint';
+import { expect, expectTypeOf, test } from 'vitest';
 
 import config from '../eslint-config-node.cjs';
 
