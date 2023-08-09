@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from 'vitest';
 
-import { run } from '../cli/run.js';
-import { validate } from './utils/cli.js';
+import { run } from '../run.ts';
+import { validate } from './utils/cli.ts';
 
 describe('CLI engine test suite', () => {
   describe('Input validation', () => {
