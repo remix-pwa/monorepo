@@ -14,21 +14,20 @@
   "type": "module",
   "scripts": {
     "lint-staged": "lint-staged",
-    "test": "jest --preset ts-jest/presets/default-esm --env=node --colors"
+    "lint": "npm run lint --workspaces --if-present",
+    "format": "npm run format --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
   },
   "dependencies": {
-    "@types/jest": "^29.5.3",
-    "@types/node": "^20.4.7",
-    "@types/semver": "^7.5.0",
-    "cross-env": "^7.0.3",
     "husky": "^8.0.3",
-    "jest": "^29.6.2",
     "lint-staged": "^13.2.3",
     "prettier": "^3.0.0",
     "prettier-plugin-organize-imports": "^3.2.3",
     "semver": "^7.5.4",
-    "ts-jest": "^29.1.1",
     "typescript": "^5.1.6"
+  },
+  "devDependencies": {
+    "@types/semver": "^7.5.0"
   },
   "engines": {
     "node": ">=18.0.0"
