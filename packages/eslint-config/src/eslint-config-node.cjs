@@ -17,9 +17,21 @@ module.exports = {
     impliedStrict: true,
   },
   plugins: ['@typescript-eslint', 'import', 'disable', 'jsdoc', 'sort-destructure-keys', 'node'],
+  settings: {
+    'import/parsers': {
+      [require.resolve('@typescript-eslint/parser')]: ['.ts', '.tsx', '.d.ts'],
+    },
+    'import/resolver': {
+      [require.resolve('eslint-import-resolver-node')]: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
+      [require.resolve('eslint-import-resolver-typescript')]: {
+        alwaysTryTypes: true,
+      },
+    },
+  },
   env: {
     node: true,
-    jest: true,
   },
   processor: 'disable/disable',
   rules: {
@@ -39,6 +51,7 @@ module.exports = {
   },
   overrides: [
     {
+      extends: ['plugin:vitest/recommended'],
       files: ['**/*.test.ts'],
       rules: {
         '@typescript-eslint/ban-ts-comment': 'off',

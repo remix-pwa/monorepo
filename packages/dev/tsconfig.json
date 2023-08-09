@@ -3,7 +3,7 @@
   "exclude": ["dist", "__tests__", "node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
-    "lib": ["ES2020", "ESNext"],
+    "lib": ["ES2020", "ESNext", "WebWorker"],
     "target": "es2022",
     "module": "NodeNext",
     // "composite": true,

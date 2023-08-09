@@ -1,14 +1,13 @@
-'use strict';
+import eslint from 'eslint';
+import { expect, expectTypeOf, test } from 'vitest';
 
-const eslint = require('eslint');
-
-const config = require('../eslint-config-node.js');
+import config from '../eslint-config-node.cjs';
 
 test('should have basic properties of an eslint config', () => {
-  expect(config.parserOptions).toBeObject();
-  expect(config.env).toBeObject();
-  expect(config.rules).toBeObject();
-  expect(config.plugins).toBeArray();
+  expectTypeOf(config.parserOptions).toBeObject();
+  expectTypeOf(config.env).toBeObject();
+  expectTypeOf(config.rules).toBeObject();
+  expectTypeOf(config.plugins).toBeArray();
 });
 
 test('should be able to lint source code using the eslint config', async () => {

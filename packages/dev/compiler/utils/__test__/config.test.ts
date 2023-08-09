@@ -1,29 +1,40 @@
-import { jest } from '@jest/globals';
 import type { ResolvedRemixConfig } from '@remix-run/dev';
-import { readConfig as _readConfig, findConfig } from '@remix-run/dev/dist/config.js';
 import { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';
-
-import readConfig from '../config.ts';
+import { afterAll, afterEach, describe, expect, test, vi } from 'vitest';
 
 const REMIX_ROOT = '.';
-
-jest.mock('@remix-run/dev/dist/config.js');
-jest.mocked(_readConfig).mockResolvedValue({
-  appDirectory: 'app',
-  assetsBuildDirectory: 'public/build',
-  ignoredRouteFiles: ['**/.*'],
-  serverPlatform: 'node',
-  serverModuleFormat: 'cjs',
-} as unknown as ResolvedRemixConfig);
-jest.mocked(findConfig).mockReturnValue('./__test__/remix.config.ts');
+vi.doMock('@remix-run/dev/dist/config.js', () => {
+  return {
+    readConfig: () =>
+      Promise.resolve({
+        appDirectory: 'app',
+        assetsBuildDirectory: 'public/build',
+        ignoredRouteFiles: ['**/.*'],
+        serverPlatform: 'node',
+        serverModuleFormat: 'cjs',
+      } as unknown as ResolvedRemixConfig),
+    findConfig: () => './__test__/remix.config.ts',
+  };
+});
+vi.doMock('node:module', async () => ({
+  createRequire: () => ({ resolve: () => 'service-worker.internal.js' }),
+}));
 
 describe('readConfig', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
   afterAll(() => {
-    jest.unmock('@remix-run/dev/dist/config');
-    jest.unmock(`./remix.config.ts`);
+    vi.doUnmock('@remix-run/dev/dist/config');
+    vi.doUnmock('./remix.config.ts');
   });
 
-  it('should return the resolved config object with default worker options', async () => {
+  test('should return the resolved config object with default worker options', async () => {
+    vi.doMock('./remix.config.ts', () => {
+      return { default: {} };
+    });
+    const { default: readConfig } = await import('../config.js');
+
     const config = await readConfig(REMIX_ROOT, ServerMode.Test);
 
     expect(config).toEqual({
@@ -41,8 +52,8 @@ describe('readConfig', () => {
     });
   });
 
-  it('should return the resolved config object with custom worker options', async () => {
-    jest.mock(`./remix.config.ts`, () => {
+  test('should return the resolved config object with custom worker options', async () => {
+    vi.doMock('./remix.config.ts', () => {
       return {
         default: {
           worker: 'custom-service-worker.js',
@@ -52,7 +63,7 @@ describe('readConfig', () => {
         },
       };
     });
-    const { default: readConfig } = await import('../config.ts');
+    const { default: readConfig } = await import('../config.js');
     const config = await readConfig(REMIX_ROOT, ServerMode.Test);
 
     expect(config).toEqual({
