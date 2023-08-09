@@ -1,7 +1,18 @@
-import { describe, expect, test, vi } from 'vitest';
+import { afterAll, assert, beforeAll, describe, expect, test, vi } from 'vitest';
 
-import { run } from '../run.ts';
-import { validate } from './utils/cli.ts';
+import { rmSync } from 'fs';
+import { cpSync, existsSync, writeFileSync } from 'fs-extra';
+import { resolve } from 'path';
+import { createPWA } from '../create.js';
+import { run } from '../run.js';
+import { validate } from './utils/cli.js';
+
+beforeAll(() => {
+  process.env.NODE_ENV = 'test';
+
+  const remixAppTemplate = resolve(__dirname, '../../../../templates/mock-remix-app');
+  cpSync(remixAppTemplate, '__mock-app', { recursive: true });
+});
 
 describe('CLI engine test suite', () => {
   describe('Input validation', () => {
@@ -39,9 +50,65 @@ A stand-alone package for integrating PWA solutions into Remix application.
     });
   });
 
-  describe('Prompt Test Suite', () => {
-    test('1 is 1, I guess', () => {
-      expect(1).toBe(1);
+  describe('Project creation test suite', () => {
+    test('should point to the correct template directory', async () => {
+      const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      await createPWA('__mock-app', {
+        dir: '__mock-app',
+        precache: false,
+        install: true,
+        workbox: false,
+        lang: 'ts',
+        features: ['sw', 'manifest'],
+        packageManager: 'npm',
+      });
+
+      expect(log).toHaveBeenCalled();
+      expect(log).toHaveBeenCalledWith(expect.stringMatching('Integrating service worker...'));
+      expect(log).toHaveBeenCalledWith(expect.stringMatching('manifest'));
+    });
+
+    test('should create an entry worker file when "sw" is specified', async () => {
+      const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      await createPWA('__mock-app', {
+        dir: '__mock-app',
+        precache: false,
+        install: true,
+        workbox: false,
+        lang: 'ts',
+        features: ['sw', 'manifest'],
+        packageManager: 'npm',
+      });
+
+      assert.ok(existsSync('__mock-app/entry.worker.ts'));
+      rmSync('__mock-app/entry.worker.ts'); // cleanup
+    });
+
+    test('should throw an error when the service worker already exists', async () => {
+      const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      writeFileSync('__mock-app/entry.worker.ts', 'console.log("hello world")');
+
+      await createPWA('__mock-app', {
+        dir: '__mock-app',
+        precache: false,
+        install: true,
+        workbox: false,
+        lang: 'ts',
+        features: ['sw', 'manifest'],
+        packageManager: 'npm',
+      });
+
+      expect(log).toHaveBeenCalled();
+      expect(log).toHaveBeenCalledWith(expect.stringMatching('Service worker already exists'));
+
+      rmSync('__mock-app/entry.worker.ts'); // cleanup
     });
   });
+});
+
+afterAll(() => {
+  rmSync('__mock-app', { recursive: true, force: true });
 });
