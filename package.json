@@ -16,7 +16,7 @@
     "lint-staged": "lint-staged",
     "lint": "npm run lint --workspaces --if-present",
     "format": "npm run format --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present"
+    "test": "npm run test --workspaces --if-present -- --coverage"
   },
   "devDependencies": {
     "@types/semver": "^7.5.0",
