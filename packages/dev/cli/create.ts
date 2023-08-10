@@ -1,8 +1,9 @@
 import { blueBright, green, red } from 'colorette';
-import { cpSync, readFileSync } from 'fs';
+import { cpSync } from 'fs';
 import pkg from 'fs-extra';
 import { resolve } from 'path';
 import { PWAFeatures } from './run.js';
+import ora from 'ora';
 
 let isV2 = false;
 
@@ -125,8 +126,6 @@ export async function createPWA(
     throw new Error('Template directory not found');
   }
 
-  console.log(features);
-
   features.map(async feature => {
     switch (feature) {
       case 'sw':
@@ -150,8 +149,6 @@ export async function createPWA(
         console.log('install');
         break;
       case 'utils':
-        console.log('precache');
-        break;
       default:
         break;
     }
@@ -174,10 +171,11 @@ export async function createPWA(
     json.scripts = {};
   }
 
-  json.dependencies['npm-run-all'] = '^4.1.5';
   json.dependencies['dotenv'] = '^16.0.3';
 
   // Todo: Add `remix-pwa` dependencies here
+
+  json.devDependencies['npm-run-all'] = '^4.1.5';
 
   json.scripts['build'] = 'run-s build:*';
   json.scripts['build:remix'] = 'remix build';
@@ -190,7 +188,10 @@ export async function createPWA(
   pkg.writeFileSync(pkgJsonPath, JSON.stringify(json, null, 2));
 
   if (install) {
-    console.log(blueBright(`Running ${packageManager} install...`));
+    let spinner = ora({
+      text: blueBright(`Running ${packageManager} install...`),
+      spinner: 'dots',
+    }).start();
 
     if (!_isTest) {
       execSync(`${packageManager} install ${packageManager == 'yarn' ? null : '--loglevel silent'}`, {
@@ -198,7 +199,10 @@ export async function createPWA(
         stdio: 'inherit',
       });
 
-      console.log(green(`Successfully ran ${packageManager} install!`));
+      spinner.succeed(`Successfully ran ${packageManager} install!`);
+      spinner.clear();
+    } else {
+      spinner.succeed(`Successfully installed dependencies!`).clear();
     }
   } else {
     console.log(red(`Skipping ${packageManager} install...\n`));
@@ -208,5 +212,5 @@ export async function createPWA(
   // literally achieves nothing but uncool suspense for the user
   await new Promise(res => setTimeout(res, 853));
 
-  console.log(green('✔ Successfully ran postinstall scripts!'));
+  console.log(green('\n✔ Successfully ran postinstall scripts!'));
 }
