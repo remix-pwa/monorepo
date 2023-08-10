@@ -1,8 +1,8 @@
 import { red } from 'colorette';
-import { pathExistsSync, writeFile, readFileSync } from 'fs-extra';
+import { readFile } from 'fs';
+import { pathExistsSync, readFileSync, writeFile } from 'fs-extra';
 import { resolve } from 'path';
 import { PWAFeatures } from './run.js';
-import { readFile } from 'fs';
 
 let isV2 = false;
 
@@ -53,23 +53,19 @@ async function integrateServiceWorker(
   }
 }
 
-async function integrateManifest(
-  projectDir: string,
-  lang: 'ts' | 'js' = 'ts',
-  dir: string = 'app'
-  ){
-    const templateDir = resolve(__dirname, 'templates');
-    const manifestDir = resolve(projectDir, dir, `routes/manifest[.]webmanifest.${lang}`);
+async function integrateManifest(projectDir: string, lang: 'ts' | 'js' = 'ts', dir: string = 'app') {
+  const templateDir = resolve(__dirname, 'templates');
+  const manifestDir = resolve(projectDir, dir, `routes/manifest[.]webmanifest.${lang}`);
 
-    console.log('Integrating Web Manifest...'); // todo: ora spinners for each step
+  console.log('Integrating Web Manifest...'); // todo: ora spinners for each step
 
-    if (pathExistsSync(manifestDir)) {
-      return;
-    } 
-
-    const manifestContent = readFileSync(resolve(templateDir, 'app', `manifest[.]webmanifest.js`), 'utf-8');
-    await writeFile(manifestDir, manifestContent, 'utf-8');
+  if (pathExistsSync(manifestDir)) {
+    return;
   }
+
+  const manifestContent = readFileSync(resolve(templateDir, 'app', `manifest[.]webmanifest.js`), 'utf-8');
+  await writeFile(manifestDir, manifestContent, 'utf-8');
+}
 
 export async function createPWA(
   projectDir: string = process.cwd(),
@@ -93,8 +89,8 @@ export async function createPWA(
     if (err) {
       console.log(
         red(
-          "No `remix.config.js` file found in your project. Please make sure to run in a remix project or create one and try again or alternatively, run `remix-pwa --help` for more info.",
-        ),
+          'No `remix.config.js` file found in your project. Please make sure to run in a remix project or create one and try again or alternatively, run `remix-pwa --help` for more info.'
+        )
       );
       return;
     }
