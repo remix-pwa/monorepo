@@ -1,6 +1,6 @@
-import { red } from 'colorette';
+import { green, red } from 'colorette';
 import { cpSync, readFile } from 'fs';
-import { pathExistsSync, readFileSync, writeFile } from 'fs-extra';
+import { pathExistsSync, readFileSync, writeFile, writeFileSync } from 'fs-extra';
 import { resolve } from 'path';
 import { PWAFeatures } from './run.js';
 
@@ -147,10 +147,46 @@ export async function createPWA(
     }
   });
 
+  const pkgJsonPath = resolve(projectDir, "package.json");
+  const json = JSON.parse(readFileSync(pkgJsonPath, "utf-8"));
+
+  // This three clauses should never run, else you are doing 
+  // utter nonsense with your remix project.
+  if (!json.hasOwnProperty("dependencies")) {
+    json.dependencies = {};
+  }
+
+  if (!json.hasOwnProperty("devDependencies")) {
+    json.devDependencies = {};
+  }
+
+  if (!json.hasOwnProperty("scripts")) {
+    json.scripts = {};
+  }
+
+  json.dependencies["npm-run-all"] = "^4.1.5";
+  json.dependencies["cross-env"] = "^7.0.3";
+  json.dependencies["dotenv"] = "^16.0.3";
+
+  json.scripts["build"] = "run-s build:*";
+  json.scripts["build:remix"] = "remix build";
+  json.scripts["build:worker"] = "remix-pwa build";
+
+  json.scripts["dev"] = "run-p dev:*";
+  json.scripts["dev:remix"] = "remix dev";
+  json.scripts["dev:worker"] = "remix-pwa dev";
+
+  writeFileSync(pkgJsonPath, JSON.stringify(json, null, 2));
+
   if (install) {
-    console.log('installing deps with', packageManager);
+    console.log('Installing deps with', packageManager);
   } else {
     console.log(red(`Skipping ${packageManager} install...\n`));
     console.log(red(`Don't forget to run ${packageManager} install`));
   }
+
+  // literally achieves nothing but uncool suspense for the user
+  await new Promise((res) => setTimeout(res, 853));
+
+  console.log(green("✔ Successfully ran postinstall scripts!"));
 }
