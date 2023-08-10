@@ -126,8 +126,10 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
 
   switch (cmd) {
     case 'dev':
+      await commands.dev(projectDir);
       break;
     case 'build':
+      await commands.build(projectDir);
       break;
     case 'push':
       break; // A delayed todo: More or less init push api and a test server route
