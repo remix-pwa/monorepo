@@ -1,0 +1,19 @@
+{
+  "extends": ["standard", "eslint:recommended", "plugin:prettier/recommended"],
+  "plugins": ["disable", "sort-destructure-keys", "node"],
+  "parser": "esprima",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "impliedStrict": true
+  },
+  "overrides": [
+    {
+      "files": ["**/*.cjs"],
+      "parserOptions": {
+        "sourceType": "script"
+      }
+    }
+  ],
+  "root": true
+}

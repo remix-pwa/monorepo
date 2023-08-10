@@ -1,11 +1,12 @@
-import { jest } from '@jest/globals';
-import { PluginBuild } from 'esbuild';
-import { ResolvedWorkerConfig } from '../../utils/config';
-import { getRouteModuleExports } from "@remix-run/dev/dist/compiler/utils/routeExports";
+import type { PluginBuild } from 'esbuild';
+import { afterAll, afterEach, describe, expect, test, vi } from 'vitest';
 
-jest.mock('@remix-run/dev/dist/compiler/utils/routeExports');
+import type { ResolvedWorkerConfig } from '../../utils/config.js';
 
-const mockGetRouteModuleExports = jest.mocked(getRouteModuleExports);
+const mockGetRouteModuleExports = vi.hoisted(() => vi.fn());
+vi.doMock('@remix-run/dev/dist/compiler/utils/routeExports', () => ({
+  getRouteModuleExports: mockGetRouteModuleExports,
+}));
 
 describe('routesModulesPlugin', () => {
   const config = {
@@ -15,26 +16,26 @@ describe('routesModulesPlugin', () => {
       '/about': { id: 'about', file: 'routes/about.js' },
     },
   } as unknown as ResolvedWorkerConfig;
-  beforeEach(() => {
-    mockGetRouteModuleExports.mockReset();
+  afterEach(() => {
+    vi.clearAllMocks();
   });
   afterAll(() => {
-    jest.unmock('@remix-run/dev/dist/compiler/utils/routeExports');
+    vi.unmock('@remix-run/dev/dist/compiler/utils/routeExports.js');
   });
 
-  it('should return an esbuild plugin object', async () => {
-    const { default: routesModulesPlugin } = await import('../routes-module');
+  test('should return an esbuild plugin object', async () => {
+    const { default: routesModulesPlugin } = await import('../routes-module.js');
     const plugin = routesModulesPlugin(config);
     expect(plugin).toHaveProperty('name', 'sw-routes-modules');
     expect(plugin).toHaveProperty('setup');
   });
 
-  it('should transform modules that match the filter regex', async () => {
-    const { default: routesModulesPlugin } = await import('../routes-module');
+  test('should transform modules that match the filter regex', async () => {
+    const { default: routesModulesPlugin } = await import('../routes-module.js');
     const plugin = routesModulesPlugin(config);
     const build = {
-      onResolve: jest.fn(),
-      onLoad: jest.fn(),
+      onResolve: vi.fn(),
+      onLoad: vi.fn(),
     } as unknown as PluginBuild;
     await plugin.setup(build);
     expect(build.onResolve).toHaveBeenCalledWith({ filter: /\?worker$/ }, expect.any(Function));
@@ -44,13 +45,14 @@ describe('routesModulesPlugin', () => {
     );
   });
 
-  it('should generate a new module with workerAction and workerLoader exports', async () => {
+  test('should generate a new module with workerAction and workerLoader exports', async () => {
+    vi.doMock('@remix-run/dev/dist/compiler/utils/routeExports');
     mockGetRouteModuleExports.mockResolvedValue(['default', 'workerAction', 'workerLoader']);
-    const { default: routesModulesPlugin } = await import('../routes-module');
+    const { default: routesModulesPlugin } = await import('../routes-module.js');
     const plugin = routesModulesPlugin(config);
     const build = {
-      onResolve: jest.fn(),
-      onLoad: jest.fn(async ({ path }) => {
+      onResolve: vi.fn(),
+      onLoad: vi.fn(async ({ path }) => {
         if (path === 'routes/home.js?worker') {
           return {
             contents: `
@@ -72,20 +74,20 @@ describe('routesModulesPlugin', () => {
       'contents',
       expect.stringContaining(
         'export { workerAction, workerLoader } from "./routes/home.js";\n' +
-        '          export const hasWorkerAction = true;\n' +
-        '          export const hasWorkerLoader = true'
+          '          export const hasWorkerAction = true;\n' +
+          '          export const hasWorkerLoader = true'
       )
     );
     expect(result).not.toHaveProperty('contents', expect.stringContaining('otherExport'));
   });
 
-  it('should not generate a new module if there are no workerAction or workerLoader exports', async () => {
+  test('should not generate a new module if there are no workerAction or workerLoader exports', async () => {
     mockGetRouteModuleExports.mockResolvedValue(['default', 'action', 'loader']);
-    const { default: routesModulesPlugin } = await import('../routes-module');
+    const { default: routesModulesPlugin } = await import('../routes-module.js');
     const plugin = routesModulesPlugin(config);
     const build = {
-      onResolve: jest.fn(),
-      onLoad: jest.fn(async ({ path }) => {
+      onResolve: vi.fn(),
+      onLoad: vi.fn(async ({ path }) => {
         if (path === 'routes/about.js?worker') {
           return {
             contents: `

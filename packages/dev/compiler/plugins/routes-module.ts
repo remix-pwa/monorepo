@@ -1,8 +1,9 @@
-import { getRouteModuleExports } from "@remix-run/dev/dist/compiler/utils/routeExports";
-import { OnLoadArgs, OnLoadResult, OnResolveArgs, Plugin, PluginBuild } from "esbuild";
-import { ResolvedWorkerConfig } from "../utils/config";
+import { getRouteModuleExports } from '@remix-run/dev/dist/compiler/utils/routeExports.js';
+import type { OnLoadArgs, OnLoadResult, OnResolveArgs, Plugin, PluginBuild } from 'esbuild';
+
+import type { ResolvedWorkerConfig } from '../utils/config.js';
 const FILTER_REGEX = /\?worker$/;
-const NAMESPACE = "routes-module";
+const NAMESPACE = 'routes-module';
 
 export default function routesModulesPlugin(config: ResolvedWorkerConfig): Plugin {
   const routesByFile = Object.keys(config.routes).reduce((map, key) => {
@@ -11,30 +12,25 @@ export default function routesModulesPlugin(config: ResolvedWorkerConfig): Plugi
     return map;
   }, new Map());
 
-
   async function setup(build: PluginBuild) {
     const onResolve = ({ path }: OnResolveArgs) => ({ path, namespace: NAMESPACE });
     const onLoad = async ({ path }: OnLoadArgs) => {
-      const file = path.replace(/\?worker$/, "");
+      const file = path.replace(/\?worker$/, '');
       const route = routesByFile.get(file);
       const sourceExports = await getRouteModuleExports(config, route.id);
-      const theExports = sourceExports.filter(
-        (exp) => exp === "workerAction" || exp === "workerLoader"
-      );
+      const theExports = sourceExports.filter(exp => exp === 'workerAction' || exp === 'workerLoader');
 
-      let contents = "module.exports = {};";
+      let contents = 'module.exports = {};';
       if (theExports.length > 0) {
-        const spec = `{ ${theExports.join(", ")} }`;
+        const spec = `{ ${theExports.join(', ')} }`;
         contents = `export ${spec} from ${JSON.stringify(`./${file}`)};
-          export const hasWorkerAction = ${theExports.includes("workerAction")};
-          export const hasWorkerLoader = ${theExports.includes(
-          "workerLoader"
-        )}`;
+          export const hasWorkerAction = ${theExports.includes('workerAction')};
+          export const hasWorkerLoader = ${theExports.includes('workerLoader')}`;
       }
       return {
         contents,
         resolveDir: config.appDirectory,
-        loader: "js",
+        loader: 'js',
       } as OnLoadResult;
     };
 
@@ -43,7 +39,7 @@ export default function routesModulesPlugin(config: ResolvedWorkerConfig): Plugi
   }
 
   return {
-    name: "sw-routes-modules",
+    name: 'sw-routes-modules',
     setup,
   };
 }

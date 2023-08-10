@@ -1,8 +1,9 @@
-import { ConfigRoute } from "@remix-run/dev/dist/config/routes";
-import { ResolvedWorkerConfig } from "../utils/config";
-import { OnLoadResult, OnResolveArgs, Plugin, PluginBuild } from "esbuild";
+import type { ConfigRoute, RouteManifest } from '@remix-run/dev/dist/config/routes.js';
+import type { OnLoadResult, OnResolveArgs, Plugin, PluginBuild } from 'esbuild';
 
-const FILTER_REGEX = /@remix-sas\/build\/magic$/;
+import type { ResolvedWorkerConfig } from '../utils/config.js';
+
+const FILTER_REGEX = /@remix-pwa\/dev\/worker-build$/;
 const NAMESPACE = 'entry-module';
 
 /**
@@ -15,11 +16,20 @@ function createRouteImports(routes: ConfigRoute[]): string {
 /**
  * Creates a string representation of each route item.
  */
-function createRouteList(routes: ConfigRoute[]): string {
-  return routes
+function createRouteManifest(routes: RouteManifest): string {
+  return Object.entries(routes)
     .map(
-      (route, index) =>
-        `{ file: "${route.file}", path: "${route.path}", module: route${index}, id: "${route.id}", parentId: "${route.parentId}", }`
+      ([key, route], index) =>
+        `${JSON.stringify(key)}: {
+          id: "${route.id}",
+          parentId: "${route.parentId}",
+          path: "${route.path}",
+          index: ${JSON.stringify(route.index)},
+          caseSensitive: ${JSON.stringify(route.caseSensitive)},
+          module: route${index},
+          hasWorkerAction: Boolean(route${index}.hasWorkerAction),
+          hasWorkerLoader: Boolean(route${index}.hasWorkerLoader),
+        }`
     )
     .join(',\n');
 }
@@ -41,9 +51,9 @@ export default function entryModulePlugin(config: ResolvedWorkerConfig): Plugin 
       const contents = `
     ${createRouteImports(routes)}
 
-    export const routes = [
-      ${createRouteList(routes)}
-    ];
+    export const routes = {
+      ${createRouteManifest(config.routes)}
+    };
 
     import * as entryWorker from  '${config.entryWorkerFile}?user';
     export const entry = { module: entryWorker };

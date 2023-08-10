@@ -1,4 +1,4 @@
-import { OnLoadResult, OnResolveArgs, Plugin, PluginBuild } from "esbuild";
+import type { OnLoadResult, OnResolveArgs, Plugin, PluginBuild } from 'esbuild';
 
 const FILTER_REGEX = /\?user$/;
 
@@ -11,7 +11,8 @@ export default function sideEffectsPlugin(): Plugin {
       path: path.replace(FILTER_REGEX, ''),
       sideEffects: true,
     });
-    const onLoad = async () => ({ loader: 'js' } as OnLoadResult);
+
+    const onLoad = async () => ({ loader: 'js' }) as OnLoadResult;
 
     build.onResolve({ filter: FILTER_REGEX }, onResolve);
     build.onLoad({ filter: FILTER_REGEX }, onLoad);

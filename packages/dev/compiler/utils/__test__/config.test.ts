@@ -1,34 +1,40 @@
-import { jest } from '@jest/globals';
-import { findConfig, readConfig as _readConfig } from '@remix-run/dev/dist/config';
 import type { ResolvedRemixConfig } from '@remix-run/dev';
-import { ServerMode } from '@remix-run/dev/dist/config/serverModes';
-import readConfig from '../config';
+import { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';
+import { afterAll, afterEach, describe, expect, test, vi } from 'vitest';
 
 const REMIX_ROOT = '.';
-var mockWorkerConfigModule = jest.fn();
-
-jest.mock('@remix-run/dev/dist/config');
-jest.mock(`./remix.config.ts`, () => ({
-  default: mockWorkerConfigModule(),
+vi.doMock('@remix-run/dev/dist/config.js', () => {
+  return {
+    readConfig: () =>
+      Promise.resolve({
+        appDirectory: 'app',
+        assetsBuildDirectory: 'public/build',
+        ignoredRouteFiles: ['**/.*'],
+        serverPlatform: 'node',
+        serverModuleFormat: 'cjs',
+      } as unknown as ResolvedRemixConfig),
+    findConfig: () => './__test__/remix.config.ts',
+  };
+});
+vi.doMock('node:module', async () => ({
+  createRequire: () => ({ resolve: () => 'service-worker.internal.js' }),
 }));
 
-jest.mocked(_readConfig).mockResolvedValue({
-  appDirectory: 'app',
-  assetsBuildDirectory: 'public/build',
-  ignoredRouteFiles: ['**/.*'],
-  serverPlatform: 'node',
-  serverModuleFormat: 'cjs',
-} as unknown as ResolvedRemixConfig)
-jest.mocked(findConfig).mockReturnValue('./__test__/remix.config.ts');
-
 describe('readConfig', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
   afterAll(() => {
-    jest.unmock('@remix-run/dev/dist/config');
-    jest.unmock(`./remix.config.ts`);
+    vi.doUnmock('@remix-run/dev/dist/config');
+    vi.doUnmock('./remix.config.ts');
   });
 
-  it('should return the resolved config object with default worker options', async () => {
-    mockWorkerConfigModule.mockReturnValue({});
+  test('should return the resolved config object with default worker options', async () => {
+    vi.doMock('./remix.config.ts', () => {
+      return { default: {} };
+    });
+    const { default: readConfig } = await import('../config.js');
+
     const config = await readConfig(REMIX_ROOT, ServerMode.Test);
 
     expect(config).toEqual({
@@ -46,28 +52,32 @@ describe('readConfig', () => {
     });
   });
 
-  it('should return the resolved config object with custom worker options', async () => {
-    mockWorkerConfigModule.mockReturnValue({
+  test('should return the resolved config object with custom worker options', async () => {
+    vi.doMock('./remix.config.ts', () => {
+      return {
+        default: {
+          worker: 'custom-service-worker.js',
+          workerMinify: true,
+          workerName: 'sw',
+          workerSourcemap: true,
+        },
+      };
+    });
+    const { default: readConfig } = await import('../config.js');
+    const config = await readConfig(REMIX_ROOT, ServerMode.Test);
+
+    expect(config).toEqual({
+      appDirectory: 'app',
+      assetsBuildDirectory: 'public/build',
+      entryWorkerFile: expect.stringContaining('entry.worker.js'),
+      ignoredRouteFiles: ['**/.*'],
+      serverModuleFormat: 'cjs',
+      serverPlatform: 'node',
       worker: 'custom-service-worker.js',
-      workerMinify: true,
-      workerName: 'sw.js',
-      workerSourcemap: true,
-    });
-    const { default: readConfig } = await import('../config');
-    const config = await readConfig(REMIX_ROOT, ServerMode.Test);
-
-    expect(config).toEqual({
-      appDirectory: 'app',
-      assetsBuildDirectory: 'public/build',
-      entryWorkerFile: expect.stringContaining('entry.worker.js'),
-      ignoredRouteFiles: ['**/.*'],
-      serverModuleFormat: 'cjs',
-      serverPlatform: 'node',
-      worker: expect.stringContaining('service-worker.internal.js'),
       workerBuildDirectory: expect.stringContaining('public'),
-      workerMinify: false,
-      workerName: 'service-worker',
-      workerSourcemap: false,
+      workerMinify: true,
+      workerName: 'sw',
+      workerSourcemap: true,
     });
   });
 });
