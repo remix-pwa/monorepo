@@ -73,7 +73,7 @@ export async function runCompiler(mode: 'dev' | 'build', projectDir: string = pr
         write: true,
       })
       .then(async context => {
-        console.log(`Building service-worker app in ${MODE} mode`);
+        console.log(`Building Service Worker in ${MODE} mode`);
         try {
           if (mode === 'build') {
             return context.dispose();
