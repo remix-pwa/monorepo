@@ -1,7 +1,7 @@
-import { afterAll, assert, beforeAll, describe, expect, test, vi } from 'vitest';
+import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { rmSync } from 'fs';
-import { cpSync, existsSync, writeFileSync } from 'fs-extra';
+import { cpSync, existsSync, readFileSync, writeFileSync } from 'fs-extra';
 import { resolve } from 'path';
 import { createPWA } from '../create.js';
 import { run } from '../run.js';
@@ -55,9 +55,9 @@ A stand-alone package for integrating PWA solutions into Remix application.
       const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       await createPWA('__mock-app', {
-        dir: '__mock-app',
+        dir: 'app',
         precache: false,
-        install: true,
+        install: false,
         workbox: false,
         lang: 'ts',
         features: ['sw', 'manifest'],
@@ -65,49 +65,71 @@ A stand-alone package for integrating PWA solutions into Remix application.
       });
 
       expect(log).toHaveBeenCalled();
-      expect(log).toHaveBeenCalledWith(expect.stringMatching('Integrating service worker...'));
-      expect(log).toHaveBeenCalledWith(expect.stringMatching('manifest'));
+      expect(log).toHaveBeenCalledWith(expect.stringMatching('Integrating Service Worker...'));
+      expect(log).toHaveBeenCalledWith(expect.stringMatching('Integrating Web Manifest...'));
     });
 
-    test('should create an entry worker file when "sw" is specified', async () => {
-      const log = vi.spyOn(console, 'log').mockImplementation(() => {});
-
-      await createPWA('__mock-app', {
-        dir: '__mock-app',
-        precache: false,
-        install: true,
-        workbox: false,
-        lang: 'ts',
-        features: ['sw', 'manifest'],
-        packageManager: 'npm',
+    describe('Service Worker creation suite', () => {
+      beforeEach(() => {
+        const remixAppTemplate = resolve(__dirname, '../../../../templates/mock-remix-app');
+        cpSync(remixAppTemplate, '__mock-app', { recursive: true, force: true });
       });
 
-      assert.ok(existsSync('__mock-app/entry.worker.ts'));
-      rmSync('__mock-app/entry.worker.ts'); // cleanup
-    });
+      test('should create an entry worker file when "sw" is specified', async () => {
+        await createPWA('__mock-app', {
+          dir: 'app',
+          precache: false,
+          install: false,
+          workbox: false,
+          lang: 'ts',
+          features: ['sw', 'manifest'],
+          packageManager: 'npm',
+        });
 
-    test('should throw an error when the service worker already exists', async () => {
-      const log = vi.spyOn(console, 'log').mockImplementation(() => {});
-
-      writeFileSync('__mock-app/entry.worker.ts', 'console.log("hello world")');
-
-      await createPWA('__mock-app', {
-        dir: '__mock-app',
-        precache: false,
-        install: true,
-        workbox: false,
-        lang: 'ts',
-        features: ['sw', 'manifest'],
-        packageManager: 'npm',
+        assert.ok(existsSync('__mock-app/app/entry.worker.ts'));
       });
 
-      expect(log).toHaveBeenCalled();
-      expect(log).toHaveBeenCalledWith(expect.stringMatching('Service worker already exists'));
+      test('should throw an error when the service worker already exists', async () => {
+        const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-      rmSync('__mock-app/entry.worker.ts'); // cleanup
+        writeFileSync('__mock-app/app/entry.worker.ts', 'console.log("hello world")');
+
+        await createPWA('__mock-app', {
+          dir: 'app',
+          precache: false,
+          install: false,
+          workbox: false,
+          lang: 'ts',
+          features: ['sw', 'manifest'],
+          packageManager: 'npm',
+        });
+
+        expect(log).toHaveBeenCalled();
+        expect(log).toHaveBeenCalledWith(expect.stringMatching('Service worker already exists'));
+      });
+
+      test.skip('should create a precache service worker when precache is selected', async () => {
+        await createPWA('__mock-app', {
+          dir: 'app',
+          precache: true,
+          install: false,
+          workbox: false,
+          lang: 'ts',
+          features: ['sw', 'manifest'],
+          packageManager: 'npm',
+        });
+
+        assert.ok(existsSync('__mock-app/app/entry.worker.ts'));
+
+        const swContent = readFileSync('__mock-app/app/entry.worker.ts', 'utf-8');
+
+        assert.ok(swContent.includes('// Precache Worker'));
+      });
+
+      afterEach(() => {
+        rmSync('__mock-app', { recursive: true, force: true });
+      });
     });
-
-    test("")
   });
 });
 
