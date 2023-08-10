@@ -49,7 +49,7 @@ interface Config {
 }
 
 export type WorkerConfig = AppConfig & Config;
-export type ResolvedWorkerConfig = ResolvedRemixConfig & Required<Config> & { entryWorkerFile: string };
+export type ResolvedWorkerConfig = ResolvedRemixConfig & Required<Config>;
 
 /**
  * Reads the remix.config.js file and returns the config object.
@@ -58,11 +58,11 @@ export default async function readConfig(remixRoot: string, mode: ServerMode): P
   const remixConfig = await _readConfig(remixRoot, mode);
   const workerConfig = await import(findConfig(remixRoot, 'remix.config', EXTENSIONS) as string).then(
     m => m.default ?? m
-  );
+  ) as WorkerConfig;
 
   return {
     ...remixConfig,
-    entryWorkerFile: resolve(remixConfig.appDirectory, 'entry.worker.ts'),
+    entryWorkerFile: workerConfig.entryWorkerFile ?? resolve(remixConfig.appDirectory, 'entry.worker.ts'),
     worker: workerConfig.worker ?? _require.resolve('@remix-pwa/worker-runtime'),
     workerBuildDirectory: workerConfig.workerBuildDirectory ?? resolve('./public'),
     workerName: workerConfig.workerName ?? 'entry.worker',

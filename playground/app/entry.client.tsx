@@ -18,6 +18,4 @@ startTransition(() => {
   );
 });
 
-loadServiceWorker({
-  serviceWorkerUrl: "/entry.worker.js",
-});
+loadServiceWorker();

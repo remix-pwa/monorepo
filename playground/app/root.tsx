@@ -15,7 +15,8 @@ export const links: LinksFunction = () => [
 ];
 
 export default function App() {
-  useSWEffect()
+  useSWEffect();
+  
   return (
     <html lang="en">
       <head>
