@@ -16,12 +16,13 @@
     "lint-staged": "lint-staged",
     "lint": "npm run lint --workspaces --if-present",
     "format": "npm run format --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present"
+    "test": "npm run test --workspaces --if-present -- --coverage"
   },
   "devDependencies": {
     "@types/semver": "^7.5.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
+    "npm-run-all": "^4.1.5",
     "prettier": "^3.0.0",
     "prettier-plugin-organize-imports": "^3.2.3",
     "semver": "^7.5.4",

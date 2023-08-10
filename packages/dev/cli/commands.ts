@@ -1,11 +1,16 @@
-import { createPWA } from './create.js';
+import { runCompiler } from '~/compiler.js';
+import { FlagOptionType, createPWA } from './create.js';
 
-export const dev = async (argv: string[] = process.argv.slice(2), projectDir: string = process.cwd()) => {};
+export const dev = async (projectDir: string = process.cwd()) => {
+  await runCompiler('dev', projectDir);
+};
 
-export const build = async (argv: string[] = process.argv.slice(2), projectDir: string = process.cwd()) => {};
+export const build = async (projectDir: string = process.cwd()) => {
+  await runCompiler('build', projectDir);
+};
 
 export const push = async () => {};
-// todo: typings
-export const init = async (answer: any) => {
-  await createPWA();
+
+export const init = async (dir: string, answer: FlagOptionType) => {
+  await createPWA(dir, answer);
 };

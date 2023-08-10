@@ -1,14 +1,13 @@
 /// <reference lib="WebWorker" />
 
-export type {};
-declare let self: ServiceWorkerGlobalScope;
+// Precache Worker
 
-self.addEventListener("install", (event: ExtendableEvent) => {
+self.addEventListener("install", (event) => {
   console.log("Service worker installed");
   event.waitUntil(self.skipWaiting());
 });
 
-self.addEventListener("activate", (event: ExtendableEvent) => {
+self.addEventListener("activate", (event) => {
   console.log("Service worker activated");
   event.waitUntil(self.clients.claim());
 });

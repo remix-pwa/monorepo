@@ -17,9 +17,6 @@ const { NODE_ENV } = process.env;
 const TIME_LABEL = '💿 Built in';
 const MODE = NODE_ENV === 'production' ? ServerMode.Production : ServerMode.Development;
 
-// note: leaving this at the moment until we have a the `cli` implementation.
-const { watch } = minimist(process.argv.slice(2));
-
 /**
  * Creates the esbuild config object.
  */
@@ -66,30 +63,32 @@ function createEsbuildConfig(config: ResolvedWorkerConfig): BuildOptions {
   };
 }
 
-readConfig(path.resolve('./'), MODE).then(remixConfig => {
-  console.time(TIME_LABEL);
+export async function runCompiler(mode: 'dev' | 'build', projectDir: string = process.cwd()) {
+  readConfig(path.resolve(projectDir), MODE).then(remixConfig => {
+    console.time(TIME_LABEL);
 
-  esbuild
-    .context({
-      ...createEsbuildConfig(remixConfig),
-      metafile: true,
-      write: true,
-    })
-    .then(async context => {
-      console.log(`Building service-worker app in ${MODE} mode`);
-      try {
-        if (!watch) {
-          return context.dispose();
+    esbuild
+      .context({
+        ...createEsbuildConfig(remixConfig),
+        metafile: true,
+        write: true,
+      })
+      .then(async context => {
+        console.log(`Building service-worker app in ${MODE} mode`);
+        try {
+          if (mode === 'build') {
+            return context.dispose();
+          }
+          await context.watch();
+          console.timeEnd(TIME_LABEL);
+          console.log('Watching for changes in the service worker file...');
+        } catch (error) {
+          console.error(error);
         }
-        await context.watch();
-        console.timeEnd(TIME_LABEL);
-        console.log('Watching for changes in the service worker file...');
-      } catch (error) {
+      })
+      .catch(error => {
         console.error(error);
-      }
-    })
-    .catch(error => {
-      console.error(error);
-      process.exit(1);
-    });
-});
+        process.exit(1);
+      });
+  });
+}
