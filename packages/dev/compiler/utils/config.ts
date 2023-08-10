@@ -12,7 +12,7 @@ interface Config {
   /**
    * The path to the entry worker file.
    * 
-   * @default '<root>/app/entry.worker.ts'
+   * @default '<appDir>/entry.worker.ts'
    */
   entryWorkerFile?: string; 
   /**
