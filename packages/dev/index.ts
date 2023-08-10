@@ -1,4 +1,4 @@
-export { run } from "./cli/run.js"
+export { run } from "./cli/run.js";
 
 // For debugging processes I guess, you would almost never use this
 // and you shouldn't 
