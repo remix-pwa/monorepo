@@ -141,7 +141,7 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
     case 'create':
     default: // Todo: Add a better error message - Deprecating this. For now tho, it would be the same as create
       if (cmd !== 'create' && cmd !== 'init' && cmd !== 'new') {
-        console.warn(red('This command is getting deprecated soon. Please use `create` instead.'));
+        console.warn(bold(red('This command is getting deprecated soon. Please use `npx remix-pwa create` instead.')));
       }
 
       // const featLookup: Record<PWAFeatures, string> = {
