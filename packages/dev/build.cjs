@@ -1,10 +1,33 @@
-const esbuild = require('esbuild')
+const fs = require('fs');
+const path = require('path');
+const esbuild = require('esbuild');
 
 // Automatically exclude all node_modules from the bundled version
-const { nodeExternalsPlugin } = require('esbuild-node-externals')
+const { nodeExternalsPlugin } = require('esbuild-node-externals');
+
+function readJsFiles(folderPath) {
+  const jsFiles = [];
+
+  function readFilesRecursive(folder) {
+    const entries = fs.readdirSync(folder, { withFileTypes: true });
+
+    entries.forEach((entry) => {
+      const entryPath = path.join(folder, entry.name);
+
+      if (entry.isDirectory()) {
+        readFilesRecursive(entryPath);
+      } else if (entry.isFile() && entry.name.endsWith('.js')) {
+        jsFiles.push(entryPath);
+      }
+    });
+  }
+
+  readFilesRecursive(folderPath);
+  return jsFiles;
+}
 
 esbuild.build({
-  entryPoints: ['./dist/index.js'],
+  entryPoints: [...readJsFiles('./dist')],
   outdir: 'dist',
   allowOverwrite: true,
   minify: true,
