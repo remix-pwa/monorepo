@@ -1,5 +1,5 @@
 import { red } from 'colorette';
-import { readFile } from 'fs';
+import { cpSync, readFile } from 'fs';
 import { pathExistsSync, readFileSync, writeFile } from 'fs-extra';
 import { resolve } from 'path';
 import { PWAFeatures } from './run.js';
@@ -67,6 +67,12 @@ async function integrateManifest(projectDir: string, lang: 'ts' | 'js' = 'ts', d
   await writeFile(manifestDir, manifestContent, 'utf-8');
 }
 
+async function integrateIcons(projectDir: string) {
+  const iconDir = resolve(__dirname, 'templates', 'icons');
+
+  cpSync(iconDir, resolve(projectDir, 'public/icons'), { recursive: true, errorOnExist: false });
+}
+
 export async function createPWA(
   projectDir: string = process.cwd(),
   options: FlagOptionType = {
@@ -128,7 +134,7 @@ export async function createPWA(
         }
         break;
       case 'icons':
-        console.log('workbox');
+        integrateIcons(projectDir);
         break;
       case 'push':
         console.log('install');
