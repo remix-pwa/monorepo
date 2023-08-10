@@ -5,17 +5,16 @@
   "license": "MIT",
   "sideEffects": false,
   "main": "dist/src/service-worker.internal.js",
+  "types": "dist/src/service-worker.internal.d.ts",
   "engines": {
     "node": ">=18.0.0"
   },
   "type": "module",
   "files": [
-    "dist/",
-    "README.md",
-    "package.json"
+    "dist/**/*"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "rimraf ./dist && tsc",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "TIMING=1 eslint --fix src/",
     "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
