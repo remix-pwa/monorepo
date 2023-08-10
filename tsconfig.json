@@ -6,5 +6,6 @@
     { "path": "packages/sw" },
     // { "path": "packages/workbox-runtime" },
     { "path": "packages/worker-runtime" }
-  ]
+  ],
+  "exclude": ["node_modules", "templates/**/*"]
 }
