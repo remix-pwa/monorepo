@@ -3,6 +3,8 @@
 export type {};
 declare let self: ServiceWorkerGlobalScope;
 
+// Precache Worker
+
 self.addEventListener("install", (event: ExtendableEvent) => {
   console.log("Service worker installed");
   event.waitUntil(self.skipWaiting());
