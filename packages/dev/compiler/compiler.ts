@@ -4,7 +4,6 @@ import { emptyModulesPlugin } from '@remix-run/dev/dist/compiler/plugins/emptyMo
 import { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';
 import type { BuildOptions, Plugin } from 'esbuild';
 import esbuild from 'esbuild';
-import minimist from 'minimist';
 import path from 'node:path';
 
 import entryModulePlugin from './plugins/entry-module.js';
