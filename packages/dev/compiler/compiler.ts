@@ -64,31 +64,31 @@ function createEsbuildConfig(config: ResolvedWorkerConfig): BuildOptions {
 }
 
 export async function runCompiler(mode: 'dev' | 'build', projectDir: string = process.cwd()) {
-readConfig(path.resolve(projectDir), MODE).then(remixConfig => {
-  console.time(TIME_LABEL);
+  readConfig(path.resolve(projectDir), MODE).then(remixConfig => {
+    console.time(TIME_LABEL);
 
-  esbuild
-    .context({
-      ...createEsbuildConfig(remixConfig),
-      metafile: true,
-      write: true,
-    })
-    .then(async context => {
-      console.log(`Building service-worker app in ${MODE} mode`);
-      try {
-        if (mode === 'build') {
-          return context.dispose();
+    esbuild
+      .context({
+        ...createEsbuildConfig(remixConfig),
+        metafile: true,
+        write: true,
+      })
+      .then(async context => {
+        console.log(`Building service-worker app in ${MODE} mode`);
+        try {
+          if (mode === 'build') {
+            return context.dispose();
+          }
+          await context.watch();
+          console.timeEnd(TIME_LABEL);
+          console.log('Watching for changes in the service worker file...');
+        } catch (error) {
+          console.error(error);
         }
-        await context.watch();
-        console.timeEnd(TIME_LABEL);
-        console.log('Watching for changes in the service worker file...');
-      } catch (error) {
+      })
+      .catch(error => {
         console.error(error);
-      }
-    })
-    .catch(error => {
-      console.error(error);
-      process.exit(1);
-    });
-});
+        process.exit(1);
+      });
+  });
 }

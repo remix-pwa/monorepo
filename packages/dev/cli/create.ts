@@ -147,35 +147,35 @@ export async function createPWA(
     }
   });
 
-  const pkgJsonPath = resolve(projectDir, "package.json");
-  const json = JSON.parse(readFileSync(pkgJsonPath, "utf-8"));
+  const pkgJsonPath = resolve(projectDir, 'package.json');
+  const json = JSON.parse(readFileSync(pkgJsonPath, 'utf-8'));
 
-  // This three clauses should never run, else you are doing 
+  // This three clauses should never run, else you are doing
   // utter nonsense with your remix project.
-  if (!json.hasOwnProperty("dependencies")) {
+  if (!json.hasOwnProperty('dependencies')) {
     json.dependencies = {};
   }
 
-  if (!json.hasOwnProperty("devDependencies")) {
+  if (!json.hasOwnProperty('devDependencies')) {
     json.devDependencies = {};
   }
 
-  if (!json.hasOwnProperty("scripts")) {
+  if (!json.hasOwnProperty('scripts')) {
     json.scripts = {};
   }
 
-  json.dependencies["npm-run-all"] = "^4.1.5";
-  json.dependencies["dotenv"] = "^16.0.3";
+  json.dependencies['npm-run-all'] = '^4.1.5';
+  json.dependencies['dotenv'] = '^16.0.3';
 
   // Todo: Add `remix-pwa` dependencies here
 
-  json.scripts["build"] = "run-s build:*";
-  json.scripts["build:remix"] = "remix build";
-  json.scripts["build:worker"] = "remix-pwa build";
+  json.scripts['build'] = 'run-s build:*';
+  json.scripts['build:remix'] = 'remix build';
+  json.scripts['build:worker'] = 'remix-pwa build';
 
-  json.scripts["dev"] = "run-p dev:*";
-  json.scripts["dev:remix"] = "remix dev";
-  json.scripts["dev:worker"] = "remix-pwa dev";
+  json.scripts['dev'] = 'run-p dev:*';
+  json.scripts['dev:remix'] = 'remix dev';
+  json.scripts['dev:worker'] = 'remix-pwa dev';
 
   writeFileSync(pkgJsonPath, JSON.stringify(json, null, 2));
 
@@ -187,7 +187,7 @@ export async function createPWA(
   }
 
   // literally achieves nothing but uncool suspense for the user
-  await new Promise((res) => setTimeout(res, 853));
+  await new Promise(res => setTimeout(res, 853));
 
-  console.log(green("✔ Successfully ran postinstall scripts!"));
+  console.log(green('✔ Successfully ran postinstall scripts!'));
 }
