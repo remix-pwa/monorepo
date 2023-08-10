@@ -69,14 +69,8 @@ A stand-alone package for integrating PWA solutions into Remix application.
       expect(log).toHaveBeenCalledWith(expect.stringMatching('Integrating Web Manifest...'));
     });
 
-    // Bug: Tests in this suite are broken
     describe('Service Worker creation suite', () => {
-      beforeEach(() => {
-        const remixAppTemplate = resolve(__dirname, '../../../../templates/mock-remix-app');
-        cpSync(remixAppTemplate, '__mock-app', { recursive: true, force: true });
-      });
-
-      test.skip('should create an entry worker file when "sw" is specified', async () => {
+      test('should create an entry worker file when "sw" is specified', async () => {
         await createPWA('__mock-app', {
           dir: 'app',
           precache: false,
@@ -90,10 +84,10 @@ A stand-alone package for integrating PWA solutions into Remix application.
         assert.ok(existsSync('__mock-app/app/entry.worker.ts'));
       });
 
-      test.skip('should throw an error when the service worker already exists', async () => {
+      test('should throw an error when the service worker already exists', async () => {
         const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-        writeFileSync('__mock-app/app/entry.worker.ts', 'console.log("hello world")');
+        writeFileSync('__mock-app/app/entry.worker.ts', 'console.log("hello world")', { flag: 'w' });
 
         await createPWA('__mock-app', {
           dir: 'app',
@@ -109,7 +103,10 @@ A stand-alone package for integrating PWA solutions into Remix application.
         expect(log).toHaveBeenCalledWith(expect.stringMatching('Service worker already exists'));
       });
 
-      test.skip('should create a precache service worker when precache is selected', async () => {
+      test('should create a precache service worker when precache is selected', async () => {
+        rmSync('__mock-app', { recursive: true, force: true });
+        cpSync(resolve(__dirname, '../../../../templates/mock-remix-app'), '__mock-app', { recursive: true });
+
         await createPWA('__mock-app', {
           dir: 'app',
           precache: true,
@@ -125,10 +122,6 @@ A stand-alone package for integrating PWA solutions into Remix application.
         const swContent = readFileSync('__mock-app/app/entry.worker.ts', 'utf-8');
 
         assert.ok(swContent.includes('// Precache Worker'));
-      });
-
-      afterEach(() => {
-        rmSync('__mock-app', { recursive: true, force: true });
       });
     });
 
