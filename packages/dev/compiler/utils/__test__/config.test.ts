@@ -40,14 +40,14 @@ describe('readConfig', () => {
     expect(config).toEqual({
       appDirectory: 'app',
       assetsBuildDirectory: 'public/build',
-      entryWorkerFile: expect.stringContaining('entry.worker.js'),
+      entryWorkerFile: expect.stringContaining('entry.worker.ts'),
       ignoredRouteFiles: ['**/.*'],
       serverModuleFormat: 'cjs',
       serverPlatform: 'node',
       worker: expect.stringContaining('service-worker.internal.js'),
       workerBuildDirectory: expect.stringContaining('public'),
       workerMinify: false,
-      workerName: 'service-worker',
+      workerName: 'entry.worker',
       workerSourcemap: false,
     });
   });
@@ -69,7 +69,7 @@ describe('readConfig', () => {
     expect(config).toEqual({
       appDirectory: 'app',
       assetsBuildDirectory: 'public/build',
-      entryWorkerFile: expect.stringContaining('entry.worker.js'),
+      entryWorkerFile: expect.stringContaining('entry.worker.ts'),
       ignoredRouteFiles: ['**/.*'],
       serverModuleFormat: 'cjs',
       serverPlatform: 'node',

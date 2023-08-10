@@ -10,23 +10,40 @@ const EXTENSIONS = ['.js', '.mjs', '.cjs'];
 
 interface Config {
   /**
-   * The path to the user custom worker implementation file.
+   * The path to the entry worker file.
+   * 
+   * @default '<root>/app/entry.worker.ts'
+   */
+  entryWorkerFile?: string; 
+  /**
+   * The path to the user custom worker implementation runtime.
+   * 
+   * @default '@remix-pwa/worker-runtime'
    */
   worker?: string;
   /**
-   * The file name of the final bundled worker file.
+   * The file name of the final bundled worker file. 
+   * **Without the extension.**
+   * 
+   * @default 'entry.worker'
    */
   workerName?: string;
   /**
    * Whether to minify the worker file.
+   * 
+   * @default false
    */
   workerMinify?: boolean;
   /**
    * The directory to write the worker file to.
+   * 
+   * @default '<root>/public'
    */
   workerBuildDirectory?: string;
   /**
    * Whether to generate a sourcemap for the worker file.
+   * 
+   * @default false
    */
   workerSourcemap?: boolean;
 }
@@ -45,10 +62,10 @@ export default async function readConfig(remixRoot: string, mode: ServerMode): P
 
   return {
     ...remixConfig,
-    entryWorkerFile: resolve(remixConfig.appDirectory, 'entry.worker.js'),
+    entryWorkerFile: resolve(remixConfig.appDirectory, 'entry.worker.ts'),
     worker: workerConfig.worker ?? _require.resolve('@remix-pwa/worker-runtime'),
     workerBuildDirectory: workerConfig.workerBuildDirectory ?? resolve('./public'),
-    workerName: workerConfig.workerName ?? 'service-worker',
+    workerName: workerConfig.workerName ?? 'entry.worker',
     workerMinify: workerConfig.workerMinify ?? false,
     workerSourcemap: workerConfig.workerSourcemap ?? false,
   };
