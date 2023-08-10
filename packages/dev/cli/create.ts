@@ -168,6 +168,8 @@ export async function createPWA(
   json.dependencies["cross-env"] = "^7.0.3";
   json.dependencies["dotenv"] = "^16.0.3";
 
+  // Todo: Add `remix-pwa` dependencies here
+
   json.scripts["build"] = "run-s build:*";
   json.scripts["build:remix"] = "remix build";
   json.scripts["build:worker"] = "remix-pwa build";
