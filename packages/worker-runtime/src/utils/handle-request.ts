@@ -3,7 +3,7 @@ import type {
   DefaultFetchHandler,
   WorkerLoadContext,
   WorkerLoaderFunction,
-  WorkerRoute,
+  WorkerRouteManifest,
 } from '@remix-pwa/dev/worker-build.js';
 import { isRouteErrorResponse } from '@remix-run/router';
 import { ServerMode } from '@remix-run/server-runtime/dist/mode.js';
@@ -26,7 +26,7 @@ interface HandleRequestArgs {
   errorHandler: DefaultErrorHandler;
   event: FetchEvent;
   loadContext: WorkerLoadContext;
-  routes: Array<WorkerRoute>;
+  routes: WorkerRouteManifest;
 }
 interface HandleArgs {
   event: FetchEvent;
@@ -56,11 +56,12 @@ export async function handleRequest({
   routes,
 }: HandleRequestArgs): Promise<Response> {
   const url = new URL(event.request.url);
-  const _data = url.searchParams.get('_data');
-  const route = routes.find(route => route.id === _data);
+  const routeId = url.searchParams.get('_data');
+  // if the request is not a loader or action request, we call the default handler and the routeId will be undefined
+  const route = routeId ? routes[routeId] : undefined;
 
   try {
-    if (isLoaderRequest(event.request) && route?.module?.workerLoader) {
+    if (isLoaderRequest(event.request) && route?.module.workerLoader) {
       return await handleLoader({
         event,
         loader: route.module.workerLoader,
