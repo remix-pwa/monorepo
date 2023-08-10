@@ -165,7 +165,6 @@ export async function createPWA(
   }
 
   json.dependencies["npm-run-all"] = "^4.1.5";
-  json.dependencies["cross-env"] = "^7.0.3";
   json.dependencies["dotenv"] = "^16.0.3";
 
   // Todo: Add `remix-pwa` dependencies here
