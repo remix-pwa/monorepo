@@ -13,6 +13,7 @@
   ],
   "type": "module",
   "scripts": {
+    "build": "npm run build --workspaces --if-present",
     "dev": "cd playground && npm run dev",
     "lint-staged": "lint-staged",
     "lint": "npm run lint --workspaces --if-present",
