@@ -42,6 +42,7 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-security-node": "^1.1.1",
     "eslint-plugin-sort-destructure-keys": "^1.5.0",
+    "eslint-plugin-turbo": "^1.10.12",
     "eslint-plugin-vitest": "^0.2.8"
   },
   "devDependencies": {
