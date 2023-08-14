@@ -1,5 +1,5 @@
-const copyTextToClipboard = (text: string) => {};
+export const copyTextToClipboard = (text: string) => {
+  console.log('copyTextToClipboard', text);
+};
 
-const pasteFromClipboard = () => {};
-
-const copyImageToClipboard = (image: string) => {};
+export const pasteFromClipboard = () => {};
