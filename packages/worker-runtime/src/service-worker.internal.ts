@@ -8,12 +8,11 @@ const _self = self as unknown as ServiceWorkerGlobalScope & typeof globalThis;
  * Creates the load context for the worker action and loader.
  */
 function createContext(event: FetchEvent): build.WorkerLoadContext {
-  const request = event.request.clone();
   // getLoadContext is a function exported by the `entry.worker.js`
   const context = build.entry.module.getLoadContext?.(event) || {};
   return {
     event,
-    fetchFromServer: (request_ = request) => fetch(request_),
+    fetchFromServer: () => fetch(event.request),
     // NOTE: we want the user to override the above properties if needed.
     ...context,
   };

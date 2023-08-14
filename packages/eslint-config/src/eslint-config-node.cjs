@@ -16,7 +16,7 @@ module.exports = {
     sourceType: 'module',
     impliedStrict: true,
   },
-  plugins: ['@typescript-eslint', 'import', 'disable', 'jsdoc', 'sort-destructure-keys', 'node'],
+  plugins: ['@typescript-eslint', 'import', 'disable', 'jsdoc', 'sort-destructure-keys', 'node', 'turbo'],
   settings: {
     'import/parsers': {
       [require.resolve('@typescript-eslint/parser')]: ['.ts', '.tsx', '.d.ts'],

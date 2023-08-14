@@ -13,3 +13,10 @@ export function errorResponseToJson(errorResponse: ErrorResponse) {
     },
   });
 }
+
+/**
+ * Checks if a response is a Remix response by checking if it has any `X-Remix` headers.
+ */
+export function isRemixResponse(response: Response) {
+  return Array.from(response.headers.keys()).some(key => key.toLowerCase().startsWith('x-remix-'));
+}
