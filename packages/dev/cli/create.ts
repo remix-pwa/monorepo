@@ -1,15 +1,14 @@
+import { execSync } from 'child_process';
 import { blueBright, green, red } from 'colorette';
 import { cpSync } from 'fs';
 import pkg from 'fs-extra';
-import { resolve } from 'path';
-import { PWAFeatures } from './run.js';
 import ora from 'ora';
+import { dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
+
+import type { PWAFeatures } from './run.js';
 
 let isV2 = false;
-
-import { execSync } from 'child_process';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -94,20 +93,20 @@ export async function createPWA(
   },
   _isTest: boolean = false
 ) {
-  let { dir, precache, install, workbox, lang, features, packageManager } = options;
+  let { dir, features, install, lang, packageManager, precache, workbox } = options;
 
   if (workbox) {
     workbox = false;
   }
 
   try {
-    let remixConfig = await import(resolve(projectDir, 'remix.config.js')).then(m => m.default);
+    const remixConfig = await import(resolve(projectDir, 'remix.config.js')).then(m => m.default);
 
     if (!remixConfig.future) {
       remixConfig.future = {};
     }
 
-    if (remixConfig.future && remixConfig.future.v2_routeConvention == true) {
+    if (remixConfig.future && remixConfig.future.v2_routeConvention === true) {
       isV2 = true;
     }
   } catch (_err) {
@@ -132,14 +131,14 @@ export async function createPWA(
         try {
           await integrateServiceWorker(projectDir, precache, workbox, lang, dir);
         } catch (err) {
-          console.log(typeof err == 'string' ? red(err) : err);
+          console.log(typeof err === 'string' ? red(err) : err);
         }
         break;
       case 'manifest':
         try {
           await integrateManifest(projectDir, lang, dir);
         } catch (err) {
-          console.log(typeof err == 'string' ? red(err) : err);
+          console.log(typeof err === 'string' ? red(err) : err);
         }
         break;
       case 'icons':
@@ -171,30 +170,30 @@ export async function createPWA(
     json.scripts = {};
   }
 
-  json.dependencies['dotenv'] = '^16.0.3';
+  json.dependencies.dotenv = '^16.0.3';
 
   // Todo: Add `remix-pwa` dependencies here
 
   json.devDependencies['npm-run-all'] = '^4.1.5';
 
-  json.scripts['build'] = 'run-s build:*';
+  json.scripts.build = 'run-s build:*';
   json.scripts['build:remix'] = 'remix build';
   json.scripts['build:worker'] = 'remix-pwa build';
 
-  json.scripts['dev'] = 'run-p dev:*';
+  json.scripts.dev = 'run-p dev:*';
   json.scripts['dev:remix'] = 'remix dev';
   json.scripts['dev:worker'] = 'remix-pwa dev';
 
   pkg.writeFileSync(pkgJsonPath, JSON.stringify(json, null, 2));
 
   if (install) {
-    let spinner = ora({
+    const spinner = ora({
       text: blueBright(`Running ${packageManager} install...`),
       spinner: 'dots',
     }).start();
 
     if (!_isTest) {
-      execSync(`${packageManager} install ${packageManager == 'yarn' ? null : '--loglevel silent'}`, {
+      execSync(`${packageManager} install ${packageManager === 'yarn' ? null : '--loglevel silent'}`, {
         cwd: process.cwd(),
         stdio: 'inherit',
       });
