@@ -6,7 +6,7 @@ import pkg from 'fs-extra';
 import { resolve } from 'path';
 
 import * as commands from './commands.js';
-import { FlagOptionType } from './create.js';
+import type { FlagOptionType } from './create.js';
 import { detectPackageManager } from './detectPkgManager.js';
 
 const { prompt } = enquirer;
