@@ -1,7 +1,7 @@
 import { ErrorResponse } from '@remix-run/router';
 import { describe, expect, test } from 'vitest';
 
-import { errorResponseToJson, isRemixResponse } from '../response.js';
+import { errorResponseToJson } from '../response.js';
 
 describe('errorResponseToJson', () => {
   test('should return a JSON response with the error message and status', () => {
@@ -23,14 +23,5 @@ describe('errorResponseToJson', () => {
   test('should include the X-Remix-Error header', () => {
     const response = errorResponseToJson(new ErrorResponse(500, 'Internal Server Error', {}));
     expect(response.headers.has('X-Remix-Error')).toBeTruthy();
-  });
-
-  test('`true` when the response has any header that starts with `x-remix-`', () => {
-    expect(isRemixResponse(new Response(null, { headers: { 'X-Remix-mock': 'true' } }))).toBeTruthy();
-    expect(isRemixResponse(new Response(null, { headers: { 'x-remix-mock-2': 'true' } }))).toBeTruthy();
-  });
-
-  test('`false` when the response has any header that starts with `x-remix-`', () => {
-    expect(isRemixResponse(new Response(null))).toBeFalsy();
   });
 });

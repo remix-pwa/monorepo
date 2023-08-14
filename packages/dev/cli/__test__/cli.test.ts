@@ -54,19 +54,15 @@ A stand-alone package for integrating PWA solutions into Remix application.
     test('should point to the correct template directory', async () => {
       const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-      await createPWA(
-        '__mock-app',
-        {
-          dir: 'app',
-          precache: false,
-          install: false,
-          workbox: false,
-          lang: 'ts',
-          features: ['sw', 'manifest'],
-          packageManager: 'npm',
-        },
-        true
-      );
+      await createPWA('__mock-app', {
+        dir: 'app',
+        precache: false,
+        install: false,
+        workbox: false,
+        lang: 'ts',
+        features: ['sw', 'manifest'],
+        packageManager: 'npm',
+      });
 
       expect(log).toHaveBeenCalled();
       expect(log).toHaveBeenCalledWith(expect.stringMatching('Integrating Service Worker...'));
@@ -75,19 +71,15 @@ A stand-alone package for integrating PWA solutions into Remix application.
 
     describe('Service Worker creation suite', () => {
       test('should create an entry worker file when "sw" is specified', async () => {
-        await createPWA(
-          '__mock-app',
-          {
-            dir: 'app',
-            precache: false,
-            install: false,
-            workbox: false,
-            lang: 'ts',
-            features: ['sw', 'manifest'],
-            packageManager: 'npm',
-          },
-          true
-        );
+        await createPWA('__mock-app', {
+          dir: 'app',
+          precache: false,
+          install: false,
+          workbox: false,
+          lang: 'ts',
+          features: ['sw', 'manifest'],
+          packageManager: 'npm',
+        });
 
         assert.ok(existsSync('__mock-app/app/entry.worker.ts'));
       });
@@ -97,19 +89,15 @@ A stand-alone package for integrating PWA solutions into Remix application.
 
         writeFileSync('__mock-app/app/entry.worker.ts', 'console.log("hello world")', { flag: 'w' });
 
-        await createPWA(
-          '__mock-app',
-          {
-            dir: 'app',
-            precache: false,
-            install: false,
-            workbox: false,
-            lang: 'ts',
-            features: ['sw', 'manifest'],
-            packageManager: 'npm',
-          },
-          true
-        );
+        await createPWA('__mock-app', {
+          dir: 'app',
+          precache: false,
+          install: false,
+          workbox: false,
+          lang: 'ts',
+          features: ['sw', 'manifest'],
+          packageManager: 'npm',
+        });
 
         expect(log).toHaveBeenCalled();
         expect(log).toHaveBeenCalledWith(expect.stringMatching('Service worker already exists'));
@@ -119,19 +107,15 @@ A stand-alone package for integrating PWA solutions into Remix application.
         rmSync('__mock-app', { recursive: true, force: true });
         cpSync(resolve(__dirname, '../../../../templates/mock-remix-app'), '__mock-app', { recursive: true });
 
-        await createPWA(
-          '__mock-app',
-          {
-            dir: 'app',
-            precache: true,
-            install: false,
-            workbox: false,
-            lang: 'ts',
-            features: ['sw', 'manifest'],
-            packageManager: 'npm',
-          },
-          true
-        );
+        await createPWA('__mock-app', {
+          dir: 'app',
+          precache: true,
+          install: false,
+          workbox: false,
+          lang: 'ts',
+          features: ['sw', 'manifest'],
+          packageManager: 'npm',
+        });
 
         assert.ok(existsSync('__mock-app/app/entry.worker.ts'));
 
@@ -143,19 +127,15 @@ A stand-alone package for integrating PWA solutions into Remix application.
 
     describe('Web Manifest creation suite', () => {
       test('should create a manifest file when "manifest" is specified', async () => {
-        await createPWA(
-          '__mock-app',
-          {
-            dir: 'app',
-            precache: false,
-            install: false,
-            workbox: false,
-            lang: 'ts',
-            features: ['sw', 'manifest'],
-            packageManager: 'npm',
-          },
-          true
-        );
+        await createPWA('__mock-app', {
+          dir: 'app',
+          precache: false,
+          install: false,
+          workbox: false,
+          lang: 'ts',
+          features: ['sw', 'manifest'],
+          packageManager: 'npm',
+        });
 
         assert.ok(existsSync('__mock-app/app/routes/manifest[.]webmanifest.ts'));
       });
