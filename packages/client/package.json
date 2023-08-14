@@ -18,9 +18,12 @@
     "build": "rimraf ./dist && tsc",
     "format": "prettier --write \"**/*.ts\"",
     "lint": "TIMING=1 eslint --fix lib/",
-    "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
+    "test": "vitest --run --environment happy-dom --threads --single-thread --pass-with-no-tests"
   },
   "engines": {
     "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "happy-dom": "^10.9.0"
   }
 }
