@@ -13,12 +13,12 @@
   ],
   "type": "module",
   "scripts": {
-    "build": "npm run build --workspaces --if-present",
+    "build": "turbo build",
     "dev": "cd playground && npm run dev",
     "lint-staged": "lint-staged",
-    "lint": "npm run lint --workspaces --if-present",
-    "format": "npm run format --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present -- --coverage"
+    "lint": "turbo lint",
+    "format": "turbo format",
+    "test": "turbo test -- --coverage"
   },
   "devDependencies": {
     "@types/semver": "^7.5.0",
@@ -30,12 +30,10 @@
     "prettier": "^3.0.0",
     "prettier-plugin-organize-imports": "^3.2.3",
     "semver": "^7.5.4",
+    "turbo": "^1.10.12",
     "typescript": "^5.1.6"
   },
   "engines": {
     "node": ">=18.0.0"
-  },
-  "dependencies": {
-    "@qiwi/multi-semantic-release": "^7.0.0"
   }
 }

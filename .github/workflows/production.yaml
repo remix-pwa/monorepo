@@ -1,0 +1,19 @@
+name: Production deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Validate
+    uses: ./.github/workflows/validate.yaml
+    with:
+      environment: production
+
+  release:
+    name: Release
+    needs: [validate]
+    uses: ./.github/workflows/semantic-release.yaml
+    with:
+      environment: production
