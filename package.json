@@ -13,19 +13,24 @@
   ],
   "type": "module",
   "scripts": {
+    "build": "turbo build",
+    "dev": "cd playground && npm run dev",
     "lint-staged": "lint-staged",
-    "lint": "npm run lint --workspaces --if-present",
-    "format": "npm run format --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present -- --coverage"
+    "lint": "turbo lint",
+    "format": "turbo format",
+    "test": "turbo test -- --coverage"
   },
   "devDependencies": {
     "@types/semver": "^7.5.0",
+    "esbuild": "^0.18.0",
+    "esbuild-node-externals": "^1.8.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.0.0",
     "prettier-plugin-organize-imports": "^3.2.3",
     "semver": "^7.5.4",
+    "turbo": "^1.10.12",
     "typescript": "^5.1.6"
   },
   "engines": {

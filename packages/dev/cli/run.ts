@@ -1,13 +1,16 @@
 /* eslint-disable no-case-declarations */
 import arg from 'arg';
 import { bold, gray, green, magenta, red, underline, whiteBright } from 'colorette';
-import { prompt } from 'enquirer';
-import { pathExists } from 'fs-extra';
+import enquirer from 'enquirer';
+import pkg from 'fs-extra';
 import { resolve } from 'path';
 
 import * as commands from './commands.js';
 import { FlagOptionType } from './create.js';
 import { detectPackageManager } from './detectPkgManager.js';
+
+const { prompt } = enquirer;
+const { pathExists } = pkg;
 
 // Todo(ShafSpecs): Update this later
 const helpText = `
@@ -138,7 +141,7 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
     case 'create':
     default: // Todo: Add a better error message - Deprecating this. For now tho, it would be the same as create
       if (cmd !== 'create' && cmd !== 'init' && cmd !== 'new') {
-        console.warn(red('This command is getting deprecated soon. Please use `create` instead.'));
+        console.warn(bold(red('This command is getting deprecated soon. Please use `npx remix-pwa create` instead.')));
       }
 
       // const featLookup: Record<PWAFeatures, string> = {
@@ -170,18 +173,18 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
         packageManager: string;
       }>([
         {
-          type: 'list',
+          type: 'select',
           name: 'lang',
           message: 'Is this a TypeScript or JavaScript project? Pick the opposite for chaos!',
           skip: flags.typescript !== undefined,
           choices: [
             {
-              name: 'TypeScript',
-              value: 'ts',
+              message: 'TypeScript',
+              name: 'ts',
             },
             {
-              name: 'JavaScript',
-              value: 'js',
+              message: 'JavaScript',
+              name: 'js',
             },
           ],
         },
@@ -214,7 +217,7 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
         //         hint: '(Use <space> to select, <return> to submit)',
         //         message: "What features of remix-pwa do you need? Don't be afraid to pick all!",
         //         indicator(state: any, choice: any) {
-        //           return choice.enabled ? ' ' + chalk.green('✔') : ' ' + chalk.gray('o');
+        //           return choice.enabled ? ' ' + green('✔') : ' ' + gray('o');
         //         },
         //         choices: [
         //           {
@@ -243,7 +246,7 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
         //     ]
         //   : []),
         {
-          name: 'feat',
+          name: 'features',
           type: 'multiselect',
           // @ts-ignore
           hint: '(Use <space> to select, <return> to submit)',
@@ -253,27 +256,27 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
           },
           choices: [
             {
-              name: 'Service Workers',
-              value: 'sw',
+              message: 'Service Workers',
+              name: 'sw',
             },
             {
-              name: 'Web Manifest',
-              value: 'manifest',
+              message: 'Web Manifest',
+              name: 'manifest',
             },
             {
-              name: 'Push Notifications',
-              value: 'push',
+              message: 'Push Notifications',
+              name: 'push',
             },
             {
-              name: 'PWA Client Utilities',
-              value: 'utils',
+              message: 'PWA Client Utilities',
+              name: 'utils',
             },
             {
-              name: 'Development Icons',
-              value: 'icons',
+              message: 'Development Icons',
+              name: 'icons',
             },
           ],
-          initialChoices: ['sw', 'manifest'],
+          initial: ['sw', 'manifest'],
         },
         {
           type: 'input',
@@ -300,25 +303,12 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
         },
         {
           name: 'packageManager',
-          type: 'list',
+          type: 'select',
           message: 'What package manager do you use?',
           // @ts-ignore This package is broken af
-          choices: [
-            {
-              name: 'Npm',
-              value: 'npm',
-            },
-            {
-              name: 'Yarn',
-              value: 'yarn',
-            },
-            {
-              name: 'Pnpm',
-              value: 'pnpm',
-            },
-          ],
+          choices: ['npm', 'yarn', 'pnpm'],
           initial: 'npm',
-          skip: args['--package-manager'] !== undefined && (await detectPackageManager(projectDir)) !== undefined,
+          skip: args['--package-manager'] !== undefined || (await detectPackageManager(projectDir)) !== undefined,
         },
         {
           type: 'confirm',
@@ -365,6 +355,7 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
         ...(install ? { install } : {}),
         ...(precache ? { precache } : {}),
         ...(dir ? { dir } : {}),
+        ...(inquiry.features ? { features: inquiry.features } : { features: ['sw', 'manifest'] }),
       };
 
       const answer = { ...inquiry, ...initialChoices } as unknown as FlagOptionType;
