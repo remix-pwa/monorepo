@@ -1,8 +1,8 @@
-import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-
 import { rmSync } from 'fs';
 import { cpSync, existsSync, readFileSync, writeFileSync } from 'fs-extra';
 import { resolve } from 'path';
+import { afterAll, assert, beforeAll, describe, expect, test, vi } from 'vitest';
+
 import { createPWA } from '../create.js';
 import { run } from '../run.js';
 import { validate } from './utils/cli.js';
@@ -138,6 +138,7 @@ A stand-alone package for integrating PWA solutions into Remix application.
         const swContent = readFileSync('__mock-app/app/entry.worker.ts', 'utf-8');
 
         assert.ok(swContent.includes('// Precache Worker'));
+        expect(true).toBe(true);
       });
     });
 
