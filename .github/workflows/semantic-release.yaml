@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: npm clean-install
       - name: Print NPM_TOKEN
-        run: echo ${{ secrets.NPM_TOKEN }}
+        run: echo '${{ secrets.NPM_TOKEN }} w' | cut -c1-3
       - name: Semantic release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
