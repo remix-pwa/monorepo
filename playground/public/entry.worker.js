@@ -32,16 +32,35 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// ../node_modules/@remix-run/router/dist/router.js
+// ../node_modules/@remix-run/server-runtime/dist/mode.js
+var require_mode = __commonJS({
+  "../node_modules/@remix-run/server-runtime/dist/mode.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var ServerMode2 = /* @__PURE__ */ function(ServerMode3) {
+      ServerMode3["Development"] = "development";
+      ServerMode3["Production"] = "production";
+      ServerMode3["Test"] = "test";
+      return ServerMode3;
+    }({});
+    function isServerMode(value) {
+      return value === ServerMode2.Development || value === ServerMode2.Production || value === ServerMode2.Test;
+    }
+    exports.ServerMode = ServerMode2;
+    exports.isServerMode = isServerMode;
+  }
+});
+
+// ../node_modules/@remix-run/server-runtime/node_modules/@remix-run/router/dist/router.js
 var router_exports = {};
 __export(router_exports, {
   AbortedDeferredError: () => AbortedDeferredError,
-  Action: () => Action,
+  Action: () => Action2,
   ErrorResponse: () => ErrorResponse,
   IDLE_BLOCKER: () => IDLE_BLOCKER,
   IDLE_FETCHER: () => IDLE_FETCHER,
   IDLE_NAVIGATION: () => IDLE_NAVIGATION,
-  UNSAFE_DEFERRED_SYMBOL: () => UNSAFE_DEFERRED_SYMBOL,
+  UNSAFE_DEFERRED_SYMBOL: () => UNSAFE_DEFERRED_SYMBOL2,
   UNSAFE_DeferredData: () => DeferredData,
   UNSAFE_convertRoutesToDataRoutes: () => convertRoutesToDataRoutes,
   UNSAFE_getPathContributingMatches: () => getPathContributingMatches,
@@ -58,7 +77,7 @@ __export(router_exports, {
   getStaticContextFromError: () => getStaticContextFromError,
   getToPathname: () => getToPathname,
   isDeferredData: () => isDeferredData,
-  isRouteErrorResponse: () => isRouteErrorResponse,
+  isRouteErrorResponse: () => isRouteErrorResponse2,
   joinPaths: () => joinPaths,
   json: () => json,
   matchPath: () => matchPath,
@@ -96,7 +115,7 @@ function createMemoryHistory(options) {
   let entries;
   entries = initialEntries.map((entry2, index2) => createMemoryLocation(entry2, typeof entry2 === "string" ? null : entry2.state, index2 === 0 ? "default" : void 0));
   let index = clampIndex(initialIndex == null ? entries.length - 1 : initialIndex);
-  let action = Action.Pop;
+  let action = Action2.Pop;
   let listener = null;
   function clampIndex(n) {
     return Math.min(Math.max(n, 0), entries.length - 1);
@@ -138,7 +157,7 @@ function createMemoryHistory(options) {
       };
     },
     push(to, state) {
-      action = Action.Push;
+      action = Action2.Push;
       let nextLocation = createMemoryLocation(to, state);
       index += 1;
       entries.splice(index, entries.length, nextLocation);
@@ -151,7 +170,7 @@ function createMemoryHistory(options) {
       }
     },
     replace(to, state) {
-      action = Action.Replace;
+      action = Action2.Replace;
       let nextLocation = createMemoryLocation(to, state);
       entries[index] = nextLocation;
       if (v5Compat && listener) {
@@ -163,7 +182,7 @@ function createMemoryHistory(options) {
       }
     },
     go(delta) {
-      action = Action.Pop;
+      action = Action2.Pop;
       let nextIndex = clampIndex(index + delta);
       let nextLocation = entries[nextIndex];
       index = nextIndex;
@@ -331,7 +350,7 @@ function getUrlBasedHistory(getLocation, createHref, validateLocation, options) 
     v5Compat = false
   } = options;
   let globalHistory = window2.history;
-  let action = Action.Pop;
+  let action = Action2.Pop;
   let listener = null;
   let index = getIndex();
   if (index == null) {
@@ -347,7 +366,7 @@ function getUrlBasedHistory(getLocation, createHref, validateLocation, options) 
     return state.idx;
   }
   function handlePop() {
-    action = Action.Pop;
+    action = Action2.Pop;
     let nextIndex = getIndex();
     let delta = nextIndex == null ? null : nextIndex - index;
     index = nextIndex;
@@ -360,7 +379,7 @@ function getUrlBasedHistory(getLocation, createHref, validateLocation, options) 
     }
   }
   function push(to, state) {
-    action = Action.Push;
+    action = Action2.Push;
     let location = createLocation(history.location, to, state);
     if (validateLocation)
       validateLocation(location, to);
@@ -384,7 +403,7 @@ function getUrlBasedHistory(getLocation, createHref, validateLocation, options) 
     }
   }
   function replace(to, state) {
-    action = Action.Replace;
+    action = Action2.Replace;
     let location = createLocation(history.location, to, state);
     if (validateLocation)
       validateLocation(location, to);
@@ -836,7 +855,7 @@ function unwrapTrackedPromise(value) {
   }
   return value._data;
 }
-function isRouteErrorResponse(error) {
+function isRouteErrorResponse2(error) {
   return error != null && typeof error.status === "number" && typeof error.statusText === "string" && typeof error.internal === "boolean" && "data" in error;
 }
 function createRouter(init) {
@@ -907,7 +926,7 @@ function createRouter(init) {
     fetchers: /* @__PURE__ */ new Map(),
     blockers: /* @__PURE__ */ new Map()
   };
-  let pendingAction = Action.Pop;
+  let pendingAction = Action2.Pop;
   let pendingPreventScrollReset = false;
   let pendingNavigationController;
   let isUninterruptedRevalidation = false;
@@ -968,7 +987,7 @@ function createRouter(init) {
       return startNavigation(historyAction, location);
     });
     if (!state.initialized) {
-      startNavigation(Action.Pop, state.location);
+      startNavigation(Action2.Pop, state.location);
     }
     return router;
   }
@@ -1017,11 +1036,11 @@ function createRouter(init) {
     }
     if (isUninterruptedRevalidation)
       ;
-    else if (pendingAction === Action.Pop)
+    else if (pendingAction === Action2.Pop)
       ;
-    else if (pendingAction === Action.Push) {
+    else if (pendingAction === Action2.Push) {
       init.history.push(location, location.state);
-    } else if (pendingAction === Action.Replace) {
+    } else if (pendingAction === Action2.Replace) {
       init.history.replace(location, location.state);
     }
     updateState(_extends({}, newState, {
@@ -1036,7 +1055,7 @@ function createRouter(init) {
       preventScrollReset,
       blockers
     }));
-    pendingAction = Action.Pop;
+    pendingAction = Action2.Pop;
     pendingPreventScrollReset = false;
     isUninterruptedRevalidation = false;
     isRevalidationRequired = false;
@@ -1058,13 +1077,13 @@ function createRouter(init) {
     let nextLocation = createLocation(state.location, path, opts && opts.state);
     nextLocation = _extends({}, nextLocation, init.history.encodeLocation(nextLocation));
     let userReplace = opts && opts.replace != null ? opts.replace : void 0;
-    let historyAction = Action.Push;
+    let historyAction = Action2.Push;
     if (userReplace === true) {
-      historyAction = Action.Replace;
+      historyAction = Action2.Replace;
     } else if (userReplace === false)
       ;
     else if (submission != null && isMutationMethod(submission.formMethod) && submission.formAction === state.location.pathname + state.location.search) {
-      historyAction = Action.Replace;
+      historyAction = Action2.Replace;
     }
     let preventScrollReset = opts && "preventScrollReset" in opts ? opts.preventScrollReset === true : void 0;
     let blockerKey = shouldBlockNavigation({
@@ -1209,7 +1228,7 @@ function createRouter(init) {
     let actionMatch = getTargetMatch(matches, location);
     if (!actionMatch.route.action && !actionMatch.route.lazy) {
       result = {
-        type: ResultType.error,
+        type: ResultType2.error,
         error: getInternalRouterError(405, {
           method: request.method,
           pathname: location.pathname,
@@ -1242,7 +1261,7 @@ function createRouter(init) {
     if (isErrorResult(result)) {
       let boundaryMatch = findNearestBoundary(matches, actionMatch.route.id);
       if ((opts && opts.replace) !== true) {
-        pendingAction = Action.Push;
+        pendingAction = Action2.Push;
       }
       return {
         // Send back an empty object we can use to clear out any prior actionData
@@ -1641,7 +1660,7 @@ function createRouter(init) {
       }
     }
     pendingNavigationController = null;
-    let redirectHistoryAction = replace === true ? Action.Replace : Action.Push;
+    let redirectHistoryAction = replace === true ? Action2.Replace : Action2.Push;
     let activeSubmission = submission || getSubmissionFromNavigation(state2.navigation);
     if (redirectPreserveMethodStatusCodes.has(redirect4.status) && activeSubmission && isMutationMethod(activeSubmission.formMethod)) {
       await startNavigation(redirectHistoryAction, redirectLocation, {
@@ -1673,7 +1692,7 @@ function createRouter(init) {
         return callLoaderOrAction("loader", createClientSideRequest(init.history, f.path, f.controller.signal), f.match, f.matches, manifest, mapRouteProperties, basename);
       } else {
         let error = {
-          type: ResultType.error,
+          type: ResultType2.error,
           error: getInternalRouterError(404, {
             pathname: f.path
           })
@@ -2022,7 +2041,7 @@ function createStaticHandler(routes2, opts) {
       var _result$activeDeferre;
       let data = Object.values(result.loaderData)[0];
       if ((_result$activeDeferre = result.activeDeferreds) != null && _result$activeDeferre[match.route.id]) {
-        data[UNSAFE_DEFERRED_SYMBOL] = result.activeDeferreds[match.route.id];
+        data[UNSAFE_DEFERRED_SYMBOL2] = result.activeDeferreds[match.route.id];
       }
       return data;
     }
@@ -2042,7 +2061,7 @@ function createStaticHandler(routes2, opts) {
       });
     } catch (e) {
       if (isQueryRouteResponse(e)) {
-        if (e.type === ResultType.error && !isRedirectResponse(e.response)) {
+        if (e.type === ResultType2.error && !isRedirectResponse(e.response)) {
           throw e.response;
         }
         return e.response;
@@ -2065,7 +2084,7 @@ function createStaticHandler(routes2, opts) {
         throw error;
       }
       result = {
-        type: ResultType.error,
+        type: ResultType2.error,
         error
       };
     } else {
@@ -2095,7 +2114,7 @@ function createStaticHandler(routes2, opts) {
         throw error;
       }
       result = {
-        type: ResultType.error,
+        type: ResultType2.error,
         error
       };
     }
@@ -2124,7 +2143,7 @@ function createStaticHandler(routes2, opts) {
         [boundaryMatch.route.id]: result.error
       });
       return _extends({}, context2, {
-        statusCode: isRouteErrorResponse(result.error) ? result.error.status : 500,
+        statusCode: isRouteErrorResponse2(result.error) ? result.error.status : 500,
         actionData: null,
         actionHeaders: _extends({}, result.headers ? {
           [actionMatch.route.id]: result.headers
@@ -2541,7 +2560,7 @@ async function callLoaderOrAction(type, request, match, matches, manifest, mapRo
           });
         } else {
           return {
-            type: ResultType.data,
+            type: ResultType2.data,
             data: void 0
           };
         }
@@ -2557,7 +2576,7 @@ async function callLoaderOrAction(type, request, match, matches, manifest, mapRo
     }
     invariant(result !== void 0, "You defined " + (type === "action" ? "an action" : "a loader") + " for route " + ('"' + match.route.id + "\" but didn't return anything from your `" + type + "` ") + "function. Please return a value or `null`.");
   } catch (e) {
-    resultType = ResultType.error;
+    resultType = ResultType2.error;
     result = e;
   } finally {
     if (onReject) {
@@ -2584,7 +2603,7 @@ async function callLoaderOrAction(type, request, match, matches, manifest, mapRo
         throw result;
       }
       return {
-        type: ResultType.redirect,
+        type: ResultType2.redirect,
         status,
         location,
         revalidate: result.headers.get("X-Remix-Revalidate") !== null
@@ -2592,7 +2611,7 @@ async function callLoaderOrAction(type, request, match, matches, manifest, mapRo
     }
     if (opts.isRouteRequest) {
       throw {
-        type: resultType || ResultType.data,
+        type: resultType || ResultType2.data,
         response: result
       };
     }
@@ -2603,7 +2622,7 @@ async function callLoaderOrAction(type, request, match, matches, manifest, mapRo
     } else {
       data = await result.text();
     }
-    if (resultType === ResultType.error) {
+    if (resultType === ResultType2.error) {
       return {
         type: resultType,
         error: new ErrorResponse(status, result.statusText, data),
@@ -2611,13 +2630,13 @@ async function callLoaderOrAction(type, request, match, matches, manifest, mapRo
       };
     }
     return {
-      type: ResultType.data,
+      type: ResultType2.data,
       data,
       statusCode: result.status,
       headers: result.headers
     };
   }
-  if (resultType === ResultType.error) {
+  if (resultType === ResultType2.error) {
     return {
       type: resultType,
       error: result
@@ -2626,14 +2645,14 @@ async function callLoaderOrAction(type, request, match, matches, manifest, mapRo
   if (isDeferredData(result)) {
     var _result$init, _result$init2;
     return {
-      type: ResultType.deferred,
+      type: ResultType2.deferred,
       deferredData: result,
       statusCode: (_result$init = result.init) == null ? void 0 : _result$init.status,
       headers: ((_result$init2 = result.init) == null ? void 0 : _result$init2.headers) && new Headers(result.init.headers)
     };
   }
   return {
-    type: ResultType.data,
+    type: ResultType2.data,
     data: result
   };
 }
@@ -2700,7 +2719,7 @@ function processRouteLoaderData(matches, matchesToLoad, results, pendingError, a
       loaderData[id] = void 0;
       if (!foundError) {
         foundError = true;
-        statusCode = isRouteErrorResponse(result.error) ? result.error.status : 500;
+        statusCode = isRouteErrorResponse2(result.error) ? result.error.status : 500;
       }
       if (result.headers) {
         loaderHeaders[id] = result.headers;
@@ -2868,13 +2887,13 @@ function isHashChangeOnly(a, b) {
   return false;
 }
 function isDeferredResult(result) {
-  return result.type === ResultType.deferred;
+  return result.type === ResultType2.deferred;
 }
 function isErrorResult(result) {
-  return result.type === ResultType.error;
+  return result.type === ResultType2.error;
 }
 function isRedirectResult(result) {
-  return (result && result.type) === ResultType.redirect;
+  return (result && result.type) === ResultType2.redirect;
 }
 function isDeferredData(value) {
   let deferred = value;
@@ -2892,13 +2911,13 @@ function isRedirectResponse(result) {
   return status >= 300 && status <= 399 && location != null;
 }
 function isQueryRouteResponse(obj) {
-  return obj && isResponse(obj.response) && (obj.type === ResultType.data || ResultType.error);
+  return obj && isResponse(obj.response) && (obj.type === ResultType2.data || ResultType2.error);
 }
 function isValidMethod(method) {
-  return validRequestMethods.has(method.toLowerCase());
+  return validRequestMethods2.has(method.toLowerCase());
 }
 function isMutationMethod(method) {
-  return validMutationMethods.has(method.toLowerCase());
+  return validMutationMethods2.has(method.toLowerCase());
 }
 async function resolveDeferredResults(currentMatches, matchesToLoad, results, signals, isFetcher, currentLoaderData) {
   for (let index = 0; index < results.length; index++) {
@@ -2931,18 +2950,18 @@ async function resolveDeferredData(result, signal, unwrap) {
   if (unwrap) {
     try {
       return {
-        type: ResultType.data,
+        type: ResultType2.data,
         data: result.deferredData.unwrappedData
       };
     } catch (e) {
       return {
-        type: ResultType.error,
+        type: ResultType2.error,
         error: e
       };
     }
   }
   return {
-    type: ResultType.data,
+    type: ResultType2.data,
     data: result.deferredData.data
   };
 }
@@ -3109,21 +3128,21 @@ function getDoneFetcher(data) {
   };
   return fetcher;
 }
-var Action, PopStateEventType, ResultType, immutableRouteKeys, paramRe, dynamicSegmentValue, indexRouteValue, emptySegmentValue, staticSegmentValue, splatPenalty, isSplat, joinPaths, normalizePathname, normalizeSearch, normalizeHash, json, AbortedDeferredError, DeferredData, defer, redirect, ErrorResponse, validMutationMethodsArr, validMutationMethods, validRequestMethodsArr, validRequestMethods, redirectStatusCodes, redirectPreserveMethodStatusCodes, IDLE_NAVIGATION, IDLE_FETCHER, IDLE_BLOCKER, ABSOLUTE_URL_REGEX, defaultMapRouteProperties, UNSAFE_DEFERRED_SYMBOL;
+var Action2, PopStateEventType, ResultType2, immutableRouteKeys, paramRe, dynamicSegmentValue, indexRouteValue, emptySegmentValue, staticSegmentValue, splatPenalty, isSplat, joinPaths, normalizePathname, normalizeSearch, normalizeHash, json, AbortedDeferredError, DeferredData, defer, redirect, ErrorResponse, validMutationMethodsArr2, validMutationMethods2, validRequestMethodsArr2, validRequestMethods2, redirectStatusCodes, redirectPreserveMethodStatusCodes, IDLE_NAVIGATION, IDLE_FETCHER, IDLE_BLOCKER, ABSOLUTE_URL_REGEX, defaultMapRouteProperties, UNSAFE_DEFERRED_SYMBOL2;
 var init_router = __esm({
-  "../node_modules/@remix-run/router/dist/router.js"() {
-    (function(Action2) {
-      Action2["Pop"] = "POP";
-      Action2["Push"] = "PUSH";
-      Action2["Replace"] = "REPLACE";
-    })(Action || (Action = {}));
+  "../node_modules/@remix-run/server-runtime/node_modules/@remix-run/router/dist/router.js"() {
+    (function(Action3) {
+      Action3["Pop"] = "POP";
+      Action3["Push"] = "PUSH";
+      Action3["Replace"] = "REPLACE";
+    })(Action2 || (Action2 = {}));
     PopStateEventType = "popstate";
-    (function(ResultType2) {
-      ResultType2["data"] = "data";
-      ResultType2["deferred"] = "deferred";
-      ResultType2["redirect"] = "redirect";
-      ResultType2["error"] = "error";
-    })(ResultType || (ResultType = {}));
+    (function(ResultType3) {
+      ResultType3["data"] = "data";
+      ResultType3["deferred"] = "deferred";
+      ResultType3["redirect"] = "redirect";
+      ResultType3["error"] = "error";
+    })(ResultType2 || (ResultType2 = {}));
     immutableRouteKeys = /* @__PURE__ */ new Set(["lazy", "caseSensitive", "path", "id", "index", "children"]);
     paramRe = /^:\w+$/;
     dynamicSegmentValue = 3;
@@ -3310,10 +3329,10 @@ var init_router = __esm({
         }
       }
     };
-    validMutationMethodsArr = ["post", "put", "patch", "delete"];
-    validMutationMethods = new Set(validMutationMethodsArr);
-    validRequestMethodsArr = ["get", ...validMutationMethodsArr];
-    validRequestMethods = new Set(validRequestMethodsArr);
+    validMutationMethodsArr2 = ["post", "put", "patch", "delete"];
+    validMutationMethods2 = new Set(validMutationMethodsArr2);
+    validRequestMethodsArr2 = ["get", ...validMutationMethodsArr2];
+    validRequestMethods2 = new Set(validRequestMethodsArr2);
     redirectStatusCodes = /* @__PURE__ */ new Set([301, 302, 303, 307, 308]);
     redirectPreserveMethodStatusCodes = /* @__PURE__ */ new Set([307, 308]);
     IDLE_NAVIGATION = {
@@ -3346,26 +3365,7 @@ var init_router = __esm({
     defaultMapRouteProperties = (route) => ({
       hasErrorBoundary: Boolean(route.hasErrorBoundary)
     });
-    UNSAFE_DEFERRED_SYMBOL = Symbol("deferred");
-  }
-});
-
-// ../node_modules/@remix-run/server-runtime/dist/mode.js
-var require_mode = __commonJS({
-  "../node_modules/@remix-run/server-runtime/dist/mode.js"(exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var ServerMode2 = /* @__PURE__ */ function(ServerMode3) {
-      ServerMode3["Development"] = "development";
-      ServerMode3["Production"] = "production";
-      ServerMode3["Test"] = "test";
-      return ServerMode3;
-    }({});
-    function isServerMode(value) {
-      return value === ServerMode2.Development || value === ServerMode2.Production || value === ServerMode2.Test;
-    }
-    exports.ServerMode = ServerMode2;
-    exports.isServerMode = isServerMode;
+    UNSAFE_DEFERRED_SYMBOL2 = Symbol("deferred");
   }
 });
 
@@ -3531,8 +3531,30 @@ throw new Error(
 var entry = void 0;
 var routes = void 0;
 
+// ../node_modules/@remix-run/router/dist/router.js
+var Action;
+(function(Action3) {
+  Action3["Pop"] = "POP";
+  Action3["Push"] = "PUSH";
+  Action3["Replace"] = "REPLACE";
+})(Action || (Action = {}));
+var ResultType;
+(function(ResultType3) {
+  ResultType3["data"] = "data";
+  ResultType3["deferred"] = "deferred";
+  ResultType3["redirect"] = "redirect";
+  ResultType3["error"] = "error";
+})(ResultType || (ResultType = {}));
+function isRouteErrorResponse(error) {
+  return error != null && typeof error.status === "number" && typeof error.statusText === "string" && typeof error.internal === "boolean" && "data" in error;
+}
+var validMutationMethodsArr = ["post", "put", "patch", "delete"];
+var validMutationMethods = new Set(validMutationMethodsArr);
+var validRequestMethodsArr = ["get", ...validMutationMethodsArr];
+var validRequestMethods = new Set(validRequestMethodsArr);
+var UNSAFE_DEFERRED_SYMBOL = Symbol("deferred");
+
 // ../packages/worker-runtime/dist/src/utils/handle-request.js
-init_router();
 var import_mode = __toESM(require_mode(), 1);
 var import_responses2 = __toESM(require_responses(), 1);
 
@@ -3598,6 +3620,9 @@ function errorResponseToJson(errorResponse) {
       "X-Remix-Error": "yes"
     }
   });
+}
+function isRemixResponse(response) {
+  return Array.from(response.headers.keys()).some((key) => key.toLowerCase().startsWith("x-remix-"));
 }
 
 // ../packages/worker-runtime/dist/src/utils/handle-request.js
@@ -3693,18 +3718,17 @@ function responseHandler(response) {
       headers
     });
   }
-  !response.headers.has("X-Remix-Response") && response.headers.set("X-Remix-Response", "yes");
+  !isRemixResponse(response) && response.headers.set("X-Remix-Response", "yes");
   return response;
 }
 
 // ../packages/worker-runtime/dist/src/service-worker.internal.js
 var _self = self;
 function createContext(event) {
-  const request = event.request.clone();
   const context = entry.module.getLoadContext?.(event) || {};
   return {
     event,
-    fetchFromServer: (request_ = request) => fetch(request_),
+    fetchFromServer: () => fetch(event.request),
     // NOTE: we want the user to override the above properties if needed.
     ...context
   };
@@ -3733,6 +3757,18 @@ _self.addEventListener(
 );
 /*! Bundled license information:
 
+@remix-run/server-runtime/dist/mode.js:
+  (**
+   * @remix-run/server-runtime v1.19.3
+   *
+   * Copyright (c) Remix Software Inc.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE.md file in the root directory of this source tree.
+   *
+   * @license MIT
+   *)
+
 @remix-run/router/dist/router.js:
   (**
    * @remix-run/router v1.7.2
@@ -3745,21 +3781,9 @@ _self.addEventListener(
    * @license MIT
    *)
 
-@remix-run/server-runtime/dist/mode.js:
-  (**
-   * @remix-run/server-runtime v1.19.2
-   *
-   * Copyright (c) Remix Software Inc.
-   *
-   * This source code is licensed under the MIT license found in the
-   * LICENSE.md file in the root directory of this source tree.
-   *
-   * @license MIT
-   *)
-
 @remix-run/server-runtime/dist/errors.js:
   (**
-   * @remix-run/server-runtime v1.19.2
+   * @remix-run/server-runtime v1.19.3
    *
    * Copyright (c) Remix Software Inc.
    *
@@ -3771,7 +3795,19 @@ _self.addEventListener(
 
 @remix-run/server-runtime/dist/responses.js:
   (**
-   * @remix-run/server-runtime v1.19.2
+   * @remix-run/server-runtime v1.19.3
+   *
+   * Copyright (c) Remix Software Inc.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE.md file in the root directory of this source tree.
+   *
+   * @license MIT
+   *)
+
+@remix-run/router/dist/router.js:
+  (**
+   * @remix-run/router v1.8.0
    *
    * Copyright (c) Remix Software Inc.
    *
