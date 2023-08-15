@@ -13,7 +13,7 @@ env:
 
 jobs:
   commit:
-    name: Commitlint
+    name: ✨ Commitlint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -31,7 +31,7 @@ jobs:
       - name: Run Commitlint
         run: npx commitlint --from=origin/main
   lint:
-    name: Lint
+    name: 💅 Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -46,9 +46,9 @@ jobs:
       - name: Install dependencies
         run: npm clean-install
       - name: Run ESLint
-        run: npm lint
+        run: npm run lint
   unit_test:
-    name: Unit test
+    name: 🧪 Unit test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -63,9 +63,9 @@ jobs:
       - name: Install dependencies
         run: npm clean-install
       - name: Run test
-        run: npm test
+        run: npm run test
   build:
-    name: Build
+    name: 🏗️ Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -78,4 +78,4 @@ jobs:
       - name: Install dependencies
         run: npm clean-install
       - name: Run build scripts
-        run: npm build
+        run: npm run build
