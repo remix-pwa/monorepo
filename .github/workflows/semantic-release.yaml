@@ -33,14 +33,13 @@ jobs:
         run: npm clean-install
       - name: Print NPM_TOKEN
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GG: 12345
-        run: echo '${{ secrets.NPM_TOKEN }} $GG ${{ secrets.GG }} ${{ env.GG }} w'
+        run: echo '${{ env.NPM_TOKEN }} $GG ${{ secrets.GG }} ${{ env.GG }} w'
       - name: Semantic release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ env.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_ENV: production
           HUSKY: 0
         run: |
