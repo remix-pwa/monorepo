@@ -14,6 +14,7 @@
   "type": "module",
   "scripts": {
     "build": "turbo build",
+    "commit": "commit",
     "dev": "cd playground && npm run dev",
     "lint-staged": "lint-staged",
     "lint": "turbo lint",
@@ -21,7 +22,9 @@
     "test": "turbo test -- --coverage"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.7.1",
     "@commitlint/config-conventional": "^17.7.0",
+    "@commitlint/prompt-cli": "^17.7.1",
     "@types/semver": "^7.5.0",
     "esbuild": "^0.18.0",
     "esbuild-node-externals": "^1.8.0",
