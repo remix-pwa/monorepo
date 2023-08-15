@@ -17,7 +17,6 @@ jobs:
     name: Semantic release
     runs-on: ubuntu-latest
     permissions: write-all
-    environment: production
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -31,10 +30,6 @@ jobs:
           node-version: 18
       - name: Install dependencies
         run: npm clean-install
-      - name: Print NPM_TOKEN
-        env:
-          GG: 12345
-        run: echo '${{ env.NPM_TOKEN }} $GG ${{ secrets.GG }} ${{ env.GG }} w'
       - name: Semantic release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
