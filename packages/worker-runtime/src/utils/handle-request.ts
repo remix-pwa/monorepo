@@ -19,7 +19,7 @@ import {
 } from '@remix-run/server-runtime/dist/responses.js';
 
 import { createArgumentsFrom, getURLParameters, isActionRequest, isLoaderRequest } from './request.js';
-import { errorResponseToJson, isRemixResponse } from './response.js';
+import { errorResponseToJson } from './response.js';
 
 interface HandleRequestArgs {
   defaultHandler: DefaultFetchHandler;
@@ -193,6 +193,6 @@ function responseHandler(response: Response): Response {
 
   // Mark all successful responses with a header so we can identify in-flight
   // network errors that are missing this header
-  !isRemixResponse(response) && response.headers.set('X-Remix-Response', 'yes');
+  !response.headers.has('X-Remix-Response') && response.headers.set('X-Remix-Response', 'yes');
   return response;
 }
