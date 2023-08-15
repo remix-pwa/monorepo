@@ -1,0 +1,4 @@
+**/__tests__/**/*.ts
+**/__test__/**/*.ts
+**/templates/**/*.ts
+**/templates/**/*.js
