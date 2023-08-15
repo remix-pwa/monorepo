@@ -8,12 +8,6 @@ on:
         required: true
         type: string
 
-permissions: 
-  contents: write
-  packages: write
-  pull-requests: write
-  issues: write
-
 env:
   NPM_VERSION: 9
   SEMANTIC_RELEASE_VERSION: 21.0.1
@@ -22,6 +16,7 @@ jobs:
   release:
     name: Semantic release
     runs-on: ubuntu-latest
+    permissions: write-all
     steps:
       - name: Checkout
         uses: actions/checkout@v3
