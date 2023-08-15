@@ -22,6 +22,7 @@ jobs:
         with:
           # Needs to fetch historical commits in order to compare with origin/main
           fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN }}
           persist-credentials: false
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
@@ -31,6 +32,7 @@ jobs:
         run: npm clean-install
       - name: Semantic release
         env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_ENV: production
