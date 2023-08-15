@@ -30,6 +30,8 @@ jobs:
           node-version: 18
       - name: Install dependencies
         run: npm clean-install
+      - name: Print NPM_TOKEN
+        run: echo ${{ secrets.NPM_TOKEN }}
       - name: Semantic release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
