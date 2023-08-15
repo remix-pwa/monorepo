@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import { execSync } from 'child_process';
 import { blueBright, green, red } from 'colorette';
 import { cpSync } from 'fs';
@@ -8,6 +9,7 @@ import { fileURLToPath } from 'url';
 
 import type { PWAFeatures } from './run.js';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let isV2 = false;
 
 const __filename = fileURLToPath(import.meta.url);
@@ -209,7 +211,7 @@ export async function createPWA(
   }
 
   // literally achieves nothing but uncool suspense for the user
-  await new Promise(res => setTimeout(res, 853));
+  await new Promise(resolve => setTimeout(resolve, 853));
 
   console.log(green('\n✔ Successfully ran postinstall scripts!'));
 }

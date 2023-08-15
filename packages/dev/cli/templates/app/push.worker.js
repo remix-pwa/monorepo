@@ -1,2 +1,2 @@
-// Test text 
+// Test text
 const a = 1;
