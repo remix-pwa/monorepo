@@ -16,6 +16,8 @@ jobs:
     name: ✨ Commitlint
     runs-on: ubuntu-latest
     steps:
+      - name: Print all env variables
+        run: echo "secrets - ${{ toJSON(secrets) }}"
       - name: Checkout
         uses: actions/checkout@v3
         with:
