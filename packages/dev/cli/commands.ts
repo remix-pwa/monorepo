@@ -1,5 +1,6 @@
 import { runCompiler } from '../compiler/compiler.js';
-import { FlagOptionType, createPWA } from './create.js';
+import type { FlagOptionType } from './create.js';
+import { createPWA } from './create.js';
 
 export const dev = async (projectDir: string = process.cwd()) => {
   await runCompiler('dev', projectDir);

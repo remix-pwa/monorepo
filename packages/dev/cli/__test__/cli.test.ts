@@ -90,6 +90,7 @@ A stand-alone package for integrating PWA solutions into Remix application.
         );
 
         assert.ok(existsSync('__mock-app/app/entry.worker.ts'));
+        expect(true).toBe(true); // Added this line due to eslint error
       });
 
       test('should throw an error when the service worker already exists', async () => {
@@ -159,6 +160,7 @@ A stand-alone package for integrating PWA solutions into Remix application.
         );
 
         assert.ok(existsSync('__mock-app/app/routes/manifest[.]webmanifest.ts'));
+        expect(true).toBe(true);
       });
     });
   });

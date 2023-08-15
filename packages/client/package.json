@@ -17,7 +17,7 @@
   "scripts": {
     "build": "rimraf ./dist && tsc",
     "format": "prettier --write \"**/*.ts\"",
-    "lint": "TIMING=1 eslint --fix lib/",
+    "lint": "TIMING=1 eslint --fix \"lib/**/*.ts\"",
     "test": "vitest --run --environment happy-dom --threads --single-thread --pass-with-no-tests"
   },
   "engines": {
@@ -25,5 +25,9 @@
   },
   "dependencies": {
     "happy-dom": "^10.9.0"
+  },
+  "devDependencies": {
+    "@remix-pwa/eslint-config": "^0.0.0",
+    "@remix-pwa/lint-staged-config": "^0.0.0"
   }
 }
