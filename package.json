@@ -3,6 +3,7 @@
   "private": true,
   "license": "MIT",
   "workspaces": [
+    "packages/cache",
     "packages/client",
     "packages/dev",
     "packages/eslint-config",
