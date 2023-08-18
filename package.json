@@ -9,13 +9,14 @@
     "packages/lint-staged-config",
     "packages/sw",
     "packages/workbox-runtime",
-    "packages/worker-runtime"
+    "packages/worker-runtime",
+    "playground"
   ],
   "type": "module",
   "scripts": {
     "build": "turbo build",
     "commit": "commit",
-    "dev": "cd playground && npm run dev",
+    "dev": "npm run dev --workspace @remix-pwa/playground",
     "lint-staged": "lint-staged",
     "lint": "turbo lint",
     "format": "turbo format",
