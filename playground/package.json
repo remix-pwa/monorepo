@@ -9,7 +9,6 @@
   },
   "license": "MIT",
   "sideEffects": false,
-  "type": "module",
   "private": true,
   "scripts": {
     "dev": "run-p dev:*",
@@ -20,7 +19,7 @@
   },
   "dependencies": {
     "@remix-pwa/sw": "^1.1.2",
-    "@remix-pwa/worker-runtime": "^0.0.0",
+    "@remix-pwa/worker-runtime": "^1.0.0",
     "@remix-run/css-bundle": "^1.19.3",
     "@remix-run/node": "^1.19.3",
     "@remix-run/react": "^1.19.3",
@@ -32,7 +31,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@remix-pwa/dev": "^0.0.0",
+    "@remix-pwa/dev": "^1.0.0",
     "@remix-run/dev": "^1.19.3",
     "@remix-run/eslint-config": "^1.19.3",
     "@types/react": "^18.0.35",

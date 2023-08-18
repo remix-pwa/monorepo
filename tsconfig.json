@@ -1,6 +1,7 @@
 {
   "files": [],
   "references": [
+    { "path": "packages/cache" },
     { "path": "packages/client" },
     { "path": "packages/dev" },
     { "path": "packages/sw" },
