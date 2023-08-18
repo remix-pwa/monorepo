@@ -11,12 +11,15 @@
   },
   "type": "module",
   "files": [
-    "dist/**/*"
+    "dist/",
+    "README.md",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "rimraf ./dist && tsc",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "TIMING=1 eslint --fix src/",
+    "prepublish": "npm run build",
     "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
   },
   "dependencies": {
