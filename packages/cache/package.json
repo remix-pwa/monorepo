@@ -29,5 +29,8 @@
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0"
+  },
+  "dependencies": {
+    "cachified": "^3.5.4"
   }
 }
