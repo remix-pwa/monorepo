@@ -6,6 +6,7 @@
       "prerelease": true
     }
   ],
+  "debug": true,
   "repositoryUrl": "git@github.com:remix-pwa/monorepo",
   "plugins": [
     [
@@ -46,7 +47,10 @@
     ],
     "@semantic-release/changelog",
     [
-      "@semantic-release/npm"
+      "@semantic-release/npm",
+      {
+        "npmPublish": false
+      }
     ],
     [
       "@semantic-release/github",
