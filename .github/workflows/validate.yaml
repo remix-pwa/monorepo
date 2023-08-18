@@ -12,10 +12,25 @@ jobs:
     name: ✨ Commitlint
     runs-on: ubuntu-latest
     steps:
-      - name: Environment setup
-        uses: ./../actions/environment
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
-          node-version: 18
+          # Needs to fetch historical commits in order to compare with origin/main
+          fetch-depth: 0
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          cache: npm
+          node-version: ${{ inputs.node-version }}
+      - name: Setup Turbo cache
+        uses: actions/cache@v3
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+      - name: Install dependencies
+        run: npm clean-install
       - name: Run Commitlint
         run:  npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
   lint:
@@ -30,7 +45,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           cache: npm
-          node-version: 18
+          node-version: ${{ inputs.node-version }}
+      - name: Setup Turbo cache
+        uses: actions/cache@v3
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
       - name: Install dependencies
         run: npm clean-install
       - name: Run ESLint
@@ -47,7 +69,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           cache: npm
-          node-version: 18
+          node-version: ${{ inputs.node-version }}
+      - name: Setup Turbo cache
+        uses: actions/cache@v3
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
       - name: Install dependencies
         run: npm clean-install
       - name: Run test
@@ -62,7 +91,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           cache: npm
-          node-version: 18
+          node-version: ${{ inputs.node-version }}
+      - name: Setup Turbo cache
+        uses: actions/cache@v3
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
       - name: Install dependencies
         run: npm clean-install
       - name: Run build scripts
