@@ -9,7 +9,6 @@
   },
   "license": "MIT",
   "sideEffects": false,
-  "type": "module",
   "private": true,
   "scripts": {
     "dev": "run-p dev:*",
