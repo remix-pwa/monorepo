@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/client",
-  "version": "1.0.0-dev.1",
+  "version": "1.0.0",
   "description": "None of my business",
   "repository": {
     "type": "git",
@@ -12,12 +12,15 @@
   "license": "MIT",
   "type": "module",
   "files": [
-    "dist"
+    "dist/",
+    "README.md",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "rimraf ./dist && tsc",
     "format": "prettier --write \"**/*.ts\"",
     "lint": "TIMING=1 eslint --fix \"lib/**/*.ts\"",
+    "prepublish": "npm run build",
     "test": "vitest --run --environment happy-dom --threads --single-thread --pass-with-no-tests"
   },
   "engines": {

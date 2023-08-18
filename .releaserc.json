@@ -1,12 +1,10 @@
 {
   "branches": [
     "main",
-    {
-      "name": "dev",
-      "prerelease": true
-    }
+    "dev"
   ],
   "debug": true,
+  "noCi": true,
   "repositoryUrl": "git@github.com:remix-pwa/monorepo",
   "plugins": [
     [

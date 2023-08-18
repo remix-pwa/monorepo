@@ -1,4 +1,4 @@
-# @remix-pwa/client 1.0.0-dev.1 (2023-08-18)
+# @remix-pwa/client 1.0.0 (2023-08-18)
 
 
 ### Bug Fixes
