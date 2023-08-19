@@ -1,7 +1,10 @@
-import type { Cache as CachifiedCache } from 'cachified';
+import { totalTtl, type Cache as CachifiedCache } from 'cachified';
 
-export const remixCacheAdapter = (cache: Cache): CachifiedCache => {
+import type { RemixCache } from './cache.js';
+
+export const remixCacheAdapter = (cache: RemixCache): CachifiedCache => {
   return {
+    name: cache.name,
     async get(key: string) {
       const response = await cache.match(key);
       if (!response) return;
@@ -9,8 +12,9 @@ export const remixCacheAdapter = (cache: Cache): CachifiedCache => {
       return value;
     },
     async set(key: string, value: any) {
+      const ttl = totalTtl(value?.metadata);
       const response = new Response(JSON.stringify(value));
-      return await cache.put(key, response);
+      return await cache.put(key, response, ttl === Infinity ? undefined : ttl);
     },
     async delete(key: string) {
       return await cache.delete(key);

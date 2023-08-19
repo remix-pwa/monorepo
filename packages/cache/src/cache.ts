@@ -1,8 +1,32 @@
 export enum Strategy {
+  /**
+   * Cache first, then network.
+   */
   CacheFirst = 'cache-first',
+  /**
+   * Network first, then cache.
+   */
   NetworkFirst = 'network-first',
+  /**
+   * Cache only, no network.
+   *
+   * @note This is the only strategy that does not use the network. If you have
+   * a use case for this, don't forget to populate the cache yourself.
+   */
   CacheOnly = 'cache-only',
+  /**
+   * Network Only, no caching.
+   *
+   * @note This is the only strategy that does not use the cache. Technically,
+   * if you have a cache that is not persistent, don't use `RemixCache` at all. Just
+   * use `fetch` directly (Remix default behaviour).
+   */
   NetworkOnly = 'network-only',
+  /**
+   * Stale while revalidate.
+   *
+   * @note This strategy will return stale data while fetching fresh data in the background.
+   */
   StaleWhileRevalidate = 'stale-while-revalidate',
 }
 
@@ -13,14 +37,14 @@ interface CustomCache extends Omit<Cache, 'add' | 'addAll' | 'matchAll'> {
 export type RemixCacheOptions = {
   /**
    * The name of the cache. Ensure this is unique for each cache.
-   * @requird
+   * @required
    */
   name: string;
   /**
    * The caching strategy to use.
-   * @required
+   * @default Strategy.NetworkFirst
    */
-  // strategy: Strategy;
+  strategy?: Strategy;
   // todo: Add allow stale option, wether you want to return stale data after it's ttl or just return undefined.
   /**
    * The maximum number of entries to store in the cache.
@@ -35,83 +59,144 @@ export type RemixCacheOptions = {
 };
 
 export class RemixCache implements CustomCache {
+  /**
+   * Required
+   *
+   * The name of the cache. Ensure this is unique for each cache.
+   * @readonly
+   */
   public readonly name: string;
-  // private readonly strategy: Strategy;
+  /**
+   * The time-to-live of the cache in ms.
+   * @readonly
+   * @default Infinity
+   */
+  public readonly ttl: number = Infinity;
+  /**
+   * The caching strategy to use.
+   * @readonly
+   * @default Strategy.NetworkFirst
+   */
+  public readonly strategy: Strategy = Strategy.NetworkFirst;
   private readonly maxItems: number = 100;
-  private readonly ttl: number = Infinity;
 
   /**
-   * Create a new `RemixCache` instance.
+   * Create a new `RemixCache` instance. Don't invoke this directly! Use `initCache` instead.
    * @constructor
    * @param {object} options - Options for the RemixCache instance.
    */
   constructor(options: RemixCacheOptions) {
     this.name = options.name;
     this.maxItems = options.maxItems || 100;
+    this.strategy = options.strategy || Strategy.NetworkFirst;
     this.ttl = options.ttl || Infinity;
+
+    if (this.strategy === Strategy.NetworkOnly) {
+      this.ttl = -1;
+    }
+  }
+
+  private async _openCache() {
+    return await caches.open(this.name);
   }
 
   private async _maintainCache(): Promise<void> {
-    const cache = await caches.open(this.name);
+    const cache = await this._openCache();
     const keysResponse = await cache.keys();
-    const keys = keysResponse.map(request => request.url);
+    const validKeys = [];
+    const now = Date.now();
 
-    // Fetch access time headers for all items
-    const accessTimestamps = await Promise.all(
-      keys.map(async key => {
-        const response = await cache.match(key);
-        if (response) {
-          const accessedAtHeader = response.headers.get('x-cache-accessed-at') || '';
-          const accessedAt = parseInt(accessedAtHeader, 10);
-          return { key, accessedAt };
-        }
-      })
-    );
-
-    const sortedKeys = accessTimestamps.sort((a, b) => a!.accessedAt - b!.accessedAt).map(item => item!.key);
-
-    if (sortedKeys.length > this.maxItems) {
-      const itemsToRemove = sortedKeys.slice(0, sortedKeys.length - this.maxItems);
-      for (const keyToRemove of itemsToRemove) {
-        await cache.delete(keyToRemove);
-      }
-    }
-
-    for (const key of keys) {
-      const response = await cache.match(key);
+    for (const request of keysResponse) {
+      const response = await cache.match(request);
       if (response) {
-        const expiresAtHeader = response.headers.get('x-cache-expires-at') || '';
+        const expiresAtHeader = response.headers.get('x-cache-expires-at')!;
         const expiresAt = parseInt(expiresAtHeader, 10);
-        if (expiresAt && Date.now() >= expiresAt) {
-          await cache.delete(key);
+        if (!expiresAt || expiresAt > now) {
+          validKeys.push({
+            key: request.url,
+            accessedAt: parseInt(response.headers.get('x-cache-accessed-at')!, 10) || 0,
+          });
+        } else {
+          await cache.delete(request);
         }
+      }
+    }
+
+    // Sort valid keys by access time (LRU)
+    validKeys.sort((a, b) => a.accessedAt - b.accessedAt);
+
+    // Remove least recently used items if cache size exceeds maxItems
+    if (validKeys.length > this.maxItems) {
+      const keysToRemove = validKeys.slice(0, validKeys.length - this.maxItems);
+      for (const keyToRemove of keysToRemove) {
+        await cache.delete(keyToRemove.key);
       }
     }
   }
 
+  private _updateHeaders(response: Response, headersToUpdate: Record<string, string>) {
+    const headers = new Headers(response.headers);
+    for (const [headerName, headerValue] of Object.entries(headersToUpdate)) {
+      headers.set(headerName, headerValue);
+    }
+
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+  }
+
+  /**
+   * Delete an entry from the cache.
+   * Takes in the same parameters as `Cache.delete`.
+   * @param {RequestInfo | URL} request - The request to delete.
+   * @param {CacheQueryOptions} [options] - Options for the delete operation.
+   * @returns {Promise<boolean>} Returns `true` if an entry was deleted, otherwise `false`.
+   *
+   * @example
+   * ```js
+   * const cache = await initCache({ name: 'my-cache' });
+   *
+   * await cache.put('/hello-world', new Response('Hello World!'));
+   * await cache.delete('/hello-world');
+   * ```
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Cache/delete
+   */
   async delete(request: RequestInfo | URL, options?: CacheQueryOptions | undefined): Promise<boolean> {
-    const cache = await caches.open(this.name);
-
-    if (typeof request === 'string') {
-      request = new Request(request);
-    }
-
-    return cache.delete(request, options);
+    return this._openCache().then(cache => cache.delete(request, options));
   }
 
-  async keys(
-    request?: RequestInfo | URL | undefined,
-    options?: CacheQueryOptions | undefined
-  ): Promise<readonly Request[]> {
-    const cache = await caches.open(this.name);
-
-    if (typeof request === 'string') {
-      request = new Request(request);
-    }
-
-    return cache.keys(request, options);
+  /**
+   * Returns a Promise that resolves to the length of the Cache object.
+   *
+   * @returns {Promise<number>} The number of entries in the cache.
+   */
+  async length(): Promise<number> {
+    const keys = await this.keys();
+    return keys.length;
   }
 
+  /**
+   * Returns a `Promise` that resolves to an array of Cache keys.
+   *
+   * @returns {Promise<readonly Request[]>} An array of Cache keys.
+   */
+  async keys(): Promise<readonly Request[]> {
+    const cache = await this._openCache();
+    return await cache.keys();
+  }
+
+  /**
+   * Return a `Promise` that resolves to an entry in the cache object. Accepts the
+   * same parameters as `Cache.match`.
+   *
+   * @param {RequestInfo | URL} request - The request to match.
+   * @param {CacheQueryOptions} [options] - Options for the match operation.
+   *
+   * @returns {Promise<Response | undefined>} A `Promise` that resolves to the response, or `undefined` if not found.
+   */
   async match(request: RequestInfo | URL, options?: CacheQueryOptions | undefined): Promise<Response | undefined> {
     const cache = await caches.open(this.name);
 
@@ -120,83 +205,54 @@ export class RemixCache implements CustomCache {
       return undefined;
     }
 
-    const item = JSON.parse(await response.text());
+    const now = Date.now();
+    const res = this._updateHeaders(response, {
+      'x-cache-accessed-at': now.toString(),
+    });
 
-    if (item.expiresAt && Date.now() >= item.expiresAt) {
-      await cache.delete(request);
-      return undefined;
-    }
-
-    item.accessedAt = Date.now();
-    await cache.put(request, new Response(JSON.stringify(item)));
-    this._maintainCache();
-
-    return item.value;
+    await cache.put(request, res);
+    return res;
   }
 
   /**
-   * A Work-in-progress API
+   * Add an entry to the cache.
+   * Takes in the same parameters as `Cache.put`.
+   *
+   * @param {RequestInfo | URL} request - The request to add.
+   * @param {Response} response - The response to add.
+   * @returns {Promise<void>} A `Promise` that resolves when the entry is added to the cache.
+   *
+   * @example
+   * ```js
+   * const cache = await initCache({ name: 'my-cache' });
+   *
+   * await cache.put('/hello-world', new Response('Hello World!'));
+   * ```
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Cache/put
    */
-  private async matchAll(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _request?: RequestInfo | URL | undefined,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _options?: CacheQueryOptions | undefined
-  ): Promise<readonly Response[]> {
-    // const cache = await caches.open(this.name);
+  async put(request: RequestInfo | URL, response: Response, ttl: number = this.ttl): Promise<void> {
+    const cache = await this._openCache();
 
-    // if (typeof request === 'string') {
-    //   request = new Request(request);
-    // }
+    // If ttl is negative, don't cache
+    if (this.ttl < 0) return;
 
-    // if (typeof request === 'undefined') {
-    //   return [];
-    // }
-
-    // const responses = await cache.matchAll(request, options);
-
-    // const res = responses.map(async response => {
-    //   const item = JSON.parse(await response.text());
-
-    //   if (item.expiresAt && Date.now() >= item.expiresAt) {
-    //     await cache.delete(request);
-    //     return undefined;
-    //   }
-
-    //   // Update access time for LRU
-    //   item.accessedAt = Date.now();
-    //   await cache.put(request, new Response(JSON.stringify(item)));
-    //   // await this.maintainCache();
-
-    //   return item.value as unknown as Response;
-    // });
-
-    // return res;
-    return new Promise<readonly Response[]>(resolve => {
-      resolve([]);
-    });
-  }
-
-  async put(request: RequestInfo | URL, response: Response, ttl: number = this.ttl, start?: number): Promise<void> {
-    const cache = await caches.open(this.name);
-
-    const responseBody = await response.clone().text();
-    const item = {
-      response: {
-        status: response.status,
-        statusText: response.statusText,
-        headers: { ...response.headers },
-        body: responseBody,
-      },
-      expiresAt: ttl ?? Date.now() + ttl,
-      accessedAt: start ?? Date.now(),
+    const now = Date.now();
+    const expiresAt = now + ttl;
+    const headersToUpdate = {
+      'x-cache-accessed-at': now.toString(),
+      'x-cache-expires-at': expiresAt.toString(),
     };
 
-    if (typeof request === 'string') {
-      request = new Request(request);
-    }
+    // Update headers and clone response with updated headers
+    const updatedResponse = this._updateHeaders(response, headersToUpdate);
 
-    await cache.put(request, new Response(JSON.stringify(item)));
-    await this._maintainCache();
+    // Cache the updated response and maintain the cache
+    try {
+      await cache.put(request, updatedResponse);
+      await this._maintainCache();
+    } catch (error) {
+      console.error('Failed to put to cache:', error);
+    }
   }
 }
