@@ -83,7 +83,8 @@ export class RemixCacheStorage {
   }
 
   /**
-   * Get a cache by name.
+   * Get a cache by name. Returns `undefined` if no cache with the given name exists.
+   * Use `has` to check if a cache exists. Or `open` to create one automatically if non exists.
    *
    * @param name
    * @returns {RemixCache | undefined}
@@ -97,6 +98,29 @@ export class RemixCacheStorage {
    */
   static get(name: string) {
     return this._instances.find(cache => cache.name === name);
+  }
+
+  /**
+   * Get a cache by name. If no cache with the given name exists, create one.
+   *
+   * @param name
+   * @returns {RemixCache}
+   *
+   * @example
+   * ```js
+   * import { Storage } from '@remix-run/cache';
+   *
+   * const cache = Storage.open('my-cache');
+   * ```
+   */
+  static open(name: string) {
+    const cache = this._instances.find(cache => cache.name === name);
+
+    if (!cache) {
+      return this.createCache({ name });
+    }
+
+    return cache;
   }
 
   /**
