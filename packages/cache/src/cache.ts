@@ -36,12 +36,11 @@ export type RemixCacheOptions = {
 
 export class RemixCache implements CustomCache {
   public readonly name: string;
-  // private readonly strategy: Strategy;
   private readonly maxItems: number = 100;
   private readonly ttl: number = Infinity;
 
   /**
-   * Create a new `RemixCache` instance.
+   * Create a new `RemixCache` instance. Don't invoke this directly! Use `initCache` instead.
    * @constructor
    * @param {object} options - Options for the RemixCache instance.
    */
@@ -51,65 +50,69 @@ export class RemixCache implements CustomCache {
     this.ttl = options.ttl || Infinity;
   }
 
+  private async _openCache() {
+    return await caches.open(this.name);
+  }
+
   private async _maintainCache(): Promise<void> {
-    const cache = await caches.open(this.name);
+    const cache = await this._openCache();
     const keysResponse = await cache.keys();
-    const keys = keysResponse.map(request => request.url);
+    const validKeys = [];
+    const now = Date.now();
 
-    // Fetch access time headers for all items
-    const accessTimestamps = await Promise.all(
-      keys.map(async key => {
-        const response = await cache.match(key);
-        if (response) {
-          const accessedAtHeader = response.headers.get('x-cache-accessed-at') || '';
-          const accessedAt = parseInt(accessedAtHeader, 10);
-          return { key, accessedAt };
-        }
-      })
-    );
-
-    const sortedKeys = accessTimestamps.sort((a, b) => a!.accessedAt - b!.accessedAt).map(item => item!.key);
-
-    if (sortedKeys.length > this.maxItems) {
-      const itemsToRemove = sortedKeys.slice(0, sortedKeys.length - this.maxItems);
-      for (const keyToRemove of itemsToRemove) {
-        await cache.delete(keyToRemove);
-      }
-    }
-
-    for (const key of keys) {
-      const response = await cache.match(key);
+    for (const request of keysResponse) {
+      const response = await cache.match(request);
       if (response) {
-        const expiresAtHeader = response.headers.get('x-cache-expires-at') || '';
+        const expiresAtHeader = response.headers.get('x-cache-expires-at')!;
         const expiresAt = parseInt(expiresAtHeader, 10);
-        if (expiresAt && Date.now() >= expiresAt) {
-          await cache.delete(key);
+        if (!expiresAt || expiresAt > now) {
+          validKeys.push({
+            key: request.url,
+            accessedAt: parseInt(response.headers.get('x-cache-accessed-at')!, 10) || 0,
+          });
+        } else {
+          await cache.delete(request);
         }
       }
     }
+
+    // Sort valid keys by access time (LRU)
+    validKeys.sort((a, b) => a.accessedAt - b.accessedAt);
+
+    // Remove least recently used items if cache size exceeds maxItems
+    if (validKeys.length > this.maxItems) {
+      const keysToRemove = validKeys.slice(0, validKeys.length - this.maxItems);
+      for (const keyToRemove of keysToRemove) {
+        await cache.delete(keyToRemove.key);
+      }
+    }
+  }
+
+  private _updateHeaders(response: Response, headersToUpdate: Record<string, string>) {
+    const headers = new Headers(response.headers);
+    for (const [headerName, headerValue] of Object.entries(headersToUpdate)) {
+      headers.set(headerName, headerValue);
+    }
+
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
   }
 
   async delete(request: RequestInfo | URL, options?: CacheQueryOptions | undefined): Promise<boolean> {
-    const cache = await caches.open(this.name);
-
-    if (typeof request === 'string') {
-      request = new Request(request);
-    }
-
-    return cache.delete(request, options);
+    return this._openCache().then(cache => cache.delete(request, options));
   }
 
-  async keys(
-    request?: RequestInfo | URL | undefined,
-    options?: CacheQueryOptions | undefined
-  ): Promise<readonly Request[]> {
-    const cache = await caches.open(this.name);
+  async length(): Promise<number> {
+    const keys = await this.keys();
+    return keys.length;
+  }
 
-    if (typeof request === 'string') {
-      request = new Request(request);
-    }
-
-    return cache.keys(request, options);
+  async keys(): Promise<readonly Request[]> {
+    const cache = await this._openCache();
+    return await cache.keys();
   }
 
   async match(request: RequestInfo | URL, options?: CacheQueryOptions | undefined): Promise<Response | undefined> {
@@ -120,40 +123,34 @@ export class RemixCache implements CustomCache {
       return undefined;
     }
 
-    const item = JSON.parse(await response.text());
+    const now = Date.now();
+    const res = this._updateHeaders(response, {
+      'x-cache-accessed-at': now.toString(),
+    });
 
-    if (item.expiresAt && Date.now() >= item.expiresAt) {
-      await cache.delete(request);
-      return undefined;
-    }
-
-    item.accessedAt = Date.now();
-    await cache.put(request, new Response(JSON.stringify(item)));
-    this._maintainCache();
-
-    return item.value;
+    await cache.put(request, res);
+    return res;
   }
 
-  async put(request: RequestInfo | URL, response: Response, ttl: number = this.ttl, start?: number): Promise<void> {
-    const cache = await caches.open(this.name);
+  async put(request: RequestInfo | URL, response: Response, ttl: number = this.ttl): Promise<void> {
+    const cache = await this._openCache();
 
-    const responseBody = await response.clone().text();
-    const item = {
-      response: {
-        status: response.status,
-        statusText: response.statusText,
-        headers: { ...response.headers },
-        body: responseBody,
-      },
-      expiresAt: ttl ?? Date.now() + ttl,
-      accessedAt: start ?? Date.now(),
+    const now = Date.now();
+    const expiresAt = now + ttl;
+    const headersToUpdate = {
+      'x-cache-accessed-at': now.toString(),
+      'x-cache-expires-at': expiresAt.toString(),
     };
 
-    if (typeof request === 'string') {
-      request = new Request(request);
-    }
+    // Update headers and clone response with updated headers
+    const updatedResponse = this._updateHeaders(response, headersToUpdate);
 
-    await cache.put(request, new Response(JSON.stringify(item)));
-    await this._maintainCache();
+    // Cache the updated response and maintain the cache
+    try {
+      await cache.put(request, updatedResponse);
+      await this._maintainCache();
+    } catch (error) {
+      console.error('Failed to put to cache:', error);
+    }
   }
 }
