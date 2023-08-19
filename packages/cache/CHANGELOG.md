@@ -1,3 +1,20 @@
+# @remix-pwa/cache 1.1.0 (2023-08-19)
+
+
+### Bug Fixes
+
+* **cache:** fixed `RemixCache` initialisation errors 718670c
+* **cache:** fixed cache not getting returned when using short-hand a634fb7
+
+
+### Features
+
+* **cache:** exported all new APIs + updated JSDocs 7f80b34
+* **cache:** new api: `RemixCacheStorage` for handling all caches 4c5edb7
+* **cache:** updated `cachified` adapter: added `ttl` to new cache 41bd0c4
+* **cache:** updated cache and optimized it's perfomance by about 600% a0484c6
+* new cachified wrapper 8d8e1e7
+
 # @remix-pwa/cache 1.0.0 (2023-08-18)
 
 
