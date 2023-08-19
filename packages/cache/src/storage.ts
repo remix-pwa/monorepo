@@ -161,3 +161,8 @@ export const Storage = RemixCacheStorage;
 export const initCache = (options: RemixCacheOptions): RemixCache => {
   return Storage.createCache(options);
 };
+
+/**
+ * @alias `initCache`
+ */
+export const createCache = initCache;
