@@ -103,7 +103,7 @@ export class RemixCache implements CustomCache {
   private async _maintainCache(): Promise<void> {
     const cache = await this._openCache();
     const keysResponse = await cache.keys();
-    const validKeys = [];
+    const validKeys: any[] = [];
     const now = Date.now();
 
     for (const request of keysResponse) {
