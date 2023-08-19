@@ -134,49 +134,6 @@ export class RemixCache implements CustomCache {
     return item.value;
   }
 
-  /**
-   * A Work-in-progress API
-   */
-  private async matchAll(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _request?: RequestInfo | URL | undefined,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _options?: CacheQueryOptions | undefined
-  ): Promise<readonly Response[]> {
-    // const cache = await caches.open(this.name);
-
-    // if (typeof request === 'string') {
-    //   request = new Request(request);
-    // }
-
-    // if (typeof request === 'undefined') {
-    //   return [];
-    // }
-
-    // const responses = await cache.matchAll(request, options);
-
-    // const res = responses.map(async response => {
-    //   const item = JSON.parse(await response.text());
-
-    //   if (item.expiresAt && Date.now() >= item.expiresAt) {
-    //     await cache.delete(request);
-    //     return undefined;
-    //   }
-
-    //   // Update access time for LRU
-    //   item.accessedAt = Date.now();
-    //   await cache.put(request, new Response(JSON.stringify(item)));
-    //   // await this.maintainCache();
-
-    //   return item.value as unknown as Response;
-    // });
-
-    // return res;
-    return new Promise<readonly Response[]>(resolve => {
-      resolve([]);
-    });
-  }
-
   async put(request: RequestInfo | URL, response: Response, ttl: number = this.ttl, start?: number): Promise<void> {
     const cache = await caches.open(this.name);
 
