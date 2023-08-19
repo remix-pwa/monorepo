@@ -155,6 +155,9 @@ export class RemixCacheStorage {
  */
 export const Storage = RemixCacheStorage;
 
+/**
+ * Short-hand for `Storage.createCache()`.
+ */
 export const initCache = (options: RemixCacheOptions) => {
   Storage.createCache(options);
 };
