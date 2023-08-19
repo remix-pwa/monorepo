@@ -1,11 +1,11 @@
 {
-  "include": ["./src/**/*.ts", "package.json"],
+  "include": ["./**/*.ts", "package.json"],
   "exclude": ["dist", "./**/__tests__", "node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
-    "lib": ["ES2020", "WebWorker"],
+    "lib": ["ES2022", "WebWorker", "DOM"],
     "composite": true,
-    "target": "es2020",
+    "target": "es2022",
     "module": "nodenext",
     "allowSyntheticDefaultImports": true,
     "strict": true,
