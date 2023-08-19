@@ -101,20 +101,56 @@ export class RemixCache implements CustomCache {
     });
   }
 
+  /**
+   * Delete an entry from the cache.
+   * Takes in the same parameters as `Cache.delete`.
+   * @param {RequestInfo | URL} request - The request to delete.
+   * @param {CacheQueryOptions} [options] - Options for the delete operation.
+   * @returns {Promise<boolean>} Returns `true` if an entry was deleted, otherwise `false`.
+   *
+   * @example
+   * ```js
+   * const cache = await initCache({ name: 'my-cache' });
+   *
+   * await cache.put('/hello-world', new Response('Hello World!'));
+   * await cache.delete('/hello-world');
+   * ```
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Cache/delete
+   */
   async delete(request: RequestInfo | URL, options?: CacheQueryOptions | undefined): Promise<boolean> {
     return this._openCache().then(cache => cache.delete(request, options));
   }
 
+  /**
+   * Returns a Promise that resolves to the length of the Cache object.
+   *
+   * @returns {Promise<number>} The number of entries in the cache.
+   */
   async length(): Promise<number> {
     const keys = await this.keys();
     return keys.length;
   }
 
+  /**
+   * Returns a `Promise` that resolves to an array of Cache keys.
+   *
+   * @returns {Promise<readonly Request[]>} An array of Cache keys.
+   */
   async keys(): Promise<readonly Request[]> {
     const cache = await this._openCache();
     return await cache.keys();
   }
 
+  /**
+   * Return a `Promise` that resolves to an entry in the cache object. Accepts the
+   * same parameters as `Cache.match`.
+   *
+   * @param {RequestInfo | URL} request - The request to match.
+   * @param {CacheQueryOptions} [options] - Options for the match operation.
+   *
+   * @returns {Promise<Response | undefined>} A `Promise` that resolves to the response, or `undefined` if not found.
+   */
   async match(request: RequestInfo | URL, options?: CacheQueryOptions | undefined): Promise<Response | undefined> {
     const cache = await caches.open(this.name);
 
@@ -132,6 +168,23 @@ export class RemixCache implements CustomCache {
     return res;
   }
 
+  /**
+   * Add an entry to the cache.
+   * Takes in the same parameters as `Cache.put`.
+   *
+   * @param {RequestInfo | URL} request - The request to add.
+   * @param {Response} response - The response to add.
+   * @returns {Promise<void>} A `Promise` that resolves when the entry is added to the cache.
+   *
+   * @example
+   * ```js
+   * const cache = await initCache({ name: 'my-cache' });
+   *
+   * await cache.put('/hello-world', new Response('Hello World!'));
+   * ```
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Cache/put
+   */
   async put(request: RequestInfo | URL, response: Response, ttl: number = this.ttl): Promise<void> {
     const cache = await this._openCache();
 
