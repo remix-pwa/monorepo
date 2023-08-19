@@ -44,7 +44,7 @@ export type RemixCacheOptions = {
    * The caching strategy to use.
    * @default Strategy.NetworkFirst
    */
-  strategy: Strategy;
+  strategy?: Strategy;
   // todo: Add allow stale option, wether you want to return stale data after it's ttl or just return undefined.
   /**
    * The maximum number of entries to store in the cache.
