@@ -1,3 +1,11 @@
+## @remix-pwa/cache 1.1.1 (2023-08-19)
+
+
+### Bug Fixes
+
+* **cache:** TS silly types errors that just decided to show up 788d898
+* **cache:** TS silly types errors that just decided to show up 0ace7c9
+
 # @remix-pwa/cache 1.1.0 (2023-08-19)
 
 
