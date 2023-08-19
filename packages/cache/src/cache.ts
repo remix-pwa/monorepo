@@ -1,8 +1,32 @@
 export enum Strategy {
+  /**
+   * Cache first, then network.
+   */
   CacheFirst = 'cache-first',
+  /**
+   * Network first, then cache.
+   */
   NetworkFirst = 'network-first',
+  /**
+   * Cache only, no network.
+   *
+   * @note This is the only strategy that does not use the network. If you have
+   * a use case for this, don't forget to populate the cache yourself.
+   */
   CacheOnly = 'cache-only',
+  /**
+   * Network Only, no caching.
+   *
+   * @note This is the only strategy that does not use the cache. Technically,
+   * if you have a cache that is not persistent, don't use `RemixCache` at all. Just
+   * use `fetch` directly (Remix default behaviour).
+   */
   NetworkOnly = 'network-only',
+  /**
+   * Stale while revalidate.
+   *
+   * @note This strategy will return stale data while fetching fresh data in the background.
+   */
   StaleWhileRevalidate = 'stale-while-revalidate',
 }
 
@@ -13,14 +37,14 @@ interface CustomCache extends Omit<Cache, 'add' | 'addAll' | 'matchAll'> {
 export type RemixCacheOptions = {
   /**
    * The name of the cache. Ensure this is unique for each cache.
-   * @requird
+   * @required
    */
   name: string;
   /**
    * The caching strategy to use.
-   * @required
+   * @default Strategy.NetworkFirst
    */
-  // strategy: Strategy;
+  strategy: Strategy;
   // todo: Add allow stale option, wether you want to return stale data after it's ttl or just return undefined.
   /**
    * The maximum number of entries to store in the cache.
@@ -35,9 +59,26 @@ export type RemixCacheOptions = {
 };
 
 export class RemixCache implements CustomCache {
+  /**
+   * Required
+   *
+   * The name of the cache. Ensure this is unique for each cache.
+   * @readonly
+   */
   public readonly name: string;
+  /**
+   * The time-to-live of the cache in ms.
+   * @readonly
+   * @default Infinity
+   */
+  public readonly ttl: number = Infinity;
+  /**
+   * The caching strategy to use.
+   * @readonly
+   * @default Strategy.NetworkFirst
+   */
+  public readonly strategy: Strategy = Strategy.NetworkFirst;
   private readonly maxItems: number = 100;
-  private readonly ttl: number = Infinity;
 
   /**
    * Create a new `RemixCache` instance. Don't invoke this directly! Use `initCache` instead.
@@ -47,7 +88,12 @@ export class RemixCache implements CustomCache {
   constructor(options: RemixCacheOptions) {
     this.name = options.name;
     this.maxItems = options.maxItems || 100;
+    this.strategy = options.strategy || Strategy.NetworkFirst;
     this.ttl = options.ttl || Infinity;
+
+    if (this.strategy === Strategy.NetworkOnly) {
+      this.ttl = -1;
+    }
   }
 
   private async _openCache() {
@@ -187,6 +233,9 @@ export class RemixCache implements CustomCache {
    */
   async put(request: RequestInfo | URL, response: Response, ttl: number = this.ttl): Promise<void> {
     const cache = await this._openCache();
+
+    // If ttl is negative, don't cache
+    if (this.ttl < 0) return;
 
     const now = Date.now();
     const expiresAt = now + ttl;
