@@ -21,6 +21,7 @@
     "lint-staged": "lint-staged",
     "lint": "turbo lint",
     "format": "turbo format",
+    "postclone": "npm run install && npm run test && npm run build",
     "test": "turbo test -- --coverage"
   },
   "devDependencies": {
