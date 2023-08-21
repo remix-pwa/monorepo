@@ -22,6 +22,7 @@ function createContext(event: FetchEvent): build.WorkerLoadContext {
 const defaultHandler =
   (build.entry.module.defaultFetchHandler as build.DefaultFetchHandler) ||
   ((event: FetchEvent) => fetch(event.request.clone()));
+
 // if the user export a `handleError` inside the entry.worker.js, we use that one as default handler
 const defaultErrorHandler =
   (build.entry.module.handleError as build.DefaultErrorHandler) ||
@@ -31,6 +32,7 @@ const defaultErrorHandler =
     }
   });
 
+// DO NOT OVERRIDE!!!
 _self.addEventListener(
   'fetch',
   /**
