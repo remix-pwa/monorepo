@@ -9,6 +9,7 @@
     "packages/eslint-config",
     "packages/lint-staged-config",
     "packages/sw",
+    "packages/sync",
     "packages/workbox-runtime",
     "packages/worker-runtime",
     "playground"
