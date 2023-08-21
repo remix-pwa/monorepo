@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/sw",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "sw",
   "repository": {
     "type": "git",
@@ -20,6 +20,13 @@
     "README.md",
     "CHANGELOG.md"
   ],
+  "scripts": {
+    "build": "rimraf ./dist && tsc",
+    "format": "prettier --write \"**/*.ts\"",
+    "lint": "TIMING=1 eslint --fix \"src/**/*.ts\"",
+    "prepublish": "npm run build",
+    "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
+  },
   "peerDependencies": {
     "@remix-pwa/cache": "^1.1.1"
   },
