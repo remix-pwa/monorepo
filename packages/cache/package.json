@@ -28,8 +28,7 @@
   },
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
-    "@remix-pwa/lint-staged-config": "^0.0.0",
-    "puppeteer": "^21.1.0"
+    "@remix-pwa/lint-staged-config": "^0.0.0"
   },
   "dependencies": {
     "cachified": "^3.5.4"
