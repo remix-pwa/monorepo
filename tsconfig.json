@@ -5,6 +5,7 @@
     { "path": "packages/client" },
     { "path": "packages/dev" },
     { "path": "packages/sw" },
+    { "path": "packages/sync" },
     // { "path": "packages/workbox-runtime" },
     { "path": "packages/worker-runtime" }
   ],

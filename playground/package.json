@@ -14,11 +14,11 @@
     "dev": "run-p dev:*",
     "start": "remix-serve build",
     "typecheck": "tsc",
-    "dev:remix": "remix dev",
-    "dev:worker": "node ./sw.mjs -- dev"
+    "dev:worker": "node ./sw.mjs -- dev",
+    "dev:remix": "remix dev"
   },
   "dependencies": {
-    "@remix-pwa/sw": "^1.1.2",
+    "@remix-pwa/sw": "1.1.3",
     "@remix-pwa/worker-runtime": "^1.0.0",
     "@remix-run/css-bundle": "^1.19.3",
     "@remix-run/node": "^1.19.3",

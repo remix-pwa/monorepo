@@ -65,8 +65,12 @@ export default function entryModulePlugin(config: ResolvedWorkerConfig): Plugin 
         loader: 'js',
       } as OnLoadResult;
     };
+
+    console.time('esbuild:sw-entry-module');
+
     build.onResolve({ filter: FILTER_REGEX }, onResolve);
     build.onLoad({ filter: FILTER_REGEX, namespace: NAMESPACE }, onLoad);
+    console.timeEnd('esbuild:sw-entry-module');
   }
 
   return {

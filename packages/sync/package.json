@@ -1,0 +1,39 @@
+{
+  "name": "@remix-pwa/sync",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Remix PWA sync",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:remix-pwa/monorepo",
+    "directory": "packages/sync"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "type": "module",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "scripts": {
+    "build": "rimraf ./dist && tsc",
+    "format": "prettier --write \"**/*.ts\"",
+    "lint": "TIMING=1 eslint --fix \"src/**/*.ts\"",
+    "prepublish": "npm run build",
+    "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "devDependencies": {
+    "@remix-pwa/eslint-config": "^0.0.0",
+    "@remix-pwa/lint-staged-config": "^0.0.0",
+    "rimraf": "^5.0.1"
+  },
+  "dependencies": {
+    "idb": "^7.1.1"
+  }
+}

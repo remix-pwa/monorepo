@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import type { Context } from '@remix-run/dev/dist/compiler/context.js';
 import { emptyModulesPlugin } from '@remix-run/dev/dist/compiler/plugins/emptyModules.js';
 import { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';

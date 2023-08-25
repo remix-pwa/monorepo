@@ -1,0 +1,22 @@
+{
+  "entry": [
+    "packages/**/*.{js,ts}"
+  ],
+  "extensions": [
+    ".ts",
+    ".js"
+  ],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "playground/**",
+    "**/template/**",
+    "**/templates/**",
+    "**/__test__/**",
+    "**/__tests__/**",
+    "**/*.{test.ts}",
+    "**/dist/**"
+  ],
+  "ignoreUnresolved": [],
+  "ignoreUnimported": [],
+  "ignoreUnused": []
+}
