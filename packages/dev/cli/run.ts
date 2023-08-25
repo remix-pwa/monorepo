@@ -125,6 +125,8 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
     packageManager = args['--package-manager'];
   }
 
+  // todo: Check wether input[0] starts with a '-'
+
   const cmd = input[0];
 
   switch (cmd) {
@@ -141,7 +143,9 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
     case 'create':
     default: // Todo: Add a better error message - Deprecating this. For now tho, it would be the same as create
       if (cmd !== 'create' && cmd !== 'init' && cmd !== 'new') {
-        console.warn(bold(red('This command is getting deprecated soon. Please use `npx remix-pwa create` instead.')));
+        console.warn(
+          bold(red('This command is getting deprecated soon. Please use `npx remix-pwa@latest create` instead.'))
+        );
       }
 
       // const featLookup: Record<PWAFeatures, string> = {
