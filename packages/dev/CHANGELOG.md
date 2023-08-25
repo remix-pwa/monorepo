@@ -1,3 +1,18 @@
+## @remix-pwa/dev 1.0.1 (2023-08-25)
+
+
+### Bug Fixes
+
+* **dev:** updated `excluded` libs - `__test__` fix cd83968
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/worker-runtime:** upgraded to 1.0.1
+
 # @remix-pwa/dev 1.0.0 (2023-08-18)
 
 
