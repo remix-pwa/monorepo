@@ -2,6 +2,12 @@ import * as utils from './utils.js';
 
 /** An in-memory implementation of the browser cache that can
  * be used to test caching strategies in a node environment.
+ *
+ * @todo: Implement the following methods from `RemixCache` spec:
+ * - `match`
+ * - `put`
+ * - `delete`
+ * and ensure they align with the spec.
  */
 class CacheMock {
   cache: Map<Request, Response>;
