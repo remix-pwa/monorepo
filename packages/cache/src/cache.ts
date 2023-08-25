@@ -92,6 +92,7 @@ export class RemixCache implements CustomCache {
     this.ttl = options.ttl || Infinity;
 
     if (this.strategy === Strategy.NetworkOnly) {
+      // Don't use the cache at all
       this.ttl = -1;
     }
   }
