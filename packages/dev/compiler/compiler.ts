@@ -62,7 +62,7 @@ function createEsbuildConfig(config: ResolvedWorkerConfig): BuildOptions {
 }
 
 export async function runCompiler(mode: 'dev' | 'build', projectDir: string = process.cwd()) {
-  await readConfig(path.resolve(projectDir), MODE).then(remixConfig => {
+  readConfig(path.resolve(projectDir), MODE).then(remixConfig => {
     console.time(TIME_LABEL);
 
     esbuild
