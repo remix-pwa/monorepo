@@ -1,3 +1,10 @@
+# @remix-pwa/cache 1.2.0 (2023-08-25)
+
+
+### Features
+
+* **cache:** added `open` method 9d07680
+
 ## @remix-pwa/cache 1.1.1 (2023-08-19)
 
 
