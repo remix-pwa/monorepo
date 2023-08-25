@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import type { Context } from '@remix-run/dev/dist/compiler/context.js';
 import { emptyModulesPlugin } from '@remix-run/dev/dist/compiler/plugins/emptyModules.js';
 import { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';
@@ -63,7 +62,7 @@ function createEsbuildConfig(config: ResolvedWorkerConfig): BuildOptions {
 }
 
 export async function runCompiler(mode: 'dev' | 'build', projectDir: string = process.cwd()) {
-  readConfig(path.resolve(projectDir), MODE).then(remixConfig => {
+  await readConfig(path.resolve(projectDir), MODE).then(remixConfig => {
     console.time(TIME_LABEL);
 
     esbuild
