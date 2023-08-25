@@ -19,7 +19,6 @@
     "build": "rimraf ./dist && tsc && npm run copy",
     "compile": "tsc && node ./build.cjs",
     "copy": "cp -r cli/templates dist/cli/templates",
-    "dev": "cross-env NODE_ENV=development ts-node compiler/compiler.ts --watch",
     "format": "prettier --write \"cli/**/*.ts\" \"compiler/**/*.ts\"",
     "lint": "TIMING=1 eslint --fix cli/ compiler/",
     "prepublish": "npm run build",
