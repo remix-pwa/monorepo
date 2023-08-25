@@ -1,3 +1,5 @@
+## @remix-pwa/worker-runtime 1.0.1 (2023-08-25)
+
 # @remix-pwa/worker-runtime 1.0.0 (2023-08-18)
 
 
