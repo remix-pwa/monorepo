@@ -1,3 +1,10 @@
+# @remix-pwa/dev 1.1.0 (2023-08-27)
+
+
+### Features
+
+* **cli:** added utils and icon scaffold feature 620316d
+
 ## @remix-pwa/dev 1.0.1 (2023-08-25)
 
 
