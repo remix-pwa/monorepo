@@ -1,7 +1,6 @@
 {
   "name": "@remix-pwa/sync",
   "version": "1.0.0",
-  "private": true,
   "description": "Remix PWA sync",
   "repository": {
     "type": "git",
