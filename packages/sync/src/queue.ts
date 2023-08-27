@@ -9,9 +9,6 @@
   https://github.com/GoogleChrome/workbox/blob/v7/packages/workbox-background-sync/src/Queue.ts
 */
 
-// import { WorkboxError } from 'workbox-core/_private/WorkboxError.js';
-// import { getFriendlyURL } from 'workbox-core/_private/getFriendlyURL.js';
-
 import type { QueueStoreEntry, UnidentifiedQueueStoreEntry } from './db.js';
 import { StorableRequest } from './request.js';
 import { QueueStore } from './store.js';
@@ -346,7 +343,7 @@ class Queue {
           //     `failed to replay, putting it back in queue '${this._name}'`
           // );
         }
-        // throw new WorkboxError('queue-replay-failed', { name: this._name });
+        // throw new Error('queue-replay-failed', { name: this._name });
       }
     }
     if (process.env.NODE_ENV !== 'production') {
