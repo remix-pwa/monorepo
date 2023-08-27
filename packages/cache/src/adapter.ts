@@ -2,6 +2,12 @@ import { totalTtl, type Cache as CachifiedCache } from 'cachified';
 
 import type { RemixCache } from './cache.js';
 
+/**
+ * `RemixCache` adapter for cachified.
+ *
+ * @param cache RemixCache instance
+ * @returns cachified `Cache`
+ */
 export const remixCacheAdapter = (cache: RemixCache): CachifiedCache => {
   return {
     name: cache.name,
