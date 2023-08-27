@@ -1,3 +1,5 @@
+## @remix-pwa/cache 1.2.1 (2023-08-27)
+
 # @remix-pwa/cache 1.2.0 (2023-08-25)
 
 
