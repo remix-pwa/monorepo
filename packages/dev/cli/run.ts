@@ -125,7 +125,9 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
     packageManager = args['--package-manager'];
   }
 
-  // todo: Check wether input[0] starts with a '-'
+  if (input[0].startsWith('-')) {
+    input.unshift('create');
+  }
 
   const cmd = input[0];
 
@@ -137,6 +139,7 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
       await commands.build(projectDir);
       break;
     case 'push':
+      await commands.push();
       break; // A delayed todo: More or less init push api and a test server route
     case 'init':
     case 'new':
@@ -206,49 +209,6 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
           initial: false,
           skip: flags.precache !== undefined,
         },
-        /**
-         * Passing skip option to multiselect throws an error below is the workaround
-         * until this get resolved https://github.com/enquirer/enquirer/issues/339
-         *
-         * But this syntax breaks the entire prompt. So, we are not using it for now.
-         */
-        // ...(feat === null
-        //   ? [
-        //       {
-        //         name: 'feat',
-        //         type: 'multiselect',
-        //         // @ts-ignore
-        //         hint: '(Use <space> to select, <return> to submit)',
-        //         message: "What features of remix-pwa do you need? Don't be afraid to pick all!",
-        //         indicator(state: any, choice: any) {
-        //           return choice.enabled ? ' ' + green('✔') : ' ' + gray('o');
-        //         },
-        //         choices: [
-        //           {
-        //             name: 'Service Workers',
-        //             value: 'sw',
-        //           },
-        //           {
-        //             name: 'Web Manifest',
-        //             value: 'manifest',
-        //           },
-        //           {
-        //             name: 'Push Notifications',
-        //             value: 'push',
-        //           },
-        //           {
-        //             name: 'PWA Client Utilities',
-        //             value: 'utils',
-        //           },
-        //           {
-        //             name: 'Development Icons',
-        //             value: 'icons',
-        //           },
-        //         ],
-        //         initialChoices: ['sw', 'manifest'],
-        //       },
-        //     ]
-        //   : []),
         {
           name: 'features',
           type: 'multiselect',
