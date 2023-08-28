@@ -1,3 +1,10 @@
+## @remix-pwa/worker-runtime 1.0.2 (2023-08-28)
+
+
+### Bug Fixes
+
+* **compiler:** change virtual-module name 9bef734
+
 ## @remix-pwa/worker-runtime 1.0.1 (2023-08-25)
 
 # @remix-pwa/worker-runtime 1.0.0 (2023-08-18)
