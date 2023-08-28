@@ -1,7 +1,7 @@
-import { run, runCompiler } from "@remix-pwa/dev";
+import { run } from '@remix-pwa/dev';
 
 async function main() {
-  await run()
+  await run();
 }
 
 await main();

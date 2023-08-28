@@ -27,9 +27,9 @@ describe('entryModulePlugin', () => {
       onLoad: vi.fn(),
     } as unknown as PluginBuild;
     await plugin.setup(build);
-    expect(build.onResolve).toHaveBeenCalledWith({ filter: /@remix-pwa\/dev\/worker-build$/ }, expect.any(Function));
+    expect(build.onResolve).toHaveBeenCalledWith({ filter: /@remix-pwa\/build\/magic$/ }, expect.any(Function));
     expect(build.onLoad).toHaveBeenCalledWith(
-      { filter: /@remix-pwa\/dev\/worker-build$/, namespace: 'entry-module' },
+      { filter: /@remix-pwa\/build\/magic$/, namespace: 'entry-module' },
       expect.any(Function)
     );
   });

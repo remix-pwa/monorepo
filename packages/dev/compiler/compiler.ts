@@ -45,7 +45,7 @@ function createEsbuildConfig(config: ResolvedWorkerConfig): BuildOptions {
       emptyModulesPlugin(pluginContext, /^react(-dom)?(\/.*)?$/, {
         includeNodeModules: true,
       }) as Plugin,
-      emptyModulesPlugin(pluginContext, /^@remix-run\/(deno|cloudflare|node)(\/.*)?$/, {
+      emptyModulesPlugin(pluginContext, /^@remix-run\/(deno|cloudflare|node|react)(\/.*)?$/, {
         includeNodeModules: true,
       }) as Plugin,
       // This plugin will generate a list of routes based on the remix `flatRoutes` output and inject them in the bundled `service-worker`.
