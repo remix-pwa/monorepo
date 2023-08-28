@@ -1,3 +1,19 @@
+## @remix-pwa/dev 1.1.1 (2023-08-28)
+
+
+### Bug Fixes
+
+* **compiler:** change virtual-module name 9bef734
+* **config:** return full entry path instead of relative ac38499
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/worker-runtime:** upgraded to 1.0.2
+
 # @remix-pwa/dev 1.1.0 (2023-08-27)
 
 
