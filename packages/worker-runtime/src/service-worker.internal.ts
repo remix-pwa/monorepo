@@ -1,4 +1,6 @@
-import * as build from '@remix-pwa/dev/worker-build.js';
+// @ts-expect-error
+// eslint-disable-next-line import/no-unresolved
+import * as build from '@remix-pwa/build/magic';
 
 import { handleRequest } from './utils/handle-request.js';
 

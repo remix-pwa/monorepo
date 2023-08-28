@@ -3,7 +3,7 @@ import type { OnLoadResult, OnResolveArgs, Plugin, PluginBuild } from 'esbuild';
 
 import type { ResolvedWorkerConfig } from '../utils/config.js';
 
-const FILTER_REGEX = /@remix-pwa\/dev\/worker-build$/;
+const FILTER_REGEX = /@remix-pwa\/build\/magic$/;
 const NAMESPACE = 'entry-module';
 
 /**
@@ -37,7 +37,7 @@ function createRouteManifest(routes: RouteManifest): string {
 /**
  * The `sw-entry-module` plugin looks for the `FILTER_REGEX`string throught the esbuild entry point and injects all the `@remix-run` routes modules and information
  * that are available in the given configuration into the ESBuild entry point.
- * @param {import('../utils/config').ResolvedWorkerConfig} config The resolved worker config.
+ * @param {import('../utils/config.js').ResolvedWorkerConfig} config The resolved worker config.
  * @returns {import('esbuild').Plugin} Esbuild plugin
  */
 export default function entryModulePlugin(config: ResolvedWorkerConfig): Plugin {
@@ -47,6 +47,7 @@ export default function entryModulePlugin(config: ResolvedWorkerConfig): Plugin 
   function setup(build: PluginBuild) {
     const onResolve = ({ path }: OnResolveArgs) => ({ path, namespace: NAMESPACE });
     const onLoad = () => {
+      console.log(config.entryWorkerFile, 'config.entryWorkerFile');
       const routes = Object.values(config.routes);
       const contents = `
     ${createRouteImports(routes)}
@@ -66,11 +67,8 @@ export default function entryModulePlugin(config: ResolvedWorkerConfig): Plugin 
       } as OnLoadResult;
     };
 
-    console.time('esbuild:sw-entry-module');
-
     build.onResolve({ filter: FILTER_REGEX }, onResolve);
     build.onLoad({ filter: FILTER_REGEX, namespace: NAMESPACE }, onLoad);
-    console.timeEnd('esbuild:sw-entry-module');
   }
 
   return {
