@@ -9,3 +9,18 @@
 export function timeout(ms: number): Promise<unknown> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+/**
+ * Checks if the passed request is an HTTP request.
+ *
+ * @param {Request | URL} request
+ * @return {boolean}
+ * @private
+ */
+export const isHttpRequest = (request: Request | URL): boolean => {
+  if (request instanceof Request) {
+    return request.url.startsWith('http');
+  }
+
+  return request.toString().startsWith('http');
+};
