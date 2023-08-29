@@ -9,8 +9,6 @@ const PAGES = "page-cache";
 const DATA = "data-cache";
 const ASSETS = "assets-cache";
 
-// create lru-cache stores here (custom ofc) and pass them instead to the handlers
-
 const precacheHandler = new PrecacheHandler({
   dataCacheName: DATA,
   documentCacheName: PAGES,
@@ -42,7 +40,7 @@ export const getLoadContext = () => {
 };
 
 // The default fetch event handler will be invoke if the route is not matched by any of the worker action/loader.
-export const defaultFetchHandler = ({ context, request }) => {
+export const defaultFetchHandler = ({ context, request }: any) => {
   const type = matchRequest(request);
 
   if (type === "asset") {
