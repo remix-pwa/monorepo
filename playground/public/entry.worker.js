@@ -3567,6 +3567,11 @@ var require_responses = __commonJS({
 });
 
 // entry-module:@remix-pwa/build/magic
+var magic_exports = {};
+__export(magic_exports, {
+  entry: () => entry,
+  routes: () => routes
+});
 var route0 = __toESM(require_root());
 
 // routes-module:routes/_app.flights.tsx?worker
@@ -9684,6 +9689,7 @@ _self.addEventListener(
    * The main fetch event listener callback.
    */
   (event) => {
+    console.log("fetch event", event, "build\n", magic_exports);
     const response = handleRequest({
       event,
       routes,
