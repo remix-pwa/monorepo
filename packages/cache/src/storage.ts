@@ -25,7 +25,7 @@ import { RemixCache } from './cache.js';
  * ```
  */
 export class RemixCacheStorage {
-  private static _instances: RemixCache[] = [];
+  private static _instances: Map<string, RemixCache> = new Map<string, RemixCache>();
 
   // eslint-disable-next-line no-useless-constructor
   private constructor() {}
@@ -53,13 +53,14 @@ export class RemixCacheStorage {
       throw new Error('Cache API is not available in this environment.');
     }
 
-    if (this._instances.length) {
+    if (this._instances.size > 0) {
       return;
     }
 
     const cachesNames = await caches.keys();
+
     for (const name of cachesNames) {
-      this._instances.push(new RemixCache({ name }));
+      this._instances.set(name, new RemixCache({ name }));
     }
   }
 
@@ -69,7 +70,7 @@ export class RemixCacheStorage {
    */
   static createCache(opts: RemixCacheOptions) {
     const newCache = new RemixCache(opts);
-    this._instances.push(newCache);
+    this._instances.set(opts.name, newCache);
     return newCache;
   }
 
@@ -79,7 +80,7 @@ export class RemixCacheStorage {
    * @param name
    */
   static has(name: string) {
-    return this._instances.some(cache => cache.name === name);
+    return this._instances.has(name);
   }
 
   /**
@@ -96,8 +97,8 @@ export class RemixCacheStorage {
    * const cache = Storage.get('my-cache');
    * ```
    */
-  static get(name: string) {
-    return this._instances.find(cache => cache.name === name);
+  static get(name: string): RemixCache | undefined {
+    return this._instances.get(name);
   }
 
   /**
@@ -113,8 +114,8 @@ export class RemixCacheStorage {
    * const cache = Storage.open('my-cache');
    * ```
    */
-  static open(name: string) {
-    const cache = this._instances.find(cache => cache.name === name);
+  static open(name: string): RemixCache {
+    const cache = this._instances.get(name);
 
     if (!cache) {
       return this.createCache({ name });
@@ -129,10 +130,11 @@ export class RemixCacheStorage {
    * @param name
    */
   static delete(name: string) {
-    const cache = this._instances.find(cache => cache.name === name);
+    const cache = this._instances.get(name);
+
     if (cache) {
       caches.delete(name);
-      this._instances = this._instances.filter(cache => cache.name !== name);
+      this._instances.delete(name);
     }
   }
 
@@ -141,7 +143,7 @@ export class RemixCacheStorage {
    */
   static clear() {
     this._instances.forEach(cache => caches.delete(cache.name));
-    this._instances = [];
+    this._instances = new Map();
   }
 
   /**
@@ -159,7 +161,7 @@ export class RemixCacheStorage {
    * Return the length of the `RemixCacheStorage` store.
    */
   static get _length() {
-    return this._instances.length;
+    return this._instances.size;
   }
 
   /**
