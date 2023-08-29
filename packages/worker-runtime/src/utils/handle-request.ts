@@ -46,7 +46,8 @@ interface HandleError {
 
 /**
  * A FetchEvent handler for Remix.
- * If the `event.request` has a worker loader/action defined, it will call it and return the response. Otherwise, it will call the default handler..
+ * If the `event.request` has a worker loader/action defined, it will call it and return the response.
+ * Otherwise, it will call the default handler...
  */
 export async function handleRequest({
   defaultHandler,

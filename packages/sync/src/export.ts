@@ -70,49 +70,11 @@ export type QueueToServerOptions = {
 export const queueToServer = ({ name, request }: QueueToServerOptions): void => {
   let queue: Queue;
 
-  // function getPathname(route: any) {
-  //   if (route.index && route.parentId === 'root') return '/';
-
-  //   let pathname = '';
-
-  //   if (route.path && route.path.length > 0) {
-  //     pathname = '/' + route.path;
-  //   }
-
-  //   if (route.parentId) {
-  //     const parentPath = getPathname(manifest?.routes[route.parentId]);
-  //     if (parentPath) {
-  //       pathname = parentPath + pathname;
-  //     }
-  //   }
-
-  //   return pathname;
-  // }
-
   try {
     queue = SyncQueue.createQueue(name);
   } catch (e) {
     queue = SyncQueue.getQueue(name) as unknown as Queue;
   }
-
-  // By default, this would allow the user to queue multiple requests (from the Service Worker)
-  // But accessing the manifest from the Service Worker is not possible for now, so we'll just
-  // queue the request as is and leave this for later.
-  // if (request instanceof RegExp && manifest) {
-  //   const matchedRequests: (Request | undefined)[] = Object.values(manifest.routes ?? {}).map(route => {
-  //     const path = getPathname(route);
-  //     if (request.test(path)) {
-  //       return new Request(path);
-  //     }
-
-  //     return undefined;
-  //   });
-
-  //   matchedRequests.forEach(request => {
-  //     if (!request) return;
-  //     queue.pushRequest({ request });
-  //   });
-  // }
 
   queue.pushRequest({ request: request as Request });
 };
