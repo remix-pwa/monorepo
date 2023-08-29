@@ -1,4 +1,5 @@
 import type { StrategyOptions, StrategyResponse } from './types.js';
+import { isHttpRequest } from './utils.js';
 
 export interface NetworkOnlyStrategyOptions extends Omit<StrategyOptions, 'cacheOptions' | 'cache'> {
   /**
@@ -30,6 +31,10 @@ export const networkOnly = async ({
   networkTimeoutSeconds = 10,
 }: NetworkOnlyStrategyOptions): Promise<StrategyResponse> => {
   return async (request: Request | URL) => {
+    if (!isHttpRequest(request)) {
+      return new Response('Not a HTTP request', { status: 403 });
+    }
+
     try {
       // Much tamer version of the timeout functionality
       // const timeoutPromise = networkTimeoutSeconds !== Infinity ? timeout(networkTimeoutSeconds * 1000) : null;

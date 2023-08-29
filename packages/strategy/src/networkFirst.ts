@@ -2,6 +2,7 @@ import type { RemixCache } from '@remix-pwa/cache';
 import { Storage, createCache } from '@remix-pwa/cache';
 
 import type { StrategyOptions, StrategyResponse } from './types.js';
+import { isHttpRequest } from './utils.js';
 
 export interface NetworkFirstStrategyOptions extends StrategyOptions {
   /**
@@ -35,6 +36,10 @@ export const networkFirst = async ({
   networkTimeoutSeconds = 10,
 }: NetworkFirstStrategyOptions): Promise<StrategyResponse> => {
   return async (request: Request | URL) => {
+    if (!isHttpRequest(request)) {
+      return new Response('Not a HTTP request', { status: 403 });
+    }
+
     let remixCache: RemixCache;
 
     if (typeof cacheName === 'string') {
@@ -82,9 +87,11 @@ export const networkFirst = async ({
         return cachedResponse;
       }
 
-      throw error;
+      return new Response(JSON.stringify({ message: 'Network Error' }), {
+        status: 500,
+      });
     }
 
-    throw new Error('Failed to fetch');
+    throw new Error('Failed to fetch. Network timed out.');
   };
 };
