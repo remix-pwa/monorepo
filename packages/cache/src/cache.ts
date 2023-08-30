@@ -66,6 +66,12 @@ export type RemixCacheOptions = {
    * @default Infinity
    */
   ttl?: number;
+  /**
+   * Whether to use strict mode or not. By strict mode, we mean that the cache will **only**
+   * return data if valid. If for example, the cache is expired, it will return `undefined` instead
+   * of returning it then nullifying it (non-strict mode)
+   */
+  // strict?: boolean;
 };
 
 export class RemixCache implements CustomCache {
@@ -126,7 +132,7 @@ export class RemixCache implements CustomCache {
   }
 
   private async _lruCleanup() {
-    if (this.maxItems > (await this.length())) {
+    if ((await this.length()) >= this.maxItems) {
       this._values().then(async values => {
         values
           .sort((a, b) => {
@@ -234,6 +240,7 @@ export class RemixCache implements CustomCache {
     if (request instanceof URL || typeof request === 'string') {
       request = new Request(request);
     }
+
     const response = await cache.match(request.clone(), options);
 
     if (!response) {
