@@ -119,6 +119,32 @@ export class RemixCache implements CustomCache {
     return false;
   }
 
+  private async _values() {
+    const cache = await this._openCache();
+    const keys = await cache.keys();
+    return (await Promise.all(keys.map(key => cache.match(key)))) as Response[];
+  }
+
+  private async _lruCleanup() {
+    if (this.maxItems > (await this.length())) {
+      this._values().then(async values => {
+        values
+          .sort((a, b) => {
+            // @ts-ignore
+            const aMeta = a.clone().json().metadata;
+            //  @ts-ignore
+            const bMeta = b.clone().json().metadata;
+
+            return aMeta.accessedAt - bMeta.accessedAt;
+          })
+          // This runs everytime a new entry is added so that means the array maximum size can never
+          // exceed `maxItems + 1` (the new entry + the maxItems), so we can safely slice the array
+          // to the maxItems length starting from the first index.
+          .slice(1);
+      });
+    }
+  }
+
   private async _getResponseValue(request: Request, response: Response) {
     const { metadata, value }: ResponseBody = await response.clone().json();
 
@@ -144,7 +170,10 @@ export class RemixCache implements CustomCache {
       );
 
       await this.put(request, res.clone(), undefined, true);
-      return res.json().then(({ value }) => value);
+      return res
+        .clone()
+        .json()
+        .then(({ value }) => value);
     }
 
     return undefined;
@@ -268,6 +297,7 @@ export class RemixCache implements CustomCache {
 
     // Cache the updated response and maintain the cache
     try {
+      await this._lruCleanup();
       return await cache.put(request, response.clone());
     } catch (error) {
       console.error('Failed to put to cache:', error);
