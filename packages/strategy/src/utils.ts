@@ -24,3 +24,14 @@ export const isHttpRequest = (request: Request | URL): boolean => {
 
   return request.toString().startsWith('http');
 };
+
+/**
+ * Converts a response to JSON.
+ */
+export const toJSON = async (response: Response | any) => {
+  if (response instanceof Response) {
+    return await response.clone().json();
+  }
+
+  return response;
+};
