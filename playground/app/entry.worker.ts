@@ -1,6 +1,6 @@
 /// <reference lib="WebWorker" />
 
-import { matchRequest, NetworkFirst, CacheFirst, PrecacheHandler } from "@remix-pwa/sw";
+import { matchRequest, NetworkFirst, CacheFirst, RemixNavigationHandler } from "@remix-pwa/sw";
 import createStorageRepository from "./database";
 
 declare let self: ServiceWorkerGlobalScope;
@@ -9,10 +9,9 @@ const PAGES = "page-cache";
 const DATA = "data-cache";
 const ASSETS = "assets-cache";
 
-const precacheHandler = new PrecacheHandler({
+let handler = new RemixNavigationHandler({
   dataCacheName: DATA,
   documentCacheName: PAGES,
-  assetCacheName: ASSETS,
 });
 
 const documentHandler = new NetworkFirst({
@@ -67,5 +66,5 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("message", (event) => {
-  event.waitUntil(precacheHandler.handle(event));
+  event.waitUntil(handler.handle(event));
 });

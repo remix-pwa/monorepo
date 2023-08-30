@@ -39,6 +39,13 @@ var require_root = __commonJS({
   }
 });
 
+// empty-module:@remix-run/node
+var require_node = __commonJS({
+  "empty-module:@remix-run/node"(exports, module) {
+    module.exports = {};
+  }
+});
+
 // empty-module:@remix-run/react
 var require_react = __commonJS({
   "empty-module:@remix-run/react"(exports, module) {
@@ -63,13 +70,6 @@ var require_jsx_runtime = __commonJS({
 // routes-module:routes/_index.tsx?worker
 var require_index = __commonJS({
   "routes-module:routes/_index.tsx?worker"(exports, module) {
-    module.exports = {};
-  }
-});
-
-// empty-module:@remix-run/node
-var require_node = __commonJS({
-  "empty-module:@remix-run/node"(exports, module) {
     module.exports = {};
   }
 });
@@ -114,14 +114,14 @@ __export(router_exports, {
   createPath: () => createPath,
   createRouter: () => createRouter,
   createStaticHandler: () => createStaticHandler,
-  defer: () => defer3,
+  defer: () => defer4,
   generatePath: () => generatePath,
   getStaticContextFromError: () => getStaticContextFromError,
   getToPathname: () => getToPathname,
   isDeferredData: () => isDeferredData,
   isRouteErrorResponse: () => isRouteErrorResponse2,
   joinPaths: () => joinPaths,
-  json: () => json4,
+  json: () => json5,
   matchPath: () => matchPath,
   matchRoutes: () => matchRoutes,
   normalizePathname: () => normalizePathname,
@@ -637,7 +637,7 @@ function explodeOptionalSegments(path) {
   return result.map((exploded) => path.startsWith("/") && exploded === "" ? "/" : exploded);
 }
 function rankRouteBranches(branches) {
-  branches.sort((a, b) => a.score !== b.score ? b.score - a.score : compareIndexes(a.routesMeta.map((meta) => meta.childrenIndex), b.routesMeta.map((meta) => meta.childrenIndex)));
+  branches.sort((a, b2) => a.score !== b2.score ? b2.score - a.score : compareIndexes(a.routesMeta.map((meta) => meta.childrenIndex), b2.routesMeta.map((meta) => meta.childrenIndex)));
 }
 function computeScore(path, index) {
   let segments = path.split("/");
@@ -650,14 +650,14 @@ function computeScore(path, index) {
   }
   return segments.filter((s) => !isSplat(s)).reduce((score, segment) => score + (paramRe.test(segment) ? dynamicSegmentValue : segment === "" ? emptySegmentValue : staticSegmentValue), initialScore);
 }
-function compareIndexes(a, b) {
-  let siblings = a.length === b.length && a.slice(0, -1).every((n, i) => n === b[i]);
+function compareIndexes(a, b2) {
+  let siblings = a.length === b2.length && a.slice(0, -1).every((n, i) => n === b2[i]);
   return siblings ? (
     // If two routes are siblings, we should try to match the earlier sibling
     // first. This allows people to have fine-grained control over the matching
     // behavior by simply putting routes with identical paths in the order they
     // want them tried.
-    a[a.length - 1] - b[b.length - 1]
+    a[a.length - 1] - b2[b2.length - 1]
   ) : (
     // Otherwise, it doesn't really make sense to rank non-siblings by index,
     // so they sort equally.
@@ -1069,7 +1069,7 @@ function createRouter(init) {
     let blockers = state.blockers;
     if (blockers.size > 0) {
       blockers = new Map(blockers);
-      blockers.forEach((_, k) => blockers.set(k, IDLE_BLOCKER));
+      blockers.forEach((_, k2) => blockers.set(k2, IDLE_BLOCKER));
     }
     let preventScrollReset = pendingPreventScrollReset === true || state.navigation.formMethod != null && isMutationMethod(state.navigation.formMethod) && ((_location$state2 = location2.state) == null ? void 0 : _location$state2._isRedirect) !== true;
     if (inFlightDataRoutes) {
@@ -1372,7 +1372,7 @@ function createRouter(init) {
         fetchControllers.set(rf.key, rf.controller);
       }
     });
-    let abortPendingFetchRevalidations = () => revalidatingFetchers.forEach((f) => abortFetcher(f.key));
+    let abortPendingFetchRevalidations = () => revalidatingFetchers.forEach((f2) => abortFetcher(f2.key));
     if (pendingNavigationController) {
       pendingNavigationController.signal.addEventListener("abort", abortPendingFetchRevalidations);
     }
@@ -1729,14 +1729,14 @@ function createRouter(init) {
     }
   }
   async function callLoadersAndMaybeResolveData(currentMatches, matches, matchesToLoad, fetchersToLoad, request) {
-    let results = await Promise.all([...matchesToLoad.map((match) => callLoaderOrAction("loader", request, match, matches, manifest, mapRouteProperties, basename)), ...fetchersToLoad.map((f) => {
-      if (f.matches && f.match && f.controller) {
-        return callLoaderOrAction("loader", createClientSideRequest(init.history, f.path, f.controller.signal), f.match, f.matches, manifest, mapRouteProperties, basename);
+    let results = await Promise.all([...matchesToLoad.map((match) => callLoaderOrAction("loader", request, match, matches, manifest, mapRouteProperties, basename)), ...fetchersToLoad.map((f2) => {
+      if (f2.matches && f2.match && f2.controller) {
+        return callLoaderOrAction("loader", createClientSideRequest(init.history, f2.path, f2.controller.signal), f2.match, f2.matches, manifest, mapRouteProperties, basename);
       } else {
         let error = {
           type: ResultType2.error,
           error: getInternalRouterError(404, {
-            pathname: f.path
+            pathname: f2.path
           })
         };
         return error;
@@ -1744,7 +1744,7 @@ function createRouter(init) {
     })]);
     let loaderResults = results.slice(0, matchesToLoad.length);
     let fetcherResults = results.slice(matchesToLoad.length);
-    await Promise.all([resolveDeferredResults(currentMatches, matchesToLoad, loaderResults, loaderResults.map(() => request.signal), false, state.loaderData), resolveDeferredResults(currentMatches, fetchersToLoad.map((f) => f.match), fetcherResults, fetchersToLoad.map((f) => f.controller ? f.controller.signal : null), true)]);
+    await Promise.all([resolveDeferredResults(currentMatches, matchesToLoad, loaderResults, loaderResults.map(() => request.signal), false, state.loaderData), resolveDeferredResults(currentMatches, fetchersToLoad.map((f2) => f2.match), fetcherResults, fetchersToLoad.map((f2) => f2.controller ? f2.controller.signal : null), true)]);
     return {
       results,
       loaderResults,
@@ -1888,10 +1888,10 @@ function createRouter(init) {
     getScrollRestorationKey = getKey || null;
     if (!initialScrollRestored && state.navigation === IDLE_NAVIGATION) {
       initialScrollRestored = true;
-      let y = getSavedScrollPosition(state.location, state.matches);
-      if (y != null) {
+      let y2 = getSavedScrollPosition(state.location, state.matches);
+      if (y2 != null) {
         updateState({
-          restoreScrollPosition: y
+          restoreScrollPosition: y2
         });
       }
     }
@@ -1917,9 +1917,9 @@ function createRouter(init) {
   function getSavedScrollPosition(location2, matches) {
     if (savedScrollPositions) {
       let key = getScrollKey(location2, matches);
-      let y = savedScrollPositions[key];
-      if (typeof y === "number") {
-        return y;
+      let y2 = savedScrollPositions[key];
+      if (typeof y2 === "number") {
+        return y2;
       }
     }
     return null;
@@ -2353,7 +2353,7 @@ function normalizeNavigateOptions(normalizeFormMethod, isFetcher, path, opts) {
         return getInvalidBodyError();
       }
       try {
-        let json8 = typeof opts.body === "string" ? JSON.parse(opts.body) : opts.body;
+        let json9 = typeof opts.body === "string" ? JSON.parse(opts.body) : opts.body;
         return {
           path,
           submission: {
@@ -2361,7 +2361,7 @@ function normalizeNavigateOptions(normalizeFormMethod, isFetcher, path, opts) {
             formAction,
             formEncType: opts.formEncType,
             formData: void 0,
-            json: json8,
+            json: json9,
             text: void 0
           }
         };
@@ -2461,16 +2461,16 @@ function getMatchesToLoad(history, state, matches, submission, location2, isReva
     }));
   });
   let revalidatingFetchers = [];
-  fetchLoadMatches.forEach((f, key) => {
-    if (!matches.some((m) => m.route.id === f.routeId)) {
+  fetchLoadMatches.forEach((f2, key) => {
+    if (!matches.some((m) => m.route.id === f2.routeId)) {
       return;
     }
-    let fetcherMatches = matchRoutes(routesToUse, f.path, basename);
+    let fetcherMatches = matchRoutes(routesToUse, f2.path, basename);
     if (!fetcherMatches) {
       revalidatingFetchers.push({
         key,
-        routeId: f.routeId,
-        path: f.path,
+        routeId: f2.routeId,
+        path: f2.path,
         matches: null,
         match: null,
         controller: null
@@ -2478,7 +2478,7 @@ function getMatchesToLoad(history, state, matches, submission, location2, isReva
       return;
     }
     let fetcher = state.fetchers.get(key);
-    let fetcherMatch = getTargetMatch(fetcherMatches, f.path);
+    let fetcherMatch = getTargetMatch(fetcherMatches, f2.path);
     let shouldRevalidate = false;
     if (fetchRedirectIds.has(key)) {
       shouldRevalidate = false;
@@ -2500,8 +2500,8 @@ function getMatchesToLoad(history, state, matches, submission, location2, isReva
     if (shouldRevalidate) {
       revalidatingFetchers.push({
         key,
-        routeId: f.routeId,
-        path: f.path,
+        routeId: f2.routeId,
+        path: f2.path,
         matches: fetcherMatches,
         match: fetcherMatch,
         controller: new AbortController()
@@ -2570,28 +2570,28 @@ async function callLoaderOrAction(type2, request, match, matches, manifest, mapR
   let resultType;
   let result;
   let onReject;
-  let runHandler = (handler) => {
+  let runHandler = (handler2) => {
     let reject;
     let abortPromise = new Promise((_, r) => reject = r);
     onReject = () => reject();
     request.signal.addEventListener("abort", onReject);
-    return Promise.race([handler({
+    return Promise.race([handler2({
       request,
       params: match.params,
       context: opts.requestContext
     }), abortPromise]);
   };
   try {
-    let handler = match.route[type2];
+    let handler2 = match.route[type2];
     if (match.route.lazy) {
-      if (handler) {
-        let values = await Promise.all([runHandler(handler), loadLazyRouteModule(match.route, mapRouteProperties, manifest)]);
+      if (handler2) {
+        let values = await Promise.all([runHandler(handler2), loadLazyRouteModule(match.route, mapRouteProperties, manifest)]);
         result = values[0];
       } else {
         await loadLazyRouteModule(match.route, mapRouteProperties, manifest);
-        handler = match.route[type2];
-        if (handler) {
-          result = await runHandler(handler);
+        handler2 = match.route[type2];
+        if (handler2) {
+          result = await runHandler(handler2);
         } else if (type2 === "action") {
           let url = new URL(request.url);
           let pathname = url.pathname + url.search;
@@ -2607,14 +2607,14 @@ async function callLoaderOrAction(type2, request, match, matches, manifest, mapR
           };
         }
       }
-    } else if (!handler) {
+    } else if (!handler2) {
       let url = new URL(request.url);
       let pathname = url.pathname + url.search;
       throw getInternalRouterError(404, {
         pathname
       });
     } else {
-      result = await runHandler(handler);
+      result = await runHandler(handler2);
     }
     invariant2(result !== void 0, "You defined " + (type2 === "action" ? "an action" : "a loader") + " for route " + ('"' + match.route.id + "\" but didn't return anything from your `" + type2 + "` ") + "function. Please return a value or `null`.");
   } catch (e) {
@@ -2915,15 +2915,15 @@ function stripHashFromPath(path) {
     hash: ""
   }));
 }
-function isHashChangeOnly(a, b) {
-  if (a.pathname !== b.pathname || a.search !== b.search) {
+function isHashChangeOnly(a, b2) {
+  if (a.pathname !== b2.pathname || a.search !== b2.search) {
     return false;
   }
   if (a.hash === "") {
-    return b.hash !== "";
-  } else if (a.hash === b.hash) {
+    return b2.hash !== "";
+  } else if (a.hash === b2.hash) {
     return true;
-  } else if (b.hash !== "") {
+  } else if (b2.hash !== "") {
     return true;
   }
   return false;
@@ -3039,7 +3039,7 @@ function getSubmissionFromNavigation(navigation) {
     formEncType,
     text,
     formData,
-    json: json8
+    json: json9
   } = navigation;
   if (!formMethod || !formAction || !formEncType) {
     return;
@@ -3062,13 +3062,13 @@ function getSubmissionFromNavigation(navigation) {
       json: void 0,
       text: void 0
     };
-  } else if (json8 !== void 0) {
+  } else if (json9 !== void 0) {
     return {
       formMethod,
       formAction,
       formEncType,
       formData: void 0,
-      json: json8,
+      json: json9,
       text: void 0
     };
   }
@@ -3170,7 +3170,7 @@ function getDoneFetcher(data) {
   };
   return fetcher;
 }
-var Action2, PopStateEventType, ResultType2, immutableRouteKeys, paramRe, dynamicSegmentValue, indexRouteValue, emptySegmentValue, staticSegmentValue, splatPenalty, isSplat, joinPaths, normalizePathname, normalizeSearch, normalizeHash, json4, AbortedDeferredError2, DeferredData2, defer3, redirect3, ErrorResponse, validMutationMethodsArr2, validMutationMethods2, validRequestMethodsArr2, validRequestMethods2, redirectStatusCodes, redirectPreserveMethodStatusCodes, IDLE_NAVIGATION, IDLE_FETCHER, IDLE_BLOCKER, ABSOLUTE_URL_REGEX, defaultMapRouteProperties, UNSAFE_DEFERRED_SYMBOL2;
+var Action2, PopStateEventType, ResultType2, immutableRouteKeys, paramRe, dynamicSegmentValue, indexRouteValue, emptySegmentValue, staticSegmentValue, splatPenalty, isSplat, joinPaths, normalizePathname, normalizeSearch, normalizeHash, json5, AbortedDeferredError2, DeferredData2, defer4, redirect3, ErrorResponse, validMutationMethodsArr2, validMutationMethods2, validRequestMethodsArr2, validRequestMethods2, redirectStatusCodes, redirectPreserveMethodStatusCodes, IDLE_NAVIGATION, IDLE_FETCHER, IDLE_BLOCKER, ABSOLUTE_URL_REGEX, defaultMapRouteProperties, UNSAFE_DEFERRED_SYMBOL2;
 var init_router = __esm({
   "../node_modules/@remix-run/server-runtime/node_modules/@remix-run/router/dist/router.js"() {
     (function(Action3) {
@@ -3197,7 +3197,7 @@ var init_router = __esm({
     normalizePathname = (pathname) => pathname.replace(/\/+$/, "").replace(/^\/*/, "/");
     normalizeSearch = (search) => !search || search === "?" ? "" : search.startsWith("?") ? search : "?" + search;
     normalizeHash = (hash) => !hash || hash === "#" ? "" : hash.startsWith("#") ? hash : "#" + hash;
-    json4 = function json5(data, init) {
+    json5 = function json6(data, init) {
       if (init === void 0) {
         init = {};
       }
@@ -3293,7 +3293,7 @@ var init_router = __esm({
       }
       cancel() {
         this.controller.abort();
-        this.pendingKeysSet.forEach((v, k) => this.pendingKeysSet.delete(k));
+        this.pendingKeysSet.forEach((v, k2) => this.pendingKeysSet.delete(k2));
         this.emit(true);
       }
       async resolveData(signal) {
@@ -3328,7 +3328,7 @@ var init_router = __esm({
         return Array.from(this.pendingKeysSet);
       }
     };
-    defer3 = function defer4(data, init) {
+    defer4 = function defer5(data, init) {
       if (init === void 0) {
         init = {};
       }
@@ -3485,10 +3485,10 @@ var require_responses = __commonJS({
     Object.defineProperty(exports, "__esModule", { value: true });
     var router = (init_router(), __toCommonJS(router_exports));
     var errors = require_errors();
-    var json8 = (data, init = {}) => {
+    var json9 = (data, init = {}) => {
       return router.json(data, init);
     };
-    var defer5 = (data, init = {}) => {
+    var defer6 = (data, init = {}) => {
       return router.defer(data, init);
     };
     var redirect6 = (url, init = 302) => {
@@ -3556,31 +3556,423 @@ var require_responses = __commonJS({
       }
     }
     exports.createDeferredReadableStream = createDeferredReadableStream2;
-    exports.defer = defer5;
+    exports.defer = defer6;
     exports.isDeferredData = isDeferredData3;
     exports.isRedirectResponse = isRedirectResponse3;
     exports.isRedirectStatusCode = isRedirectStatusCode2;
     exports.isResponse = isResponse3;
-    exports.json = json8;
+    exports.json = json9;
     exports.redirect = redirect6;
   }
 });
 
 // entry-module:@remix-pwa/build/magic
-var magic_exports = {};
-__export(magic_exports, {
-  entry: () => entry,
-  routes: () => routes
-});
 var route0 = __toESM(require_root());
+
+// routes-module:routes/basic-caching.tsx?worker
+var basic_caching_exports = {};
+__export(basic_caching_exports, {
+  hasWorkerAction: () => hasWorkerAction,
+  hasWorkerLoader: () => hasWorkerLoader,
+  workerLoader: () => workerLoader
+});
+
+// ../node_modules/cachified/dist/index.mjs
+var k = Symbol();
+var w = Symbol();
+var f = Symbol();
+
+// ../packages/cache/dist/src/cache.js
+var Strategy;
+(function(Strategy2) {
+  Strategy2["CacheFirst"] = "cache-first";
+  Strategy2["NetworkFirst"] = "network-first";
+  Strategy2["CacheOnly"] = "cache-only";
+  Strategy2["NetworkOnly"] = "network-only";
+  Strategy2["StaleWhileRevalidate"] = "stale-while-revalidate";
+})(Strategy || (Strategy = {}));
+var RemixCache = class {
+  /**
+   * Create a new `RemixCache` instance. Don't invoke this directly! Use `initCache` instead.
+   * @constructor
+   * @param {object} options - Options for the RemixCache instance.
+   */
+  constructor(options) {
+    this.ttl = Infinity;
+    this.strategy = Strategy.NetworkFirst;
+    this.maxItems = 100;
+    this.name = options.name;
+    this.maxItems = options.maxItems || 100;
+    this.strategy = options.strategy || Strategy.NetworkFirst;
+    this.ttl = options.ttl || Infinity;
+    if (this.strategy === Strategy.NetworkOnly) {
+      this.ttl = -1;
+    }
+  }
+  async _openCache() {
+    return await caches.open(this.name);
+  }
+  async _maintainCache() {
+    const cache = await this._openCache();
+    const keysResponse = await cache.keys();
+    const validKeys = [];
+    const now = Date.now();
+    for (const request of keysResponse) {
+      const response = await cache.match(request);
+      if (response) {
+        const expiresAtHeader = response.headers.get("x-cache-expires-at");
+        const expiresAt = parseInt(expiresAtHeader, 10);
+        if (!expiresAt || expiresAt > now) {
+          validKeys.push({
+            key: request.url,
+            accessedAt: parseInt(response.headers.get("x-cache-accessed-at"), 10) || 0
+          });
+        } else {
+          await cache.delete(request);
+        }
+      }
+    }
+    validKeys.sort((a, b2) => a.accessedAt - b2.accessedAt);
+    if (validKeys.length > this.maxItems) {
+      const keysToRemove = validKeys.slice(0, validKeys.length - this.maxItems);
+      for (const keyToRemove of keysToRemove) {
+        await cache.delete(keyToRemove.key);
+      }
+    }
+  }
+  _updateHeaders(response, headersToUpdate) {
+    const headers = new Headers(response.headers);
+    for (const [headerName, headerValue] of Object.entries(headersToUpdate)) {
+      headers.set(headerName, headerValue);
+    }
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers
+    });
+  }
+  /**
+   * Delete an entry from the cache.
+   * Takes in the same parameters as `Cache.delete`.
+   * @param {RequestInfo | URL} request - The request to delete.
+   * @param {CacheQueryOptions} [options] - Options for the delete operation.
+   * @returns {Promise<boolean>} Returns `true` if an entry was deleted, otherwise `false`.
+   *
+   * @example
+   * ```js
+   * const cache = await initCache({ name: 'my-cache' });
+   *
+   * await cache.put('/hello-world', new Response('Hello World!'));
+   * await cache.delete('/hello-world');
+   * ```
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Cache/delete
+   */
+  async delete(request, options) {
+    return this._openCache().then((cache) => cache.delete(request, options));
+  }
+  /**
+   * Returns a Promise that resolves to the length of the Cache object.
+   *
+   * @returns {Promise<number>} The number of entries in the cache.
+   */
+  async length() {
+    const keys2 = await this.keys();
+    return keys2.length;
+  }
+  /**
+   * Returns a `Promise` that resolves to an array of Cache keys.
+   *
+   * @returns {Promise<readonly Request[]>} An array of Cache keys.
+   */
+  async keys() {
+    const cache = await this._openCache();
+    return await cache.keys();
+  }
+  /**
+   * Return a `Promise` that resolves to an entry in the cache object. Accepts the
+   * same parameters as `Cache.match`.
+   *
+   * @param {RequestInfo | URL} request - The request to match.
+   * @param {CacheQueryOptions} [options] - Options for the match operation.
+   *
+   * @returns {Promise<Response | undefined>} A `Promise` that resolves to the response, or `undefined` if not found.
+   */
+  async match(request, options) {
+    const cache = await caches.open(this.name);
+    const response = await cache.match(request, options);
+    if (!response) {
+      return void 0;
+    }
+    const now = Date.now();
+    const res = this._updateHeaders(response, {
+      "x-cache-accessed-at": now.toString()
+    });
+    await cache.put(request, res.clone());
+    this._maintainCache();
+    return res;
+  }
+  /**
+   * Add an entry to the cache.
+   * Takes in the same parameters as `Cache.put`.
+   *
+   * @param {RequestInfo | URL} request - The request to add.
+   * @param {Response} response - The response to add.
+   * @returns {Promise<void>} A `Promise` that resolves when the entry is added to the cache.
+   *
+   * @example
+   * ```js
+   * const cache = await initCache({ name: 'my-cache' });
+   *
+   * await cache.put('/hello-world', new Response('Hello World!'));
+   * ```
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Cache/put
+   */
+  async put(request, response, ttl = this.ttl) {
+    const cache = await this._openCache();
+    if (this.ttl < 0)
+      return;
+    const now = Date.now();
+    const expiresAt = now + ttl;
+    const headersToUpdate = {
+      "x-cache-accessed-at": now.toString(),
+      "x-cache-expires-at": expiresAt.toString()
+    };
+    const updatedResponse = this._updateHeaders(response.clone(), headersToUpdate);
+    try {
+      await cache.put(request, updatedResponse);
+      await this._maintainCache();
+    } catch (error) {
+      console.error("Failed to put to cache:", error);
+    }
+  }
+};
+
+// ../packages/cache/dist/src/storage.js
+var RemixCacheStorage = class {
+  // eslint-disable-next-line no-useless-constructor
+  constructor() {
+  }
+  /**
+   * Initialize the Remix PWA Cache Storage. This will create a special cache for each
+   * existing cache in the browser or create a new map if none exist.
+   *
+   * Use in your service worker installation script.
+   *
+   * @example
+   * ```js
+   * import { RemixCacheStorage } from '@remix-run/cache';
+   *
+   * self.addEventListener('install', (event) => {
+   *  event.waitUntil(Promise.all[
+   *   RemixCacheStorage.init(),
+   *   // other stuff
+   *  ]);
+   * });
+   * ```
+   */
+  static async init() {
+    if (typeof caches === "undefined") {
+      throw new Error("Cache API is not available in this environment.");
+    }
+    if (this._instances.size > 0) {
+      return;
+    }
+    const cachesNames = await caches.keys();
+    for (const name of cachesNames) {
+      this._instances.set(name, new RemixCache({ name }));
+    }
+  }
+  /**
+   * Create a custom cache that you can use across your application.
+   * Use this instead of initialising `RemixCache` directly.
+   */
+  static createCache(opts) {
+    const newCache = new RemixCache(opts);
+    this._instances.set(opts.name, newCache);
+    return newCache;
+  }
+  /**
+   * Check wether a cache with the given name exists.
+   *
+   * @param name
+   */
+  static has(name) {
+    return this._instances.has(name);
+  }
+  /**
+   * Get a cache by name. Returns `undefined` if no cache with the given name exists.
+   * Use `has` to check if a cache exists. Or `open` to create one automatically if non exists.
+   *
+   * @param name
+   * @returns {RemixCache | undefined}
+   *
+   * @example
+   * ```js
+   * import { Storage } from '@remix-run/cache';
+   *
+   * const cache = Storage.get('my-cache');
+   * ```
+   */
+  static get(name) {
+    return this._instances.get(name);
+  }
+  /**
+   * Get a cache by name. If no cache with the given name exists, create one.
+   *
+   * @param name
+   * @returns {RemixCache}
+   *
+   * @example
+   * ```js
+   * import { Storage } from '@remix-run/cache';
+   *
+   * const cache = Storage.open('my-cache');
+   * ```
+   */
+  static open(name) {
+    const cache = this._instances.get(name);
+    if (!cache) {
+      return this.createCache({ name });
+    }
+    return cache;
+  }
+  /**
+   * Delete a cache by name.
+   *
+   * @param name
+   */
+  static delete(name) {
+    const cache = this._instances.get(name);
+    if (cache) {
+      caches.delete(name);
+      this._instances.delete(name);
+    }
+  }
+  /**
+   * Delete all caches.
+   */
+  static clear() {
+    this._instances.forEach((cache) => caches.delete(cache.name));
+    this._instances = /* @__PURE__ */ new Map();
+  }
+  /**
+   * Get all caches. **Don't use this except you know what you are doing!**
+   *
+   * Which, frankly speaking, you probably don't. So shoo away!
+   */
+  static get instances() {
+    return this._instances;
+  }
+  /**
+   * Get the number of caches.
+   *
+   * Return the length of the `RemixCacheStorage` store.
+   */
+  static get _length() {
+    return this._instances.size;
+  }
+  /**
+   * Check if a request is stored as the key of a response in all caches.
+   *
+   * Experimental. Use at your own risk!
+   *
+   * @param {RequestInfo | URL} request
+   */
+  static _match(request) {
+    return caches.match(request);
+  }
+};
+RemixCacheStorage._instances = /* @__PURE__ */ new Map();
+var Storage = RemixCacheStorage;
+var initCache = (options) => {
+  return Storage.createCache(options);
+};
+var createCache = initCache;
+
+// ../packages/strategy/dist/src/utils.js
+var isHttpRequest = (request) => {
+  if (request instanceof Request) {
+    return request.url.startsWith("http");
+  }
+  return request.toString().startsWith("http");
+};
+
+// ../packages/strategy/dist/src/cacheFirst.js
+var cacheFirst = async ({ cache: cacheName, cacheOptions, fetchDidFail = void 0 }) => {
+  return async (request) => {
+    if (!isHttpRequest(request)) {
+      return new Response("Not a HTTP request", { status: 403 });
+    }
+    let remixCache;
+    if (typeof cacheName === "string") {
+      Storage.init();
+      remixCache = Storage.has(cacheName) ? Storage.get(cacheName) : createCache({ name: cacheName, ...cacheOptions });
+    } else {
+      Storage.init();
+      remixCache = cacheName;
+    }
+    const response = await remixCache.match(request);
+    if (!response) {
+      try {
+        const networkResponse = await fetch(request);
+        remixCache.put(request, networkResponse.clone());
+        return networkResponse;
+      } catch (err) {
+        if (fetchDidFail) {
+          await Promise.all(fetchDidFail.map((cb) => cb()));
+        }
+        throw err;
+      }
+    }
+    return response;
+  };
+};
+
+// app/routes/basic-caching.tsx
+var import_node = __toESM(require_node());
+var import_react = __toESM(require_react());
+var import_react2 = __toESM(require_react2());
+var import_jsx_runtime = __toESM(require_jsx_runtime());
+var workerLoader = async ({ context }) => {
+  const customStrategy = await cacheFirst({
+    cache: "basic-caching",
+    cacheOptions: {
+      maxItems: 5,
+      ttl: 10 * 1e3
+      // 10 seconds
+    },
+    fetchDidFail: [
+      () => console.log("Fetch failed!")
+    ]
+  });
+  const response = await customStrategy(context.event.request);
+  const data = await response.json();
+  const date = /* @__PURE__ */ new Date();
+  return new Response(JSON.stringify({
+    data: data.data,
+    // Only this shows an updated time, the other one doesn't because it's cached.
+    // Try deleting the cache and reloading the page to see the difference.
+    message: `Server already up and running! Time: ${date.getMinutes()}:${date.getSeconds()}`
+  }), {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+};
+
+// routes-module:routes/basic-caching.tsx?worker
+var hasWorkerAction = false;
+var hasWorkerLoader = true;
 
 // routes-module:routes/_app.flights.tsx?worker
 var app_flights_exports = {};
 __export(app_flights_exports, {
-  hasWorkerAction: () => hasWorkerAction,
-  hasWorkerLoader: () => hasWorkerLoader,
+  hasWorkerAction: () => hasWorkerAction2,
+  hasWorkerLoader: () => hasWorkerLoader2,
   workerAction: () => workerAction,
-  workerLoader: () => workerLoader
+  workerLoader: () => workerLoader2
 });
 
 // ../node_modules/@remix-run/router/dist/router.js
@@ -3616,7 +4008,7 @@ var ResultType;
   ResultType3["redirect"] = "redirect";
   ResultType3["error"] = "error";
 })(ResultType || (ResultType = {}));
-var json = function json2(data, init) {
+var json2 = function json3(data, init) {
   if (init === void 0) {
     init = {};
   }
@@ -3712,7 +4104,7 @@ var DeferredData = class {
   }
   cancel() {
     this.controller.abort();
-    this.pendingKeysSet.forEach((v, k) => this.pendingKeysSet.delete(k));
+    this.pendingKeysSet.forEach((v, k2) => this.pendingKeysSet.delete(k2));
     this.emit(true);
   }
   async resolveData(signal) {
@@ -3796,9 +4188,9 @@ var validRequestMethods = new Set(validRequestMethodsArr);
 var UNSAFE_DEFERRED_SYMBOL = Symbol("deferred");
 
 // app/routes/_app.flights.tsx
-var import_react = __toESM(require_react());
-var import_react2 = __toESM(require_react2());
-var import_jsx_runtime = __toESM(require_jsx_runtime());
+var import_react3 = __toESM(require_react());
+var import_react4 = __toESM(require_react2());
+var import_jsx_runtime2 = __toESM(require_jsx_runtime());
 var workerAction = async ({ request, context }) => {
   const formData = await request.formData();
   const { database, fetchFromServer } = context;
@@ -3807,10 +4199,10 @@ var workerAction = async ({ request, context }) => {
     await database.selections.add(Object.fromEntries(formData.entries()));
     return redirect("/selection");
   } catch (error) {
-    throw json({ message: "Something went wrong", error }, 500);
+    throw json2({ message: "Something went wrong", error }, 500);
   }
 };
-var workerLoader = async ({ context }) => {
+var workerLoader2 = async ({ context }) => {
   try {
     const { fetchFromServer, database } = context;
     const [serverResult, clientResult] = await Promise.allSettled([
@@ -3822,58 +4214,115 @@ var workerLoader = async ({ context }) => {
     const flights = serverResult.value || clientResult.value;
     if (serverResult.value) {
       await database.flights.bulkPut(
-        flights.map((f) => ({
-          ...f,
-          flightNumber: `${f.flightNumber.split("-")[0].trim()} - client`
+        flights.map((f2) => ({
+          ...f2,
+          flightNumber: `${f2.flightNumber.split("-")[0].trim()} - client`
         }))
       );
     }
     return defer({ flights });
   } catch (error) {
     console.error(error);
-    throw json({ message: "Something went wrong", error }, 500);
+    throw json2({ message: "Something went wrong", error }, 500);
   }
 };
 
 // routes-module:routes/_app.flights.tsx?worker
-var hasWorkerAction = true;
-var hasWorkerLoader = true;
+var hasWorkerAction2 = true;
+var hasWorkerLoader2 = true;
 
 // routes-module:routes/selection.tsx?worker
 var selection_exports = {};
 __export(selection_exports, {
-  hasWorkerAction: () => hasWorkerAction2,
-  hasWorkerLoader: () => hasWorkerLoader2,
-  workerLoader: () => workerLoader2
-});
-
-// app/routes/selection.tsx
-var import_react3 = __toESM(require_react());
-var import_jsx_runtime2 = __toESM(require_jsx_runtime());
-async function workerLoader2({ context }) {
-  const { database } = context;
-  const selections = await database.selections.toArray();
-  return json({ selections });
-}
-
-// routes-module:routes/selection.tsx?worker
-var hasWorkerAction2 = false;
-var hasWorkerLoader2 = true;
-
-// entry-module:@remix-pwa/build/magic
-var route3 = __toESM(require_index());
-
-// routes-module:routes/_app.tsx?worker
-var app_exports = {};
-__export(app_exports, {
   hasWorkerAction: () => hasWorkerAction3,
   hasWorkerLoader: () => hasWorkerLoader3,
   workerLoader: () => workerLoader3
 });
 
-// app/routes/_app.tsx
-var import_node = __toESM(require_node());
+// app/routes/selection.tsx
+var import_react5 = __toESM(require_react());
+var import_jsx_runtime3 = __toESM(require_jsx_runtime());
+async function workerLoader3({ context }) {
+  const { database } = context;
+  const selections = await database.selections.toArray();
+  return json2({ selections });
+}
+
+// routes-module:routes/selection.tsx?worker
+var hasWorkerAction3 = false;
+var hasWorkerLoader3 = true;
+
+// entry-module:@remix-pwa/build/magic
+var route4 = __toESM(require_index());
+
+// routes-module:routes/basic.tsx?worker
+var basic_exports = {};
+__export(basic_exports, {
+  hasWorkerAction: () => hasWorkerAction4,
+  hasWorkerLoader: () => hasWorkerLoader4,
+  workerLoader: () => workerLoader4
+});
+
+// app/routes/basic.tsx
+var import_node2 = __toESM(require_node());
 var import_react6 = __toESM(require_react());
+var import_react7 = __toESM(require_react2());
+var import_jsx_runtime4 = __toESM(require_jsx_runtime());
+var workerLoader4 = async ({ context }) => {
+  const { fetchFromServer } = context;
+  const message = await Promise.race([
+    fetchFromServer().then((response) => response.json()).then(({ message: message2 }) => message2),
+    new Promise((resolve) => setTimeout(resolve, 500, "Hello World!\n\n\u2022 This message is sent to you from the client \u{1F61C}!"))
+  ]);
+  return new Response(
+    JSON.stringify({
+      message
+    }),
+    {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+  );
+};
+
+// routes-module:routes/basic.tsx?worker
+var hasWorkerAction4 = false;
+var hasWorkerLoader4 = true;
+
+// routes-module:routes/_app.tsx?worker
+var app_exports = {};
+__export(app_exports, {
+  hasWorkerAction: () => hasWorkerAction5,
+  hasWorkerLoader: () => hasWorkerLoader5,
+  workerLoader: () => workerLoader5
+});
+
+// app/routes/_app.tsx
+var import_node3 = __toESM(require_node());
+var import_react8 = __toESM(require_react());
+var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+async function workerLoader5({ context }) {
+  const { fetchFromServer } = context;
+  const data = await fetchFromServer().then((response) => response.json());
+  console.log(data);
+  return new Response(JSON.stringify(data), {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+}
+
+// routes-module:routes/_app.tsx?worker
+var hasWorkerAction5 = false;
+var hasWorkerLoader5 = true;
+
+// app/entry.worker.ts
+var entry_worker_exports = {};
+__export(entry_worker_exports, {
+  defaultFetchHandler: () => defaultFetchHandler,
+  getLoadContext: () => getLoadContext
+});
 
 // node_modules/@remix-pwa/sw/lib/core/logger.js
 var methodToColorMap = {
@@ -4043,7 +4492,7 @@ var MessageHandler = class {
   }
 };
 
-// node_modules/@remix-pwa/sw/lib/message/precacheHandler.js
+// node_modules/@remix-pwa/sw/lib/message/remixNavigationHandler.js
 var __awaiter2 = function(thisArg, _arguments, P, generator) {
   function adopt(value) {
     return value instanceof P ? value : new P(function(resolve) {
@@ -4071,9 +4520,9 @@ var __awaiter2 = function(thisArg, _arguments, P, generator) {
     step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
 };
-var PrecacheHandler = class extends MessageHandler {
-  constructor({ plugins, dataCacheName, documentCacheName, assetCacheName, state }) {
-    super({ plugins, state: {} });
+var RemixNavigationHandler = class extends MessageHandler {
+  constructor({ plugins, dataCacheName, documentCacheName, state }) {
+    super({ plugins, state });
     Object.defineProperty(this, "dataCacheName", {
       enumerable: true,
       configurable: true,
@@ -4086,190 +4535,62 @@ var PrecacheHandler = class extends MessageHandler {
       writable: true,
       value: void 0
     });
-    Object.defineProperty(this, "assetCacheName", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "_ignoredFiles", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: null
-    });
     this.dataCacheName = dataCacheName;
     this.documentCacheName = documentCacheName;
-    this.assetCacheName = assetCacheName;
     this._handleMessage = this._handleMessage.bind(this);
-    this._ignoredFiles = (state === null || state === void 0 ? void 0 : state.ignoredRoutes) || null;
   }
   _handleMessage(event) {
     return __awaiter2(this, void 0, void 0, function* () {
-      let DATA_CACHE, DOCUMENT_CACHE, ASSET_CACHE;
-      DATA_CACHE = this.dataCacheName;
-      DOCUMENT_CACHE = this.documentCacheName;
-      ASSET_CACHE = this.assetCacheName;
+      const { data } = event;
+      let DATA2, PAGES2;
+      DATA2 = this.dataCacheName;
+      PAGES2 = this.documentCacheName;
       this.runPlugins("messageDidReceive", {
         event
       });
-      const cachePromises = /* @__PURE__ */ new Map();
-      const [dataCache, documentCache, assetCache] = yield Promise.all([
-        caches.open(DATA_CACHE),
-        caches.open(DOCUMENT_CACHE),
-        caches.open(ASSET_CACHE)
-      ]);
-      const manifest = event.data.manifest;
-      const routes2 = Object.values((manifest === null || manifest === void 0 ? void 0 : manifest.routes) || {});
-      for (const route of routes2) {
-        if (route.id.includes("$")) {
-          logger.info("Skipping parametrized route:", route.id);
-          continue;
-        }
-        if (Array.isArray(this._ignoredFiles)) {
-          if (typeof this._ignoredFiles[0] === "string") {
-            const map = this._ignoredFiles.map((ignoredRoute) => {
-              ignoredRoute = ignoredRoute;
-              ignoredRoute = ignoredRoute.charAt(0) === "/" ? ignoredRoute : ignoredRoute = "/" + ignoredRoute;
-              if (getPathname(route) == ignoredRoute) {
-                logger.debug("Skipping ignored route:", route.id);
-                return true;
-              } else {
-                return false;
-              }
-            });
-            if (map.includes(true))
-              continue;
-          } else if (typeof this._ignoredFiles[0] === "function") {
-            const map = this._ignoredFiles.map((ignoredRoute) => {
-              ignoredRoute = ignoredRoute;
-              if (ignoredRoute(route)) {
-                logger.debug("Skipping ignored route:", route.id);
-                return true;
-              } else {
-                return false;
-              }
-            });
-            if (map.includes(true))
-              continue;
-          } else if (this._ignoredFiles[0] instanceof RegExp) {
-            let map = this._ignoredFiles.map((ignoredRoute) => {
-              ignoredRoute = ignoredRoute;
-              if (ignoredRoute.test(getPathname(route))) {
-                logger.debug("Skipping ignored route:", route.id);
-                return true;
-              } else {
-                return false;
-              }
-            });
-            if (map.includes(true))
-              continue;
-          } else {
-            logger.error("Invalid ignoredRoutes type:", this._ignoredFiles);
-          }
-        } else if (typeof this._ignoredFiles === "function") {
-          if (this._ignoredFiles(route)) {
-            logger.debug("Skipping ignored route:", route.id);
-            continue;
-          }
-        }
-        logger.log("Precaching route:", route.id);
-        cacheRoute(route);
-      }
-      yield Promise.all(cachePromises.values());
-      function cacheRoute(route) {
-        const pathname = getPathname(route);
-        if (route.hasLoader) {
-          cacheLoaderData(route);
-        }
-        if (route.module) {
-          cachePromises.set(route.module, cacheAsset(route.module));
-        }
-        if (route.imports) {
-          for (const assetUrl of route.imports) {
-            logger.groupCollapsed("Caching asset: ", assetUrl);
-            logger.log("Is index:", route.index || false);
-            logger.log("Parent ID:", route.parentId);
-            logger.log("Imports:", route.imports);
-            logger.log("Module:", route.module);
-            logger.groupEnd();
-            if (cachePromises.has(assetUrl)) {
-              continue;
-            }
-            cachePromises.set(assetUrl, cacheAsset(assetUrl));
-          }
-        }
-        logger.info("Caching document:", pathname);
-        cachePromises.set(pathname, documentCache.add(pathname).catch((error) => {
-          if (error instanceof TypeError) {
-            logger.error(`TypeError when caching document ${pathname}:`, error.message);
-          } else if (error instanceof DOMException) {
-            logger.error(`DOMException when caching document ${pathname}:`, error.message);
-          } else {
-            logger.error(`Failed to cache document ${pathname}:`, error);
-          }
-        }));
-      }
-      function cacheLoaderData(route) {
-        const pathname = getPathname(route);
-        const params = new URLSearchParams({ _data: route.id });
-        const search = `?${params.toString()}`;
-        const url = pathname + search;
-        if (!cachePromises.has(url)) {
-          logger.debug("caching loader data", url);
-          cachePromises.set(url, dataCache.add(url).catch((error) => {
-            if (error instanceof TypeError) {
-              logger.error(`TypeError when caching data ${pathname}:`, error.message);
-            } else if (error instanceof DOMException) {
-              logger.error(`DOMException when caching data ${pathname}:`, error.message);
-            } else {
-              logger.error(`Failed to cache data ${pathname}:`, error);
-            }
+      let cachePromises = /* @__PURE__ */ new Map();
+      if (data.type === "REMIX_NAVIGATION") {
+        let { isMount, location: location2, matches, manifest } = data;
+        let documentUrl = location2.pathname + location2.search + location2.hash;
+        let [dataCache, documentCache, existingDocument] = yield Promise.all([
+          caches.open(DATA2),
+          caches.open(PAGES2),
+          caches.match(documentUrl)
+        ]);
+        if (!existingDocument || !isMount) {
+          cachePromises.set(documentUrl, documentCache.add(documentUrl).catch((error) => {
+            logger.error(`Failed to cache document for ${documentUrl}:`, error);
           }));
         }
-      }
-      function cacheAsset(assetUrl) {
-        return __awaiter2(this, void 0, void 0, function* () {
-          if (yield assetCache.match(assetUrl)) {
-            return;
-          }
-          logger.debug("Caching asset:", assetUrl);
-          return assetCache.add(assetUrl).catch((error) => {
-            if (error instanceof TypeError) {
-              logger.error(`TypeError when caching asset ${assetUrl}:`, error.message);
-            } else if (error instanceof DOMException) {
-              logger.error(`DOMException when caching asset ${assetUrl}:`, error.message);
-            } else {
-              logger.error(`Failed to cache asset ${assetUrl}:`, error);
+        if (isMount) {
+          for (let match of matches) {
+            if (manifest.routes[match.id].hasLoader) {
+              let params = new URLSearchParams(location2.search);
+              params.set("_data", match.id);
+              let search = params.toString();
+              search = search ? `?${search}` : "";
+              let url = location2.pathname + search + location2.hash;
+              if (!cachePromises.has(url)) {
+                logger.debug("Caching data for:", url);
+                cachePromises.set(url, dataCache.add(url).catch((error) => {
+                  logger.error(`Failed to cache data for ${url}:`, error);
+                }));
+              }
             }
-          });
-        });
-      }
-      function getPathname(route) {
-        if (route.index && route.parentId === "root")
-          return "/";
-        let pathname = "";
-        if (route.path && route.path.length > 0) {
-          pathname = "/" + route.path;
-        }
-        if (route.parentId) {
-          const parentPath = getPathname(manifest.routes[route.parentId]);
-          if (parentPath) {
-            pathname = parentPath + pathname;
           }
         }
-        return pathname;
       }
+      yield Promise.all(cachePromises.values());
     });
   }
 };
 
 // node_modules/@remix-pwa/sw/lib/react/useSWEffect.js
-var import_react4 = __toESM(require_react2());
-var import_react5 = __toESM(require_react());
+var import_react9 = __toESM(require_react2());
+var import_react10 = __toESM(require_react());
 
 // node_modules/@remix-pwa/sw/lib/core/helper.js
-var isHttpRequest = (request) => {
+var isHttpRequest2 = (request) => {
   return request.url.startsWith("http");
 };
 function toError(error) {
@@ -4342,7 +4663,7 @@ var CacheStrategy = class {
   // Can you return null or a custom, handled error???
   handle(request) {
     return __awaiter3(this, void 0, void 0, function* () {
-      if (!isHttpRequest(request)) {
+      if (!isHttpRequest2(request)) {
         return new Response("Not a HTTP request", { status: 403 });
       }
       return this._handle(request);
@@ -4627,26 +4948,6 @@ var NetworkFirst = class extends CacheStrategy {
   }
 };
 
-// app/routes/_app.tsx
-var import_jsx_runtime3 = __toESM(require_jsx_runtime());
-var strategy = new CacheFirst({
-  cacheName: "app-loader"
-});
-function workerLoader3({ context }) {
-  return strategy.handle(context.event.request);
-}
-
-// routes-module:routes/_app.tsx?worker
-var hasWorkerAction3 = false;
-var hasWorkerLoader3 = true;
-
-// app/entry.worker.ts
-var entry_worker_exports = {};
-__export(entry_worker_exports, {
-  defaultFetchHandler: () => defaultFetchHandler,
-  getLoadContext: () => getLoadContext
-});
-
 // ../node_modules/dexie/dist/modern/dexie.mjs
 var _global = typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : global;
 var keys = Object.keys;
@@ -4702,8 +5003,8 @@ function slice(args, start, end) {
 function override(origFunc, overridedFactory) {
   return overridedFactory(origFunc);
 }
-function assert(b) {
-  if (!b)
+function assert(b2) {
+  if (!b2)
     throw new Error("Assertion Failed");
 }
 function asap$1(fn) {
@@ -5251,8 +5552,8 @@ props(DexiePromise.prototype, {
   catch: function(onRejected) {
     if (arguments.length === 1)
       return this.then(null, onRejected);
-    var type2 = arguments[0], handler = arguments[1];
-    return typeof type2 === "function" ? this.then(null, (err) => err instanceof type2 ? handler(err) : PromiseReject(err)) : this.then(null, (err) => err && err.name === type2 ? handler(err) : PromiseReject(err));
+    var type2 = arguments[0], handler2 = arguments[1];
+    return typeof type2 === "function" ? this.then(null, (err) => err instanceof type2 ? handler2(err) : PromiseReject(err)) : this.then(null, (err) => err && err.name === type2 ? handler2(err) : PromiseReject(err));
   },
   finally: function(onFinally) {
     return this.then((value) => {
@@ -5893,9 +6194,9 @@ var Table = class {
       console.warn(`The query ${JSON.stringify(indexOrCrit)} on ${this.name} would benefit of a compound index [${keyPaths.join("+")}]`);
     const { idxByName } = this.schema;
     const idb = this.db._deps.indexedDB;
-    function equals(a, b) {
+    function equals(a, b2) {
       try {
-        return idb.cmp(a, b) === 0;
+        return idb.cmp(a, b2) === 0;
       } catch (e) {
         return false;
       }
@@ -6248,10 +6549,10 @@ function iterate(cursorPromise, filter, fn, valueMapper) {
     }
   });
 }
-function cmp(a, b) {
+function cmp(a, b2) {
   try {
     const ta = type(a);
-    const tb = type(b);
+    const tb = type(b2);
     if (ta !== tb) {
       if (ta === "Array")
         return 1;
@@ -6275,35 +6576,35 @@ function cmp(a, b) {
       case "number":
       case "Date":
       case "string":
-        return a > b ? 1 : a < b ? -1 : 0;
+        return a > b2 ? 1 : a < b2 ? -1 : 0;
       case "binary": {
-        return compareUint8Arrays(getUint8Array(a), getUint8Array(b));
+        return compareUint8Arrays(getUint8Array(a), getUint8Array(b2));
       }
       case "Array":
-        return compareArrays(a, b);
+        return compareArrays(a, b2);
     }
   } catch (_a) {
   }
   return NaN;
 }
-function compareArrays(a, b) {
+function compareArrays(a, b2) {
   const al = a.length;
-  const bl = b.length;
+  const bl = b2.length;
   const l = al < bl ? al : bl;
   for (let i = 0; i < l; ++i) {
-    const res = cmp(a[i], b[i]);
+    const res = cmp(a[i], b2[i]);
     if (res !== 0)
       return res;
   }
   return al === bl ? 0 : al < bl ? -1 : 1;
 }
-function compareUint8Arrays(a, b) {
+function compareUint8Arrays(a, b2) {
   const al = a.length;
-  const bl = b.length;
+  const bl = b2.length;
   const l = al < bl ? al : bl;
   for (let i = 0; i < l; ++i) {
-    if (a[i] !== b[i])
-      return a[i] < b[i] ? -1 : 1;
+    if (a[i] !== b2[i])
+      return a[i] < b2[i] ? -1 : 1;
   }
   return al === bl ? 0 : al < bl ? -1 : 1;
 }
@@ -6383,8 +6684,8 @@ var Collection = class {
       return obj[lastPart];
     }
     var order = this._ctx.dir === "next" ? 1 : -1;
-    function sorter(a, b) {
-      var aVal = getval(a, lastIndex), bVal = getval(b, lastIndex);
+    function sorter(a, b2) {
+      var aVal = getval(a, lastIndex), bVal = getval(b2, lastIndex);
       return aVal < bVal ? -order : aVal > bVal ? order : 0;
     }
     return this.toArray(function(a) {
@@ -6724,11 +7025,11 @@ function createCollectionConstructor(db) {
     };
   });
 }
-function simpleCompare(a, b) {
-  return a < b ? -1 : a === b ? 0 : 1;
+function simpleCompare(a, b2) {
+  return a < b2 ? -1 : a === b2 ? 0 : 1;
 }
-function simpleCompareReverse(a, b) {
-  return a > b ? -1 : a === b ? 0 : 1;
+function simpleCompareReverse(a, b2) {
+  return a > b2 ? -1 : a === b2 ? 0 : 1;
 }
 function fail(collectionOrWhereClause, err, T) {
   var collection = collectionOrWhereClause instanceof WhereClause ? new collectionOrWhereClause.Collection(collectionOrWhereClause) : collectionOrWhereClause;
@@ -6778,8 +7079,8 @@ function addIgnoreCaseAlgorithm(whereClause, match, needles, suffix) {
     compare = dir === "next" ? simpleCompare : simpleCompareReverse;
     var needleBounds = needles.map(function(needle) {
       return { lower: lower(needle), upper: upper(needle) };
-    }).sort(function(a, b) {
-      return compare(a.lower, b.lower);
+    }).sort(function(a, b2) {
+      return compare(a.lower, b2.lower);
     });
     upperNeedles = needleBounds.map(function(nb) {
       return nb.upper;
@@ -6982,8 +7283,8 @@ var WhereClause = class {
       return ranges2;
     }
     let sortDirection = ascending;
-    function rangeSorter(a, b) {
-      return sortDirection(a[0], b[0]);
+    function rangeSorter(a, b2) {
+      return sortDirection(a[0], b2[0]);
     }
     let set;
     try {
@@ -7057,9 +7358,9 @@ function createWhereClauseConstructor(db) {
     if (!indexedDB2)
       throw new exceptions.MissingAPI();
     this._cmp = this._ascending = indexedDB2.cmp.bind(indexedDB2);
-    this._descending = (a, b) => indexedDB2.cmp(b, a);
-    this._max = (a, b) => indexedDB2.cmp(a, b) > 0 ? a : b;
-    this._min = (a, b) => indexedDB2.cmp(a, b) < 0 ? a : b;
+    this._descending = (a, b2) => indexedDB2.cmp(b2, a);
+    this._max = (a, b2) => indexedDB2.cmp(a, b2) > 0 ? a : b2;
+    this._min = (a, b2) => indexedDB2.cmp(a, b2) < 0 ? a : b2;
     this._IDBKeyRange = db._deps.IDBKeyRange;
   });
 }
@@ -7680,8 +7981,8 @@ function removeTablesApi({ _novip: db }, objs) {
     }
   });
 }
-function lowerVersionFirst(a, b) {
-  return a._cfg.version - b._cfg.version;
+function lowerVersionFirst(a, b2) {
+  return a._cfg.version - b2._cfg.version;
 }
 function runUpgraders(db, oldVersion, idbUpgradeTrans, reject) {
   const globalSchema = db._dbSchema;
@@ -8213,7 +8514,7 @@ function createVirtualIndexMiddleware(down) {
           const virtualKeyPath = keyLength === 2 ? keyPath[0] : keyPath.slice(0, keyLength - 1);
           addVirtualIndexes(virtualKeyPath, keyTail + 1, lowLevelIndex);
         }
-        indexList.sort((a, b) => a.keyTail - b.keyTail);
+        indexList.sort((a, b2) => a.keyTail - b2.keyTail);
         return virtualIndex;
       }
       const primaryKey = addVirtualIndexes(schema.primaryKey.keyPath, 0, schema.primaryKey);
@@ -8305,31 +8606,31 @@ var virtualIndexMiddleware = {
   level: 1,
   create: createVirtualIndexMiddleware
 };
-function getObjectDiff(a, b, rv, prfx) {
+function getObjectDiff(a, b2, rv, prfx) {
   rv = rv || {};
   prfx = prfx || "";
   keys(a).forEach((prop) => {
-    if (!hasOwn(b, prop)) {
+    if (!hasOwn(b2, prop)) {
       rv[prfx + prop] = void 0;
     } else {
-      var ap = a[prop], bp = b[prop];
+      var ap = a[prop], bp = b2[prop];
       if (typeof ap === "object" && typeof bp === "object" && ap && bp) {
         const apTypeName = toStringTag(ap);
         const bpTypeName = toStringTag(bp);
         if (apTypeName !== bpTypeName) {
-          rv[prfx + prop] = b[prop];
+          rv[prfx + prop] = b2[prop];
         } else if (apTypeName === "Object") {
           getObjectDiff(ap, bp, rv, prfx + prop + ".");
         } else if (ap !== bp) {
-          rv[prfx + prop] = b[prop];
+          rv[prfx + prop] = b2[prop];
         }
       } else if (ap !== bp)
-        rv[prfx + prop] = b[prop];
+        rv[prfx + prop] = b2[prop];
     }
   });
-  keys(b).forEach((prop) => {
+  keys(b2).forEach((prop) => {
     if (!hasOwn(a, prop)) {
-      rv[prfx + prop] = b[prop];
+      rv[prfx + prop] = b2[prop];
     }
   });
   return rv;
@@ -8596,11 +8897,11 @@ function rangesOverlap(rangeSet1, rangeSet2) {
   let a = nextResult1.value;
   const i2 = getRangeSetIterator(rangeSet1);
   let nextResult2 = i2.next(a.from);
-  let b = nextResult2.value;
+  let b2 = nextResult2.value;
   while (!nextResult1.done && !nextResult2.done) {
-    if (cmp(b.from, a.to) <= 0 && cmp(b.to, a.from) >= 0)
+    if (cmp(b2.from, a.to) <= 0 && cmp(b2.to, a.from) >= 0)
       return true;
-    cmp(a.from, b.from) < 0 ? a = (nextResult1 = i1.next(b.from)).value : b = (nextResult2 = i2.next(a.from)).value;
+    cmp(a.from, b2.from) < 0 ? a = (nextResult1 = i1.next(b2.from)).value : b2 = (nextResult2 = i2.next(a.from)).value;
   }
   return false;
 }
@@ -8954,7 +9255,7 @@ var Dexie$1 = class _Dexie$1 {
       this.unuse({ stack, name });
     const middlewares = this._middlewares[stack] || (this._middlewares[stack] = []);
     middlewares.push({ stack, create, level: level == null ? 10 : level, name });
-    middlewares.sort((a, b) => a.level - b.level);
+    middlewares.sort((a, b2) => a.level - b2.level);
     return this;
   }
   unuse({ stack, name, create }) {
@@ -9400,10 +9701,9 @@ var database_default = createStorageRepository;
 var PAGES = "page-cache";
 var DATA = "data-cache";
 var ASSETS = "assets-cache";
-var precacheHandler = new PrecacheHandler({
+var handler = new RemixNavigationHandler({
   dataCacheName: DATA,
-  documentCacheName: PAGES,
-  assetCacheName: ASSETS
+  documentCacheName: PAGES
 });
 var documentHandler = new NetworkFirst({
   cacheName: PAGES
@@ -9440,7 +9740,7 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(self.clients.claim());
 });
 self.addEventListener("message", (event) => {
-  event.waitUntil(precacheHandler.handle(event));
+  event.waitUntil(handler.handle(event));
 });
 
 // entry-module:@remix-pwa/build/magic
@@ -9455,6 +9755,16 @@ var routes = {
     hasWorkerAction: Boolean(route0.hasWorkerAction),
     hasWorkerLoader: Boolean(route0.hasWorkerLoader)
   },
+  "routes/basic-caching": {
+    id: "routes/basic-caching",
+    parentId: "root",
+    path: "basic-caching",
+    index: void 0,
+    caseSensitive: void 0,
+    module: basic_caching_exports,
+    hasWorkerAction: Boolean(hasWorkerAction),
+    hasWorkerLoader: Boolean(hasWorkerLoader)
+  },
   "routes/_app.flights": {
     id: "routes/_app.flights",
     parentId: "routes/_app",
@@ -9462,8 +9772,8 @@ var routes = {
     index: void 0,
     caseSensitive: void 0,
     module: app_flights_exports,
-    hasWorkerAction: Boolean(hasWorkerAction),
-    hasWorkerLoader: Boolean(hasWorkerLoader)
+    hasWorkerAction: Boolean(hasWorkerAction2),
+    hasWorkerLoader: Boolean(hasWorkerLoader2)
   },
   "routes/selection": {
     id: "routes/selection",
@@ -9472,8 +9782,8 @@ var routes = {
     index: void 0,
     caseSensitive: void 0,
     module: selection_exports,
-    hasWorkerAction: Boolean(hasWorkerAction2),
-    hasWorkerLoader: Boolean(hasWorkerLoader2)
+    hasWorkerAction: Boolean(hasWorkerAction3),
+    hasWorkerLoader: Boolean(hasWorkerLoader3)
   },
   "routes/_index": {
     id: "routes/_index",
@@ -9481,9 +9791,19 @@ var routes = {
     path: "undefined",
     index: true,
     caseSensitive: void 0,
-    module: route3,
-    hasWorkerAction: Boolean(route3.hasWorkerAction),
-    hasWorkerLoader: Boolean(route3.hasWorkerLoader)
+    module: route4,
+    hasWorkerAction: Boolean(route4.hasWorkerAction),
+    hasWorkerLoader: Boolean(route4.hasWorkerLoader)
+  },
+  "routes/basic": {
+    id: "routes/basic",
+    parentId: "root",
+    path: "basic",
+    index: void 0,
+    caseSensitive: void 0,
+    module: basic_exports,
+    hasWorkerAction: Boolean(hasWorkerAction4),
+    hasWorkerLoader: Boolean(hasWorkerLoader4)
   },
   "routes/_app": {
     id: "routes/_app",
@@ -9492,8 +9812,8 @@ var routes = {
     index: void 0,
     caseSensitive: void 0,
     module: app_exports,
-    hasWorkerAction: Boolean(hasWorkerAction3),
-    hasWorkerLoader: Boolean(hasWorkerLoader3)
+    hasWorkerAction: Boolean(hasWorkerAction5),
+    hasWorkerLoader: Boolean(hasWorkerLoader5)
   }
 };
 var entry = { module: entry_worker_exports };
@@ -9592,8 +9912,8 @@ async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, ev
       }).then(responseHandler);
     }
   } catch (error) {
-    const handler = (error2) => errorHandler(error2, createArgumentsFrom({ event, loadContext }));
-    return _errorHandler({ error, handler });
+    const handler2 = (error2) => errorHandler(error2, createArgumentsFrom({ event, loadContext }));
+    return _errorHandler({ error, handler: handler2 });
   }
   return defaultHandler2({
     request: event.request,
@@ -9689,7 +10009,6 @@ _self.addEventListener(
    * The main fetch event listener callback.
    */
   (event) => {
-    console.log("fetch event", event, "build\n", magic_exports);
     const response = handleRequest({
       event,
       routes,
