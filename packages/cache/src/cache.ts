@@ -31,8 +31,18 @@ export enum Strategy {
 }
 
 interface CustomCache extends Omit<Cache, 'add' | 'addAll' | 'matchAll'> {
-  put(request: RequestInfo | URL, response: Response, ttl?: number): Promise<void>;
+  put(request: RequestInfo | URL, response: Response, ttl?: number | undefined, modified?: boolean): Promise<void>;
 }
+
+type Metadata = {
+  accessedAt: number;
+  expiresAt: number;
+};
+
+type ResponseBody = {
+  value: any;
+  metadata: Metadata;
+};
 
 export type RemixCacheOptions = {
   /**
@@ -101,53 +111,43 @@ export class RemixCache implements CustomCache {
     return await caches.open(this.name);
   }
 
-  private async _maintainCacheLRU(): Promise<void> {}
-
-  private async _maintainCache(): Promise<void> {
-    const cache = await this._openCache();
-    const keysResponse = await cache.keys();
-    const validKeys: any[] = [];
-    const now = Date.now();
-
-    for (const request of keysResponse) {
-      const response = await cache.match(request);
-      if (response) {
-        const expiresAtHeader = response.headers.get('x-cache-expires-at')!;
-        const expiresAt = parseInt(expiresAtHeader, 10);
-        if (!expiresAt || expiresAt > now) {
-          validKeys.push({
-            key: request.url,
-            accessedAt: parseInt(response.headers.get('x-cache-accessed-at')!, 10) || 0,
-          });
-        } else {
-          await cache.delete(request);
-        }
-      }
+  private async _getOrDeleteIfExpired(key: Request, metadata: Metadata) {
+    if (metadata.expiresAt <= Date.now()) {
+      return await this.delete(key);
     }
 
-    // Sort valid keys by access time (LRU)
-    validKeys.sort((a, b) => a.accessedAt - b.accessedAt);
-
-    // Remove least recently used items if cache size exceeds maxItems
-    if (validKeys.length > this.maxItems) {
-      const keysToRemove = validKeys.slice(0, validKeys.length - this.maxItems);
-      for (const keyToRemove of keysToRemove) {
-        await cache.delete(keyToRemove.key);
-      }
-    }
+    return false;
   }
 
-  private _updateHeaders(response: Response, headersToUpdate: Record<string, string>) {
-    const headers = new Headers(response.headers);
-    for (const [headerName, headerValue] of Object.entries(headersToUpdate)) {
-      headers.set(headerName, headerValue);
+  private async _getResponseValue(request: Request, response: Response) {
+    const { metadata, value }: ResponseBody = await response.clone().json();
+
+    const deleted = await this._getOrDeleteIfExpired(request.clone(), metadata);
+
+    if (!deleted) {
+      const res = new Response(
+        JSON.stringify({
+          metadata: {
+            ...metadata,
+            accessedAt: Date.now(),
+          },
+          value,
+        }),
+        {
+          status: response.status,
+          statusText: response.statusText,
+          headers: {
+            ...Object.fromEntries(response.clone().headers.entries()),
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      await this.put(request, res.clone(), undefined, true);
+      return res.json().then(({ value }) => value);
     }
 
-    return new Response(response.body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers,
-    });
+    return undefined;
   }
 
   /**
@@ -202,20 +202,16 @@ export class RemixCache implements CustomCache {
    */
   async match(request: RequestInfo | URL, options?: CacheQueryOptions | undefined): Promise<Response | undefined> {
     const cache = await caches.open(this.name);
+    if (request instanceof URL || typeof request === 'string') {
+      request = new Request(request);
+    }
+    const response = await cache.match(request.clone(), options);
 
-    const response = await cache.match(request, options);
     if (!response) {
       return undefined;
     }
 
-    const now = Date.now();
-    const res = this._updateHeaders(response, {
-      'x-cache-accessed-at': now.toString(),
-    });
-
-    await cache.put(request, res.clone());
-    this._maintainCache();
-    return res;
+    return await this._getResponseValue(request, response.clone());
   }
 
   /**
@@ -224,6 +220,7 @@ export class RemixCache implements CustomCache {
    *
    * @param {RequestInfo | URL} request - The request to add.
    * @param {Response} response - The response to add.
+   * @param {boolean} modified - Whether the response has been modified.
    * @returns {Promise<void>} A `Promise` that resolves when the entry is added to the cache.
    *
    * @example
@@ -235,26 +232,43 @@ export class RemixCache implements CustomCache {
    *
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Cache/put
    */
-  async put(request: RequestInfo | URL, response: Response, ttl: number = this.ttl): Promise<void> {
+  async put(
+    request: RequestInfo | URL,
+    response: Response,
+    ttl: number | undefined = undefined,
+    modified: boolean = false
+  ): Promise<void> {
     const cache = await this._openCache();
+    if (request instanceof URL || typeof request === 'string') {
+      request = new Request(request);
+    }
 
     // If ttl is negative, don't cache
-    if (this.ttl < 0) return;
+    if (this.ttl <= 0 || (ttl && ttl <= 0)) return;
 
-    const now = Date.now();
-    const expiresAt = now + ttl;
-    const headersToUpdate = {
-      'x-cache-accessed-at': now.toString(),
-      'x-cache-expires-at': expiresAt.toString(),
-    };
-
-    // Update headers and clone response with updated headers
-    const updatedResponse = this._updateHeaders(response.clone(), headersToUpdate);
+    if (!modified) {
+      response = new Response(
+        JSON.stringify({
+          metadata: {
+            accessedAt: Date.now(),
+            expiresAt: Date.now() + (ttl ?? this.ttl),
+          },
+          value: await response.clone().json(),
+        }),
+        {
+          status: response.status,
+          statusText: response.statusText,
+          headers: {
+            ...Object.fromEntries(response.clone().headers.entries()),
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+    }
 
     // Cache the updated response and maintain the cache
     try {
-      await cache.put(request, updatedResponse);
-      await this._maintainCache();
+      return await cache.put(request, response.clone());
     } catch (error) {
       console.error('Failed to put to cache:', error);
     }
