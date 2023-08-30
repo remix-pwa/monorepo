@@ -1,13 +1,16 @@
 /// <reference lib="WebWorker" />
 
-import { matchRequest, NetworkFirst, CacheFirst, RemixNavigationHandler } from "@remix-pwa/sw";
-import createStorageRepository from "./database";
+import { CacheFirst, NetworkFirst, RemixNavigationHandler, matchRequest } from '@remix-pwa/sw';
+import createStorageRepository from './database';
 
-declare let self: ServiceWorkerGlobalScope;
+declare let self: ServiceWorkerGlobalScope &
+  typeof globalThis & {
+    __workerManifest: any;
+  }; // wrap this up into one type
 
-const PAGES = "page-cache";
-const DATA = "data-cache";
-const ASSETS = "assets-cache";
+const PAGES = 'page-cache';
+const DATA = 'data-cache';
+const ASSETS = 'assets-cache';
 
 let handler = new RemixNavigationHandler({
   dataCacheName: DATA,
@@ -42,29 +45,30 @@ export const getLoadContext = () => {
 export const defaultFetchHandler = ({ context, request }: any) => {
   const type = matchRequest(request);
 
-  if (type === "asset") {
+  if (type === 'asset') {
     return assetsHandler.handle(request);
   }
 
-  if (type === "loader") {
+  if (type === 'loader') {
     return loadersHandler.handle(request);
   }
 
-  if (type === "document") {
+  if (type === 'document') {
     return documentHandler.handle(request);
   }
 
   return context.fetchFromServer();
 };
 
-self.addEventListener("install", (event) => {
+self.addEventListener('install', event => {
   event.waitUntil(self.skipWaiting());
 });
 
-self.addEventListener("activate", (event) => {
+self.addEventListener('activate', event => {
   event.waitUntil(self.clients.claim());
 });
 
-self.addEventListener("message", (event) => {
+self.addEventListener('message', event => {
+  // console.log(self.__workerManifest);
   event.waitUntil(handler.handle(event));
 });
