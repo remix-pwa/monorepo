@@ -126,7 +126,7 @@ __export(router_exports, {
   matchRoutes: () => matchRoutes,
   normalizePathname: () => normalizePathname,
   parsePath: () => parsePath,
-  redirect: () => redirect3,
+  redirect: () => redirect4,
   resolvePath: () => resolvePath,
   resolveTo: () => resolveTo,
   stripBasename: () => stripBasename
@@ -1390,13 +1390,13 @@ function createRouter(init) {
       pendingNavigationController.signal.removeEventListener("abort", abortPendingFetchRevalidations);
     }
     revalidatingFetchers.forEach((rf) => fetchControllers.delete(rf.key));
-    let redirect6 = findRedirect(results);
-    if (redirect6) {
-      if (redirect6.idx >= matchesToLoad.length) {
-        let fetcherKey = revalidatingFetchers[redirect6.idx - matchesToLoad.length].key;
+    let redirect7 = findRedirect(results);
+    if (redirect7) {
+      if (redirect7.idx >= matchesToLoad.length) {
+        let fetcherKey = revalidatingFetchers[redirect7.idx - matchesToLoad.length].key;
         fetchRedirectIds.add(fetcherKey);
       }
-      await startRedirectNavigation(state, redirect6.result, {
+      await startRedirectNavigation(state, redirect7.result, {
         replace
       });
       return {
@@ -1580,13 +1580,13 @@ function createRouter(init) {
     fetchReloadIds.delete(key);
     fetchControllers.delete(key);
     revalidatingFetchers.forEach((r) => fetchControllers.delete(r.key));
-    let redirect6 = findRedirect(results);
-    if (redirect6) {
-      if (redirect6.idx >= matchesToLoad.length) {
-        let fetcherKey = revalidatingFetchers[redirect6.idx - matchesToLoad.length].key;
+    let redirect7 = findRedirect(results);
+    if (redirect7) {
+      if (redirect7.idx >= matchesToLoad.length) {
+        let fetcherKey = revalidatingFetchers[redirect7.idx - matchesToLoad.length].key;
         fetchRedirectIds.add(fetcherKey);
       }
-      return startRedirectNavigation(state, redirect6.result);
+      return startRedirectNavigation(state, redirect7.result);
     }
     let {
       loaderData,
@@ -1669,18 +1669,18 @@ function createRouter(init) {
       fetchers: new Map(state.fetchers)
     });
   }
-  async function startRedirectNavigation(state2, redirect6, _temp) {
+  async function startRedirectNavigation(state2, redirect7, _temp) {
     let {
       submission,
       replace,
       isFetchActionRedirect
     } = _temp === void 0 ? {} : _temp;
-    if (redirect6.revalidate) {
+    if (redirect7.revalidate) {
       isRevalidationRequired = true;
     }
     let redirectLocation = createLocation(
       state2.location,
-      redirect6.location,
+      redirect7.location,
       // TODO: This can be removed once we get rid of useTransition in Remix v2
       _extends2({
         _isRedirect: true
@@ -1689,14 +1689,14 @@ function createRouter(init) {
       } : {})
     );
     invariant2(redirectLocation, "Expected a location on the redirect navigation");
-    if (ABSOLUTE_URL_REGEX.test(redirect6.location) && isBrowser) {
-      let url = init.history.createURL(redirect6.location);
+    if (ABSOLUTE_URL_REGEX.test(redirect7.location) && isBrowser) {
+      let url = init.history.createURL(redirect7.location);
       let isDifferentBasename = stripBasename(url.pathname, basename) == null;
       if (routerWindow.location.origin !== url.origin || isDifferentBasename) {
         if (replace) {
-          routerWindow.location.replace(redirect6.location);
+          routerWindow.location.replace(redirect7.location);
         } else {
-          routerWindow.location.assign(redirect6.location);
+          routerWindow.location.assign(redirect7.location);
         }
         return;
       }
@@ -1704,10 +1704,10 @@ function createRouter(init) {
     pendingNavigationController = null;
     let redirectHistoryAction = replace === true ? Action2.Replace : Action2.Push;
     let activeSubmission = submission || getSubmissionFromNavigation(state2.navigation);
-    if (redirectPreserveMethodStatusCodes.has(redirect6.status) && activeSubmission && isMutationMethod(activeSubmission.formMethod)) {
+    if (redirectPreserveMethodStatusCodes.has(redirect7.status) && activeSubmission && isMutationMethod(activeSubmission.formMethod)) {
       await startNavigation(redirectHistoryAction, redirectLocation, {
         submission: _extends2({}, activeSubmission, {
-          formAction: redirect6.location
+          formAction: redirect7.location
         }),
         // Preserve this flag across redirects
         preventScrollReset: pendingPreventScrollReset
@@ -3170,7 +3170,7 @@ function getDoneFetcher(data) {
   };
   return fetcher;
 }
-var Action2, PopStateEventType, ResultType2, immutableRouteKeys, paramRe, dynamicSegmentValue, indexRouteValue, emptySegmentValue, staticSegmentValue, splatPenalty, isSplat, joinPaths, normalizePathname, normalizeSearch, normalizeHash, json5, AbortedDeferredError2, DeferredData2, defer4, redirect3, ErrorResponse, validMutationMethodsArr2, validMutationMethods2, validRequestMethodsArr2, validRequestMethods2, redirectStatusCodes, redirectPreserveMethodStatusCodes, IDLE_NAVIGATION, IDLE_FETCHER, IDLE_BLOCKER, ABSOLUTE_URL_REGEX, defaultMapRouteProperties, UNSAFE_DEFERRED_SYMBOL2;
+var Action2, PopStateEventType, ResultType2, immutableRouteKeys, paramRe, dynamicSegmentValue, indexRouteValue, emptySegmentValue, staticSegmentValue, splatPenalty, isSplat, joinPaths, normalizePathname, normalizeSearch, normalizeHash, json5, AbortedDeferredError2, DeferredData2, defer4, redirect4, ErrorResponse, validMutationMethodsArr2, validMutationMethods2, validRequestMethodsArr2, validRequestMethods2, redirectStatusCodes, redirectPreserveMethodStatusCodes, IDLE_NAVIGATION, IDLE_FETCHER, IDLE_BLOCKER, ABSOLUTE_URL_REGEX, defaultMapRouteProperties, UNSAFE_DEFERRED_SYMBOL2;
 var init_router = __esm({
   "../node_modules/@remix-run/server-runtime/node_modules/@remix-run/router/dist/router.js"() {
     (function(Action3) {
@@ -3337,7 +3337,7 @@ var init_router = __esm({
       } : init;
       return new DeferredData2(data, responseInit);
     };
-    redirect3 = function redirect4(url, init) {
+    redirect4 = function redirect5(url, init) {
       if (init === void 0) {
         init = 302;
       }
@@ -3491,7 +3491,7 @@ var require_responses = __commonJS({
     var defer6 = (data, init = {}) => {
       return router.defer(data, init);
     };
-    var redirect6 = (url, init = 302) => {
+    var redirect7 = (url, init = 302) => {
       return router.redirect(url, init);
     };
     function isDeferredData3(value) {
@@ -3562,7 +3562,7 @@ var require_responses = __commonJS({
     exports.isRedirectStatusCode = isRedirectStatusCode2;
     exports.isResponse = isResponse3;
     exports.json = json9;
-    exports.redirect = redirect6;
+    exports.redirect = redirect7;
   }
 });
 
@@ -3624,7 +3624,7 @@ var RemixCache = class {
     return await Promise.all(keys2.map((key) => cache.match(key)));
   }
   async _lruCleanup() {
-    if (this.maxItems > await this.length()) {
+    if (await this.length() >= this.maxItems) {
       this._values().then(async (values) => {
         values.sort((a, b2) => {
           const aMeta = a.clone().json().metadata;
@@ -3963,7 +3963,7 @@ var workerLoader = async ({ context }) => {
     cacheOptions: {
       maxItems: 5,
       ttl: 30 * 1e3
-      // 10 seconds
+      // 30 seconds time-to-live (maxAge)
     },
     fetchDidFail: [
       () => console.log("Fetch failed!")
@@ -3971,10 +3971,9 @@ var workerLoader = async ({ context }) => {
   });
   let response = await customStrategy(context.event.request);
   let data = await toJSON(response);
-  console.log("Data from the server:", data);
   const date = /* @__PURE__ */ new Date();
   return new Response(JSON.stringify({
-    data: "data.data",
+    data: data.data,
     // Only this shows an updated time, the other one doesn't because it's cached.
     // Try deleting the cache and reloading the page to see the difference.
     message: `Server already up and running! Time: ${date.getMinutes()}:${date.getSeconds()}`
@@ -4254,44 +4253,54 @@ var workerLoader2 = async ({ context }) => {
 var hasWorkerAction2 = true;
 var hasWorkerLoader2 = true;
 
-// routes-module:routes/selection.tsx?worker
-var selection_exports = {};
-__export(selection_exports, {
+// routes-module:routes/basic-action.tsx?worker
+var basic_action_exports = {};
+__export(basic_action_exports, {
   hasWorkerAction: () => hasWorkerAction3,
   hasWorkerLoader: () => hasWorkerLoader3,
+  workerAction: () => workerAction2
+});
+
+// app/routes/basic-action.tsx
+var import_node2 = __toESM(require_node());
+var import_react5 = __toESM(require_react());
+var import_react6 = __toESM(require_react2());
+var import_jsx_runtime3 = __toESM(require_jsx_runtime());
+var workerAction2 = async ({ context }) => {
+  const { fetchFromServer } = context;
+  try {
+    fetchFromServer();
+  } catch (error) {
+    console.error(error);
+  }
+  console.log("Submitting...");
+  return new Response(JSON.stringify({
+    message: "Modified action response, Remix Actions are quite out of the picture here"
+  }), {
+    headers: {
+      "Content-Type": "application/json; charset=utf-8"
+    }
+  });
+};
+
+// routes-module:routes/basic-action.tsx?worker
+var hasWorkerAction3 = true;
+var hasWorkerLoader3 = false;
+
+// routes-module:routes/basic-loader.tsx?worker
+var basic_loader_exports = {};
+__export(basic_loader_exports, {
+  hasWorkerAction: () => hasWorkerAction4,
+  hasWorkerLoader: () => hasWorkerLoader4,
   workerLoader: () => workerLoader3
 });
 
-// app/routes/selection.tsx
-var import_react5 = __toESM(require_react());
-var import_jsx_runtime3 = __toESM(require_jsx_runtime());
-async function workerLoader3({ context }) {
-  const { database } = context;
-  const selections = await database.selections.toArray();
-  return json2({ selections });
-}
-
-// routes-module:routes/selection.tsx?worker
-var hasWorkerAction3 = false;
-var hasWorkerLoader3 = true;
-
-// entry-module:@remix-pwa/build/magic
-var route4 = __toESM(require_index());
-
-// routes-module:routes/basic.tsx?worker
-var basic_exports = {};
-__export(basic_exports, {
-  hasWorkerAction: () => hasWorkerAction4,
-  hasWorkerLoader: () => hasWorkerLoader4,
-  workerLoader: () => workerLoader4
-});
-
-// app/routes/basic.tsx
-var import_node2 = __toESM(require_node());
-var import_react6 = __toESM(require_react());
-var import_react7 = __toESM(require_react2());
+// app/routes/basic-loader.tsx
+var import_node3 = __toESM(require_node());
+var import_react7 = __toESM(require_react());
+var import_react8 = __toESM(require_react2());
 var import_jsx_runtime4 = __toESM(require_jsx_runtime());
-var workerLoader4 = async ({ context }) => {
+var workerLoader3 = async ({ context }) => {
   const { fetchFromServer } = context;
   const message = await Promise.race([
     fetchFromServer().then((response) => response.json()).then(({ message: message2 }) => message2),
@@ -4309,22 +4318,46 @@ var workerLoader4 = async ({ context }) => {
   );
 };
 
-// routes-module:routes/basic.tsx?worker
+// routes-module:routes/basic-loader.tsx?worker
 var hasWorkerAction4 = false;
 var hasWorkerLoader4 = true;
+
+// routes-module:routes/selection.tsx?worker
+var selection_exports = {};
+__export(selection_exports, {
+  hasWorkerAction: () => hasWorkerAction5,
+  hasWorkerLoader: () => hasWorkerLoader5,
+  workerLoader: () => workerLoader4
+});
+
+// app/routes/selection.tsx
+var import_react9 = __toESM(require_react());
+var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+async function workerLoader4({ context }) {
+  const { database } = context;
+  const selections = await database.selections.toArray();
+  return json2({ selections });
+}
+
+// routes-module:routes/selection.tsx?worker
+var hasWorkerAction5 = false;
+var hasWorkerLoader5 = true;
+
+// entry-module:@remix-pwa/build/magic
+var route6 = __toESM(require_index());
 
 // routes-module:routes/_app.tsx?worker
 var app_exports = {};
 __export(app_exports, {
-  hasWorkerAction: () => hasWorkerAction5,
-  hasWorkerLoader: () => hasWorkerLoader5,
+  hasWorkerAction: () => hasWorkerAction6,
+  hasWorkerLoader: () => hasWorkerLoader6,
   workerLoader: () => workerLoader5
 });
 
 // app/routes/_app.tsx
-var import_node3 = __toESM(require_node());
-var import_react8 = __toESM(require_react());
-var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+var import_node4 = __toESM(require_node());
+var import_react10 = __toESM(require_react());
+var import_jsx_runtime6 = __toESM(require_jsx_runtime());
 async function workerLoader5({ context }) {
   const { fetchFromServer } = context;
   const data = await fetchFromServer().then((response) => response.json());
@@ -4337,8 +4370,8 @@ async function workerLoader5({ context }) {
 }
 
 // routes-module:routes/_app.tsx?worker
-var hasWorkerAction5 = false;
-var hasWorkerLoader5 = true;
+var hasWorkerAction6 = false;
+var hasWorkerLoader6 = true;
 
 // app/entry.worker.ts
 var entry_worker_exports = {};
@@ -4609,8 +4642,8 @@ var RemixNavigationHandler = class extends MessageHandler {
 };
 
 // node_modules/@remix-pwa/sw/lib/react/useSWEffect.js
-var import_react9 = __toESM(require_react2());
-var import_react10 = __toESM(require_react());
+var import_react11 = __toESM(require_react2());
+var import_react12 = __toESM(require_react());
 
 // node_modules/@remix-pwa/sw/lib/core/helper.js
 var isHttpRequest2 = (request) => {
@@ -9798,6 +9831,26 @@ var routes = {
     hasWorkerAction: Boolean(hasWorkerAction2),
     hasWorkerLoader: Boolean(hasWorkerLoader2)
   },
+  "routes/basic-action": {
+    id: "routes/basic-action",
+    parentId: "root",
+    path: "basic-action",
+    index: void 0,
+    caseSensitive: void 0,
+    module: basic_action_exports,
+    hasWorkerAction: Boolean(hasWorkerAction3),
+    hasWorkerLoader: Boolean(hasWorkerLoader3)
+  },
+  "routes/basic-loader": {
+    id: "routes/basic-loader",
+    parentId: "root",
+    path: "basic-loader",
+    index: void 0,
+    caseSensitive: void 0,
+    module: basic_loader_exports,
+    hasWorkerAction: Boolean(hasWorkerAction4),
+    hasWorkerLoader: Boolean(hasWorkerLoader4)
+  },
   "routes/selection": {
     id: "routes/selection",
     parentId: "root",
@@ -9805,8 +9858,8 @@ var routes = {
     index: void 0,
     caseSensitive: void 0,
     module: selection_exports,
-    hasWorkerAction: Boolean(hasWorkerAction3),
-    hasWorkerLoader: Boolean(hasWorkerLoader3)
+    hasWorkerAction: Boolean(hasWorkerAction5),
+    hasWorkerLoader: Boolean(hasWorkerLoader5)
   },
   "routes/_index": {
     id: "routes/_index",
@@ -9814,19 +9867,9 @@ var routes = {
     path: "undefined",
     index: true,
     caseSensitive: void 0,
-    module: route4,
-    hasWorkerAction: Boolean(route4.hasWorkerAction),
-    hasWorkerLoader: Boolean(route4.hasWorkerLoader)
-  },
-  "routes/basic": {
-    id: "routes/basic",
-    parentId: "root",
-    path: "basic",
-    index: void 0,
-    caseSensitive: void 0,
-    module: basic_exports,
-    hasWorkerAction: Boolean(hasWorkerAction4),
-    hasWorkerLoader: Boolean(hasWorkerLoader4)
+    module: route6,
+    hasWorkerAction: Boolean(route6.hasWorkerAction),
+    hasWorkerLoader: Boolean(route6.hasWorkerLoader)
   },
   "routes/_app": {
     id: "routes/_app",
@@ -9835,8 +9878,8 @@ var routes = {
     index: void 0,
     caseSensitive: void 0,
     module: app_exports,
-    hasWorkerAction: Boolean(hasWorkerAction5),
-    hasWorkerLoader: Boolean(hasWorkerLoader5)
+    hasWorkerAction: Boolean(hasWorkerAction6),
+    hasWorkerLoader: Boolean(hasWorkerLoader6)
   }
 };
 var entry = { module: entry_worker_exports };
