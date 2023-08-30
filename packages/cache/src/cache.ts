@@ -73,7 +73,7 @@ export class RemixCache implements CustomCache {
    */
   public readonly ttl: number = Infinity;
   /**
-   * The caching strategy to use.
+   * The caching strategy to use. Intended to provide strategies with cachified.
    * @readonly
    * @default Strategy.NetworkFirst
    */
@@ -100,6 +100,8 @@ export class RemixCache implements CustomCache {
   private async _openCache() {
     return await caches.open(this.name);
   }
+
+  private async _maintainCacheLRU(): Promise<void> {}
 
   private async _maintainCache(): Promise<void> {
     const cache = await this._openCache();
@@ -211,7 +213,8 @@ export class RemixCache implements CustomCache {
       'x-cache-accessed-at': now.toString(),
     });
 
-    await cache.put(request, res);
+    await cache.put(request, res.clone());
+    this._maintainCache();
     return res;
   }
 
@@ -246,7 +249,7 @@ export class RemixCache implements CustomCache {
     };
 
     // Update headers and clone response with updated headers
-    const updatedResponse = this._updateHeaders(response, headersToUpdate);
+    const updatedResponse = this._updateHeaders(response.clone(), headersToUpdate);
 
     // Cache the updated response and maintain the cache
     try {
