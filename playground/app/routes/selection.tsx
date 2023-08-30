@@ -7,12 +7,15 @@ export async function loader() {
 
 export async function workerLoader({ context }) {
   const { database } = context;
+  
   const selections = await database.selections.toArray();
+
   return json({ selections });
 }
 
 export default function SelectionPage() {
   const { selections } = useLoaderData();
+  
   return (
     <article>
       <h1>Here is your selection</h1>
