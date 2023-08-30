@@ -6,6 +6,12 @@ import { handleRequest } from './utils/handle-request.js';
 
 const _self = self as unknown as ServiceWorkerGlobalScope & typeof globalThis;
 
+declare global {
+  interface ServiceWorkerGlobalScope {
+    __workerManifest: any;
+  }
+}
+
 /**
  * Creates the load context for the worker action and loader.
  */
@@ -33,6 +39,8 @@ const defaultErrorHandler =
       console.error(error);
     }
   });
+
+_self.__workerManifest = build.routes;
 
 // DO NOT OVERRIDE!!!
 _self.addEventListener(
