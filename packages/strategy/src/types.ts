@@ -11,4 +11,4 @@ export interface StrategyOptions {
   cacheOptions?: Omit<RemixCacheOptions, 'name'>;
 }
 
-export type StrategyResponse = (request: Request) => Response | Promise<Response>;
+export type StrategyResponse = (request: Request) => Promise<Response>;
