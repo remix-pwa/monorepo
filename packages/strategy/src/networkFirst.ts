@@ -74,7 +74,7 @@ export const networkFirst = async ({
 
         await remixCache.put(request, response.clone());
 
-        return response;
+        return response.clone();
       }
     } catch (error) {
       if (fetchDidFail) {
@@ -84,7 +84,7 @@ export const networkFirst = async ({
       const cachedResponse = await remixCache.match(request);
 
       if (cachedResponse) {
-        return cachedResponse;
+        return cachedResponse.clone();
       }
 
       return new Response(JSON.stringify({ message: 'Network Error' }), {

@@ -55,7 +55,7 @@ export const networkOnly = async ({
           await Promise.all(fetchDidSucceed.map(cb => cb()));
         }
 
-        return response;
+        return response.clone();
       }
 
       // Re-thrown error to be caught by `catch` block

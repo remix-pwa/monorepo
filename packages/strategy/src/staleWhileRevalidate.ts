@@ -56,7 +56,7 @@ export const staleWhileRevalidate = async ({
           });
         });
 
-      return response || fetchPromise;
+      return response ? response.clone() : fetchPromise;
     });
   };
 };

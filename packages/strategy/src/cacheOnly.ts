@@ -64,6 +64,6 @@ export const cacheOnly = async ({
       );
     }
 
-    return response;
+    return response.clone();
   };
 };
