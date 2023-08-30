@@ -3612,44 +3612,50 @@ var RemixCache = class {
   async _openCache() {
     return await caches.open(this.name);
   }
-  async _maintainCache() {
-    const cache = await this._openCache();
-    const keysResponse = await cache.keys();
-    const validKeys = [];
-    const now = Date.now();
-    for (const request of keysResponse) {
-      const response = await cache.match(request);
-      if (response) {
-        const expiresAtHeader = response.headers.get("x-cache-expires-at");
-        const expiresAt = parseInt(expiresAtHeader, 10);
-        if (!expiresAt || expiresAt > now) {
-          validKeys.push({
-            key: request.url,
-            accessedAt: parseInt(response.headers.get("x-cache-accessed-at"), 10) || 0
-          });
-        } else {
-          await cache.delete(request);
-        }
-      }
+  async _getOrDeleteIfExpired(key, metadata) {
+    if (metadata.expiresAt <= Date.now()) {
+      return await this.delete(key);
     }
-    validKeys.sort((a, b2) => a.accessedAt - b2.accessedAt);
-    if (validKeys.length > this.maxItems) {
-      const keysToRemove = validKeys.slice(0, validKeys.length - this.maxItems);
-      for (const keyToRemove of keysToRemove) {
-        await cache.delete(keyToRemove.key);
-      }
+    return false;
+  }
+  async _values() {
+    const cache = await this._openCache();
+    const keys2 = await cache.keys();
+    return await Promise.all(keys2.map((key) => cache.match(key)));
+  }
+  async _lruCleanup() {
+    if (this.maxItems > await this.length()) {
+      this._values().then(async (values) => {
+        values.sort((a, b2) => {
+          const aMeta = a.clone().json().metadata;
+          const bMeta = b2.clone().json().metadata;
+          return aMeta.accessedAt - bMeta.accessedAt;
+        }).slice(1);
+      });
     }
   }
-  _updateHeaders(response, headersToUpdate) {
-    const headers = new Headers(response.headers);
-    for (const [headerName, headerValue] of Object.entries(headersToUpdate)) {
-      headers.set(headerName, headerValue);
+  async _getResponseValue(request, response) {
+    const { metadata, value } = await response.clone().json();
+    const deleted = await this._getOrDeleteIfExpired(request.clone(), metadata);
+    if (!deleted) {
+      const res = new Response(JSON.stringify({
+        metadata: {
+          ...metadata,
+          accessedAt: Date.now()
+        },
+        value
+      }), {
+        status: response.status,
+        statusText: response.statusText,
+        headers: {
+          ...Object.fromEntries(response.clone().headers.entries()),
+          "Content-Type": "application/json"
+        }
+      });
+      await this.put(request, res.clone(), void 0, true);
+      return res.clone().json().then(({ value: value2 }) => value2);
     }
-    return new Response(response.body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers
-    });
+    return void 0;
   }
   /**
    * Delete an entry from the cache.
@@ -3700,17 +3706,14 @@ var RemixCache = class {
    */
   async match(request, options) {
     const cache = await caches.open(this.name);
-    const response = await cache.match(request, options);
+    if (request instanceof URL || typeof request === "string") {
+      request = new Request(request);
+    }
+    const response = await cache.match(request.clone(), options);
     if (!response) {
       return void 0;
     }
-    const now = Date.now();
-    const res = this._updateHeaders(response, {
-      "x-cache-accessed-at": now.toString()
-    });
-    await cache.put(request, res.clone());
-    this._maintainCache();
-    return res;
+    return await this._getResponseValue(request, response.clone());
   }
   /**
    * Add an entry to the cache.
@@ -3718,6 +3721,7 @@ var RemixCache = class {
    *
    * @param {RequestInfo | URL} request - The request to add.
    * @param {Response} response - The response to add.
+   * @param {boolean} modified - Whether the response has been modified.
    * @returns {Promise<void>} A `Promise` that resolves when the entry is added to the cache.
    *
    * @example
@@ -3729,20 +3733,32 @@ var RemixCache = class {
    *
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Cache/put
    */
-  async put(request, response, ttl = this.ttl) {
+  async put(request, response, ttl = void 0, modified = false) {
     const cache = await this._openCache();
-    if (this.ttl < 0)
+    if (request instanceof URL || typeof request === "string") {
+      request = new Request(request);
+    }
+    if (this.ttl <= 0 || ttl && ttl <= 0)
       return;
-    const now = Date.now();
-    const expiresAt = now + ttl;
-    const headersToUpdate = {
-      "x-cache-accessed-at": now.toString(),
-      "x-cache-expires-at": expiresAt.toString()
-    };
-    const updatedResponse = this._updateHeaders(response.clone(), headersToUpdate);
+    if (!modified) {
+      response = new Response(JSON.stringify({
+        metadata: {
+          accessedAt: Date.now(),
+          expiresAt: Date.now() + (ttl ?? this.ttl)
+        },
+        value: await response.clone().json()
+      }), {
+        status: response.status,
+        statusText: response.statusText,
+        headers: {
+          ...Object.fromEntries(response.clone().headers.entries()),
+          "Content-Type": "application/json"
+        }
+      });
+    }
     try {
-      await cache.put(request, updatedResponse);
-      await this._maintainCache();
+      await this._lruCleanup();
+      return await cache.put(request, response.clone());
     } catch (error) {
       console.error("Failed to put to cache:", error);
     }
@@ -3898,6 +3914,12 @@ var isHttpRequest = (request) => {
   }
   return request.toString().startsWith("http");
 };
+var toJSON = async (response) => {
+  if (response instanceof Response) {
+    return await response.clone().json();
+  }
+  return response;
+};
 
 // ../packages/strategy/dist/src/cacheFirst.js
 var cacheFirst = async ({ cache: cacheName, cacheOptions, fetchDidFail = void 0 }) => {
@@ -3940,18 +3962,19 @@ var workerLoader = async ({ context }) => {
     cache: "basic-caching",
     cacheOptions: {
       maxItems: 5,
-      ttl: 10 * 1e3
+      ttl: 30 * 1e3
       // 10 seconds
     },
     fetchDidFail: [
       () => console.log("Fetch failed!")
     ]
   });
-  const response = await customStrategy(context.event.request);
-  const data = await response.json();
+  let response = await customStrategy(context.event.request);
+  let data = await toJSON(response);
+  console.log("Data from the server:", data);
   const date = /* @__PURE__ */ new Date();
   return new Response(JSON.stringify({
-    data: data.data,
+    data: "data.data",
     // Only this shows an updated time, the other one doesn't because it's cached.
     // Try deleting the cache and reloading the page to see the difference.
     message: `Server already up and running! Time: ${date.getMinutes()}:${date.getSeconds()}`
@@ -10003,6 +10026,7 @@ var defaultErrorHandler = entry.module.handleError || ((error, { request }) => {
     console.error(error);
   }
 });
+_self.__workerManifest = routes;
 _self.addEventListener(
   "fetch",
   /**

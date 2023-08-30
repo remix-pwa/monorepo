@@ -48,7 +48,7 @@ export default function Basic() {
   const loaderData = useLoaderData();
 
   return (
-    <div className="w-full h-screen px-6 flex flex-col">
+    <div className="w-full h-screen px-6 flex flex-col mx-auto max-w-3xl">
       <h1 className="text-2xl font-bold py-8">Basic Showcase</h1>
       <div className="w-full flex-1 rounded-2xl mb-10 px-4 py-6 bg-blue-600/50">
         <div>

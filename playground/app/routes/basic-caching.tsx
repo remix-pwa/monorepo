@@ -1,4 +1,4 @@
-import { cacheFirst } from "@remix-pwa/strategy";
+import { cacheFirst, toJSON } from "@remix-pwa/strategy";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { Fragment } from "react";
@@ -17,16 +17,17 @@ export const workerLoader = async ({ context }: any) => {
     cache: 'basic-caching',
     cacheOptions: {
       maxItems: 5,
-      ttl: 10 * 1_000 // 10 seconds
+      ttl: 30 * 1_000 // 10 seconds
     },
     fetchDidFail: [
       () => console.log('Fetch failed!')
     ]
   });
 
-  const response = await customStrategy(context.event.request);
+  let response = await customStrategy(context.event.request);
+  let data = await toJSON(response);
 
-  const data = await response.json();
+  console.log('Data from the server:', data);
 
   const date = new Date();
 
@@ -34,7 +35,7 @@ export const workerLoader = async ({ context }: any) => {
   // modifying one of its properties and returning it back to the client (which is only
   // possible if we have a cached value to modify.)
   return new Response(JSON.stringify({
-    data: data.data,
+    data: 'data.data',
     // Only this shows an updated time, the other one doesn't because it's cached.
     // Try deleting the cache and reloading the page to see the difference.
     message: `Server already up and running! Time: ${date.getMinutes()}:${date.getSeconds()}`
@@ -49,7 +50,7 @@ export default function BasicCaching() {
   const loaderData = useLoaderData();
 
   return (
-    <div className="w-full h-screen px-6 flex flex-col">
+    <div className="w-full h-screen px-6 flex flex-col mx-auto max-w-3xl">
       <h1 className="text-2xl font-bold py-8">Basic Showcase</h1>
       <div className="w-full flex-1 rounded-2xl mb-10 px-4 py-6 bg-indigo-600/50">
         <div>

@@ -15,7 +15,7 @@ const CustomLink = ({ href, children }: any) => {
 
 export default function Index() {
   return (
-    <div className="w-full h-screen flex flex-col px-6">
+    <div className="w-full h-screen flex flex-col px-6 mx-auto max-w-3xl">
       <div className="py-8 flex justify-between">
         <h1 className="text-2xl font-bold">Remix PWA - Worker Actions & Loaders</h1>
         <button
