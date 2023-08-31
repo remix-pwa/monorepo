@@ -4269,11 +4269,11 @@ var import_jsx_runtime3 = __toESM(require_jsx_runtime());
 var workerAction2 = async ({ context }) => {
   const { fetchFromServer } = context;
   try {
-    fetchFromServer();
+    await fetchFromServer();
   } catch (error) {
     console.error(error);
   }
-  console.log("Submitting...");
+  console.log("worker action called");
   return new Response(JSON.stringify({
     message: "Modified action response, Remix Actions are quite out of the picture here"
   }), {
@@ -9957,11 +9957,12 @@ function isRemixResponse(response) {
 
 // ../packages/worker-runtime/dist/src/utils/handle-request.js
 async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, event, loadContext, routes: routes2 }) {
-  const url = new URL(event.request.url);
+  const { request } = event;
+  const url = new URL(request.url);
   const routeId = url.searchParams.get("_data");
   const route = routeId ? routes2[routeId] : void 0;
   try {
-    if (isLoaderRequest2(event.request) && route?.module.workerLoader) {
+    if (isLoaderRequest2(request) && route?.module.workerLoader) {
       return await handleLoader({
         event,
         loader: route.module.workerLoader,
@@ -9969,7 +9970,7 @@ async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, ev
         loadContext
       }).then(responseHandler);
     }
-    if (isActionRequest(event.request) && route?.module?.workerAction) {
+    if (isActionRequest(request) && route?.module?.workerAction) {
       return await handleAction({
         event,
         action: route.module.workerAction,
@@ -9981,9 +9982,12 @@ async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, ev
     const handler2 = (error2) => errorHandler(error2, createArgumentsFrom({ event, loadContext }));
     return _errorHandler({ error, handler: handler2 });
   }
+  if (request.method.toUpperCase() !== "GET") {
+    return fetch(request.clone());
+  }
   return defaultHandler2({
-    request: event.request,
-    params: getURLParameters(event.request),
+    request,
+    params: getURLParameters(request),
     context: loadContext
   });
 }
