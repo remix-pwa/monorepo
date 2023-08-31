@@ -56,13 +56,15 @@ export async function handleRequest({
   loadContext,
   routes,
 }: HandleRequestArgs): Promise<Response> {
-  const url = new URL(event.request.url);
+  const { request } = event;
+
+  const url = new URL(request.url);
   const routeId = url.searchParams.get('_data');
   // if the request is not a loader or action request, we call the default handler and the routeId will be undefined
   const route = routeId ? routes[routeId] : undefined;
 
   try {
-    if (isLoaderRequest(event.request) && route?.module.workerLoader) {
+    if (isLoaderRequest(request) && route?.module.workerLoader) {
       return await handleLoader({
         event,
         loader: route.module.workerLoader,
@@ -71,7 +73,7 @@ export async function handleRequest({
       }).then(responseHandler);
     }
 
-    if (isActionRequest(event.request) && route?.module?.workerAction) {
+    if (isActionRequest(request) && route?.module?.workerAction) {
       return await handleAction({
         event,
         action: route.module.workerAction,
@@ -84,9 +86,18 @@ export async function handleRequest({
     return _errorHandler({ error, handler });
   }
 
+  // If the request is a non-GET request and we don't have an action in that route,
+  // fetch it like normal.
+  //
+  // This is a precautionary move, you might not rely on this if your default handler just
+  // handles GET requests but just in case...
+  if (request.method.toUpperCase() !== 'GET') {
+    return fetch(request.clone());
+  }
+
   return defaultHandler({
-    request: event.request,
-    params: getURLParameters(event.request),
+    request,
+    params: getURLParameters(request),
     context: loadContext,
   });
 }
