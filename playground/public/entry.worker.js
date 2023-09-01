@@ -4349,11 +4349,7 @@ __export(sync_away_exports, {
   workerAction: () => workerAction3
 });
 
-// app/routes/sync-away.tsx
-var import_node4 = __toESM(require_node());
-var import_react9 = __toESM(require_react());
-
-// ../packages/sync/src/request.ts
+// ../packages/sync/dist/src/request.js
 var serializableProperties = [
   "method",
   "referrer",
@@ -4644,7 +4640,7 @@ replaceTraps((oldTraps) => ({
   has: (target, prop) => !!getMethod(target, prop) || oldTraps.has(target, prop)
 }));
 
-// ../packages/sync/src/db.ts
+// ../packages/sync/dist/src/db.js
 var DB_VERSION = 3;
 var DB_NAME = "remix-pwa-sync";
 var REQUEST_OBJECT_STORE_NAME = "failed-requests";
@@ -4768,7 +4764,7 @@ var QueueDb = class {
   }
 };
 
-// ../packages/sync/src/store.ts
+// ../packages/sync/dist/src/store.js
 var QueueStore = class {
   _queueName;
   _queueDb;
@@ -4875,7 +4871,7 @@ var QueueStore = class {
   }
 };
 
-// ../packages/sync/src/queue.ts
+// ../packages/sync/dist/src/queue.js
 var TAG_PREFIX = "rp-sync";
 var MAX_RETENTION_TIME = 60 * 24 * 7;
 var queueNames = /* @__PURE__ */ new Set();
@@ -5160,7 +5156,7 @@ var Queue = class {
   }
 };
 
-// ../packages/sync/src/export.ts
+// ../packages/sync/dist/src/export.js
 var SyncQueue = class {
   static queues = /* @__PURE__ */ new Map();
   static createQueue(name) {
@@ -5206,8 +5202,13 @@ var queueToServer = ({ name, request }) => {
   }
   queue.pushRequest({ request });
 };
+var registerQueue = (name) => {
+  SyncQueue.createQueue(name);
+};
 
 // app/routes/sync-away.tsx
+var import_node4 = __toESM(require_node());
+var import_react9 = __toESM(require_react());
 var import_jsx_runtime6 = __toESM(require_jsx_runtime());
 var workerAction3 = async ({ context }) => {
   const { fetchFromServer, event } = context;
@@ -10660,6 +10661,7 @@ var loadersHandler = new NetworkFirst({
 var assetsHandler = new CacheFirst({
   cacheName: ASSETS
 });
+registerQueue("offline-action");
 var getLoadContext = () => {
   const stores = database_default();
   return {
