@@ -1,3 +1,4 @@
+/// <reference lib="WebWorker" />
 import type { AppData, AppLoadContext, DataFunctionArgs } from '@remix-run/server-runtime';
 import type { ServerRouteModule } from '@remix-run/server-runtime/dist/routeModules.js';
 import type { ServerRoute } from '@remix-run/server-runtime/dist/routes.js';
