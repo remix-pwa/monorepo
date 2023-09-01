@@ -2,6 +2,8 @@
 
 import { CacheFirst, NetworkFirst, RemixNavigationHandler, matchRequest } from '@remix-pwa/sw';
 import createStorageRepository from './database';
+import { registerQueue } from '@remix-pwa/sync';
+
 
 declare let self: ServiceWorkerGlobalScope &
   typeof globalThis & {
@@ -28,6 +30,8 @@ const loadersHandler = new NetworkFirst({
 const assetsHandler = new CacheFirst({
   cacheName: ASSETS,
 });
+
+registerQueue('offline-action');
 
 /**
  * The load context works same as in Remix. The return values of this function will be injected in the worker action/loader.
