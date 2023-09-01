@@ -1,10 +1,8 @@
 import { redirect } from "@remix-run/node";
 import type { ActionFunction } from "@remix-run/node";
-import type { ShouldRevalidateFunction } from "@remix-run/react";
-import { useActionData, useFetcher } from "@remix-run/react";
-import { useEffect } from "react";
+import { Form, useActionData } from "@remix-run/react";
 
-export const action: ActionFunction = async () => {
+export const action: ActionFunction = () => {
   const actionData = {
     message: 'This is from a simple action. Nothing more to see here.'
   }
@@ -23,13 +21,11 @@ export const workerAction = async ({ context }) => {
     // We are now calling the actual Remix action here, but like you can see 
     // we are doing nothing with it, so no redirect happens 😏
     //
-    // But open up the 'Cookies' section in your devtools.
+    // But open up the 'Cookies' section in your devtools for a little surprise.
     await fetchFromServer() as unknown as Response;
   } catch (error) {
     console.error(error);
   }
-
-  console.log('worker action called');
 
   return new Response(JSON.stringify({
     message: 'Modified action response, Remix Actions are quite out of the picture here'
@@ -40,28 +36,8 @@ export const workerAction = async ({ context }) => {
   });
 }
 
-export const shouldRevalidate: ShouldRevalidateFunction = ({
-  defaultShouldRevalidate,
-  actionResult
-}) => {
-  if (actionResult) {
-    return false;
-  }
-
-  return defaultShouldRevalidate;
-}
-
 export default function BasicAction() {
-  const fetcher = useFetcher();
   const actionData = useActionData<typeof workerAction>();
-
-  useEffect(() => {
-    console.log(actionData)
-  }, [actionData])
-
-  const submit = () => {
-    fetcher.submit({ 'text': 'test script' }, { method: 'POST' })
-  }
 
   return (
     <div className="w-full h-screen px-6 flex flex-col mx-auto max-w-3xl">
@@ -74,21 +50,41 @@ export default function BasicAction() {
               <p className="text-lg font-medium leading-relaxed text-gray-900 dark:text-white">"{actionData.message}"</p>
             </blockquote>
           ) : (
-            <p>Submit to see weird stuff</p>
+            <p className="text-lg">Submit to see interesting stuff happen</p>
           )}
         </div>
         <div className="mt-6">
           <h3 className="font-medium text-lg">How does it work?</h3>
-          <p className="indent-6 px-1">
-            ...
+          <p className="indent-5 px-1">
+            Remix PWA service workers intercept <b>all</b> fetch requests made, previously we were only dealing
+            with GET requests and if they weren't, we would just let them pass through. That behaviour is still
+            the default, but now we are introducing the ability to intentionally intercept them and do whatever you want to.
+          </p>
+          <p className="indent-5 px-1">
+            Whenever a non-GET fetch request is made to a route that has an action, the service worker 
+            will call the <code>workerAction</code> function if it exists. If it doesn't exist, it will just let the request 
+            pass through like normal. If it does however, it will invoke the <code>workerAction</code> function
+            which can now call the actual Remix action, modify the response, or do whatever you want to do.
           </p>
         </div>
         <div className="mt-6">
           <h3 className="font-medium text-lg">See the behaviour in action</h3>
-          <p className="indent-6 px-1">
-            ...
+          <p className="indent-5 px-1">
+            Click the 'Submit' button below to trigger the action.
           </p>
-          <button onClick={submit}>Submit</button>
+          <p className="indent-5 px-1">
+            By default, the <code>action</code> in this route returns a redirect response to a route that doesn't exist.
+            Don't believe me? Comment out the worker action and re-submit. You'll see the redirect happen.
+            Instead of redirecting though, we now see a message from the worker action instead.
+          </p>
+          <p className="indent-5 px-1">
+            Open up the 'Cookies' section in your devtools and you'll see that the <code>actionData</code> cookie
+            set by the <code>action</code> redirect. Actions still run like normal, but we are now able to modify
+            the response and extend the functionality of Remix Actions like never before.
+          </p>
+          <Form method="post" className="mt-4">
+            <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-fuchsia-600 hover:bg-fuchsia-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-fuchsia-500">Submit</button>
+          </Form>
         </div>
       </div>
     </div>
