@@ -11,5 +11,12 @@ module.exports = {
     v2_routeConvention: true,
   },
   tailwind: true,
-  serverDependenciesToBundle: ['@remix-pwa/sw', '@remix-pwa/strategy', '@remix-pwa/dev', '@remix-pwa/cache']
+  serverDependenciesToBundle: [
+    '@remix-pwa/sw', 
+    '@remix-pwa/strategy', 
+    '@remix-pwa/dev', 
+    '@remix-pwa/sync', 
+    '@remix-pwa/cache', 
+    'idb'
+  ]
 };
