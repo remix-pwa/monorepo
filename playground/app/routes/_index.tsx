@@ -59,11 +59,11 @@ export default function Index() {
         <div className="pt-4">
           <h3 className="text-lg pb-2 font-medium">Syncing your app 💿</h3>
           <article>
-            normally when you have no network and something fails, if it isn't something cached like a page or data, you get 
+            Normally when you have no network and something fails, if it isn't something cached like a page or data, you get 
             an error and that's it. What if I submitted something? Or requested something? The user had to manually retry again. 
-            Good thing we used the word "<span className="underline">had</span>", click the link to find out what's happened.
+            Good thing we used the word "<span className="underline">had</span>", click the link to find out what's changed.
           </article>
-          <CustomLink href={'/flights'}>Break the internet</CustomLink>
+          <CustomLink href={'/sync-away'}>Break the internet</CustomLink>
         </div>
         <div className="pt-4">
           <h3 className="text-lg pb-2 font-medium">Basic Caching</h3>
