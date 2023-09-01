@@ -126,7 +126,7 @@ __export(router_exports, {
   matchRoutes: () => matchRoutes,
   normalizePathname: () => normalizePathname,
   parsePath: () => parsePath,
-  redirect: () => redirect4,
+  redirect: () => redirect5,
   resolvePath: () => resolvePath,
   resolveTo: () => resolveTo,
   stripBasename: () => stripBasename
@@ -1390,13 +1390,13 @@ function createRouter(init) {
       pendingNavigationController.signal.removeEventListener("abort", abortPendingFetchRevalidations);
     }
     revalidatingFetchers.forEach((rf) => fetchControllers.delete(rf.key));
-    let redirect7 = findRedirect(results);
-    if (redirect7) {
-      if (redirect7.idx >= matchesToLoad.length) {
-        let fetcherKey = revalidatingFetchers[redirect7.idx - matchesToLoad.length].key;
+    let redirect8 = findRedirect(results);
+    if (redirect8) {
+      if (redirect8.idx >= matchesToLoad.length) {
+        let fetcherKey = revalidatingFetchers[redirect8.idx - matchesToLoad.length].key;
         fetchRedirectIds.add(fetcherKey);
       }
-      await startRedirectNavigation(state, redirect7.result, {
+      await startRedirectNavigation(state, redirect8.result, {
         replace
       });
       return {
@@ -1580,13 +1580,13 @@ function createRouter(init) {
     fetchReloadIds.delete(key);
     fetchControllers.delete(key);
     revalidatingFetchers.forEach((r) => fetchControllers.delete(r.key));
-    let redirect7 = findRedirect(results);
-    if (redirect7) {
-      if (redirect7.idx >= matchesToLoad.length) {
-        let fetcherKey = revalidatingFetchers[redirect7.idx - matchesToLoad.length].key;
+    let redirect8 = findRedirect(results);
+    if (redirect8) {
+      if (redirect8.idx >= matchesToLoad.length) {
+        let fetcherKey = revalidatingFetchers[redirect8.idx - matchesToLoad.length].key;
         fetchRedirectIds.add(fetcherKey);
       }
-      return startRedirectNavigation(state, redirect7.result);
+      return startRedirectNavigation(state, redirect8.result);
     }
     let {
       loaderData,
@@ -1669,18 +1669,18 @@ function createRouter(init) {
       fetchers: new Map(state.fetchers)
     });
   }
-  async function startRedirectNavigation(state2, redirect7, _temp) {
+  async function startRedirectNavigation(state2, redirect8, _temp) {
     let {
       submission,
       replace,
       isFetchActionRedirect
     } = _temp === void 0 ? {} : _temp;
-    if (redirect7.revalidate) {
+    if (redirect8.revalidate) {
       isRevalidationRequired = true;
     }
     let redirectLocation = createLocation(
       state2.location,
-      redirect7.location,
+      redirect8.location,
       // TODO: This can be removed once we get rid of useTransition in Remix v2
       _extends2({
         _isRedirect: true
@@ -1689,14 +1689,14 @@ function createRouter(init) {
       } : {})
     );
     invariant2(redirectLocation, "Expected a location on the redirect navigation");
-    if (ABSOLUTE_URL_REGEX.test(redirect7.location) && isBrowser) {
-      let url = init.history.createURL(redirect7.location);
+    if (ABSOLUTE_URL_REGEX.test(redirect8.location) && isBrowser) {
+      let url = init.history.createURL(redirect8.location);
       let isDifferentBasename = stripBasename(url.pathname, basename) == null;
       if (routerWindow.location.origin !== url.origin || isDifferentBasename) {
         if (replace) {
-          routerWindow.location.replace(redirect7.location);
+          routerWindow.location.replace(redirect8.location);
         } else {
-          routerWindow.location.assign(redirect7.location);
+          routerWindow.location.assign(redirect8.location);
         }
         return;
       }
@@ -1704,10 +1704,10 @@ function createRouter(init) {
     pendingNavigationController = null;
     let redirectHistoryAction = replace === true ? Action2.Replace : Action2.Push;
     let activeSubmission = submission || getSubmissionFromNavigation(state2.navigation);
-    if (redirectPreserveMethodStatusCodes.has(redirect7.status) && activeSubmission && isMutationMethod(activeSubmission.formMethod)) {
+    if (redirectPreserveMethodStatusCodes.has(redirect8.status) && activeSubmission && isMutationMethod(activeSubmission.formMethod)) {
       await startNavigation(redirectHistoryAction, redirectLocation, {
         submission: _extends2({}, activeSubmission, {
-          formAction: redirect7.location
+          formAction: redirect8.location
         }),
         // Preserve this flag across redirects
         preventScrollReset: pendingPreventScrollReset
@@ -2981,15 +2981,15 @@ async function resolveDeferredResults(currentMatches, matchesToLoad, results, si
     }
   }
 }
-async function resolveDeferredData(result, signal, unwrap) {
-  if (unwrap === void 0) {
-    unwrap = false;
+async function resolveDeferredData(result, signal, unwrap2) {
+  if (unwrap2 === void 0) {
+    unwrap2 = false;
   }
   let aborted = await result.deferredData.resolveData(signal);
   if (aborted) {
     return;
   }
-  if (unwrap) {
+  if (unwrap2) {
     try {
       return {
         type: ResultType2.data,
@@ -3170,7 +3170,7 @@ function getDoneFetcher(data) {
   };
   return fetcher;
 }
-var Action2, PopStateEventType, ResultType2, immutableRouteKeys, paramRe, dynamicSegmentValue, indexRouteValue, emptySegmentValue, staticSegmentValue, splatPenalty, isSplat, joinPaths, normalizePathname, normalizeSearch, normalizeHash, json5, AbortedDeferredError2, DeferredData2, defer4, redirect4, ErrorResponse, validMutationMethodsArr2, validMutationMethods2, validRequestMethodsArr2, validRequestMethods2, redirectStatusCodes, redirectPreserveMethodStatusCodes, IDLE_NAVIGATION, IDLE_FETCHER, IDLE_BLOCKER, ABSOLUTE_URL_REGEX, defaultMapRouteProperties, UNSAFE_DEFERRED_SYMBOL2;
+var Action2, PopStateEventType, ResultType2, immutableRouteKeys, paramRe, dynamicSegmentValue, indexRouteValue, emptySegmentValue, staticSegmentValue, splatPenalty, isSplat, joinPaths, normalizePathname, normalizeSearch, normalizeHash, json5, AbortedDeferredError2, DeferredData2, defer4, redirect5, ErrorResponse, validMutationMethodsArr2, validMutationMethods2, validRequestMethodsArr2, validRequestMethods2, redirectStatusCodes, redirectPreserveMethodStatusCodes, IDLE_NAVIGATION, IDLE_FETCHER, IDLE_BLOCKER, ABSOLUTE_URL_REGEX, defaultMapRouteProperties, UNSAFE_DEFERRED_SYMBOL2;
 var init_router = __esm({
   "../node_modules/@remix-run/server-runtime/node_modules/@remix-run/router/dist/router.js"() {
     (function(Action3) {
@@ -3337,7 +3337,7 @@ var init_router = __esm({
       } : init;
       return new DeferredData2(data, responseInit);
     };
-    redirect4 = function redirect5(url, init) {
+    redirect5 = function redirect6(url, init) {
       if (init === void 0) {
         init = 302;
       }
@@ -3491,7 +3491,7 @@ var require_responses = __commonJS({
     var defer6 = (data, init = {}) => {
       return router.defer(data, init);
     };
-    var redirect7 = (url, init = 302) => {
+    var redirect8 = (url, init = 302) => {
       return router.redirect(url, init);
     };
     function isDeferredData3(value) {
@@ -3562,7 +3562,7 @@ var require_responses = __commonJS({
     exports.isRedirectStatusCode = isRedirectStatusCode2;
     exports.isResponse = isResponse3;
     exports.json = json9;
-    exports.redirect = redirect7;
+    exports.redirect = redirect8;
   }
 });
 
@@ -4264,7 +4264,6 @@ __export(basic_action_exports, {
 // app/routes/basic-action.tsx
 var import_node2 = __toESM(require_node());
 var import_react5 = __toESM(require_react());
-var import_react6 = __toESM(require_react2());
 var import_jsx_runtime3 = __toESM(require_jsx_runtime());
 var workerAction2 = async ({ context }) => {
   const { fetchFromServer } = context;
@@ -4273,7 +4272,6 @@ var workerAction2 = async ({ context }) => {
   } catch (error) {
     console.error(error);
   }
-  console.log("worker action called");
   return new Response(JSON.stringify({
     message: "Modified action response, Remix Actions are quite out of the picture here"
   }), {
@@ -4297,8 +4295,8 @@ __export(basic_loader_exports, {
 
 // app/routes/basic-loader.tsx
 var import_node3 = __toESM(require_node());
-var import_react7 = __toESM(require_react());
-var import_react8 = __toESM(require_react2());
+var import_react6 = __toESM(require_react());
+var import_react7 = __toESM(require_react2());
 var import_jsx_runtime4 = __toESM(require_jsx_runtime());
 var workerLoader3 = async ({ context }) => {
   const { fetchFromServer } = context;
@@ -4331,7 +4329,7 @@ __export(selection_exports, {
 });
 
 // app/routes/selection.tsx
-var import_react9 = __toESM(require_react());
+var import_react8 = __toESM(require_react());
 var import_jsx_runtime5 = __toESM(require_jsx_runtime());
 async function workerLoader4({ context }) {
   const { database } = context;
@@ -4343,21 +4341,913 @@ async function workerLoader4({ context }) {
 var hasWorkerAction5 = false;
 var hasWorkerLoader5 = true;
 
+// routes-module:routes/sync-away.tsx?worker
+var sync_away_exports = {};
+__export(sync_away_exports, {
+  hasWorkerAction: () => hasWorkerAction6,
+  hasWorkerLoader: () => hasWorkerLoader6,
+  workerAction: () => workerAction3
+});
+
+// app/routes/sync-away.tsx
+var import_node4 = __toESM(require_node());
+var import_react9 = __toESM(require_react());
+
+// ../packages/sync/src/request.ts
+var serializableProperties = [
+  "method",
+  "referrer",
+  "referrerPolicy",
+  "mode",
+  "credentials",
+  "cache",
+  "redirect",
+  "integrity",
+  "keepalive"
+];
+var StorableRequest = class _StorableRequest {
+  _requestData;
+  /**
+   * Converts a Request object to a plain object that can be structured
+   * cloned or JSON-stringified.
+   *
+   * @param {Request} request
+   * @return {Promise<StorableRequest>}
+   */
+  static async fromRequest(request) {
+    const requestData = {
+      url: request.url,
+      headers: {}
+    };
+    if (request.method !== "GET") {
+      requestData.body = await request.clone().arrayBuffer();
+    }
+    for (const [key, value] of request.headers.entries()) {
+      requestData.headers[key] = value;
+    }
+    for (const prop of serializableProperties) {
+      if (request[prop] !== void 0) {
+        requestData[prop] = request[prop];
+      }
+    }
+    return new _StorableRequest(requestData);
+  }
+  /**
+   * Accepts an object of request data that can be used to construct a
+   * `Request` but can also be stored in IndexedDB.
+   *
+   * @param {Object} requestData An object of request data that includes the
+   *     `url` plus any relevant properties of
+   *     [requestInit]{@link https://fetch.spec.whatwg.org/#requestinit}.
+   */
+  constructor(requestData) {
+    if (requestData.mode === "navigate") {
+      requestData.mode = "same-origin";
+    }
+    this._requestData = requestData;
+  }
+  /**
+   * Returns a deep clone of the instances `_requestData` object.
+   *
+   * @return {Object}
+   */
+  toObject() {
+    const requestData = Object.assign({}, this._requestData);
+    requestData.headers = Object.assign({}, this._requestData.headers);
+    if (requestData.body) {
+      requestData.body = requestData.body.slice(0);
+    }
+    return requestData;
+  }
+  /**
+   * Converts this instance to a Request.
+   *
+   * @return {Request}
+   */
+  toRequest() {
+    return new Request(this._requestData.url, this._requestData);
+  }
+  /**
+   * Creates and returns a deep clone of the instance.
+   *
+   * @return {StorableRequest}
+   */
+  clone() {
+    return new _StorableRequest(this.toObject());
+  }
+};
+
+// ../node_modules/idb/build/wrap-idb-value.js
+var instanceOfAny = (object, constructors) => constructors.some((c) => object instanceof c);
+var idbProxyableTypes;
+var cursorAdvanceMethods;
+function getIdbProxyableTypes() {
+  return idbProxyableTypes || (idbProxyableTypes = [
+    IDBDatabase,
+    IDBObjectStore,
+    IDBIndex,
+    IDBCursor,
+    IDBTransaction
+  ]);
+}
+function getCursorAdvanceMethods() {
+  return cursorAdvanceMethods || (cursorAdvanceMethods = [
+    IDBCursor.prototype.advance,
+    IDBCursor.prototype.continue,
+    IDBCursor.prototype.continuePrimaryKey
+  ]);
+}
+var cursorRequestMap = /* @__PURE__ */ new WeakMap();
+var transactionDoneMap = /* @__PURE__ */ new WeakMap();
+var transactionStoreNamesMap = /* @__PURE__ */ new WeakMap();
+var transformCache = /* @__PURE__ */ new WeakMap();
+var reverseTransformCache = /* @__PURE__ */ new WeakMap();
+function promisifyRequest(request) {
+  const promise = new Promise((resolve, reject) => {
+    const unlisten = () => {
+      request.removeEventListener("success", success);
+      request.removeEventListener("error", error);
+    };
+    const success = () => {
+      resolve(wrap(request.result));
+      unlisten();
+    };
+    const error = () => {
+      reject(request.error);
+      unlisten();
+    };
+    request.addEventListener("success", success);
+    request.addEventListener("error", error);
+  });
+  promise.then((value) => {
+    if (value instanceof IDBCursor) {
+      cursorRequestMap.set(value, request);
+    }
+  }).catch(() => {
+  });
+  reverseTransformCache.set(promise, request);
+  return promise;
+}
+function cacheDonePromiseForTransaction(tx) {
+  if (transactionDoneMap.has(tx))
+    return;
+  const done = new Promise((resolve, reject) => {
+    const unlisten = () => {
+      tx.removeEventListener("complete", complete);
+      tx.removeEventListener("error", error);
+      tx.removeEventListener("abort", error);
+    };
+    const complete = () => {
+      resolve();
+      unlisten();
+    };
+    const error = () => {
+      reject(tx.error || new DOMException("AbortError", "AbortError"));
+      unlisten();
+    };
+    tx.addEventListener("complete", complete);
+    tx.addEventListener("error", error);
+    tx.addEventListener("abort", error);
+  });
+  transactionDoneMap.set(tx, done);
+}
+var idbProxyTraps = {
+  get(target, prop, receiver) {
+    if (target instanceof IDBTransaction) {
+      if (prop === "done")
+        return transactionDoneMap.get(target);
+      if (prop === "objectStoreNames") {
+        return target.objectStoreNames || transactionStoreNamesMap.get(target);
+      }
+      if (prop === "store") {
+        return receiver.objectStoreNames[1] ? void 0 : receiver.objectStore(receiver.objectStoreNames[0]);
+      }
+    }
+    return wrap(target[prop]);
+  },
+  set(target, prop, value) {
+    target[prop] = value;
+    return true;
+  },
+  has(target, prop) {
+    if (target instanceof IDBTransaction && (prop === "done" || prop === "store")) {
+      return true;
+    }
+    return prop in target;
+  }
+};
+function replaceTraps(callback) {
+  idbProxyTraps = callback(idbProxyTraps);
+}
+function wrapFunction(func) {
+  if (func === IDBDatabase.prototype.transaction && !("objectStoreNames" in IDBTransaction.prototype)) {
+    return function(storeNames, ...args) {
+      const tx = func.call(unwrap(this), storeNames, ...args);
+      transactionStoreNamesMap.set(tx, storeNames.sort ? storeNames.sort() : [storeNames]);
+      return wrap(tx);
+    };
+  }
+  if (getCursorAdvanceMethods().includes(func)) {
+    return function(...args) {
+      func.apply(unwrap(this), args);
+      return wrap(cursorRequestMap.get(this));
+    };
+  }
+  return function(...args) {
+    return wrap(func.apply(unwrap(this), args));
+  };
+}
+function transformCachableValue(value) {
+  if (typeof value === "function")
+    return wrapFunction(value);
+  if (value instanceof IDBTransaction)
+    cacheDonePromiseForTransaction(value);
+  if (instanceOfAny(value, getIdbProxyableTypes()))
+    return new Proxy(value, idbProxyTraps);
+  return value;
+}
+function wrap(value) {
+  if (value instanceof IDBRequest)
+    return promisifyRequest(value);
+  if (transformCache.has(value))
+    return transformCache.get(value);
+  const newValue = transformCachableValue(value);
+  if (newValue !== value) {
+    transformCache.set(value, newValue);
+    reverseTransformCache.set(newValue, value);
+  }
+  return newValue;
+}
+var unwrap = (value) => reverseTransformCache.get(value);
+
+// ../node_modules/idb/build/index.js
+function openDB(name, version, { blocked, upgrade, blocking, terminated } = {}) {
+  const request = indexedDB.open(name, version);
+  const openPromise = wrap(request);
+  if (upgrade) {
+    request.addEventListener("upgradeneeded", (event) => {
+      upgrade(wrap(request.result), event.oldVersion, event.newVersion, wrap(request.transaction), event);
+    });
+  }
+  if (blocked) {
+    request.addEventListener("blocked", (event) => blocked(
+      // Casting due to https://github.com/microsoft/TypeScript-DOM-lib-generator/pull/1405
+      event.oldVersion,
+      event.newVersion,
+      event
+    ));
+  }
+  openPromise.then((db) => {
+    if (terminated)
+      db.addEventListener("close", () => terminated());
+    if (blocking) {
+      db.addEventListener("versionchange", (event) => blocking(event.oldVersion, event.newVersion, event));
+    }
+  }).catch(() => {
+  });
+  return openPromise;
+}
+var readMethods = ["get", "getKey", "getAll", "getAllKeys", "count"];
+var writeMethods = ["put", "add", "delete", "clear"];
+var cachedMethods = /* @__PURE__ */ new Map();
+function getMethod(target, prop) {
+  if (!(target instanceof IDBDatabase && !(prop in target) && typeof prop === "string")) {
+    return;
+  }
+  if (cachedMethods.get(prop))
+    return cachedMethods.get(prop);
+  const targetFuncName = prop.replace(/FromIndex$/, "");
+  const useIndex = prop !== targetFuncName;
+  const isWrite = writeMethods.includes(targetFuncName);
+  if (
+    // Bail if the target doesn't exist on the target. Eg, getAll isn't in Edge.
+    !(targetFuncName in (useIndex ? IDBIndex : IDBObjectStore).prototype) || !(isWrite || readMethods.includes(targetFuncName))
+  ) {
+    return;
+  }
+  const method = async function(storeName, ...args) {
+    const tx = this.transaction(storeName, isWrite ? "readwrite" : "readonly");
+    let target2 = tx.store;
+    if (useIndex)
+      target2 = target2.index(args.shift());
+    return (await Promise.all([
+      target2[targetFuncName](...args),
+      isWrite && tx.done
+    ]))[0];
+  };
+  cachedMethods.set(prop, method);
+  return method;
+}
+replaceTraps((oldTraps) => ({
+  ...oldTraps,
+  get: (target, prop, receiver) => getMethod(target, prop) || oldTraps.get(target, prop, receiver),
+  has: (target, prop) => !!getMethod(target, prop) || oldTraps.has(target, prop)
+}));
+
+// ../packages/sync/src/db.ts
+var DB_VERSION = 3;
+var DB_NAME = "remix-pwa-sync";
+var REQUEST_OBJECT_STORE_NAME = "failed-requests";
+var QUEUE_NAME_INDEX = "queueName";
+var QueueDb = class {
+  _db = null;
+  /**
+   * Add QueueStoreEntry to underlying db.
+   *
+   * @param {UnidentifiedQueueStoreEntry} entry
+   */
+  async addEntry(entry2) {
+    const db = await this.getDb();
+    const tx = db.transaction(REQUEST_OBJECT_STORE_NAME, "readwrite", {
+      durability: "relaxed"
+    });
+    await tx.store.add(entry2);
+    await tx.done;
+  }
+  /**
+   * Returns the first entry id in the ObjectStore.
+   *
+   * @return {number | undefined}
+   */
+  async getFirstEntryId() {
+    const db = await this.getDb();
+    const cursor = await db.transaction(REQUEST_OBJECT_STORE_NAME).store.openCursor();
+    return cursor?.value.id;
+  }
+  /**
+   * Get all the entries filtered by index
+   *
+   * @param queueName
+   * @return {Promise<QueueStoreEntry[]>}
+   */
+  async getAllEntriesByQueueName(queueName) {
+    const db = await this.getDb();
+    const results = await db.getAllFromIndex(REQUEST_OBJECT_STORE_NAME, QUEUE_NAME_INDEX, IDBKeyRange.only(queueName));
+    return results || new Array();
+  }
+  /**
+   * Returns the number of entries filtered by index
+   *
+   * @param queueName
+   * @return {Promise<number>}
+   */
+  async getEntryCountByQueueName(queueName) {
+    const db = await this.getDb();
+    return db.countFromIndex(REQUEST_OBJECT_STORE_NAME, QUEUE_NAME_INDEX, IDBKeyRange.only(queueName));
+  }
+  /**
+   * Deletes a single entry by id.
+   *
+   * @param {number} id the id of the entry to be deleted
+   */
+  async deleteEntry(id) {
+    const db = await this.getDb();
+    await db.delete(REQUEST_OBJECT_STORE_NAME, id);
+  }
+  /**
+   *
+   * @param queueName
+   * @returns {Promise<QueueStoreEntry | undefined>}
+   */
+  async getFirstEntryByQueueName(queueName) {
+    return await this.getEndEntryFromIndex(IDBKeyRange.only(queueName), "next");
+  }
+  /**
+   *
+   * @param queueName
+   * @returns {Promise<QueueStoreEntry | undefined>}
+   */
+  async getLastEntryByQueueName(queueName) {
+    return await this.getEndEntryFromIndex(IDBKeyRange.only(queueName), "prev");
+  }
+  /**
+   * Returns either the first or the last entries, depending on direction.
+   * Filtered by index.
+   *
+   * @param {IDBCursorDirection} direction
+   * @param {IDBKeyRange} query
+   * @return {Promise<QueueStoreEntry | undefined>}
+   * @private
+   */
+  async getEndEntryFromIndex(query, direction) {
+    const db = await this.getDb();
+    const cursor = await db.transaction(REQUEST_OBJECT_STORE_NAME).store.index(QUEUE_NAME_INDEX).openCursor(query, direction);
+    return cursor?.value;
+  }
+  /**
+   * Returns an open connection to the database.
+   *
+   * @private
+   */
+  async getDb() {
+    if (!this._db) {
+      this._db = await openDB(DB_NAME, DB_VERSION, {
+        upgrade: this._upgradeDb
+      });
+    }
+    return this._db;
+  }
+  /**
+   * Upgrades QueueDB
+   *
+   * @param {IDBPDatabase<QueueDBSchema>} db
+   * @param {number} oldVersion
+   * @private
+   */
+  _upgradeDb(db, oldVersion) {
+    if (oldVersion > 0 && oldVersion < DB_VERSION) {
+      if (db.objectStoreNames.contains(REQUEST_OBJECT_STORE_NAME)) {
+        db.deleteObjectStore(REQUEST_OBJECT_STORE_NAME);
+      }
+    }
+    const objStore = db.createObjectStore(REQUEST_OBJECT_STORE_NAME, {
+      autoIncrement: true,
+      keyPath: "id"
+    });
+    objStore.createIndex(QUEUE_NAME_INDEX, QUEUE_NAME_INDEX, { unique: false });
+  }
+};
+
+// ../packages/sync/src/store.ts
+var QueueStore = class {
+  _queueName;
+  _queueDb;
+  /**
+   * Associates this instance with a Queue instance, so entries added can be
+   * identified by their queue name.
+   *
+   * @param {string} queueName
+   */
+  constructor(queueName) {
+    this._queueName = queueName;
+    this._queueDb = new QueueDb();
+  }
+  /**
+   * Append an entry last in the queue.
+   *
+   * @param {Object} entry
+   * @param {Object} entry.requestData
+   * @param {number} [entry.timestamp]
+   * @param {Object} [entry.metadata]
+   */
+  async pushEntry(entry2) {
+    delete entry2.id;
+    entry2.queueName = this._queueName;
+    await this._queueDb.addEntry(entry2);
+  }
+  /**
+   * Prepend an entry first in the queue.
+   *
+   * @param {Object} entry
+   * @param {Object} entry.requestData
+   * @param {number} [entry.timestamp]
+   * @param {Object} [entry.metadata]
+   */
+  async unshiftEntry(entry2) {
+    const firstId = await this._queueDb.getFirstEntryId();
+    if (firstId) {
+      entry2.id = firstId - 1;
+    } else {
+      delete entry2.id;
+    }
+    entry2.queueName = this._queueName;
+    await this._queueDb.addEntry(entry2);
+  }
+  /**
+   * Removes and returns the last entry in the queue matching the `queueName`.
+   *
+   * @return {Promise<QueueStoreEntry|undefined>}
+   */
+  async popEntry() {
+    return this._removeEntry(await this._queueDb.getLastEntryByQueueName(this._queueName));
+  }
+  /**
+   * Removes and returns the first entry in the queue matching the `queueName`.
+   *
+   * @return {Promise<QueueStoreEntry|undefined>}
+   */
+  async shiftEntry() {
+    return this._removeEntry(await this._queueDb.getFirstEntryByQueueName(this._queueName));
+  }
+  /**
+   * Returns all entries in the store matching the `queueName`.
+   *
+   * @param {Object} options See {@link workbox-background-sync.Queue~getAll}
+   * @return {Promise<Array<Object>>}
+   */
+  async getAll() {
+    return await this._queueDb.getAllEntriesByQueueName(this._queueName);
+  }
+  /**
+   * Returns the number of entries in the store matching the `queueName`.
+   *
+   * @param {Object} options See {@link workbox-background-sync.Queue~size}
+   * @return {Promise<number>}
+   */
+  async size() {
+    return await this._queueDb.getEntryCountByQueueName(this._queueName);
+  }
+  /**
+   * Deletes the entry for the given ID.
+   *
+   * WARNING: this method does not ensure the deleted entry belongs to this
+   * queue (i.e. matches the `queueName`). But this limitation is acceptable
+   * as this class is not publicly exposed. An additional check would make
+   * this method slower than it needs to be.
+   *
+   * @param {number} id
+   */
+  async deleteEntry(id) {
+    await this._queueDb.deleteEntry(id);
+  }
+  /**
+   * Removes and returns the first or last entry in the queue (based on the
+   * `direction` argument) matching the `queueName`.
+   *
+   * @return {Promise<QueueStoreEntry|undefined>}
+   * @private
+   */
+  async _removeEntry(entry2) {
+    if (entry2) {
+      await this.deleteEntry(entry2.id);
+    }
+    return entry2;
+  }
+};
+
+// ../packages/sync/src/queue.ts
+var TAG_PREFIX = "rp-sync";
+var MAX_RETENTION_TIME = 60 * 24 * 7;
+var queueNames = /* @__PURE__ */ new Set();
+var convertEntry = (queueStoreEntry) => {
+  const queueEntry = {
+    request: new StorableRequest(queueStoreEntry.requestData).toRequest(),
+    timestamp: queueStoreEntry.timestamp
+  };
+  if (queueStoreEntry.metadata) {
+    queueEntry.metadata = queueStoreEntry.metadata;
+  }
+  return queueEntry;
+};
+var Queue = class {
+  _name;
+  _onSync;
+  _maxRetentionTime;
+  _queueStore;
+  _syncInProgress = false;
+  _requestsAddedDuringSync = false;
+  /**
+   * Creates an instance of Queue with the given options
+   *
+   * @param {string} name The unique name for this queue. This name must be
+   *     unique as it's used to register sync events and store requests
+   *     in IndexedDB specific to this instance. An error will be thrown if
+   *     a duplicate name is detected.
+   * @param {Object} [options]
+   * @param {Function} [options.onSync] A function that gets invoked whenever
+   *     the 'sync' event fires. The function is invoked with an object
+   *     containing the `queue` property (referencing this instance), and you
+   *     can use the callback to customize the replay behavior of the queue.
+   *     When not set the `replayRequests()` method is called.
+   *     Note: if the replay fails after a sync event, make sure you throw an
+   *     error, so the browser knows to retry the sync event later.
+   * @param {number} [options.maxRetentionTime=7 days] The amount of time (in
+   *     minutes) a request may be retried. After this amount of time has
+   *     passed, the request will be deleted from the queue.
+   */
+  constructor(name, { maxRetentionTime, onSync } = {}) {
+    this._name = name;
+    this._onSync = onSync || this.replayRequests;
+    this._maxRetentionTime = maxRetentionTime || MAX_RETENTION_TIME;
+    this._queueStore = new QueueStore(this._name);
+    this._addSyncListener();
+  }
+  /**
+   * @return {string}
+   */
+  get name() {
+    return this._name;
+  }
+  /**
+   * Stores the passed request in IndexedDB (with its timestamp and any
+   * metadata) at the end of the queue.
+   *
+   * @param {QueueEntry} entry
+   * @param {Request} entry.request The request to store in the queue.
+   * @param {Object} [entry.metadata] Any metadata you want associated with the
+   *     stored request. When requests are replayed you'll have access to this
+   *     metadata object in case you need to modify the request beforehand.
+   * @param {number} [entry.timestamp] The timestamp (Epoch time in
+   *     milliseconds) when the request was first added to the queue. This is
+   *     used along with `maxRetentionTime` to remove outdated requests. In
+   *     general you don't need to set this value, as it's automatically set
+   *     for you (defaulting to `Date.now()`), but you can update it if you
+   *     don't want particular requests to expire.
+   */
+  async pushRequest(entry2) {
+    await this._addRequest(entry2, "push");
+  }
+  /**
+   * Stores the passed request in IndexedDB (with its timestamp and any
+   * metadata) at the beginning of the queue.
+   *
+   * @param {QueueEntry} entry
+   * @param {Request} entry.request The request to store in the queue.
+   * @param {Object} [entry.metadata] Any metadata you want associated with the
+   *     stored request. When requests are replayed you'll have access to this
+   *     metadata object in case you need to modify the request beforehand.
+   * @param {number} [entry.timestamp] The timestamp (Epoch time in
+   *     milliseconds) when the request was first added to the queue. This is
+   *     used along with `maxRetentionTime` to remove outdated requests. In
+   *     general you don't need to set this value, as it's automatically set
+   *     for you (defaulting to `Date.now()`), but you can update it if you
+   *     don't want particular requests to expire.
+   */
+  async unshiftRequest(entry2) {
+    await this._addRequest(entry2, "unshift");
+  }
+  /**
+   * Removes and returns the last request in the queue (along with its
+   * timestamp and any metadata). The returned object takes the form:
+   * `{request, timestamp, metadata}`.
+   *
+   * @return {Promise<QueueEntry | undefined>}
+   */
+  async popRequest() {
+    return this._removeRequest("pop");
+  }
+  /**
+   * Removes and returns the first request in the queue (along with its
+   * timestamp and any metadata). The returned object takes the form:
+   * `{request, timestamp, metadata}`.
+   *
+   * @return {Promise<QueueEntry | undefined>}
+   */
+  async shiftRequest() {
+    return this._removeRequest("shift");
+  }
+  /**
+   * Returns all the entries that have not expired (per `maxRetentionTime`).
+   * Any expired entries are removed from the queue.
+   *
+   * @return {Promise<Array<QueueEntry>>}
+   */
+  async getAll() {
+    const allEntries = await this._queueStore.getAll();
+    const now = Date.now();
+    const unexpiredEntries = [];
+    for (const entry2 of allEntries) {
+      const maxRetentionTimeInMs = this._maxRetentionTime * 60 * 1e3;
+      if (now - entry2.timestamp > maxRetentionTimeInMs) {
+        await this._queueStore.deleteEntry(entry2.id);
+      } else {
+        unexpiredEntries.push(convertEntry(entry2));
+      }
+    }
+    return unexpiredEntries;
+  }
+  /**
+   * Returns the number of entries present in the queue.
+   * Note that expired entries (per `maxRetentionTime`) are also included in this count.
+   *
+   * @return {Promise<number>}
+   */
+  async size() {
+    return await this._queueStore.size();
+  }
+  /**
+   * Adds the entry to the QueueStore and registers for a sync event.
+   *
+   * @param {Object} entry
+   * @param {Request} entry.request
+   * @param {Object} [entry.metadata]
+   * @param {number} [entry.timestamp=Date.now()]
+   * @param {string} operation ('push' or 'unshift')
+   * @private
+   */
+  async _addRequest({ metadata, request, timestamp = Date.now() }, operation) {
+    const storableRequest = await StorableRequest.fromRequest(request.clone());
+    const entry2 = {
+      requestData: storableRequest.toObject(),
+      timestamp
+    };
+    if (metadata) {
+      entry2.metadata = metadata;
+    }
+    switch (operation) {
+      case "push":
+        await this._queueStore.pushEntry(entry2);
+        break;
+      case "unshift":
+        await this._queueStore.unshiftEntry(entry2);
+        break;
+    }
+    if (true) {
+    }
+    if (this._syncInProgress) {
+      this._requestsAddedDuringSync = true;
+    } else {
+      await this.registerSync();
+    }
+  }
+  /**
+   * Removes and returns the first or last (depending on `operation`) entry
+   * from the QueueStore that's not older than the `maxRetentionTime`.
+   *
+   * @param {string} operation ('pop' or 'shift')
+   * @return {Object|undefined}
+   * @private
+   */
+  async _removeRequest(operation) {
+    const now = Date.now();
+    let entry2;
+    switch (operation) {
+      case "pop":
+        entry2 = await this._queueStore.popEntry();
+        break;
+      case "shift":
+        entry2 = await this._queueStore.shiftEntry();
+        break;
+    }
+    if (entry2) {
+      const maxRetentionTimeInMs = this._maxRetentionTime * 60 * 1e3;
+      if (now - entry2.timestamp > maxRetentionTimeInMs) {
+        return this._removeRequest(operation);
+      }
+      return convertEntry(entry2);
+    } else {
+      return void 0;
+    }
+  }
+  /**
+   * Loops through each request in the queue and attempts to re-fetch it.
+   * If any request fails to re-fetch, it's put back in the same position in
+   * the queue (which registers a retry for the next sync event).
+   */
+  async replayRequests() {
+    let entry2;
+    while (entry2 = await this.shiftRequest()) {
+      try {
+        await fetch(entry2.request.clone());
+        if (true) {
+        }
+      } catch (error) {
+        await this.unshiftRequest(entry2);
+        if (true) {
+        }
+      }
+    }
+    if (true) {
+    }
+  }
+  /**
+   * Registers a sync event with a tag unique to this instance.
+   */
+  async registerSync() {
+    if ("sync" in self.registration) {
+      try {
+        await self.registration.sync.register(`${TAG_PREFIX}:${this._name}`);
+      } catch (err) {
+      }
+    }
+  }
+  /**
+   * In sync-supporting browsers, this adds a listener for the sync event.
+   * In non-sync-supporting browsers, or if _forceSyncFallback is true, this
+   * will retry the queue on service worker startup.
+   *
+   * @private
+   */
+  _addSyncListener() {
+    if ("sync" in self.registration) {
+      self.addEventListener("sync", (event) => {
+        if (event.tag === `${TAG_PREFIX}:${this._name}`) {
+          const syncComplete = async () => {
+            this._syncInProgress = true;
+            let syncError;
+            try {
+              await this._onSync({ queue: this });
+            } catch (error) {
+              if (error instanceof Error) {
+                syncError = error;
+                throw syncError;
+              }
+            } finally {
+              if (this._requestsAddedDuringSync && !(syncError && !event.lastChance)) {
+                await this.registerSync();
+              }
+              this._syncInProgress = false;
+              this._requestsAddedDuringSync = false;
+            }
+          };
+          event.waitUntil(syncComplete());
+        }
+      });
+    } else {
+      void this._onSync({ queue: this });
+    }
+  }
+  /**
+   * Returns the set of queue names. This is primarily used to reset the list
+   * of queue names in tests.
+   *
+   * @return {Set<string>}
+   *
+   * @private
+   */
+  static get _queueNames() {
+    return queueNames;
+  }
+};
+
+// ../packages/sync/src/export.ts
+var SyncQueue = class {
+  static queues = /* @__PURE__ */ new Map();
+  static createQueue(name) {
+    if (this.queues.has(name)) {
+      throw new Error(`Queue "${name}" already exists`);
+    }
+    const _q = new Queue(name);
+    this.queues.set(name, _q);
+    return _q;
+  }
+  static getQueue(name) {
+    return this.queues.get(name);
+  }
+  static removeQueue(name) {
+    this.queues.delete(name);
+  }
+  static async getQueueNames() {
+    return Array.from(this.queues.keys());
+  }
+  static async getQueueSizes() {
+    const sizes = /* @__PURE__ */ new Map();
+    for (const [name, queue] of this.queues) {
+      sizes.set(name, await queue.size());
+    }
+    return sizes;
+  }
+  /* WIP */
+  async getQueueByTag(tag) {
+    for (const [name, queue] of /* @__PURE__ */ new Map()) {
+      if (name === tag) {
+        return queue;
+      }
+    }
+    return void 0;
+  }
+};
+var queueToServer = ({ name, request }) => {
+  let queue;
+  try {
+    queue = SyncQueue.createQueue(name);
+  } catch (e) {
+    queue = SyncQueue.getQueue(name);
+  }
+  queue.pushRequest({ request });
+};
+
+// app/routes/sync-away.tsx
+var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+var workerAction3 = async ({ context }) => {
+  const { fetchFromServer, event } = context;
+  try {
+    await fetchFromServer();
+  } catch (error) {
+    console.error(error);
+    queueToServer({
+      name: "offline-action",
+      request: event.request.clone()
+    });
+  }
+  return new Response(JSON.stringify({
+    message: "Offline or Online. I shall always respond!"
+  }), {
+    headers: {
+      "Content-Type": "application/json; charset=utf-8"
+    }
+  });
+};
+
+// routes-module:routes/sync-away.tsx?worker
+var hasWorkerAction6 = true;
+var hasWorkerLoader6 = false;
+
 // entry-module:@remix-pwa/build/magic
-var route6 = __toESM(require_index());
+var route7 = __toESM(require_index());
 
 // routes-module:routes/_app.tsx?worker
 var app_exports = {};
 __export(app_exports, {
-  hasWorkerAction: () => hasWorkerAction6,
-  hasWorkerLoader: () => hasWorkerLoader6,
+  hasWorkerAction: () => hasWorkerAction7,
+  hasWorkerLoader: () => hasWorkerLoader7,
   workerLoader: () => workerLoader5
 });
 
 // app/routes/_app.tsx
-var import_node4 = __toESM(require_node());
+var import_node5 = __toESM(require_node());
 var import_react10 = __toESM(require_react());
-var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+var import_jsx_runtime7 = __toESM(require_jsx_runtime());
 async function workerLoader5({ context }) {
   const { fetchFromServer } = context;
   const data = await fetchFromServer().then((response) => response.json());
@@ -4370,8 +5260,8 @@ async function workerLoader5({ context }) {
 }
 
 // routes-module:routes/_app.tsx?worker
-var hasWorkerAction6 = false;
-var hasWorkerLoader6 = true;
+var hasWorkerAction7 = false;
+var hasWorkerLoader7 = true;
 
 // app/entry.worker.ts
 var entry_worker_exports = {};
@@ -5939,7 +6829,7 @@ function markErrorAsHandled(promise) {
 function PromiseReject(reason) {
   return new DexiePromise(INTERNAL, false, reason);
 }
-function wrap(fn, errorCatcher) {
+function wrap2(fn, errorCatcher) {
   var psd = PSD;
   return function() {
     var wasRootExec = beginMicroTickScope(), outerScope = PSD;
@@ -6587,7 +7477,7 @@ function iter(ctx, fn, coreTrans, coreTable) {
 }
 function iterate(cursorPromise, filter, fn, valueMapper) {
   var mappedFn = valueMapper ? (x, c, a) => fn(valueMapper(x), c, a) : fn;
-  var wrappedFn = wrap(mappedFn);
+  var wrappedFn = wrap2(mappedFn);
   return cursorPromise.then((cursor) => {
     if (cursor) {
       return cursor.start(() => {
@@ -7421,7 +8311,7 @@ function createWhereClauseConstructor(db) {
   });
 }
 function eventRejectHandler(reject) {
-  return wrap(function(event) {
+  return wrap2(function(event) {
     preventDefault(event);
     reject(event.target.error);
     return false;
@@ -7482,17 +8372,17 @@ var Transaction = class {
       throw new exceptions.TransactionInactive();
     assert(this._completion._state === null);
     idbtrans = this.idbtrans = idbtrans || (this.db.core ? this.db.core.transaction(this.storeNames, this.mode, { durability: this.chromeTransactionDurability }) : idbdb.transaction(this.storeNames, this.mode, { durability: this.chromeTransactionDurability }));
-    idbtrans.onerror = wrap((ev) => {
+    idbtrans.onerror = wrap2((ev) => {
       preventDefault(ev);
       this._reject(idbtrans.error);
     });
-    idbtrans.onabort = wrap((ev) => {
+    idbtrans.onabort = wrap2((ev) => {
       preventDefault(ev);
       this.active && this._reject(new exceptions.Abort(idbtrans.error));
       this.active = false;
       this.on("abort").fire(ev);
     });
-    idbtrans.oncomplete = wrap(() => {
+    idbtrans.oncomplete = wrap2(() => {
       this.active = false;
       this._resolve();
       if ("mutatedParts" in idbtrans) {
@@ -7556,7 +8446,7 @@ var Transaction = class {
     }
     var currentWaitPromise = root._waitingFor;
     return new DexiePromise((resolve, reject) => {
-      promise.then((res) => root._waitingQueue.push(wrap(resolve.bind(null, res))), (err) => root._waitingQueue.push(wrap(reject.bind(null, err)))).finally(() => {
+      promise.then((res) => root._waitingQueue.push(wrap2(resolve.bind(null, res))), (err) => root._waitingQueue.push(wrap2(reject.bind(null, err)))).finally(() => {
         if (root._waitingFor === currentWaitPromise) {
           root._waitingFor = null;
         }
@@ -7741,7 +8631,7 @@ function createDBCore(db, IdbKeyRange, tmpTrans) {
     const tableName = tableSchema.name;
     function mutate({ trans, type: type2, keys: keys2, values, range }) {
       return new Promise((resolve, reject) => {
-        resolve = wrap(resolve);
+        resolve = wrap2(resolve);
         const store = trans.objectStore(tableName);
         const outbound = store.keyPath == null;
         const isAddOrPut = type2 === "put" || type2 === "add";
@@ -7801,14 +8691,14 @@ function createDBCore(db, IdbKeyRange, tmpTrans) {
     }
     function openCursor2({ trans, values, query: query2, reverse, unique }) {
       return new Promise((resolve, reject) => {
-        resolve = wrap(resolve);
+        resolve = wrap2(resolve);
         const { index, range } = query2;
         const store = trans.objectStore(tableName);
         const source = index.isPrimaryKey ? store : store.index(index.name);
         const direction = reverse ? unique ? "prevunique" : "prev" : unique ? "nextunique" : "next";
         const req = values || !("openKeyCursor" in source) ? source.openCursor(makeIDBKeyRange(range), direction) : source.openKeyCursor(makeIDBKeyRange(range), direction);
         req.onerror = eventRejectHandler(reject);
-        req.onsuccess = wrap((ev) => {
+        req.onsuccess = wrap2((ev) => {
           const cursor = req.result;
           if (!cursor) {
             resolve(null);
@@ -7829,14 +8719,14 @@ function createDBCore(db, IdbKeyRange, tmpTrans) {
           };
           cursor.trans = trans;
           cursor.stop = cursor.continue = cursor.continuePrimaryKey = cursor.advance = doThrowCursorIsNotStarted;
-          cursor.fail = wrap(reject);
+          cursor.fail = wrap2(reject);
           cursor.next = function() {
             let gotOne = 1;
             return this.start(() => gotOne-- ? this.continue() : this.stop()).then(() => this);
           };
           cursor.start = (callback) => {
             const iterationPromise = new Promise((resolveIteration, rejectIteration) => {
-              resolveIteration = wrap(resolveIteration);
+              resolveIteration = wrap2(resolveIteration);
               req.onerror = eventRejectHandler(rejectIteration);
               cursor.fail = rejectIteration;
               cursor.stop = (value) => {
@@ -7859,7 +8749,7 @@ function createDBCore(db, IdbKeyRange, tmpTrans) {
                 cursor.stop();
               }
             };
-            req.onsuccess = wrap((ev2) => {
+            req.onsuccess = wrap2((ev2) => {
               req.onsuccess = guardedCallback;
               guardedCallback();
             });
@@ -7876,7 +8766,7 @@ function createDBCore(db, IdbKeyRange, tmpTrans) {
     function query(hasGetAll2) {
       return (request) => {
         return new Promise((resolve, reject) => {
-          resolve = wrap(resolve);
+          resolve = wrap2(resolve);
           const { trans, values, limit, query: query2 } = request;
           const nonInfinitLimit = limit === Infinity ? void 0 : limit;
           const { index, range } = query2;
@@ -7913,7 +8803,7 @@ function createDBCore(db, IdbKeyRange, tmpTrans) {
       mutate,
       getMany({ trans, keys: keys2 }) {
         return new Promise((resolve, reject) => {
-          resolve = wrap(resolve);
+          resolve = wrap2(resolve);
           const store = trans.objectStore(tableName);
           const length = keys2.length;
           const result = new Array(length);
@@ -7944,7 +8834,7 @@ function createDBCore(db, IdbKeyRange, tmpTrans) {
       },
       get({ trans, key }) {
         return new Promise((resolve, reject) => {
-          resolve = wrap(resolve);
+          resolve = wrap2(resolve);
           const store = trans.objectStore(tableName);
           const req = store.get(key);
           req.onsuccess = (event) => resolve(event.target.result);
@@ -7960,7 +8850,7 @@ function createDBCore(db, IdbKeyRange, tmpTrans) {
           const source = index.isPrimaryKey ? store : store.index(index.name);
           const idbKeyRange = makeIDBKeyRange(range);
           const req = idbKeyRange ? source.count(idbKeyRange) : source.count();
-          req.onsuccess = wrap((ev) => resolve(ev.target.result));
+          req.onsuccess = wrap2((ev) => resolve(ev.target.result));
           req.onerror = eventRejectHandler(reject);
         });
       }
@@ -7987,8 +8877,8 @@ function createDBCore(db, IdbKeyRange, tmpTrans) {
 function createMiddlewareStack(stackImpl, middlewares) {
   return middlewares.reduce((down, { create }) => ({ ...down, ...create(down) }), stackImpl);
 }
-function createMiddlewareStacks(middlewares, idbdb, { IDBKeyRange, indexedDB: indexedDB2 }, tmpTrans) {
-  const dbcore = createMiddlewareStack(createDBCore(idbdb, IDBKeyRange, tmpTrans), middlewares.dbcore);
+function createMiddlewareStacks(middlewares, idbdb, { IDBKeyRange: IDBKeyRange2, indexedDB: indexedDB2 }, tmpTrans) {
+  const dbcore = createMiddlewareStack(createDBCore(idbdb, IDBKeyRange2, tmpTrans), middlewares.dbcore);
   return {
     dbcore
   };
@@ -8317,13 +9207,13 @@ function createVersionConstructor(db) {
     };
   });
 }
-function getDbNamesTable(indexedDB2, IDBKeyRange) {
+function getDbNamesTable(indexedDB2, IDBKeyRange2) {
   let dbNamesDB = indexedDB2["_dbNamesDB"];
   if (!dbNamesDB) {
     dbNamesDB = indexedDB2["_dbNamesDB"] = new Dexie$1(DBNAMES_DB, {
       addons: [],
       indexedDB: indexedDB2,
-      IDBKeyRange
+      IDBKeyRange: IDBKeyRange2
     });
     dbNamesDB.version(1).stores({ dbnames: "name" });
   }
@@ -8332,14 +9222,14 @@ function getDbNamesTable(indexedDB2, IDBKeyRange) {
 function hasDatabasesNative(indexedDB2) {
   return indexedDB2 && typeof indexedDB2.databases === "function";
 }
-function getDatabaseNames({ indexedDB: indexedDB2, IDBKeyRange }) {
-  return hasDatabasesNative(indexedDB2) ? Promise.resolve(indexedDB2.databases()).then((infos) => infos.map((info) => info.name).filter((name) => name !== DBNAMES_DB)) : getDbNamesTable(indexedDB2, IDBKeyRange).toCollection().primaryKeys();
+function getDatabaseNames({ indexedDB: indexedDB2, IDBKeyRange: IDBKeyRange2 }) {
+  return hasDatabasesNative(indexedDB2) ? Promise.resolve(indexedDB2.databases()).then((infos) => infos.map((info) => info.name).filter((name) => name !== DBNAMES_DB)) : getDbNamesTable(indexedDB2, IDBKeyRange2).toCollection().primaryKeys();
 }
-function _onDatabaseCreated({ indexedDB: indexedDB2, IDBKeyRange }, name) {
-  !hasDatabasesNative(indexedDB2) && name !== DBNAMES_DB && getDbNamesTable(indexedDB2, IDBKeyRange).put({ name }).catch(nop);
+function _onDatabaseCreated({ indexedDB: indexedDB2, IDBKeyRange: IDBKeyRange2 }, name) {
+  !hasDatabasesNative(indexedDB2) && name !== DBNAMES_DB && getDbNamesTable(indexedDB2, IDBKeyRange2).put({ name }).catch(nop);
 }
-function _onDatabaseDeleted({ indexedDB: indexedDB2, IDBKeyRange }, name) {
-  !hasDatabasesNative(indexedDB2) && name !== DBNAMES_DB && getDbNamesTable(indexedDB2, IDBKeyRange).delete(name).catch(nop);
+function _onDatabaseDeleted({ indexedDB: indexedDB2, IDBKeyRange: IDBKeyRange2 }, name) {
+  !hasDatabasesNative(indexedDB2) && name !== DBNAMES_DB && getDbNamesTable(indexedDB2, IDBKeyRange2).delete(name).catch(nop);
 }
 function vip(fn) {
   return newScope(function() {
@@ -8386,15 +9276,15 @@ function dexieOpen(db) {
     if (!req)
       throw new exceptions.MissingAPI();
     req.onerror = eventRejectHandler(reject);
-    req.onblocked = wrap(db._fireOnBlocked);
-    req.onupgradeneeded = wrap((e) => {
+    req.onblocked = wrap2(db._fireOnBlocked);
+    req.onupgradeneeded = wrap2((e) => {
       upgradeTransaction = req.transaction;
       if (state.autoSchema && !db._options.allowEmptyDB) {
         req.onerror = preventDefault;
         upgradeTransaction.abort();
         req.result.close();
         const delreq = indexedDB2.deleteDatabase(dbName);
-        delreq.onsuccess = delreq.onerror = wrap(() => {
+        delreq.onsuccess = delreq.onerror = wrap2(() => {
           reject(new exceptions.NoSuchDatabase(`Database ${dbName} doesnt exist`));
         });
       } else {
@@ -8405,7 +9295,7 @@ function dexieOpen(db) {
         runUpgraders(db, oldVer / 10, upgradeTransaction, reject);
       }
     }, reject);
-    req.onsuccess = wrap(() => {
+    req.onsuccess = wrap2(() => {
       upgradeTransaction = null;
       const idbdb = db._novip.idbdb = req.result;
       const objectStoreNames = slice(idbdb.objectStoreNames);
@@ -8424,11 +9314,11 @@ function dexieOpen(db) {
         } catch (e) {
         }
       connections.push(db);
-      idbdb.onversionchange = wrap((ev) => {
+      idbdb.onversionchange = wrap2((ev) => {
         state.vcFired = true;
         db.on("versionchange").fire(ev);
       });
-      idbdb.onclose = wrap((ev) => {
+      idbdb.onclose = wrap2((ev) => {
         db.on("close").fire(ev);
       });
       if (wasCreated)
@@ -9357,7 +10247,7 @@ var Dexie$1 = class _Dexie$1 {
       const doDelete = () => {
         this.close();
         var req = this._deps.indexedDB.deleteDatabase(this.name);
-        req.onsuccess = wrap(() => {
+        req.onsuccess = wrap2(() => {
           _onDatabaseDeleted(this._deps, this.name);
           resolve();
         });
@@ -9861,15 +10751,25 @@ var routes = {
     hasWorkerAction: Boolean(hasWorkerAction5),
     hasWorkerLoader: Boolean(hasWorkerLoader5)
   },
+  "routes/sync-away": {
+    id: "routes/sync-away",
+    parentId: "root",
+    path: "sync-away",
+    index: void 0,
+    caseSensitive: void 0,
+    module: sync_away_exports,
+    hasWorkerAction: Boolean(hasWorkerAction6),
+    hasWorkerLoader: Boolean(hasWorkerLoader6)
+  },
   "routes/_index": {
     id: "routes/_index",
     parentId: "root",
     path: "undefined",
     index: true,
     caseSensitive: void 0,
-    module: route6,
-    hasWorkerAction: Boolean(route6.hasWorkerAction),
-    hasWorkerLoader: Boolean(route6.hasWorkerLoader)
+    module: route7,
+    hasWorkerAction: Boolean(route7.hasWorkerAction),
+    hasWorkerLoader: Boolean(route7.hasWorkerLoader)
   },
   "routes/_app": {
     id: "routes/_app",
@@ -9878,8 +10778,8 @@ var routes = {
     index: void 0,
     caseSensitive: void 0,
     module: app_exports,
-    hasWorkerAction: Boolean(hasWorkerAction6),
-    hasWorkerLoader: Boolean(hasWorkerLoader6)
+    hasWorkerAction: Boolean(hasWorkerAction7),
+    hasWorkerLoader: Boolean(hasWorkerLoader7)
   }
 };
 var entry = { module: entry_worker_exports };
@@ -9983,6 +10883,9 @@ async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, ev
     return _errorHandler({ error, handler: handler2 });
   }
   if (request.method.toUpperCase() !== "GET") {
+    if (true) {
+      console.warn(`You made a non-GET request to route "${routeId}" but didn't define a workerAction function. We're treating this request like a normal fetch request.`);
+    }
     return fetch(request.clone());
   }
   return defaultHandler2({
@@ -10062,7 +10965,7 @@ function createContext(event) {
   const context = entry.module.getLoadContext?.(event) || {};
   return {
     event,
-    fetchFromServer: () => fetch(event.request),
+    fetchFromServer: () => fetch(event.request.clone()),
     // NOTE: we want the user to override the above properties if needed.
     ...context
   };
