@@ -92,6 +92,13 @@ export async function handleRequest({
   // This is a precautionary move, you might not rely on this if your default handler just
   // handles GET requests but just in case...
   if (request.method.toUpperCase() !== 'GET') {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(
+        `You made a non-GET request to route "${routeId}" but didn't define a workerAction function. ` +
+          `We're treating this request like a normal fetch request.`
+      );
+    }
+
     return fetch(request.clone());
   }
 
