@@ -1,3 +1,19 @@
+## @remix-pwa/strategy 1.0.1 (2023-09-02)
+
+
+### Bug Fixes
+
+* **strategy:** fixed `Response` getting read before returning 8f03f60
+* **strategy:** fixed strategy return params d6e6ad1
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/cache:** upgraded to 1.3.0
+
 # @remix-pwa/strategy 1.0.0 (2023-08-29)
 
 
