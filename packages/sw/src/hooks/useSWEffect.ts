@@ -1,8 +1,8 @@
 import type { RouteMatch } from '@remix-run/react';
 import { useLocation, useMatches } from '@remix-run/react';
-import React from 'react';
+import React, { useRef } from 'react';
 
-let isMount = true;
+// let isMount = true;
 
 /**
  * This hook is used to send navigation events to the service worker.
@@ -11,6 +11,7 @@ let isMount = true;
 export function useSWEffect(): void {
   const location = useLocation();
   const matches = useMatches();
+  const isMount = useRef(true);
 
   function isPromise(p: any): boolean {
     if (p && typeof p === 'object' && typeof p.then === 'function') {
@@ -28,7 +29,7 @@ export function useSWEffect(): void {
 
   React.useEffect(() => {
     const mounted = isMount;
-    isMount = false;
+    isMount.current = false;
 
     if ('serviceWorker' in navigator) {
       if (navigator.serviceWorker.controller) {

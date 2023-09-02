@@ -1,18 +1,22 @@
 /// <reference lib="WebWorker" />
 
-import { matchRequest, NetworkFirst, CacheFirst, PrecacheHandler } from "@remix-pwa/sw";
-import createStorageRepository from "./database";
+import { CacheFirst, NetworkFirst, RemixNavigationHandler, matchRequest } from '@remix-pwa/sw';
+import createStorageRepository from './database';
+import { registerQueue } from '@remix-pwa/sync';
 
-declare let self: ServiceWorkerGlobalScope;
 
-const PAGES = "page-cache";
-const DATA = "data-cache";
-const ASSETS = "assets-cache";
+declare let self: ServiceWorkerGlobalScope &
+  typeof globalThis & {
+    __workerManifest: any;
+  }; // wrap this up into one type
 
-const precacheHandler = new PrecacheHandler({
+const PAGES = 'page-cache';
+const DATA = 'data-cache';
+const ASSETS = 'assets-cache';
+
+let handler = new RemixNavigationHandler({
   dataCacheName: DATA,
   documentCacheName: PAGES,
-  assetCacheName: ASSETS,
 });
 
 const documentHandler = new NetworkFirst({
@@ -26,6 +30,8 @@ const loadersHandler = new NetworkFirst({
 const assetsHandler = new CacheFirst({
   cacheName: ASSETS,
 });
+
+registerQueue('offline-action');
 
 /**
  * The load context works same as in Remix. The return values of this function will be injected in the worker action/loader.
@@ -43,29 +49,30 @@ export const getLoadContext = () => {
 export const defaultFetchHandler = ({ context, request }: any) => {
   const type = matchRequest(request);
 
-  if (type === "asset") {
+  if (type === 'asset') {
     return assetsHandler.handle(request);
   }
 
-  if (type === "loader") {
+  if (type === 'loader') {
     return loadersHandler.handle(request);
   }
 
-  if (type === "document") {
+  if (type === 'document') {
     return documentHandler.handle(request);
   }
 
   return context.fetchFromServer();
 };
 
-self.addEventListener("install", (event) => {
+self.addEventListener('install', event => {
   event.waitUntil(self.skipWaiting());
 });
 
-self.addEventListener("activate", (event) => {
+self.addEventListener('activate', event => {
   event.waitUntil(self.clients.claim());
 });
 
-self.addEventListener("message", (event) => {
-  event.waitUntil(precacheHandler.handle(event));
+self.addEventListener('message', event => {
+  // console.log(self.__workerManifest);
+  event.waitUntil(handler.handle(event));
 });

@@ -6,6 +6,12 @@ import { handleRequest } from './utils/handle-request.js';
 
 const _self = self as unknown as ServiceWorkerGlobalScope & typeof globalThis;
 
+declare global {
+  interface ServiceWorkerGlobalScope {
+    __workerManifest: any;
+  }
+}
+
 /**
  * Creates the load context for the worker action and loader.
  */
@@ -14,7 +20,7 @@ function createContext(event: FetchEvent): build.WorkerLoadContext {
   const context = build.entry.module.getLoadContext?.(event) || {};
   return {
     event,
-    fetchFromServer: () => fetch(event.request),
+    fetchFromServer: () => fetch(event.request.clone()),
     // NOTE: we want the user to override the above properties if needed.
     ...context,
   };
@@ -33,6 +39,8 @@ const defaultErrorHandler =
       console.error(error);
     }
   });
+
+_self.__workerManifest = build.routes;
 
 // DO NOT OVERRIDE!!!
 _self.addEventListener(

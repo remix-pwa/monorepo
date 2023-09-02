@@ -70,6 +70,7 @@ export type QueueToServerOptions = {
 export const queueToServer = ({ name, request }: QueueToServerOptions): void => {
   let queue: Queue;
 
+  // Todo: Remove this. Enforce `registerQueue` to be called first in your entry worker file.
   try {
     queue = SyncQueue.createQueue(name);
   } catch (e) {
@@ -77,4 +78,29 @@ export const queueToServer = ({ name, request }: QueueToServerOptions): void => 
   }
 
   queue.pushRequest({ request: request as Request });
+};
+
+/**
+ * Create a `Queue` to handle syncing for a particular tag. This is useful for grouping
+ * requests together to be retried later on.
+ *
+ * Make sure to place this function in your entry worker file (e.g. `entry.worker.ts`).
+ * @param {string} name
+ */
+export const registerQueue = (name: string): void => {
+  SyncQueue.createQueue(name);
+};
+
+/**
+ * Create multiple `Queue`s to handle syncing for tags. This is a useful short-hand
+ * for `registerQueue` with multiple tags.
+ *
+ * Make sure to place this function in your entry worker file (e.g. `entry.worker.ts`).
+ *
+ * @param {string[]} names
+ */
+export const registerAllQueues = (names: string[]): void => {
+  for (const name of names) {
+    SyncQueue.createQueue(name);
+  }
 };

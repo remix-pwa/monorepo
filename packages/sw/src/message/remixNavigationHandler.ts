@@ -1,5 +1,6 @@
 import { Storage } from '@remix-pwa/cache';
 
+import { logger } from '../private/logger.js';
 import type { MessageHandlerParams } from './message.js';
 import { MessageHandler } from './message.js';
 
@@ -48,7 +49,7 @@ export class RemixNavigationHandler extends MessageHandler {
         cachePromises.set(
           documentUrl,
           documentCache.put(documentUrl, response).catch(error => {
-            // logger.error(`Failed to cache document for ${documentUrl}:`, error);
+            logger.error(`Failed to cache document for ${documentUrl}:`, error);
             console.error(`Failed to cache document for ${documentUrl}:`, error);
           })
         );
@@ -66,7 +67,7 @@ export class RemixNavigationHandler extends MessageHandler {
             const url = location.pathname + search + location.hash;
 
             if (!cachePromises.has(url)) {
-              // logger.debug('Caching data for:', url);
+              logger.debug('Caching data for:', url);
               console.debug('Caching data for:', url);
 
               const response = await fetch(url);
@@ -74,7 +75,7 @@ export class RemixNavigationHandler extends MessageHandler {
               cachePromises.set(
                 url,
                 dataCache.put(url, response).catch(error => {
-                  // logger.error(`Failed to cache data for ${url}:`, error);
+                  logger.error(`Failed to cache data for ${url}:`, error);
                   console.error(`Failed to cache data for ${url}:`, error);
                 })
               );

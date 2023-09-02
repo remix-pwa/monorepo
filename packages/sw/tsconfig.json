@@ -3,7 +3,7 @@
   "exclude": ["dist", "./**/__tests__", "node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
-    "lib": ["ES2022", "WebWorker", "DOM"],
+    "lib": ["ES2022", "WebWorker", "DOM", "DOM.Iterable"],
     "composite": true,
     "target": "es2022",
     "module": "nodenext",
