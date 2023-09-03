@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           cache: npm
-          node-version: ${{ inputs.node-version }}
+          node-version: 18
       - name: Setup Turbo cache
         uses: actions/cache@v3
         with:
@@ -45,7 +45,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           cache: npm
-          node-version: ${{ inputs.node-version }}
+          node-version: 18
       - name: Setup Turbo cache
         uses: actions/cache@v3
         with:
@@ -69,7 +69,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           cache: npm
-          node-version: ${{ inputs.node-version }}
+          node-version: 18
       - name: Setup Turbo cache
         uses: actions/cache@v3
         with:
@@ -91,7 +91,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           cache: npm
-          node-version: ${{ inputs.node-version }}
+          node-version: 18
       - name: Setup Turbo cache
         uses: actions/cache@v3
         with:
