@@ -1,3 +1,10 @@
+## @remix-pwa/worker-runtime 1.1.1 (2023-09-03)
+
+
+### Bug Fixes
+
+* **loader-action:** parse path and url parameters properly ea7cc91
+
 # @remix-pwa/worker-runtime 1.1.0 (2023-09-02)
 
 
