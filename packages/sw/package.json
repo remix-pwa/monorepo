@@ -33,6 +33,7 @@
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
+    "@remix-run/server-runtime": "^1.19.3",
     "rimraf": "^5.0.1"
   },
   "dependencies": {
