@@ -12,6 +12,7 @@ export const LiveReload =
         timeoutMs?: number;
         nonce?: string;
       }) {
+        // TODO: Fix the LOG aspect of the WebSocket. Log it **just** once.
         const js = String.raw;
         return (
           <script
