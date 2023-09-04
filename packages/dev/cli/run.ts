@@ -141,6 +141,9 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
     case 'push':
       await commands.push();
       break; // A delayed todo: More or less init push api and a test server route
+    case 'packages':
+      await commands.packages(projectDir); // quickly install all base packages at once for remix-pwa
+      break;
     case 'init':
     case 'new':
     case 'create':

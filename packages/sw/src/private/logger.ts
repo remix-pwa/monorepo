@@ -32,6 +32,8 @@ declare global {
     __DISABLE_PWA_ERROR_LOGS: boolean;
   }
 
+  // You might want to expantiate on this. In order to disable
+  // logger in the main thread too.
   interface Window {
     /**
      * Disable all logs from displaying in the console.

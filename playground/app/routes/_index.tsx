@@ -1,7 +1,8 @@
+import type { LoaderFunction} from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link } from "@remix-run/react";
 
-export const loader = () => {
+export const loader: LoaderFunction = () => {
   return json({ message: "Hello from the server!" });
 }
 
@@ -33,7 +34,7 @@ export default function Index() {
           Log In
         </button>
       </div>
-      <div className="bg-amber-700/40 w-full flex-1 rounded-2xl mb-10 px-4 py-6 overflow-y-auto">
+      <div className="bg-amber-500/40 w-full flex-1 rounded-2xl mb-10 px-4 py-6 overflow-y-auto">
         <div>
           <h3 className="text-lg pb-2 font-medium">Basic Worker Loaders</h3>
           <article>
@@ -87,7 +88,7 @@ export default function Index() {
             version bump. Bringing back all four strategies (Cache Only, Cache First, Network Only, Network First) as well as a 
             new one - Stale While Revalidate, this version 
           </article>
-          <CustomLink href={'/basic-caching'}>Getting started with caching</CustomLink>
+          <CustomLink href={'/strategies'}>Explore caching strategies</CustomLink>
         </div>
         <div className="pt-4">
           <h3 className="text-lg pb-2 font-medium">Caching: A deeper dive 🤿</h3>

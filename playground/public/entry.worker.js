@@ -107,7 +107,7 @@ __export(router_exports, {
   UNSAFE_convertRoutesToDataRoutes: () => convertRoutesToDataRoutes,
   UNSAFE_getPathContributingMatches: () => getPathContributingMatches,
   UNSAFE_invariant: () => invariant2,
-  UNSAFE_warning: () => warning,
+  UNSAFE_warning: () => warning2,
   createBrowserHistory: () => createBrowserHistory,
   createHashHistory: () => createHashHistory,
   createMemoryHistory: () => createMemoryHistory,
@@ -122,7 +122,7 @@ __export(router_exports, {
   isRouteErrorResponse: () => isRouteErrorResponse2,
   joinPaths: () => joinPaths,
   json: () => json5,
-  matchPath: () => matchPath,
+  matchPath: () => matchPath2,
   matchRoutes: () => matchRoutes,
   normalizePathname: () => normalizePathname,
   parsePath: () => parsePath,
@@ -170,7 +170,7 @@ function createMemoryHistory(options) {
       state = null;
     }
     let location2 = createLocation(entries ? getCurrentLocation().pathname : "/", to, state, key);
-    warning(location2.pathname.charAt(0) === "/", "relative pathnames are not supported in memory history: " + JSON.stringify(to));
+    warning2(location2.pathname.charAt(0) === "/", "relative pathnames are not supported in memory history: " + JSON.stringify(to));
     return location2;
   }
   function createHref(to) {
@@ -305,7 +305,7 @@ function createHashHistory(options) {
     return href + "#" + (typeof to === "string" ? to : createPath(to));
   }
   function validateHashLocation(location2, to) {
-    warning(location2.pathname.charAt(0) === "/", "relative pathnames are not supported in hash history.push(" + JSON.stringify(to) + ")");
+    warning2(location2.pathname.charAt(0) === "/", "relative pathnames are not supported in hash history.push(" + JSON.stringify(to) + ")");
   }
   return getUrlBasedHistory(createHashLocation, createHashHref, validateHashLocation, options);
 }
@@ -314,7 +314,7 @@ function invariant2(value, message) {
     throw new Error(message);
   }
 }
-function warning(cond, message) {
+function warning2(cond, message) {
   if (!cond) {
     if (typeof console !== "undefined")
       console.warn(message);
@@ -675,7 +675,7 @@ function matchRouteBranch(branch, pathname) {
     let meta = routesMeta[i];
     let end = i === routesMeta.length - 1;
     let remainingPathname = matchedPathname === "/" ? pathname : pathname.slice(matchedPathname.length) || "/";
-    let match = matchPath({
+    let match = matchPath2({
       path: meta.relativePath,
       caseSensitive: meta.caseSensitive,
       end
@@ -703,7 +703,7 @@ function generatePath(originalPath, params) {
   }
   let path = originalPath;
   if (path.endsWith("*") && path !== "*" && !path.endsWith("/*")) {
-    warning(false, 'Route path "' + path + '" will be treated as if it were ' + ('"' + path.replace(/\*$/, "/*") + '" because the `*` character must ') + "always follow a `/` in the pattern. To get rid of this warning, " + ('please change the route path to "' + path.replace(/\*$/, "/*") + '".'));
+    warning2(false, 'Route path "' + path + '" will be treated as if it were ' + ('"' + path.replace(/\*$/, "/*") + '" because the `*` character must ') + "always follow a `/` in the pattern. To get rid of this warning, " + ('please change the route path to "' + path.replace(/\*$/, "/*") + '".'));
     path = path.replace(/\*$/, "/*");
   }
   const prefix = path.startsWith("/") ? "/" : "";
@@ -725,7 +725,7 @@ function generatePath(originalPath, params) {
   }).filter((segment) => !!segment);
   return prefix + segments.join("/");
 }
-function matchPath(pattern, pathname) {
+function matchPath2(pattern, pathname) {
   if (typeof pattern === "string") {
     pattern = {
       path: pattern,
@@ -733,7 +733,7 @@ function matchPath(pattern, pathname) {
       end: true
     };
   }
-  let [matcher, paramNames] = compilePath(pattern.path, pattern.caseSensitive, pattern.end);
+  let [matcher, paramNames] = compilePath2(pattern.path, pattern.caseSensitive, pattern.end);
   let match = pathname.match(matcher);
   if (!match)
     return null;
@@ -745,7 +745,7 @@ function matchPath(pattern, pathname) {
       let splatValue = captureGroups[index] || "";
       pathnameBase = matchedPathname.slice(0, matchedPathname.length - splatValue.length).replace(/(.)\/+$/, "$1");
     }
-    memo[paramName] = safelyDecodeURIComponent(captureGroups[index] || "", paramName);
+    memo[paramName] = safelyDecodeURIComponent2(captureGroups[index] || "", paramName);
     return memo;
   }, {});
   return {
@@ -755,14 +755,14 @@ function matchPath(pattern, pathname) {
     pattern
   };
 }
-function compilePath(path, caseSensitive, end) {
+function compilePath2(path, caseSensitive, end) {
   if (caseSensitive === void 0) {
     caseSensitive = false;
   }
   if (end === void 0) {
     end = true;
   }
-  warning(path === "*" || !path.endsWith("*") || path.endsWith("/*"), 'Route path "' + path + '" will be treated as if it were ' + ('"' + path.replace(/\*$/, "/*") + '" because the `*` character must ') + "always follow a `/` in the pattern. To get rid of this warning, " + ('please change the route path to "' + path.replace(/\*$/, "/*") + '".'));
+  warning2(path === "*" || !path.endsWith("*") || path.endsWith("/*"), 'Route path "' + path + '" will be treated as if it were ' + ('"' + path.replace(/\*$/, "/*") + '" because the `*` character must ') + "always follow a `/` in the pattern. To get rid of this warning, " + ('please change the route path to "' + path.replace(/\*$/, "/*") + '".'));
   let paramNames = [];
   let regexpSource = "^" + path.replace(/\/*\*?$/, "").replace(/^\/*/, "/").replace(/[\\.*+^$?{}|()[\]]/g, "\\$&").replace(/\/:(\w+)/g, (_, paramName) => {
     paramNames.push(paramName);
@@ -784,15 +784,15 @@ function safelyDecodeURI(value) {
   try {
     return decodeURI(value);
   } catch (error) {
-    warning(false, 'The URL path "' + value + '" could not be decoded because it is is a malformed URL segment. This is probably due to a bad percent ' + ("encoding (" + error + ")."));
+    warning2(false, 'The URL path "' + value + '" could not be decoded because it is is a malformed URL segment. This is probably due to a bad percent ' + ("encoding (" + error + ")."));
     return value;
   }
 }
-function safelyDecodeURIComponent(value, paramName) {
+function safelyDecodeURIComponent2(value, paramName) {
   try {
     return decodeURIComponent(value);
   } catch (error) {
-    warning(false, 'The value for the URL param "' + paramName + '" will not be decoded because' + (' the string "' + value + '" is a malformed URL segment. This is probably') + (" due to a bad percent encoding (" + error + ")."));
+    warning2(false, 'The value for the URL param "' + paramName + '" will not be decoded because' + (' the string "' + value + '" is a malformed URL segment. This is probably') + (" due to a bad percent encoding (" + error + ")."));
     return value;
   }
 }
@@ -995,7 +995,7 @@ function createRouter(init) {
         ignoreNextHistoryUpdate = false;
         return;
       }
-      warning(blockerFunctions.size === 0 || delta != null, "You are trying to use a blocker on a POP navigation to a location that was not created by @remix-run/router. This will fail silently in production. This can happen if you are navigating outside the router via `window.history.pushState`/`window.location.hash` instead of using router navigation APIs.  This can also happen if you are using createHashRouter and the user manually changes the URL.");
+      warning2(blockerFunctions.size === 0 || delta != null, "You are trying to use a blocker on a POP navigation to a location that was not created by @remix-run/router. This will fail silently in production. This can happen if you are navigating outside the router via `window.history.pushState`/`window.location.hash` instead of using router navigation APIs.  This can also happen if you are using createHashRouter and the user manually changes the URL.");
       let blockerKey = shouldBlockNavigation({
         currentLocation: state.location,
         nextLocation: location2,
@@ -1855,7 +1855,7 @@ function createRouter(init) {
       return;
     }
     if (blockerFunctions.size > 1) {
-      warning(false, "A router only supports one blocker at a time");
+      warning2(false, "A router only supports one blocker at a time");
     }
     let entries = Array.from(blockerFunctions.entries());
     let [blockerKey, blockerFunction] = entries[entries.length - 1];
@@ -2553,7 +2553,7 @@ async function loadLazyRouteModule(route, mapRouteProperties, manifest) {
     let isPropertyStaticallyDefined = staticRouteValue !== void 0 && // This property isn't static since it should always be updated based
     // on the route updates
     lazyRouteProperty !== "hasErrorBoundary";
-    warning(!isPropertyStaticallyDefined, 'Route "' + routeToUpdate.id + '" has a static property "' + lazyRouteProperty + '" defined but its lazy function is also returning a value for this property. ' + ('The lazy route property "' + lazyRouteProperty + '" will be ignored.'));
+    warning2(!isPropertyStaticallyDefined, 'Route "' + routeToUpdate.id + '" has a static property "' + lazyRouteProperty + '" defined but its lazy function is also returning a value for this property. ' + ('The lazy route property "' + lazyRouteProperty + '" will be ignored.'));
     if (!isPropertyStaticallyDefined && !immutableRouteKeys.has(lazyRouteProperty)) {
       routeUpdates[lazyRouteProperty] = lazyRoute[lazyRouteProperty];
     }
@@ -3952,6 +3952,111 @@ var cacheFirst = async ({ cache: cacheName, cacheOptions, fetchDidFail = void 0 
   };
 };
 
+// ../packages/strategy/dist/src/cacheOnly.js
+var cacheOnly = async ({ cache: cacheName, cacheMatchOptions: matchOptions = { ignoreSearch: false, ignoreVary: false, ignoreMethod: true }, cacheOptions }) => {
+  return async (request) => {
+    if (!isHttpRequest(request)) {
+      return new Response("Not a HTTP request", { status: 403 });
+    }
+    let remixCache;
+    if (typeof cacheName === "string") {
+      Storage.init();
+      remixCache = Storage.has(cacheName) ? Storage.get(cacheName) : createCache({ name: cacheName, ...cacheOptions });
+    } else {
+      Storage.init();
+      remixCache = cacheName;
+    }
+    const response = await remixCache.match(request, matchOptions);
+    if (!response) {
+      const req = request instanceof Request ? request : new Request(request.toString());
+      const isGet = req.method.toLowerCase() === "get";
+      return new Response(JSON.stringify({
+        message: isGet ? "Not Found" : "No idea what you are trying to accomplish but this ain't it!"
+      }), {
+        status: isGet ? 404 : 400,
+        statusText: isGet ? "Not Found" : "Bad Request"
+      });
+    }
+    return response.clone();
+  };
+};
+
+// ../packages/strategy/dist/src/networkFirst.js
+var networkFirst = async ({ cache: cacheName, cacheOptions, fetchDidFail = void 0, fetchDidSucceed = void 0, networkTimeoutSeconds = 10 }) => {
+  return async (request) => {
+    if (!isHttpRequest(request)) {
+      return new Response("Not a HTTP request", { status: 403 });
+    }
+    let remixCache;
+    if (typeof cacheName === "string") {
+      Storage.init();
+      remixCache = Storage.has(cacheName) ? Storage.get(cacheName) : createCache({ name: cacheName, ...cacheOptions });
+    } else {
+      Storage.init();
+      remixCache = cacheName;
+    }
+    try {
+      const timeoutPromise = networkTimeoutSeconds !== Infinity ? new Promise((_resolve, reject) => {
+        setTimeout(() => {
+          reject(new Error(`Network timed out after ${networkTimeoutSeconds} seconds`));
+        }, networkTimeoutSeconds * 1e3);
+      }) : null;
+      const response = timeoutPromise ? await Promise.race([fetch(request), timeoutPromise]) : await fetch(request);
+      if (response) {
+        if (fetchDidSucceed) {
+          await Promise.all(fetchDidSucceed.map((cb) => cb()));
+        }
+        await remixCache.put(request, response.clone());
+        return response.clone();
+      }
+    } catch (error) {
+      if (fetchDidFail) {
+        await Promise.all(fetchDidFail.map((cb) => cb()));
+      }
+      const cachedResponse = await remixCache.match(request);
+      if (cachedResponse) {
+        return cachedResponse.clone();
+      }
+      return new Response(JSON.stringify({ message: "Network Error" }), {
+        status: 500
+      });
+    }
+    throw new Error("Failed to fetch. Network timed out.");
+  };
+};
+
+// ../packages/strategy/dist/src/staleWhileRevalidate.js
+var staleWhileRevalidate = async ({ cache: cacheName, cacheOptions, fetchDidFail = void 0 }) => {
+  return async (request) => {
+    if (!isHttpRequest(request)) {
+      return new Response("Not a HTTP request", { status: 403 });
+    }
+    let remixCache;
+    if (typeof cacheName === "string") {
+      Storage.init();
+      remixCache = Storage.has(cacheName) ? Storage.get(cacheName) : createCache({ name: cacheName, ...cacheOptions });
+    } else {
+      Storage.init();
+      remixCache = cacheName;
+    }
+    return remixCache.match(request).then(async (response) => {
+      const fetchPromise = fetch(request).then(async (networkResponse) => {
+        await remixCache.put(request, networkResponse.clone());
+        return networkResponse;
+      }).catch(async (_err) => {
+        if (fetchDidFail) {
+          await Promise.all(fetchDidFail.map((cb) => cb()));
+        }
+        return new Response(JSON.stringify({ error: "Network request failed" }), {
+          status: 500,
+          statusText: "Network request failed"
+        });
+      });
+      return response ? response.clone() : fetchPromise;
+    });
+  };
+};
+
 // app/routes/basic-caching.tsx
 var import_node = __toESM(require_node());
 var import_react = __toESM(require_react());
@@ -4023,6 +4128,16 @@ function invariant(value, message) {
     throw new Error(message);
   }
 }
+function warning(cond, message) {
+  if (!cond) {
+    if (typeof console !== "undefined")
+      console.warn(message);
+    try {
+      throw new Error(message);
+    } catch (e) {
+    }
+  }
+}
 var ResultType;
 (function(ResultType3) {
   ResultType3["data"] = "data";
@@ -4030,6 +4145,69 @@ var ResultType;
   ResultType3["redirect"] = "redirect";
   ResultType3["error"] = "error";
 })(ResultType || (ResultType = {}));
+function matchPath(pattern, pathname) {
+  if (typeof pattern === "string") {
+    pattern = {
+      path: pattern,
+      caseSensitive: false,
+      end: true
+    };
+  }
+  let [matcher, paramNames] = compilePath(pattern.path, pattern.caseSensitive, pattern.end);
+  let match = pathname.match(matcher);
+  if (!match)
+    return null;
+  let matchedPathname = match[0];
+  let pathnameBase = matchedPathname.replace(/(.)\/+$/, "$1");
+  let captureGroups = match.slice(1);
+  let params = paramNames.reduce((memo, paramName, index) => {
+    if (paramName === "*") {
+      let splatValue = captureGroups[index] || "";
+      pathnameBase = matchedPathname.slice(0, matchedPathname.length - splatValue.length).replace(/(.)\/+$/, "$1");
+    }
+    memo[paramName] = safelyDecodeURIComponent(captureGroups[index] || "", paramName);
+    return memo;
+  }, {});
+  return {
+    params,
+    pathname: matchedPathname,
+    pathnameBase,
+    pattern
+  };
+}
+function compilePath(path, caseSensitive, end) {
+  if (caseSensitive === void 0) {
+    caseSensitive = false;
+  }
+  if (end === void 0) {
+    end = true;
+  }
+  warning(path === "*" || !path.endsWith("*") || path.endsWith("/*"), 'Route path "' + path + '" will be treated as if it were ' + ('"' + path.replace(/\*$/, "/*") + '" because the `*` character must ') + "always follow a `/` in the pattern. To get rid of this warning, " + ('please change the route path to "' + path.replace(/\*$/, "/*") + '".'));
+  let paramNames = [];
+  let regexpSource = "^" + path.replace(/\/*\*?$/, "").replace(/^\/*/, "/").replace(/[\\.*+^$?{}|()[\]]/g, "\\$&").replace(/\/:(\w+)/g, (_, paramName) => {
+    paramNames.push(paramName);
+    return "/([^\\/]+)";
+  });
+  if (path.endsWith("*")) {
+    paramNames.push("*");
+    regexpSource += path === "*" || path === "/*" ? "(.*)$" : "(?:\\/(.+)|\\/*)$";
+  } else if (end) {
+    regexpSource += "\\/*$";
+  } else if (path !== "" && path !== "/") {
+    regexpSource += "(?:(?=\\/|$))";
+  } else
+    ;
+  let matcher = new RegExp(regexpSource, caseSensitive ? void 0 : "i");
+  return [matcher, paramNames];
+}
+function safelyDecodeURIComponent(value, paramName) {
+  try {
+    return decodeURIComponent(value);
+  } catch (error) {
+    warning(false, 'The value for the URL param "' + paramName + '" will not be decoded because' + (' the string "' + value + '" is a malformed URL segment. This is probably') + (" due to a bad percent encoding (" + error + ")."));
+    return value;
+  }
+}
 var json2 = function json3(data, init) {
   if (init === void 0) {
     init = {};
@@ -4320,17 +4498,64 @@ var workerLoader3 = async ({ context }) => {
 var hasWorkerAction4 = false;
 var hasWorkerLoader4 = true;
 
+// routes-module:routes/strategies.tsx?worker
+var strategies_exports = {};
+__export(strategies_exports, {
+  hasWorkerAction: () => hasWorkerAction5,
+  hasWorkerLoader: () => hasWorkerLoader5,
+  workerAction: () => workerAction3
+});
+
+// app/routes/strategies.tsx
+var import_react8 = __toESM(require_react());
+var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+var workerAction3 = async ({ context }) => {
+  const { event } = context;
+  const formData = await event.request.clone().formData();
+  const strategy = formData.get("strategy");
+  let customStrategy = void 0;
+  switch (strategy) {
+    case "cache-only":
+      customStrategy = await cacheOnly({
+        cache: "strategies-cache-only"
+      });
+      break;
+    case "cache-first":
+      customStrategy = await cacheFirst({
+        cache: "strategies-cache-first"
+      });
+      break;
+    case "network-first":
+      customStrategy = await networkFirst({
+        cache: "strategies-network-first"
+      });
+      break;
+    case "swr":
+      customStrategy = await staleWhileRevalidate({
+        cache: "strategies-swr"
+      });
+      break;
+    default:
+      break;
+  }
+  return null;
+};
+
+// routes-module:routes/strategies.tsx?worker
+var hasWorkerAction5 = true;
+var hasWorkerLoader5 = false;
+
 // routes-module:routes/selection.tsx?worker
 var selection_exports = {};
 __export(selection_exports, {
-  hasWorkerAction: () => hasWorkerAction5,
-  hasWorkerLoader: () => hasWorkerLoader5,
+  hasWorkerAction: () => hasWorkerAction6,
+  hasWorkerLoader: () => hasWorkerLoader6,
   workerLoader: () => workerLoader4
 });
 
 // app/routes/selection.tsx
-var import_react8 = __toESM(require_react());
-var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+var import_react9 = __toESM(require_react());
+var import_jsx_runtime6 = __toESM(require_jsx_runtime());
 async function workerLoader4({ context }) {
   const { database } = context;
   const selections = await database.selections.toArray();
@@ -4338,15 +4563,15 @@ async function workerLoader4({ context }) {
 }
 
 // routes-module:routes/selection.tsx?worker
-var hasWorkerAction5 = false;
-var hasWorkerLoader5 = true;
+var hasWorkerAction6 = false;
+var hasWorkerLoader6 = true;
 
 // routes-module:routes/sync-away.tsx?worker
 var sync_away_exports = {};
 __export(sync_away_exports, {
-  hasWorkerAction: () => hasWorkerAction6,
-  hasWorkerLoader: () => hasWorkerLoader6,
-  workerAction: () => workerAction3
+  hasWorkerAction: () => hasWorkerAction7,
+  hasWorkerLoader: () => hasWorkerLoader7,
+  workerAction: () => workerAction4
 });
 
 // ../packages/sync/dist/src/request.js
@@ -5208,9 +5433,9 @@ var registerQueue = (name) => {
 
 // app/routes/sync-away.tsx
 var import_node4 = __toESM(require_node());
-var import_react9 = __toESM(require_react());
-var import_jsx_runtime6 = __toESM(require_jsx_runtime());
-var workerAction3 = async ({ context }) => {
+var import_react10 = __toESM(require_react());
+var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+var workerAction4 = async ({ context }) => {
   const { fetchFromServer, event } = context;
   try {
     await fetchFromServer();
@@ -5231,24 +5456,24 @@ var workerAction3 = async ({ context }) => {
 };
 
 // routes-module:routes/sync-away.tsx?worker
-var hasWorkerAction6 = true;
-var hasWorkerLoader6 = false;
+var hasWorkerAction7 = true;
+var hasWorkerLoader7 = false;
 
 // entry-module:@remix-pwa/build/magic
-var route7 = __toESM(require_index());
+var route8 = __toESM(require_index());
 
 // routes-module:routes/_app.tsx?worker
 var app_exports = {};
 __export(app_exports, {
-  hasWorkerAction: () => hasWorkerAction7,
-  hasWorkerLoader: () => hasWorkerLoader7,
+  hasWorkerAction: () => hasWorkerAction8,
+  hasWorkerLoader: () => hasWorkerLoader8,
   workerLoader: () => workerLoader5
 });
 
 // app/routes/_app.tsx
 var import_node5 = __toESM(require_node());
-var import_react10 = __toESM(require_react());
-var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+var import_react11 = __toESM(require_react());
+var import_jsx_runtime8 = __toESM(require_jsx_runtime());
 async function workerLoader5({ context }) {
   const { fetchFromServer } = context;
   const data = await fetchFromServer().then((response) => response.json());
@@ -5261,8 +5486,8 @@ async function workerLoader5({ context }) {
 }
 
 // routes-module:routes/_app.tsx?worker
-var hasWorkerAction7 = false;
-var hasWorkerLoader7 = true;
+var hasWorkerAction8 = false;
+var hasWorkerLoader8 = true;
 
 // app/entry.worker.ts
 var entry_worker_exports = {};
@@ -5271,7 +5496,7 @@ __export(entry_worker_exports, {
   getLoadContext: () => getLoadContext
 });
 
-// node_modules/@remix-pwa/sw/lib/core/logger.js
+// ../packages/sw/dist/src/private/logger.js
 var methodToColorMap = {
   debug: `#7f8c8d`,
   log: `#2ecc71`,
@@ -5341,17 +5566,12 @@ var logger = false ? (() => {
   return api;
 })();
 
-// node_modules/@remix-pwa/sw/lib/fetch/fetch.js
+// ../packages/sw/dist/src/utils/worker.js
 function isMethod(request, methods) {
   return methods.includes(request.method.toLowerCase());
 }
-
-// node_modules/@remix-pwa/sw/lib/fetch/match.js
 function isAssetRequest(request, assetUrls = ["/build/", "/icons"]) {
   return isMethod(request, ["get"]) && assetUrls.some((publicPath) => request.url.includes(publicPath));
-}
-function isDocumentRequest(request) {
-  return isMethod(request, ["get"]) && request.mode === "navigate";
 }
 function isLoaderRequest(request) {
   const url = new URL(request.url);
@@ -5362,55 +5582,23 @@ var matchRequest = (request, assetUrls = ["/build/", "/icons"]) => {
     return "asset";
   } else if (isLoaderRequest(request)) {
     return "loader";
-  } else if (isDocumentRequest(request)) {
-    return "document";
   } else {
     return null;
   }
 };
 
-// node_modules/@remix-pwa/sw/lib/message/message.js
-var __awaiter = function(thisArg, _arguments, P, generator) {
-  function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve) {
-      resolve(value);
-    });
-  }
-  return new (P || (P = Promise))(function(resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-    }
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
+// ../packages/sw/dist/src/message/message.js
 var MessageHandler = class {
+  /**
+   * The plugins array is used to run plugins before and after the message handler.
+   * They are passed in when the handler is initialised.
+   */
+  plugins;
+  /**
+   * The state object is used to pass data between plugins.
+   */
+  state;
   constructor({ plugins, state } = {}) {
-    Object.defineProperty(this, "plugins", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "state", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
     this.plugins = plugins || [];
     this.state = state || {};
   }
@@ -5420,478 +5608,76 @@ var MessageHandler = class {
    * Takes in the MessageEvent as a mandatory argument as well as an optional
    * object that can be used to pass further information/data.
    */
-  handle(event, state = {}) {
-    return __awaiter(this, void 0, void 0, function* () {
-      yield this._handleMessage(event, state);
-    });
+  async handle(event, state = {}) {
+    await this._handleMessage(event, state);
   }
   /**
    * Runs the plugins that are passed in when the handler is initialised.
    */
-  runPlugins(hook, env) {
-    return __awaiter(this, void 0, void 0, function* () {
-      for (const plugin of this.plugins) {
-        if (plugin[hook]) {
-          plugin[hook](env);
-        }
+  async runPlugins(hook, env) {
+    for (const plugin of this.plugins) {
+      if (plugin[hook]) {
+        plugin[hook](env);
       }
-    });
+    }
   }
 };
 
-// node_modules/@remix-pwa/sw/lib/message/remixNavigationHandler.js
-var __awaiter2 = function(thisArg, _arguments, P, generator) {
-  function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve) {
-      resolve(value);
-    });
-  }
-  return new (P || (P = Promise))(function(resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-    }
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
+// ../packages/sw/dist/src/message/remixNavigationHandler.js
 var RemixNavigationHandler = class extends MessageHandler {
-  constructor({ plugins, dataCacheName, documentCacheName, state }) {
+  dataCacheName;
+  documentCacheName;
+  constructor({ dataCacheName, documentCacheName, plugins, state }) {
     super({ plugins, state });
-    Object.defineProperty(this, "dataCacheName", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "documentCacheName", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
     this.dataCacheName = dataCacheName;
     this.documentCacheName = documentCacheName;
     this._handleMessage = this._handleMessage.bind(this);
   }
-  _handleMessage(event) {
-    return __awaiter2(this, void 0, void 0, function* () {
-      const { data } = event;
-      let DATA2, PAGES2;
-      DATA2 = this.dataCacheName;
-      PAGES2 = this.documentCacheName;
-      this.runPlugins("messageDidReceive", {
-        event
-      });
-      let cachePromises = /* @__PURE__ */ new Map();
-      if (data.type === "REMIX_NAVIGATION") {
-        let { isMount, location: location2, matches, manifest } = data;
-        let documentUrl = location2.pathname + location2.search + location2.hash;
-        let [dataCache, documentCache, existingDocument] = yield Promise.all([
-          caches.open(DATA2),
-          caches.open(PAGES2),
-          caches.match(documentUrl)
-        ]);
-        if (!existingDocument || !isMount) {
-          cachePromises.set(documentUrl, documentCache.add(documentUrl).catch((error) => {
-            logger.error(`Failed to cache document for ${documentUrl}:`, error);
-          }));
-        }
-        if (isMount) {
-          for (let match of matches) {
-            if (manifest.routes[match.id].hasLoader) {
-              let params = new URLSearchParams(location2.search);
-              params.set("_data", match.id);
-              let search = params.toString();
-              search = search ? `?${search}` : "";
-              let url = location2.pathname + search + location2.hash;
-              if (!cachePromises.has(url)) {
-                logger.debug("Caching data for:", url);
-                cachePromises.set(url, dataCache.add(url).catch((error) => {
-                  logger.error(`Failed to cache data for ${url}:`, error);
-                }));
-              }
+  async _handleMessage(event) {
+    const { data } = event;
+    const DATA2 = this.dataCacheName;
+    const PAGES2 = this.documentCacheName;
+    this.runPlugins("messageDidReceive", {
+      event
+    });
+    const cachePromises = /* @__PURE__ */ new Map();
+    if (data.type === "REMIX_NAVIGATION") {
+      const { isMount, location: location2, manifest, matches } = data;
+      const documentUrl = location2.pathname + location2.search + location2.hash;
+      const [dataCache, documentCache, existingDocument] = await Promise.all([
+        Storage.open(DATA2),
+        Storage.open(PAGES2),
+        caches.match(documentUrl)
+      ]);
+      if (!existingDocument || !isMount) {
+        const response = await fetch(documentUrl);
+        cachePromises.set(documentUrl, documentCache.put(documentUrl, response).catch((error) => {
+          logger.error(`Failed to cache document for ${documentUrl}:`, error);
+          console.error(`Failed to cache document for ${documentUrl}:`, error);
+        }));
+      }
+      if (isMount) {
+        for (const match of matches) {
+          if (manifest.routes[match.id].hasLoader) {
+            const params = new URLSearchParams(location2.search);
+            params.set("_data", match.id);
+            let search = params.toString();
+            search = search ? `?${search}` : "";
+            const url = location2.pathname + search + location2.hash;
+            if (!cachePromises.has(url)) {
+              logger.debug("Caching data for:", url);
+              console.debug("Caching data for:", url);
+              const response = await fetch(url);
+              cachePromises.set(url, dataCache.put(url, response).catch((error) => {
+                logger.error(`Failed to cache data for ${url}:`, error);
+                console.error(`Failed to cache data for ${url}:`, error);
+              }));
             }
           }
         }
       }
-      yield Promise.all(cachePromises.values());
-    });
-  }
-};
-
-// node_modules/@remix-pwa/sw/lib/react/useSWEffect.js
-var import_react11 = __toESM(require_react2());
-var import_react12 = __toESM(require_react());
-
-// node_modules/@remix-pwa/sw/lib/core/helper.js
-var isHttpRequest2 = (request) => {
-  return request.url.startsWith("http");
-};
-function toError(error) {
-  if (error instanceof Error) {
-    return error;
-  }
-  return error;
-}
-
-// node_modules/@remix-pwa/sw/lib/strategy/strategy.js
-var __awaiter3 = function(thisArg, _arguments, P, generator) {
-  function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve) {
-      resolve(value);
-    });
-  }
-  return new (P || (P = Promise))(function(resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
     }
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-    }
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-var CacheStrategy = class {
-  // todo: (ShafSpecs) Fix this!
-  constructor({ cacheName, isLoader = false, plugins = [], matchOptions = {} }) {
-    Object.defineProperty(this, "cacheName", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "plugins", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "isLoader", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "matchOptions", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    this.cacheName = cacheName;
-    this.isLoader = isLoader;
-    this.plugins = plugins;
-    this.matchOptions = matchOptions;
-  }
-  // Can you return null or a custom, handled error???
-  handle(request) {
-    return __awaiter3(this, void 0, void 0, function* () {
-      if (!isHttpRequest2(request)) {
-        return new Response("Not a HTTP request", { status: 403 });
-      }
-      return this._handle(request);
-    });
-  }
-};
-
-// node_modules/@remix-pwa/sw/lib/strategy/cacheFirst.js
-var __awaiter4 = function(thisArg, _arguments, P, generator) {
-  function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve) {
-      resolve(value);
-    });
-  }
-  return new (P || (P = Promise))(function(resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-    }
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-var CacheFirst = class extends CacheStrategy {
-  _handle(request) {
-    return __awaiter4(this, void 0, void 0, function* () {
-      let response = yield this.getFromCache(request);
-      if (!response) {
-        response = yield this.getFromNetwork(request);
-        if (response) {
-          yield this.updateCache(request, response.clone());
-        }
-      }
-      const headers = { "X-Remix-Catch": "yes", "X-Remix-Worker": "yes" };
-      return response ? response : new Response("Not found", {
-        status: 404,
-        headers: this.isLoader ? headers : {}
-      });
-    });
-  }
-  getFromCache(request) {
-    var _a, _b;
-    return __awaiter4(this, void 0, void 0, function* () {
-      const cache = yield caches.open(this.cacheName);
-      let cachedResponse = yield cache.match(request, {
-        ignoreVary: ((_a = this.matchOptions) === null || _a === void 0 ? void 0 : _a.ignoreVary) || false,
-        ignoreSearch: ((_b = this.matchOptions) === null || _b === void 0 ? void 0 : _b.ignoreSearch) || false
-      });
-      if (cachedResponse) {
-        let res = cachedResponse.clone();
-        for (const plugin of this.plugins) {
-          if (plugin.cachedResponseWillBeUsed) {
-            res = yield plugin.cachedResponseWillBeUsed({
-              cacheName: this.cacheName,
-              request,
-              cachedResponse,
-              matchOptions: this.matchOptions || {}
-            });
-            if (!res) {
-              break;
-            }
-          }
-        }
-        return res;
-      }
-      return null;
-    });
-  }
-  getFromNetwork(request) {
-    return __awaiter4(this, void 0, void 0, function* () {
-      let req = request.clone();
-      for (const plugin of this.plugins) {
-        if (plugin.requestWillFetch) {
-          req = yield plugin.requestWillFetch({ request: req });
-        }
-      }
-      let response = yield fetch(req).catch((err) => {
-        for (const plugin of this.plugins) {
-          if (plugin.fetchDidFail) {
-            plugin.fetchDidFail({
-              request: req.clone(),
-              error: err
-            });
-          }
-        }
-      });
-      if (response) {
-        for (const plugin of this.plugins) {
-          if (plugin.fetchDidSucceed) {
-            response = yield plugin.fetchDidSucceed({ request: req, response });
-          }
-        }
-        return response;
-      }
-      return null;
-    });
-  }
-  updateCache(request, response) {
-    return __awaiter4(this, void 0, void 0, function* () {
-      const cache = yield caches.open(this.cacheName);
-      const oldResponse = yield cache.match(request);
-      let newResponse = response.clone();
-      for (const plugin of this.plugins) {
-        if (plugin.cacheWillUpdate) {
-          newResponse = yield plugin.cacheWillUpdate({
-            response: newResponse.clone(),
-            request
-          });
-          if (!newResponse) {
-            break;
-          }
-        }
-      }
-      if (newResponse) {
-        yield cache.put(request, newResponse.clone());
-        for (const plugin of this.plugins) {
-          if (plugin.cacheDidUpdate) {
-            plugin.cacheDidUpdate({
-              cacheName: this.cacheName,
-              request,
-              oldResponse,
-              newResponse
-            });
-          }
-        }
-      }
-    });
-  }
-};
-
-// node_modules/@remix-pwa/sw/lib/strategy/networkFirst.js
-var __awaiter5 = function(thisArg, _arguments, P, generator) {
-  function adopt(value) {
-    return value instanceof P ? value : new P(function(resolve) {
-      resolve(value);
-    });
-  }
-  return new (P || (P = Promise))(function(resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-    function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-    }
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-var NetworkFirst = class extends CacheStrategy {
-  constructor(options, env = {}) {
-    super(options);
-    Object.defineProperty(this, "fetchListenerEnv", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "_networkTimeoutSeconds", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    this.fetchListenerEnv = env;
-    this._networkTimeoutSeconds = options.networkTimeoutSeconds || Infinity;
-  }
-  _handle(request) {
-    return __awaiter5(this, void 0, void 0, function* () {
-      const cache = yield caches.open(this.cacheName);
-      try {
-        const response = yield this.fetchAndCache(request);
-        return response;
-      } catch (error) {
-        let err = toError(error);
-        const cachedResponse = yield cache.match(request, this.matchOptions);
-        if (cachedResponse) {
-          const body = cachedResponse.clone().body;
-          const headers = new Headers(cachedResponse.clone().headers);
-          const newResponse = new Response(body, {
-            headers: Object.assign(Object.assign({}, headers), { "X-Remix-Worker": "yes" }),
-            status: cachedResponse.status,
-            statusText: cachedResponse.statusText
-          });
-          return newResponse;
-        }
-        return new Response(JSON.stringify({ message: "Network Error" }), {
-          status: 500,
-          headers: { "X-Remix-Catch": "yes", "X-Remix-Worker": "yes" }
-        });
-      }
-    });
-  }
-  fetchAndCache(request) {
-    var _a;
-    return __awaiter5(this, void 0, void 0, function* () {
-      const cache = yield caches.open(this.cacheName);
-      const timeoutPromise = this._networkTimeoutSeconds !== Infinity ? new Promise((_, reject) => {
-        setTimeout(() => {
-          reject(new Error(`Network timed out after ${this._networkTimeoutSeconds} seconds`));
-        }, this._networkTimeoutSeconds * 1e3);
-      }) : null;
-      const fetcher = ((_a = this.fetchListenerEnv.state) === null || _a === void 0 ? void 0 : _a.fetcher) || fetch;
-      let updatedRequest = request.clone();
-      for (const plugin of this.plugins) {
-        if (plugin.requestWillFetch) {
-          updatedRequest = yield plugin.requestWillFetch({
-            request: updatedRequest
-          });
-        }
-      }
-      const fetchPromise = fetcher(updatedRequest).catch((err) => {
-        for (const plugin of this.plugins) {
-          if (plugin.fetchDidFail)
-            plugin.fetchDidFail({
-              request: updatedRequest,
-              error: err
-            });
-        }
-      });
-      let response = timeoutPromise ? yield Promise.race([fetchPromise, timeoutPromise]) : yield fetchPromise;
-      if (response) {
-        let updatedResponse = response.clone();
-        for (const plugin of this.plugins) {
-          if (plugin.fetchDidSucceed) {
-            updatedResponse = yield plugin.fetchDidSucceed({
-              request: updatedRequest,
-              response: updatedResponse
-            });
-          }
-        }
-        let aboutToBeCachedResponse = updatedResponse;
-        for (const plugin of this.plugins) {
-          if (plugin.cacheWillUpdate) {
-            aboutToBeCachedResponse = yield plugin.cacheWillUpdate({
-              request: updatedRequest,
-              response: aboutToBeCachedResponse
-            });
-            if (!aboutToBeCachedResponse) {
-              break;
-            }
-          }
-        }
-        if (aboutToBeCachedResponse) {
-          yield cache.put(request, response.clone());
-          for (const plugin of this.plugins) {
-            if (plugin.cacheDidUpdate) {
-              yield plugin.cacheDidUpdate({
-                request: updatedRequest,
-                cacheName: this.cacheName,
-                newResponse: updatedResponse
-              });
-            }
-          }
-          return aboutToBeCachedResponse;
-        }
-        return updatedResponse;
-      }
-      throw new Error("No response received from fetch: Timeout");
-    });
+    await Promise.all(cachePromises.values());
   }
 };
 
@@ -10647,19 +10433,9 @@ var database_default = createStorageRepository;
 // app/entry.worker.ts
 var PAGES = "page-cache";
 var DATA = "data-cache";
-var ASSETS = "assets-cache";
 var handler = new RemixNavigationHandler({
   dataCacheName: DATA,
   documentCacheName: PAGES
-});
-var documentHandler = new NetworkFirst({
-  cacheName: PAGES
-});
-var loadersHandler = new NetworkFirst({
-  cacheName: DATA
-});
-var assetsHandler = new CacheFirst({
-  cacheName: ASSETS
 });
 registerQueue("offline-action");
 var getLoadContext = () => {
@@ -10670,15 +10446,6 @@ var getLoadContext = () => {
 };
 var defaultFetchHandler = ({ context, request }) => {
   const type2 = matchRequest(request);
-  if (type2 === "asset") {
-    return assetsHandler.handle(request);
-  }
-  if (type2 === "loader") {
-    return loadersHandler.handle(request);
-  }
-  if (type2 === "document") {
-    return documentHandler.handle(request);
-  }
   return context.fetchFromServer();
 };
 self.addEventListener("install", (event) => {
@@ -10743,6 +10510,16 @@ var routes = {
     hasWorkerAction: Boolean(hasWorkerAction4),
     hasWorkerLoader: Boolean(hasWorkerLoader4)
   },
+  "routes/strategies": {
+    id: "routes/strategies",
+    parentId: "root",
+    path: "strategies",
+    index: void 0,
+    caseSensitive: void 0,
+    module: strategies_exports,
+    hasWorkerAction: Boolean(hasWorkerAction5),
+    hasWorkerLoader: Boolean(hasWorkerLoader5)
+  },
   "routes/selection": {
     id: "routes/selection",
     parentId: "root",
@@ -10750,8 +10527,8 @@ var routes = {
     index: void 0,
     caseSensitive: void 0,
     module: selection_exports,
-    hasWorkerAction: Boolean(hasWorkerAction5),
-    hasWorkerLoader: Boolean(hasWorkerLoader5)
+    hasWorkerAction: Boolean(hasWorkerAction6),
+    hasWorkerLoader: Boolean(hasWorkerLoader6)
   },
   "routes/sync-away": {
     id: "routes/sync-away",
@@ -10760,8 +10537,8 @@ var routes = {
     index: void 0,
     caseSensitive: void 0,
     module: sync_away_exports,
-    hasWorkerAction: Boolean(hasWorkerAction6),
-    hasWorkerLoader: Boolean(hasWorkerLoader6)
+    hasWorkerAction: Boolean(hasWorkerAction7),
+    hasWorkerLoader: Boolean(hasWorkerLoader7)
   },
   "routes/_index": {
     id: "routes/_index",
@@ -10769,9 +10546,9 @@ var routes = {
     path: "undefined",
     index: true,
     caseSensitive: void 0,
-    module: route7,
-    hasWorkerAction: Boolean(route7.hasWorkerAction),
-    hasWorkerLoader: Boolean(route7.hasWorkerLoader)
+    module: route8,
+    hasWorkerAction: Boolean(route8.hasWorkerAction),
+    hasWorkerLoader: Boolean(route8.hasWorkerLoader)
   },
   "routes/_app": {
     id: "routes/_app",
@@ -10780,8 +10557,8 @@ var routes = {
     index: void 0,
     caseSensitive: void 0,
     module: app_exports,
-    hasWorkerAction: Boolean(hasWorkerAction7),
-    hasWorkerLoader: Boolean(hasWorkerLoader7)
+    hasWorkerAction: Boolean(hasWorkerAction8),
+    hasWorkerLoader: Boolean(hasWorkerLoader8)
   }
 };
 var entry = { module: entry_worker_exports };
@@ -10798,8 +10575,13 @@ function clone(_object) {
   }
   return init;
 }
-function getURLParameters(request) {
-  return Object.fromEntries(new URL(request.url).searchParams.entries());
+function getURLParameters(request, path = "") {
+  const url = new URL(request.url);
+  const match = matchPath(path, url.pathname);
+  return {
+    ...Object.fromEntries(new URL(request.url).searchParams.entries()),
+    ...match?.params
+  };
 }
 function stripIndexParameter(request) {
   const url = new URL(request.url);
@@ -10821,9 +10603,9 @@ function stripDataParameter(request) {
   url.searchParams.delete("_data");
   return new Request(url.href, { ...clone(request), duplex: "half" });
 }
-function createArgumentsFrom({ event, loadContext }) {
+function createArgumentsFrom({ event, loadContext, path }) {
   const request = stripDataParameter(stripIndexParameter(event.request.clone()));
-  const parameters = getURLParameters(request);
+  const parameters = getURLParameters(request, path);
   return {
     request,
     params: parameters,
@@ -10845,7 +10627,7 @@ function isLoaderRequest2(request) {
 // ../packages/worker-runtime/dist/src/utils/response.js
 var import_responses = __toESM(require_responses(), 1);
 function errorResponseToJson(errorResponse) {
-  return (0, import_responses.json)(errorResponse.error || new Error("Unexpected Server Error"), {
+  return (0, import_responses.json)(errorResponse.error || { message: "Unexpected Server Error" }, {
     status: errorResponse.status,
     statusText: errorResponse.statusText,
     headers: {
@@ -10863,12 +10645,18 @@ async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, ev
   const url = new URL(request.url);
   const routeId = url.searchParams.get("_data");
   const route = routeId ? routes2[routeId] : void 0;
+  const _arguments = {
+    request: event.request,
+    params: getURLParameters(event.request, route?.path),
+    context: loadContext
+  };
   try {
     if (isLoaderRequest2(request) && route?.module.workerLoader) {
       return await handleLoader({
         event,
         loader: route.module.workerLoader,
         routeId: route.id,
+        routePath: route.path,
         loadContext
       }).then(responseHandler);
     }
@@ -10877,30 +10665,21 @@ async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, ev
         event,
         action: route.module.workerAction,
         routeId: route.id,
+        routePath: route.path,
         loadContext
       }).then(responseHandler);
     }
   } catch (error) {
-    const handler2 = (error2) => errorHandler(error2, createArgumentsFrom({ event, loadContext }));
+    const handler2 = (error2) => errorHandler(error2, _arguments);
     return _errorHandler({ error, handler: handler2 });
   }
-  if (request.method.toUpperCase() !== "GET") {
-    if (true) {
-      console.warn(`You made a non-GET request to route "${routeId}" but didn't define a workerAction function. We're treating this request like a normal fetch request.`);
-    }
-    return fetch(request.clone());
-  }
-  return defaultHandler2({
-    request,
-    params: getURLParameters(request),
-    context: loadContext
-  });
+  return defaultHandler2(_arguments);
 }
-async function handleLoader({ event, loadContext, loader, routeId }) {
-  const _arguments = createArgumentsFrom({ event, loadContext });
+async function handleLoader({ event, loadContext, loader, routeId, routePath }) {
+  const _arguments = createArgumentsFrom({ event, loadContext, path: routePath });
   const result = await loader(_arguments);
   if (result === void 0) {
-    throw new Error(`You defined a loader for route "${routeId}" but didn't return anything from your \`loader\` function. Please return a value or \`null\`.`);
+    throw new Error(`You defined a loader for route "${routeId}" but didn't return anything from your \`worker loader\` function. Please return a value or \`null\`.`);
   }
   if ((0, import_responses2.isDeferredData)(result)) {
     if (result.init && (0, import_responses2.isRedirectStatusCode)(result.init.status || 200)) {
@@ -10915,11 +10694,11 @@ async function handleLoader({ event, loadContext, loader, routeId }) {
   }
   return (0, import_responses2.isResponse)(result) ? result : (0, import_responses2.json)(result);
 }
-async function handleAction({ action, event, loadContext, routeId }) {
-  const _arguments = createArgumentsFrom({ event, loadContext });
+async function handleAction({ action, event, loadContext, routeId, routePath }) {
+  const _arguments = createArgumentsFrom({ event, loadContext, path: routePath });
   const result = await action(_arguments);
   if (result === void 0) {
-    throw new Error(`You defined an action for route "${routeId}" but didn't return anything from your \`action\` function. Please return a value or \`null\`.`);
+    throw new Error(`You defined an action for route "${routeId}" but didn't return anything from your \`worker action\` function. Please return a value or \`null\`.`);
   }
   return (0, import_responses2.isResponse)(result) ? result : (0, import_responses2.json)(result);
 }
