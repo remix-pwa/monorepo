@@ -21,7 +21,7 @@ export type LoadServiceWorkerOptions = RegistrationOptions & {
  *
  * @param  options - Options for loading the service worker.
  * @param  options.serviceWorkerUrl='/entry.worker.js' - URL of the service worker.
- * @param  options.serviceWorkerRegistrationCallback - Callback function when the service worker gets registered.
+ * @param  options.serviceWorkerRegistrationCallback - Callback function when the service worker gets registered. Takes in the `ServiceWorkerRegistration` object.
  * @param  options.registrationOptions - Options for the service worker registration.
  *
  * ### Example
@@ -58,7 +58,7 @@ export function loadServiceWorker(
         // await serviceWorkerRegistrationCallback?.(registration); ❌
 
         window.$ServiceWorkerHMRHandler$ = async () => {
-          await serviceWorkerRegistrationCallback?.(registration);
+          await serviceWorkerRegistrationCallback?.(registration); // ✅
         };
 
         await navigator.serviceWorker.ready;
@@ -74,7 +74,7 @@ export function loadServiceWorker(
           });
         }
       } catch (error) {
-        // console.error('Service worker registration failed', error);
+        logger.error('Service worker registration failed', error);
       }
     }
 
