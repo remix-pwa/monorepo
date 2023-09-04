@@ -67,6 +67,13 @@ var require_jsx_runtime = __commonJS({
   }
 });
 
+// routes-module:routes/strategies.tsx?worker
+var require_strategies = __commonJS({
+  "routes-module:routes/strategies.tsx?worker"(exports, module) {
+    module.exports = {};
+  }
+});
+
 // routes-module:routes/_index.tsx?worker
 var require_index = __commonJS({
   "routes-module:routes/_index.tsx?worker"(exports, module) {
@@ -4320,6 +4327,9 @@ var workerLoader3 = async ({ context }) => {
 var hasWorkerAction4 = false;
 var hasWorkerLoader4 = true;
 
+// entry-module:@remix-pwa/build/magic
+var route5 = __toESM(require_strategies());
+
 // routes-module:routes/selection.tsx?worker
 var selection_exports = {};
 __export(selection_exports, {
@@ -5235,7 +5245,7 @@ var hasWorkerAction6 = true;
 var hasWorkerLoader6 = false;
 
 // entry-module:@remix-pwa/build/magic
-var route7 = __toESM(require_index());
+var route8 = __toESM(require_index());
 
 // routes-module:routes/_app.tsx?worker
 var app_exports = {};
@@ -10743,6 +10753,16 @@ var routes = {
     hasWorkerAction: Boolean(hasWorkerAction4),
     hasWorkerLoader: Boolean(hasWorkerLoader4)
   },
+  "routes/strategies": {
+    id: "routes/strategies",
+    parentId: "root",
+    path: "strategies",
+    index: void 0,
+    caseSensitive: void 0,
+    module: route5,
+    hasWorkerAction: Boolean(route5.hasWorkerAction),
+    hasWorkerLoader: Boolean(route5.hasWorkerLoader)
+  },
   "routes/selection": {
     id: "routes/selection",
     parentId: "root",
@@ -10769,9 +10789,9 @@ var routes = {
     path: "undefined",
     index: true,
     caseSensitive: void 0,
-    module: route7,
-    hasWorkerAction: Boolean(route7.hasWorkerAction),
-    hasWorkerLoader: Boolean(route7.hasWorkerLoader)
+    module: route8,
+    hasWorkerAction: Boolean(route8.hasWorkerAction),
+    hasWorkerLoader: Boolean(route8.hasWorkerLoader)
   },
   "routes/_app": {
     id: "routes/_app",

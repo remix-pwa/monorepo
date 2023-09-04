@@ -4,7 +4,6 @@ import { CacheFirst, NetworkFirst, RemixNavigationHandler, matchRequest } from '
 import createStorageRepository from './database';
 import { registerQueue } from '@remix-pwa/sync';
 
-
 declare let self: ServiceWorkerGlobalScope &
   typeof globalThis & {
     __workerManifest: any;
