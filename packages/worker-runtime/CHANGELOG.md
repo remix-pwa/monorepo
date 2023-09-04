@@ -1,3 +1,25 @@
+## @remix-pwa/worker-runtime 1.1.1 (2023-09-03)
+
+
+### Bug Fixes
+
+* **loader-action:** parse path and url parameters properly ea7cc91
+
+# @remix-pwa/worker-runtime 1.1.0 (2023-09-02)
+
+
+### Bug Fixes
+
+* **worker-runtime:** fixed errors throwing errors due to `Request` consumption by `fetch` 5224a1f
+
+
+### Features
+
+* **worker-runtime:** added precautionary checks for non-`GET` requests 74a91b7
+* **worker-runtime:** implemented worker manifest 81e7a04
+
+## @remix-pwa/worker-runtime 1.0.3 (2023-08-29)
+
 ## @remix-pwa/worker-runtime 1.0.2 (2023-08-28)
 
 

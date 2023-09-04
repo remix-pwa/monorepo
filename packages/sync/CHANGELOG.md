@@ -1,3 +1,12 @@
+# @remix-pwa/sync 1.1.0 (2023-09-02)
+
+
+### Features
+
+* **sync:** new helpers for handling queueing with `bg-sync` cf005b9
+
+## @remix-pwa/sync 1.0.1 (2023-08-29)
+
 # @remix-pwa/sync 1.0.0 (2023-08-27)
 
 

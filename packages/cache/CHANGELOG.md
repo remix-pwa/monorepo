@@ -1,3 +1,16 @@
+# @remix-pwa/cache 1.3.0 (2023-09-02)
+
+
+### Bug Fixes
+
+* **cache:** fixed broken LRU feature 5cd3008
+
+
+### Features
+
+* **cache:** implemented lru feature 106af88
+* **cache:** improved speed of cache operations by >200% cff194f
+
 ## @remix-pwa/cache 1.2.1 (2023-08-27)
 
 # @remix-pwa/cache 1.2.0 (2023-08-25)
