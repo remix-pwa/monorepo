@@ -36,7 +36,9 @@ export function loadServiceWorker(
   { serviceWorkerRegistraionCallback, serviceWorkerUrl, ...options }: LoadServiceWorkerOptions = {
     scope: '/',
     serviceWorkerUrl: '/entry.worker.js',
-    serviceWorkerRegistraionCallback: () => {},
+    serviceWorkerRegistraionCallback: (reg: ServiceWorkerRegistration) => {
+      reg.update();
+    },
   }
 ) {
   if ('serviceWorker' in navigator) {
