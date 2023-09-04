@@ -5,12 +5,13 @@ import { logger } from '../private/logger.js';
 declare global {
   interface Window {
     __remixManifest: AssetsManifest;
+    $ServiceWorkerHMRHandler$: () => Promise<void>;
   }
 }
 
 export type LoadServiceWorkerOptions = RegistrationOptions & {
   serviceWorkerUrl?: string;
-  serviceWorkerRegistraionCallback?: (registration: ServiceWorkerRegistration) => Promise<void> | void;
+  serviceWorkerRegistrationCallback?: (registration: ServiceWorkerRegistration) => Promise<void> | void;
 };
 
 /**
@@ -20,7 +21,7 @@ export type LoadServiceWorkerOptions = RegistrationOptions & {
  *
  * @param  options - Options for loading the service worker.
  * @param  options.serviceWorkerUrl='/entry.worker.js' - URL of the service worker.
- * @param  options.serviceWorkerRegistraionCallback - Callback function when the service worker gets registered.
+ * @param  options.serviceWorkerRegistrationCallback - Callback function when the service worker gets registered.
  * @param  options.registrationOptions - Options for the service worker registration.
  *
  * ### Example
@@ -33,10 +34,10 @@ export type LoadServiceWorkerOptions = RegistrationOptions & {
  * ```
  */
 export function loadServiceWorker(
-  { serviceWorkerRegistraionCallback, serviceWorkerUrl, ...options }: LoadServiceWorkerOptions = {
+  { serviceWorkerRegistrationCallback, serviceWorkerUrl, ...options }: LoadServiceWorkerOptions = {
     scope: '/',
     serviceWorkerUrl: '/entry.worker.js',
-    serviceWorkerRegistraionCallback: (reg: ServiceWorkerRegistration) => {
+    serviceWorkerRegistrationCallback: (reg: ServiceWorkerRegistration) => {
       reg.update();
     },
   }
@@ -54,7 +55,11 @@ export function loadServiceWorker(
       try {
         const registration = await navigator.serviceWorker.register(serviceWorkerUrl!, options);
 
-        await serviceWorkerRegistraionCallback?.(registration);
+        // await serviceWorkerRegistrationCallback?.(registration); ❌
+
+        window.$ServiceWorkerHMRHandler$ = async () => {
+          await serviceWorkerRegistrationCallback?.(registration);
+        };
 
         await navigator.serviceWorker.ready;
 

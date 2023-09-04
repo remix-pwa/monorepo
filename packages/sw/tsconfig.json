@@ -1,9 +1,10 @@
 {
-  "include": ["./**/*.ts", "package.json"],
+  "include": ["./**/*.ts", "package.json", "src/react/LiveReload.tsx"],
   "exclude": ["dist", "./**/__tests__", "node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
     "lib": ["ES2022", "WebWorker", "DOM", "DOM.Iterable"],
+    "jsx": "react",
     "composite": true,
     "target": "es2022",
     "module": "nodenext",
