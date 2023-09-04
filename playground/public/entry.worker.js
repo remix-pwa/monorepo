@@ -67,13 +67,6 @@ var require_jsx_runtime = __commonJS({
   }
 });
 
-// routes-module:routes/strategies.tsx?worker
-var require_strategies = __commonJS({
-  "routes-module:routes/strategies.tsx?worker"(exports, module) {
-    module.exports = {};
-  }
-});
-
 // routes-module:routes/_index.tsx?worker
 var require_index = __commonJS({
   "routes-module:routes/_index.tsx?worker"(exports, module) {
@@ -3959,6 +3952,111 @@ var cacheFirst = async ({ cache: cacheName, cacheOptions, fetchDidFail = void 0 
   };
 };
 
+// ../packages/strategy/dist/src/cacheOnly.js
+var cacheOnly = async ({ cache: cacheName, cacheMatchOptions: matchOptions = { ignoreSearch: false, ignoreVary: false, ignoreMethod: true }, cacheOptions }) => {
+  return async (request) => {
+    if (!isHttpRequest(request)) {
+      return new Response("Not a HTTP request", { status: 403 });
+    }
+    let remixCache;
+    if (typeof cacheName === "string") {
+      Storage.init();
+      remixCache = Storage.has(cacheName) ? Storage.get(cacheName) : createCache({ name: cacheName, ...cacheOptions });
+    } else {
+      Storage.init();
+      remixCache = cacheName;
+    }
+    const response = await remixCache.match(request, matchOptions);
+    if (!response) {
+      const req = request instanceof Request ? request : new Request(request.toString());
+      const isGet = req.method.toLowerCase() === "get";
+      return new Response(JSON.stringify({
+        message: isGet ? "Not Found" : "No idea what you are trying to accomplish but this ain't it!"
+      }), {
+        status: isGet ? 404 : 400,
+        statusText: isGet ? "Not Found" : "Bad Request"
+      });
+    }
+    return response.clone();
+  };
+};
+
+// ../packages/strategy/dist/src/networkFirst.js
+var networkFirst = async ({ cache: cacheName, cacheOptions, fetchDidFail = void 0, fetchDidSucceed = void 0, networkTimeoutSeconds = 10 }) => {
+  return async (request) => {
+    if (!isHttpRequest(request)) {
+      return new Response("Not a HTTP request", { status: 403 });
+    }
+    let remixCache;
+    if (typeof cacheName === "string") {
+      Storage.init();
+      remixCache = Storage.has(cacheName) ? Storage.get(cacheName) : createCache({ name: cacheName, ...cacheOptions });
+    } else {
+      Storage.init();
+      remixCache = cacheName;
+    }
+    try {
+      const timeoutPromise = networkTimeoutSeconds !== Infinity ? new Promise((_resolve, reject) => {
+        setTimeout(() => {
+          reject(new Error(`Network timed out after ${networkTimeoutSeconds} seconds`));
+        }, networkTimeoutSeconds * 1e3);
+      }) : null;
+      const response = timeoutPromise ? await Promise.race([fetch(request), timeoutPromise]) : await fetch(request);
+      if (response) {
+        if (fetchDidSucceed) {
+          await Promise.all(fetchDidSucceed.map((cb) => cb()));
+        }
+        await remixCache.put(request, response.clone());
+        return response.clone();
+      }
+    } catch (error) {
+      if (fetchDidFail) {
+        await Promise.all(fetchDidFail.map((cb) => cb()));
+      }
+      const cachedResponse = await remixCache.match(request);
+      if (cachedResponse) {
+        return cachedResponse.clone();
+      }
+      return new Response(JSON.stringify({ message: "Network Error" }), {
+        status: 500
+      });
+    }
+    throw new Error("Failed to fetch. Network timed out.");
+  };
+};
+
+// ../packages/strategy/dist/src/staleWhileRevalidate.js
+var staleWhileRevalidate = async ({ cache: cacheName, cacheOptions, fetchDidFail = void 0 }) => {
+  return async (request) => {
+    if (!isHttpRequest(request)) {
+      return new Response("Not a HTTP request", { status: 403 });
+    }
+    let remixCache;
+    if (typeof cacheName === "string") {
+      Storage.init();
+      remixCache = Storage.has(cacheName) ? Storage.get(cacheName) : createCache({ name: cacheName, ...cacheOptions });
+    } else {
+      Storage.init();
+      remixCache = cacheName;
+    }
+    return remixCache.match(request).then(async (response) => {
+      const fetchPromise = fetch(request).then(async (networkResponse) => {
+        await remixCache.put(request, networkResponse.clone());
+        return networkResponse;
+      }).catch(async (_err) => {
+        if (fetchDidFail) {
+          await Promise.all(fetchDidFail.map((cb) => cb()));
+        }
+        return new Response(JSON.stringify({ error: "Network request failed" }), {
+          status: 500,
+          statusText: "Network request failed"
+        });
+      });
+      return response ? response.clone() : fetchPromise;
+    });
+  };
+};
+
 // app/routes/basic-caching.tsx
 var import_node = __toESM(require_node());
 var import_react = __toESM(require_react());
@@ -4400,20 +4498,64 @@ var workerLoader3 = async ({ context }) => {
 var hasWorkerAction4 = false;
 var hasWorkerLoader4 = true;
 
-// entry-module:@remix-pwa/build/magic
-var route5 = __toESM(require_strategies());
+// routes-module:routes/strategies.tsx?worker
+var strategies_exports = {};
+__export(strategies_exports, {
+  hasWorkerAction: () => hasWorkerAction5,
+  hasWorkerLoader: () => hasWorkerLoader5,
+  workerAction: () => workerAction3
+});
+
+// app/routes/strategies.tsx
+var import_react8 = __toESM(require_react());
+var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+var workerAction3 = async ({ context }) => {
+  const { event } = context;
+  const formData = await event.request.clone().formData();
+  const strategy = formData.get("strategy");
+  let customStrategy = void 0;
+  switch (strategy) {
+    case "cache-only":
+      customStrategy = await cacheOnly({
+        cache: "strategies-cache-only"
+      });
+      break;
+    case "cache-first":
+      customStrategy = await cacheFirst({
+        cache: "strategies-cache-first"
+      });
+      break;
+    case "network-first":
+      customStrategy = await networkFirst({
+        cache: "strategies-network-first"
+      });
+      break;
+    case "swr":
+      customStrategy = await staleWhileRevalidate({
+        cache: "strategies-swr"
+      });
+      break;
+    default:
+      break;
+  }
+  return null;
+};
+
+// routes-module:routes/strategies.tsx?worker
+var hasWorkerAction5 = true;
+var hasWorkerLoader5 = false;
 
 // routes-module:routes/selection.tsx?worker
 var selection_exports = {};
 __export(selection_exports, {
-  hasWorkerAction: () => hasWorkerAction5,
-  hasWorkerLoader: () => hasWorkerLoader5,
+  hasWorkerAction: () => hasWorkerAction6,
+  hasWorkerLoader: () => hasWorkerLoader6,
   workerLoader: () => workerLoader4
 });
 
 // app/routes/selection.tsx
-var import_react8 = __toESM(require_react());
-var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+var import_react9 = __toESM(require_react());
+var import_jsx_runtime6 = __toESM(require_jsx_runtime());
 async function workerLoader4({ context }) {
   const { database } = context;
   const selections = await database.selections.toArray();
@@ -4421,15 +4563,15 @@ async function workerLoader4({ context }) {
 }
 
 // routes-module:routes/selection.tsx?worker
-var hasWorkerAction5 = false;
-var hasWorkerLoader5 = true;
+var hasWorkerAction6 = false;
+var hasWorkerLoader6 = true;
 
 // routes-module:routes/sync-away.tsx?worker
 var sync_away_exports = {};
 __export(sync_away_exports, {
-  hasWorkerAction: () => hasWorkerAction6,
-  hasWorkerLoader: () => hasWorkerLoader6,
-  workerAction: () => workerAction3
+  hasWorkerAction: () => hasWorkerAction7,
+  hasWorkerLoader: () => hasWorkerLoader7,
+  workerAction: () => workerAction4
 });
 
 // ../packages/sync/dist/src/request.js
@@ -5291,9 +5433,9 @@ var registerQueue = (name) => {
 
 // app/routes/sync-away.tsx
 var import_node4 = __toESM(require_node());
-var import_react9 = __toESM(require_react());
-var import_jsx_runtime6 = __toESM(require_jsx_runtime());
-var workerAction3 = async ({ context }) => {
+var import_react10 = __toESM(require_react());
+var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+var workerAction4 = async ({ context }) => {
   const { fetchFromServer, event } = context;
   try {
     await fetchFromServer();
@@ -5314,8 +5456,8 @@ var workerAction3 = async ({ context }) => {
 };
 
 // routes-module:routes/sync-away.tsx?worker
-var hasWorkerAction6 = true;
-var hasWorkerLoader6 = false;
+var hasWorkerAction7 = true;
+var hasWorkerLoader7 = false;
 
 // entry-module:@remix-pwa/build/magic
 var route8 = __toESM(require_index());
@@ -5323,15 +5465,15 @@ var route8 = __toESM(require_index());
 // routes-module:routes/_app.tsx?worker
 var app_exports = {};
 __export(app_exports, {
-  hasWorkerAction: () => hasWorkerAction7,
-  hasWorkerLoader: () => hasWorkerLoader7,
+  hasWorkerAction: () => hasWorkerAction8,
+  hasWorkerLoader: () => hasWorkerLoader8,
   workerLoader: () => workerLoader5
 });
 
 // app/routes/_app.tsx
 var import_node5 = __toESM(require_node());
-var import_react10 = __toESM(require_react());
-var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+var import_react11 = __toESM(require_react());
+var import_jsx_runtime8 = __toESM(require_jsx_runtime());
 async function workerLoader5({ context }) {
   const { fetchFromServer } = context;
   const data = await fetchFromServer().then((response) => response.json());
@@ -5344,8 +5486,8 @@ async function workerLoader5({ context }) {
 }
 
 // routes-module:routes/_app.tsx?worker
-var hasWorkerAction7 = false;
-var hasWorkerLoader7 = true;
+var hasWorkerAction8 = false;
+var hasWorkerLoader8 = true;
 
 // app/entry.worker.ts
 var entry_worker_exports = {};
@@ -10374,9 +10516,9 @@ var routes = {
     path: "strategies",
     index: void 0,
     caseSensitive: void 0,
-    module: route5,
-    hasWorkerAction: Boolean(route5.hasWorkerAction),
-    hasWorkerLoader: Boolean(route5.hasWorkerLoader)
+    module: strategies_exports,
+    hasWorkerAction: Boolean(hasWorkerAction5),
+    hasWorkerLoader: Boolean(hasWorkerLoader5)
   },
   "routes/selection": {
     id: "routes/selection",
@@ -10385,8 +10527,8 @@ var routes = {
     index: void 0,
     caseSensitive: void 0,
     module: selection_exports,
-    hasWorkerAction: Boolean(hasWorkerAction5),
-    hasWorkerLoader: Boolean(hasWorkerLoader5)
+    hasWorkerAction: Boolean(hasWorkerAction6),
+    hasWorkerLoader: Boolean(hasWorkerLoader6)
   },
   "routes/sync-away": {
     id: "routes/sync-away",
@@ -10395,8 +10537,8 @@ var routes = {
     index: void 0,
     caseSensitive: void 0,
     module: sync_away_exports,
-    hasWorkerAction: Boolean(hasWorkerAction6),
-    hasWorkerLoader: Boolean(hasWorkerLoader6)
+    hasWorkerAction: Boolean(hasWorkerAction7),
+    hasWorkerLoader: Boolean(hasWorkerLoader7)
   },
   "routes/_index": {
     id: "routes/_index",
@@ -10415,8 +10557,8 @@ var routes = {
     index: void 0,
     caseSensitive: void 0,
     module: app_exports,
-    hasWorkerAction: Boolean(hasWorkerAction7),
-    hasWorkerLoader: Boolean(hasWorkerLoader7)
+    hasWorkerAction: Boolean(hasWorkerAction8),
+    hasWorkerLoader: Boolean(hasWorkerLoader8)
   }
 };
 var entry = { module: entry_worker_exports };
