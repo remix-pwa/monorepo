@@ -1,6 +1,6 @@
 /// <reference lib="WebWorker" />
 
-import { CacheFirst, NetworkFirst, RemixNavigationHandler, matchRequest } from '@remix-pwa/sw';
+import { RemixNavigationHandler, matchRequest } from '@remix-pwa/sw';
 import createStorageRepository from './database';
 import { registerQueue } from '@remix-pwa/sync';
 
@@ -11,24 +11,24 @@ declare let self: ServiceWorkerGlobalScope &
 
 const PAGES = 'page-cache';
 const DATA = 'data-cache';
-const ASSETS = 'assets-cache';
+// const ASSETS = 'assets-cache';
 
 let handler = new RemixNavigationHandler({
   dataCacheName: DATA,
   documentCacheName: PAGES,
 });
 
-const documentHandler = new NetworkFirst({
-  cacheName: PAGES,
-});
+// const documentHandler = new NetworkFirst({ 
+//   cacheName: PAGES,
+// });
 
-const loadersHandler = new NetworkFirst({
-  cacheName: DATA,
-});
+// const loadersHandler = new NetworkFirst({
+//   cacheName: DATA,
+// });
 
-const assetsHandler = new CacheFirst({
-  cacheName: ASSETS,
-});
+// const assetsHandler = new CacheFirst({
+//   cacheName: ASSETS,
+// });
 
 registerQueue('offline-action');
 
@@ -48,17 +48,17 @@ export const getLoadContext = () => {
 export const defaultFetchHandler = ({ context, request }: any) => {
   const type = matchRequest(request);
 
-  if (type === 'asset') {
-    return assetsHandler.handle(request);
-  }
+  // if (type === 'asset') {
+  //   return assetsHandler.handle(request);
+  // }
 
-  if (type === 'loader') {
-    return loadersHandler.handle(request);
-  }
+  // if (type === 'loader') {
+  //   return loadersHandler.handle(request);
+  // }
 
-  if (type === 'document') {
-    return documentHandler.handle(request);
-  }
+  // if (type === 'document') {
+  //   return documentHandler.handle(request);
+  // }
 
   return context.fetchFromServer();
 };
@@ -72,6 +72,5 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('message', event => {
-  // console.log(self.__workerManifest);
   event.waitUntil(handler.handle(event));
 });

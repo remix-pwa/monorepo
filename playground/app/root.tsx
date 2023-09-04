@@ -1,9 +1,9 @@
-import { useSWEffect } from "@remix-pwa/sw";
+import { useSWEffect, LiveReload } from "@remix-pwa/sw";
 import { cssBundleHref } from "@remix-run/css-bundle";
 import type { LinksFunction } from "@remix-run/node";
 import {
   Links,
-  LiveReload,
+  // LiveReload,
   Meta,
   Outlet,
   Scripts,
@@ -23,7 +23,7 @@ export default function App() {
   
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      // 
+      // ...
     }
   })
 
