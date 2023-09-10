@@ -36,6 +36,7 @@ export const packages = async (dir: string) => {
   console.log(
     yellow('installing:\n- @remix-pwa/sw\n- @remix-pwa/dev\n- @remix-pwa/worker-runtime\n- @remix-pwa/cache\n')
   );
+
   execSync(
     `${pkgManager ?? 'npm'} ${
       pkgManager === 'yarn' ? 'add' : 'install'

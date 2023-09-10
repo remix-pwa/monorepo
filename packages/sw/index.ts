@@ -10,6 +10,8 @@ export {
 
 export { logger } from './src/private/logger.js';
 
+export { StoreAPI, StoreOptions, indexedDBStore } from './src/db/indexedDBStore.js';
+
 export { useSWEffect } from './src/hooks/useSWEffect.js';
 
 export { MessageEnv, MessageHandler, MessageHandlerParams, MessagePlugin } from './src/message/message.js';

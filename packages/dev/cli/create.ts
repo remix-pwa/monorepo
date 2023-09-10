@@ -135,6 +135,7 @@ export async function createPWA(
 
   let push = false;
   let utils = false;
+  let sync = false;
 
   features.map(async feature => {
     switch (feature) {
@@ -162,6 +163,9 @@ export async function createPWA(
       case 'utils':
         utils = true;
         break;
+      case 'sync':
+        sync = true;
+        break;
       default:
         break;
     }
@@ -187,20 +191,25 @@ export async function createPWA(
   json.dependencies['@remix-pwa/worker-runtime'] = '^1.0.1';
   json.dependencies.dotenv = '^16.0.3';
 
-  json.devDependencies['@remix-pwa/dev'] = '^1.0.1';
+  json.devDependencies['@remix-pwa/dev'] = '^2.0.0';
   json.devDependencies['npm-run-all'] = '^4.1.5';
 
   if (features.includes('sw')) {
-    json.dependencies['@remix-pwa/cache'] = '^1.2.0';
-    json.dependencies['@remix-pwa/sw'] = '^1.0.0';
+    json.dependencies['@remix-pwa/cache'] = '^2.0.0';
+    json.dependencies['@remix-pwa/sw'] = '^2.0.0';
+    json.dependencies['@remix-pwa/strategy'] = '^2.0.0';
   }
 
   if (push) {
-    json.dependencies['@remix-pwa/push'] = '^1.0.0';
+    json.dependencies['@remix-pwa/push'] = '^2.0.0';
   }
 
   if (utils) {
-    json.dependencies['@remix-pwa/client'] = '^1.0.0';
+    json.dependencies['@remix-pwa/client'] = '^2.0.0';
+  }
+
+  if (sync) {
+    json.dependencies['@remix-pwa/sync'] = '^2.0.0';
   }
 
   json.scripts.build = 'run-s build:*';

@@ -42,7 +42,7 @@ ${underline(whiteBright('Options:'))}
 --version, -v                   Print the CLI version and exit
 --docs                          Print the link to the remix-pwa docs and exit`;
 
-export type PWAFeatures = 'sw' | 'manifest' | 'push' | 'utils' | 'icons';
+export type PWAFeatures = 'sw' | 'manifest' | 'push' | 'utils' | 'icons' | 'sync';
 
 export async function run(argv: string[] = process.argv.slice(2), projectDir: string = process.cwd()) {
   // todo: Allow passing configs via CLI like minify build, worker path, etc.
@@ -142,7 +142,7 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
       await commands.push();
       break; // A delayed todo: More or less init push api and a test server route
     case 'packages':
-      await commands.packages(projectDir); // quickly install all base packages at once for remix-pwa
+      await commands.packages(projectDir);
       break;
     case 'init':
     case 'new':
@@ -225,6 +225,10 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
             {
               message: 'Service Workers',
               name: 'sw',
+            },
+            {
+              message: 'Background Sync',
+              name: 'sync',
             },
             {
               message: 'Web Manifest',

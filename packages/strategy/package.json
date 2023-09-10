@@ -1,7 +1,7 @@
 {
   "name": "@remix-pwa/strategy",
   "version": "1.0.1",
-  "description": "Another empty description",
+  "description": "A collection of service worker strategies for Remix PWA",
   "repository": {
     "type": "git",
     "url": "git@github.com:remix-pwa/monorepo",

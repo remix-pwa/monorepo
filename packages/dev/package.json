@@ -1,7 +1,7 @@
 {
   "name": "@remix-pwa/dev",
   "version": "1.1.4",
-  "description": "An ESbuild compiler for Service Worker on Remix.run",
+  "description": "An esbuild compiler for Service Workers in Remix.run",
   "repository": {
     "type": "git",
     "url": "git@github.com:remix-pwa/monorepo",

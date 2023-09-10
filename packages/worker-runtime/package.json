@@ -1,7 +1,7 @@
 {
   "name": "@remix-pwa/worker-runtime",
   "version": "1.1.1",
-  "description": "A vanilla JavaScript worker runtime for remix service worker",
+  "description": "A vanilla JavaScript worker runtime for Remix service workers",
   "license": "MIT",
   "sideEffects": false,
   "main": "dist/src/service-worker.internal.js",
