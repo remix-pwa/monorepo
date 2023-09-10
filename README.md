@@ -7,7 +7,7 @@
 
 This repository is the home of Remix PWA packages and their respective documentations (version 3 and above).
 
-**Docs are still a work in progress. Contributions are welcome.**
+**Docs are still a work in progress (including the docs site). Contributions are welcome.**
 
 ## Contributing
 
