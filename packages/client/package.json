@@ -1,7 +1,7 @@
 {
   "name": "@remix-pwa/client",
   "version": "1.1.0",
-  "description": "None of my business",
+  "description": "A set of utilities for client-side development to enhance the native feel of your Remix App",
   "repository": {
     "type": "git",
     "url": "git@github.com:remix-pwa/monorepo",
