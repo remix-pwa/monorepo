@@ -8,7 +8,10 @@ const _self = self as unknown as ServiceWorkerGlobalScope & typeof globalThis;
 
 declare global {
   interface ServiceWorkerGlobalScope {
-    __workerManifest: any;
+    __workerManifest: {
+      assets: string[];
+      routes: build.WorkerRouteManifest;
+    };
   }
 }
 
@@ -40,7 +43,10 @@ const defaultErrorHandler =
     }
   });
 
-_self.__workerManifest = build.routes;
+_self.__workerManifest = {
+  assets: build.assets,
+  routes: build.routes,
+};
 
 // DO NOT OVERRIDE!!!
 _self.addEventListener(
