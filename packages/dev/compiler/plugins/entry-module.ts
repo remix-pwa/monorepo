@@ -10,7 +10,7 @@ const NAMESPACE = 'entry-module';
  * Creates a string representation of the routes to be imported
  */
 function createRouteImports(routes: ConfigRoute[]): string {
-  return routes.map((route, index) => `import * as route${index} from '${route.file}?worker'`).join(';\n');
+  return routes.map((route, index) => `import * as route${index} from '${route.file}?worker';`).join('\n');
 }
 
 /**
@@ -22,8 +22,8 @@ function createRouteManifest(routes: RouteManifest): string {
       ([key, route], index) =>
         `${JSON.stringify(key)}: {
           id: "${route.id}",
-          parentId: "${route.parentId}",
-          path: "${route.path}",
+          parentId: ${JSON.stringify(route.parentId)},
+          path: ${JSON.stringify(route.path)},
           index: ${JSON.stringify(route.index)},
           caseSensitive: ${JSON.stringify(route.caseSensitive)},
           module: route${index},
@@ -50,13 +50,15 @@ export default function entryModulePlugin(config: ResolvedWorkerConfig): Plugin 
       console.log(config.entryWorkerFile, 'config.entryWorkerFile');
       const routes = Object.values(config.routes);
       const contents = `
+      import * as entryWorker from  '${config.entryWorkerFile}?user';
+
     ${createRouteImports(routes)}
 
     export const routes = {
       ${createRouteManifest(config.routes)}
     };
 
-    import * as entryWorker from  '${config.entryWorkerFile}?user';
+    export { assets } from '@remix-sas/dev?assets';
     export const entry = { module: entryWorker };
     `;
 
