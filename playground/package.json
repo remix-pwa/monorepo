@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@remix-pwa/strategy": "^1.0.1",
-    "@remix-pwa/sw": "1.0.1",
+    "@remix-pwa/sw": "1.3.0",
     "@remix-pwa/sync": "^1.0.0",
     "@remix-pwa/worker-runtime": "^1.0.0",
     "@remix-run/css-bundle": "^1.19.3",
