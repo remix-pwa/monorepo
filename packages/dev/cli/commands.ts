@@ -40,6 +40,6 @@ export const packages = async (dir: string) => {
   execSync(
     `${pkgManager ?? 'npm'} ${
       pkgManager === 'yarn' ? 'add' : 'install'
-    } @remix-pwa/sw @remix-pwa/dev @remix-pwa/worker-runtime @remix-pwa/cache`
+    } @remix-pwa/sw@latest @remix-pwa/dev@latest @remix-pwa/worker-runtime@latest @remix-pwa/cache@latest`
   );
 };
