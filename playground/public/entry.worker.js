@@ -32,20 +32,6 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// routes-module:root.tsx?worker
-var require_root = __commonJS({
-  "routes-module:root.tsx?worker"(exports, module) {
-    module.exports = {};
-  }
-});
-
-// empty-module:@remix-run/node
-var require_node = __commonJS({
-  "empty-module:@remix-run/node"(exports, module) {
-    module.exports = {};
-  }
-});
-
 // empty-module:@remix-run/react
 var require_react = __commonJS({
   "empty-module:@remix-run/react"(exports, module) {
@@ -56,6 +42,20 @@ var require_react = __commonJS({
 // empty-module:react
 var require_react2 = __commonJS({
   "empty-module:react"(exports, module) {
+    module.exports = {};
+  }
+});
+
+// routes-module:root.tsx?worker
+var require_root = __commonJS({
+  "routes-module:root.tsx?worker"(exports, module) {
+    module.exports = {};
+  }
+});
+
+// empty-module:@remix-run/node
+var require_node = __commonJS({
+  "empty-module:@remix-run/node"(exports, module) {
     module.exports = {};
   }
 });
@@ -121,12 +121,12 @@ __export(router_exports, {
   isDeferredData: () => isDeferredData,
   isRouteErrorResponse: () => isRouteErrorResponse2,
   joinPaths: () => joinPaths,
-  json: () => json5,
+  json: () => json6,
   matchPath: () => matchPath2,
   matchRoutes: () => matchRoutes,
   normalizePathname: () => normalizePathname,
   parsePath: () => parsePath,
-  redirect: () => redirect5,
+  redirect: () => redirect6,
   resolvePath: () => resolvePath,
   resolveTo: () => resolveTo,
   stripBasename: () => stripBasename
@@ -1390,13 +1390,13 @@ function createRouter(init) {
       pendingNavigationController.signal.removeEventListener("abort", abortPendingFetchRevalidations);
     }
     revalidatingFetchers.forEach((rf) => fetchControllers.delete(rf.key));
-    let redirect8 = findRedirect(results);
-    if (redirect8) {
-      if (redirect8.idx >= matchesToLoad.length) {
-        let fetcherKey = revalidatingFetchers[redirect8.idx - matchesToLoad.length].key;
+    let redirect9 = findRedirect(results);
+    if (redirect9) {
+      if (redirect9.idx >= matchesToLoad.length) {
+        let fetcherKey = revalidatingFetchers[redirect9.idx - matchesToLoad.length].key;
         fetchRedirectIds.add(fetcherKey);
       }
-      await startRedirectNavigation(state, redirect8.result, {
+      await startRedirectNavigation(state, redirect9.result, {
         replace
       });
       return {
@@ -1580,13 +1580,13 @@ function createRouter(init) {
     fetchReloadIds.delete(key);
     fetchControllers.delete(key);
     revalidatingFetchers.forEach((r) => fetchControllers.delete(r.key));
-    let redirect8 = findRedirect(results);
-    if (redirect8) {
-      if (redirect8.idx >= matchesToLoad.length) {
-        let fetcherKey = revalidatingFetchers[redirect8.idx - matchesToLoad.length].key;
+    let redirect9 = findRedirect(results);
+    if (redirect9) {
+      if (redirect9.idx >= matchesToLoad.length) {
+        let fetcherKey = revalidatingFetchers[redirect9.idx - matchesToLoad.length].key;
         fetchRedirectIds.add(fetcherKey);
       }
-      return startRedirectNavigation(state, redirect8.result);
+      return startRedirectNavigation(state, redirect9.result);
     }
     let {
       loaderData,
@@ -1669,18 +1669,18 @@ function createRouter(init) {
       fetchers: new Map(state.fetchers)
     });
   }
-  async function startRedirectNavigation(state2, redirect8, _temp) {
+  async function startRedirectNavigation(state2, redirect9, _temp) {
     let {
       submission,
       replace,
       isFetchActionRedirect
     } = _temp === void 0 ? {} : _temp;
-    if (redirect8.revalidate) {
+    if (redirect9.revalidate) {
       isRevalidationRequired = true;
     }
     let redirectLocation = createLocation(
       state2.location,
-      redirect8.location,
+      redirect9.location,
       // TODO: This can be removed once we get rid of useTransition in Remix v2
       _extends2({
         _isRedirect: true
@@ -1689,14 +1689,14 @@ function createRouter(init) {
       } : {})
     );
     invariant2(redirectLocation, "Expected a location on the redirect navigation");
-    if (ABSOLUTE_URL_REGEX.test(redirect8.location) && isBrowser) {
-      let url = init.history.createURL(redirect8.location);
+    if (ABSOLUTE_URL_REGEX.test(redirect9.location) && isBrowser) {
+      let url = init.history.createURL(redirect9.location);
       let isDifferentBasename = stripBasename(url.pathname, basename) == null;
       if (routerWindow.location.origin !== url.origin || isDifferentBasename) {
         if (replace) {
-          routerWindow.location.replace(redirect8.location);
+          routerWindow.location.replace(redirect9.location);
         } else {
-          routerWindow.location.assign(redirect8.location);
+          routerWindow.location.assign(redirect9.location);
         }
         return;
       }
@@ -1704,10 +1704,10 @@ function createRouter(init) {
     pendingNavigationController = null;
     let redirectHistoryAction = replace === true ? Action2.Replace : Action2.Push;
     let activeSubmission = submission || getSubmissionFromNavigation(state2.navigation);
-    if (redirectPreserveMethodStatusCodes.has(redirect8.status) && activeSubmission && isMutationMethod(activeSubmission.formMethod)) {
+    if (redirectPreserveMethodStatusCodes.has(redirect9.status) && activeSubmission && isMutationMethod(activeSubmission.formMethod)) {
       await startNavigation(redirectHistoryAction, redirectLocation, {
         submission: _extends2({}, activeSubmission, {
-          formAction: redirect8.location
+          formAction: redirect9.location
         }),
         // Preserve this flag across redirects
         preventScrollReset: pendingPreventScrollReset
@@ -2353,7 +2353,7 @@ function normalizeNavigateOptions(normalizeFormMethod, isFetcher, path, opts) {
         return getInvalidBodyError();
       }
       try {
-        let json9 = typeof opts.body === "string" ? JSON.parse(opts.body) : opts.body;
+        let json10 = typeof opts.body === "string" ? JSON.parse(opts.body) : opts.body;
         return {
           path,
           submission: {
@@ -2361,7 +2361,7 @@ function normalizeNavigateOptions(normalizeFormMethod, isFetcher, path, opts) {
             formAction,
             formEncType: opts.formEncType,
             formData: void 0,
-            json: json9,
+            json: json10,
             text: void 0
           }
         };
@@ -3039,7 +3039,7 @@ function getSubmissionFromNavigation(navigation) {
     formEncType,
     text,
     formData,
-    json: json9
+    json: json10
   } = navigation;
   if (!formMethod || !formAction || !formEncType) {
     return;
@@ -3062,13 +3062,13 @@ function getSubmissionFromNavigation(navigation) {
       json: void 0,
       text: void 0
     };
-  } else if (json9 !== void 0) {
+  } else if (json10 !== void 0) {
     return {
       formMethod,
       formAction,
       formEncType,
       formData: void 0,
-      json: json9,
+      json: json10,
       text: void 0
     };
   }
@@ -3170,7 +3170,7 @@ function getDoneFetcher(data) {
   };
   return fetcher;
 }
-var Action2, PopStateEventType, ResultType2, immutableRouteKeys, paramRe, dynamicSegmentValue, indexRouteValue, emptySegmentValue, staticSegmentValue, splatPenalty, isSplat, joinPaths, normalizePathname, normalizeSearch, normalizeHash, json5, AbortedDeferredError2, DeferredData2, defer4, redirect5, ErrorResponse, validMutationMethodsArr2, validMutationMethods2, validRequestMethodsArr2, validRequestMethods2, redirectStatusCodes, redirectPreserveMethodStatusCodes, IDLE_NAVIGATION, IDLE_FETCHER, IDLE_BLOCKER, ABSOLUTE_URL_REGEX, defaultMapRouteProperties, UNSAFE_DEFERRED_SYMBOL2;
+var Action2, PopStateEventType, ResultType2, immutableRouteKeys, paramRe, dynamicSegmentValue, indexRouteValue, emptySegmentValue, staticSegmentValue, splatPenalty, isSplat, joinPaths, normalizePathname, normalizeSearch, normalizeHash, json6, AbortedDeferredError2, DeferredData2, defer4, redirect6, ErrorResponse, validMutationMethodsArr2, validMutationMethods2, validRequestMethodsArr2, validRequestMethods2, redirectStatusCodes, redirectPreserveMethodStatusCodes, IDLE_NAVIGATION, IDLE_FETCHER, IDLE_BLOCKER, ABSOLUTE_URL_REGEX, defaultMapRouteProperties, UNSAFE_DEFERRED_SYMBOL2;
 var init_router = __esm({
   "../node_modules/@remix-run/server-runtime/node_modules/@remix-run/router/dist/router.js"() {
     (function(Action3) {
@@ -3197,7 +3197,7 @@ var init_router = __esm({
     normalizePathname = (pathname) => pathname.replace(/\/+$/, "").replace(/^\/*/, "/");
     normalizeSearch = (search) => !search || search === "?" ? "" : search.startsWith("?") ? search : "?" + search;
     normalizeHash = (hash) => !hash || hash === "#" ? "" : hash.startsWith("#") ? hash : "#" + hash;
-    json5 = function json6(data, init) {
+    json6 = function json7(data, init) {
       if (init === void 0) {
         init = {};
       }
@@ -3337,7 +3337,7 @@ var init_router = __esm({
       } : init;
       return new DeferredData2(data, responseInit);
     };
-    redirect5 = function redirect6(url, init) {
+    redirect6 = function redirect7(url, init) {
       if (init === void 0) {
         init = 302;
       }
@@ -3485,13 +3485,13 @@ var require_responses = __commonJS({
     Object.defineProperty(exports, "__esModule", { value: true });
     var router = (init_router(), __toCommonJS(router_exports));
     var errors = require_errors();
-    var json9 = (data, init = {}) => {
+    var json10 = (data, init = {}) => {
       return router.json(data, init);
     };
     var defer6 = (data, init = {}) => {
       return router.defer(data, init);
     };
-    var redirect8 = (url, init = 302) => {
+    var redirect9 = (url, init = 302) => {
       return router.redirect(url, init);
     };
     function isDeferredData3(value) {
@@ -3561,21 +3561,123 @@ var require_responses = __commonJS({
     exports.isRedirectResponse = isRedirectResponse3;
     exports.isRedirectStatusCode = isRedirectStatusCode2;
     exports.isResponse = isResponse3;
-    exports.json = json9;
-    exports.redirect = redirect8;
+    exports.json = json10;
+    exports.redirect = redirect9;
   }
 });
 
-// entry-module:@remix-pwa/build/magic
-var route0 = __toESM(require_root());
-
-// routes-module:routes/basic-caching.tsx?worker
-var basic_caching_exports = {};
-__export(basic_caching_exports, {
-  hasWorkerAction: () => hasWorkerAction,
-  hasWorkerLoader: () => hasWorkerLoader,
-  workerLoader: () => workerLoader
+// app/entry.worker.ts
+var entry_worker_exports = {};
+__export(entry_worker_exports, {
+  defaultFetchHandler: () => defaultFetchHandler,
+  getLoadContext: () => getLoadContext
 });
+
+// ../packages/sw/dist/src/private/logger.js
+var methodToColorMap = {
+  debug: `#7f8c8d`,
+  log: `#2ecc71`,
+  info: `#3498db`,
+  warn: `#f39c12`,
+  error: `#c0392b`,
+  groupCollapsed: `#3498db`,
+  groupEnd: null
+  // No colored prefix on groupEnd
+};
+var logger = false ? (() => {
+  const api = {};
+  const loggerMethods = Object.keys(methodToColorMap);
+  for (const key of loggerMethods) {
+    const method = key;
+    api[method] = noop;
+  }
+  return api;
+})() : (() => {
+  let inGroup = false;
+  const print = function(method, args) {
+    if (self.__DISABLE_PWA_DEV_LOGS) {
+      return;
+    }
+    if (method === "debug" && self.__DISABLE_PWA_DEBUG_LOGS) {
+      return;
+    }
+    if (method === "info" && self.__DISABLE_PWA_INFO_LOGS) {
+      return;
+    }
+    if (method === "warn" && self.__DISABLE_PWA_WARN_LOGS) {
+      return;
+    }
+    if (method === "error" && self.__DISABLE_PWA_ERROR_LOGS) {
+      return;
+    }
+    if (method === "groupCollapsed") {
+      if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
+        console[method](...args);
+        return;
+      }
+    }
+    const styles = [
+      `background: ${methodToColorMap[method]}`,
+      `border-radius: 0.5em`,
+      `color: white`,
+      `font-weight: bold`,
+      `padding: 2px 0.5em`
+    ];
+    const logPrefix = inGroup ? [] : ["%cremix-pwa", styles.join(";")];
+    console[method](...logPrefix, ...args);
+    if (method === "groupCollapsed") {
+      inGroup = true;
+    }
+    if (method === "groupEnd") {
+      inGroup = false;
+    }
+  };
+  const api = {};
+  const loggerMethods = Object.keys(methodToColorMap);
+  for (const key of loggerMethods) {
+    const method = key;
+    api[method] = (...args) => {
+      print(method, args);
+    };
+  }
+  return api;
+})();
+
+// ../packages/sw/dist/src/message/message.js
+var MessageHandler = class {
+  /**
+   * The plugins array is used to run plugins before and after the message handler.
+   * They are passed in when the handler is initialised.
+   */
+  plugins;
+  /**
+   * The state object is used to pass data between plugins.
+   */
+  state;
+  constructor({ plugins, state } = {}) {
+    this.plugins = plugins || [];
+    this.state = state || {};
+  }
+  /**
+   * The method that handles the message event.
+   *
+   * Takes in the MessageEvent as a mandatory argument as well as an optional
+   * object that can be used to pass further information/data.
+   */
+  async handle(event, state = {}) {
+    await this._handleMessage(event, state);
+  }
+  /**
+   * Runs the plugins that are passed in when the handler is initialised.
+   */
+  async runPlugins(hook, env) {
+    for (const plugin of this.plugins) {
+      if (plugin[hook]) {
+        plugin[hook](env);
+      }
+    }
+  }
+};
 
 // ../node_modules/cachified/dist/index.mjs
 var k = Symbol();
@@ -3626,34 +3728,30 @@ var RemixCache = class {
   async _lruCleanup() {
     if (await this.length() >= this.maxItems) {
       this._values().then(async (values) => {
-        values.sort((a, b2) => {
+        const val = values.sort((a, b2) => {
           const aMeta = a.clone().json().metadata;
           const bMeta = b2.clone().json().metadata;
           return aMeta.accessedAt - bMeta.accessedAt;
-        }).slice(1);
+        })[0];
+        this.delete(val.url);
       });
     }
   }
   async _getResponseValue(request, response) {
     const { metadata, value } = await response.clone().json();
     const deleted = await this._getOrDeleteIfExpired(request.clone(), metadata);
+    const headers = new Headers(response.clone().headers);
     if (!deleted) {
-      const res = new Response(JSON.stringify({
-        metadata: {
-          ...metadata,
-          accessedAt: Date.now()
-        },
-        value
-      }), {
+      const res = new Response(value, {
         status: response.status,
         statusText: response.statusText,
         headers: {
-          ...Object.fromEntries(response.clone().headers.entries()),
-          "Content-Type": "application/json"
+          ...Object.fromEntries(headers.entries()),
+          "Content-Type": headers.get("x-remix-pwa-original-content-type") || "application/json"
         }
       });
-      await this.put(request, res.clone(), void 0, true);
-      return res.clone().json().then(({ value: value2 }) => value2);
+      await this.put(request, res.clone(), void 0);
+      return res;
     }
     return void 0;
   }
@@ -3733,29 +3831,35 @@ var RemixCache = class {
    *
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Cache/put
    */
-  async put(request, response, ttl = void 0, modified = false) {
+  async put(request, response, ttl = void 0) {
     const cache = await this._openCache();
     if (request instanceof URL || typeof request === "string") {
       request = new Request(request);
     }
     if (this.ttl <= 0 || ttl && ttl <= 0)
       return;
-    if (!modified) {
-      response = new Response(JSON.stringify({
-        metadata: {
-          accessedAt: Date.now(),
-          expiresAt: Date.now() + (ttl ?? this.ttl)
-        },
-        value: await response.clone().json()
-      }), {
-        status: response.status,
-        statusText: response.statusText,
-        headers: {
-          ...Object.fromEntries(response.clone().headers.entries()),
-          "Content-Type": "application/json"
-        }
-      });
+    const contentType = response.headers.get("Content-Type");
+    let data;
+    if (contentType && contentType.includes("application/json")) {
+      data = await response.clone().json();
+    } else {
+      data = await response.clone().text();
     }
+    response = new Response(JSON.stringify({
+      metadata: {
+        accessedAt: Date.now(),
+        expiresAt: Date.now() + (ttl ?? this.ttl)
+      },
+      value: data
+    }), {
+      status: response.status,
+      statusText: response.statusText,
+      headers: {
+        ...Object.fromEntries(response.clone().headers.entries()),
+        "Content-Type": "application/json",
+        "x-remix-pwa-original-content-type": contentType || "text/plain"
+      }
+    });
     try {
       await this._lruCleanup();
       return await cache.put(request, response.clone());
@@ -3907,1722 +4011,6 @@ var initCache = (options) => {
 };
 var createCache = initCache;
 
-// ../packages/strategy/dist/src/utils.js
-var isHttpRequest = (request) => {
-  if (request instanceof Request) {
-    return request.url.startsWith("http");
-  }
-  return request.toString().startsWith("http");
-};
-var toJSON = async (response) => {
-  if (response instanceof Response) {
-    return await response.clone().json();
-  }
-  return response;
-};
-
-// ../packages/strategy/dist/src/cacheFirst.js
-var cacheFirst = async ({ cache: cacheName, cacheOptions, fetchDidFail = void 0 }) => {
-  return async (request) => {
-    if (!isHttpRequest(request)) {
-      return new Response("Not a HTTP request", { status: 403 });
-    }
-    let remixCache;
-    if (typeof cacheName === "string") {
-      Storage.init();
-      remixCache = Storage.has(cacheName) ? Storage.get(cacheName) : createCache({ name: cacheName, ...cacheOptions });
-    } else {
-      Storage.init();
-      remixCache = cacheName;
-    }
-    const response = await remixCache.match(request);
-    if (!response) {
-      try {
-        const networkResponse = await fetch(request);
-        remixCache.put(request, networkResponse.clone());
-        return networkResponse;
-      } catch (err) {
-        if (fetchDidFail) {
-          await Promise.all(fetchDidFail.map((cb) => cb()));
-        }
-        throw err;
-      }
-    }
-    return response;
-  };
-};
-
-// ../packages/strategy/dist/src/cacheOnly.js
-var cacheOnly = async ({ cache: cacheName, cacheMatchOptions: matchOptions = { ignoreSearch: false, ignoreVary: false, ignoreMethod: true }, cacheOptions }) => {
-  return async (request) => {
-    if (!isHttpRequest(request)) {
-      return new Response("Not a HTTP request", { status: 403 });
-    }
-    let remixCache;
-    if (typeof cacheName === "string") {
-      Storage.init();
-      remixCache = Storage.has(cacheName) ? Storage.get(cacheName) : createCache({ name: cacheName, ...cacheOptions });
-    } else {
-      Storage.init();
-      remixCache = cacheName;
-    }
-    const response = await remixCache.match(request, matchOptions);
-    if (!response) {
-      const req = request instanceof Request ? request : new Request(request.toString());
-      const isGet = req.method.toLowerCase() === "get";
-      return new Response(JSON.stringify({
-        message: isGet ? "Not Found" : "No idea what you are trying to accomplish but this ain't it!"
-      }), {
-        status: isGet ? 404 : 400,
-        statusText: isGet ? "Not Found" : "Bad Request"
-      });
-    }
-    return response.clone();
-  };
-};
-
-// ../packages/strategy/dist/src/networkFirst.js
-var networkFirst = async ({ cache: cacheName, cacheOptions, fetchDidFail = void 0, fetchDidSucceed = void 0, networkTimeoutSeconds = 10 }) => {
-  return async (request) => {
-    if (!isHttpRequest(request)) {
-      return new Response("Not a HTTP request", { status: 403 });
-    }
-    let remixCache;
-    if (typeof cacheName === "string") {
-      Storage.init();
-      remixCache = Storage.has(cacheName) ? Storage.get(cacheName) : createCache({ name: cacheName, ...cacheOptions });
-    } else {
-      Storage.init();
-      remixCache = cacheName;
-    }
-    try {
-      const timeoutPromise = networkTimeoutSeconds !== Infinity ? new Promise((_resolve, reject) => {
-        setTimeout(() => {
-          reject(new Error(`Network timed out after ${networkTimeoutSeconds} seconds`));
-        }, networkTimeoutSeconds * 1e3);
-      }) : null;
-      const response = timeoutPromise ? await Promise.race([fetch(request), timeoutPromise]) : await fetch(request);
-      if (response) {
-        if (fetchDidSucceed) {
-          await Promise.all(fetchDidSucceed.map((cb) => cb()));
-        }
-        await remixCache.put(request, response.clone());
-        return response.clone();
-      }
-    } catch (error) {
-      if (fetchDidFail) {
-        await Promise.all(fetchDidFail.map((cb) => cb()));
-      }
-      const cachedResponse = await remixCache.match(request);
-      if (cachedResponse) {
-        return cachedResponse.clone();
-      }
-      return new Response(JSON.stringify({ message: "Network Error" }), {
-        status: 500
-      });
-    }
-    throw new Error("Failed to fetch. Network timed out.");
-  };
-};
-
-// ../packages/strategy/dist/src/staleWhileRevalidate.js
-var staleWhileRevalidate = async ({ cache: cacheName, cacheOptions, fetchDidFail = void 0 }) => {
-  return async (request) => {
-    if (!isHttpRequest(request)) {
-      return new Response("Not a HTTP request", { status: 403 });
-    }
-    let remixCache;
-    if (typeof cacheName === "string") {
-      Storage.init();
-      remixCache = Storage.has(cacheName) ? Storage.get(cacheName) : createCache({ name: cacheName, ...cacheOptions });
-    } else {
-      Storage.init();
-      remixCache = cacheName;
-    }
-    return remixCache.match(request).then(async (response) => {
-      const fetchPromise = fetch(request).then(async (networkResponse) => {
-        await remixCache.put(request, networkResponse.clone());
-        return networkResponse;
-      }).catch(async (_err) => {
-        if (fetchDidFail) {
-          await Promise.all(fetchDidFail.map((cb) => cb()));
-        }
-        return new Response(JSON.stringify({ error: "Network request failed" }), {
-          status: 500,
-          statusText: "Network request failed"
-        });
-      });
-      return response ? response.clone() : fetchPromise;
-    });
-  };
-};
-
-// app/routes/basic-caching.tsx
-var import_node = __toESM(require_node());
-var import_react = __toESM(require_react());
-var import_react2 = __toESM(require_react2());
-var import_jsx_runtime = __toESM(require_jsx_runtime());
-var workerLoader = async ({ context }) => {
-  const customStrategy = await cacheFirst({
-    cache: "basic-caching",
-    cacheOptions: {
-      maxItems: 5,
-      ttl: 30 * 1e3
-      // 30 seconds time-to-live (maxAge)
-    },
-    fetchDidFail: [
-      () => console.log("Fetch failed!")
-    ]
-  });
-  let response = await customStrategy(context.event.request);
-  let data = await toJSON(response);
-  const date = /* @__PURE__ */ new Date();
-  return new Response(JSON.stringify({
-    data: data.data,
-    // Only this shows an updated time, the other one doesn't because it's cached.
-    // Try deleting the cache and reloading the page to see the difference.
-    message: `Server already up and running! Time: ${date.getMinutes()}:${date.getSeconds()}`
-  }), {
-    headers: {
-      "Content-Type": "application/json"
-    }
-  });
-};
-
-// routes-module:routes/basic-caching.tsx?worker
-var hasWorkerAction = false;
-var hasWorkerLoader = true;
-
-// routes-module:routes/_app.flights.tsx?worker
-var app_flights_exports = {};
-__export(app_flights_exports, {
-  hasWorkerAction: () => hasWorkerAction2,
-  hasWorkerLoader: () => hasWorkerLoader2,
-  workerAction: () => workerAction,
-  workerLoader: () => workerLoader2
-});
-
-// ../node_modules/@remix-run/router/dist/router.js
-function _extends() {
-  _extends = Object.assign ? Object.assign.bind() : function(target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-    return target;
-  };
-  return _extends.apply(this, arguments);
-}
-var Action;
-(function(Action3) {
-  Action3["Pop"] = "POP";
-  Action3["Push"] = "PUSH";
-  Action3["Replace"] = "REPLACE";
-})(Action || (Action = {}));
-function invariant(value, message) {
-  if (value === false || value === null || typeof value === "undefined") {
-    throw new Error(message);
-  }
-}
-function warning(cond, message) {
-  if (!cond) {
-    if (typeof console !== "undefined")
-      console.warn(message);
-    try {
-      throw new Error(message);
-    } catch (e) {
-    }
-  }
-}
-var ResultType;
-(function(ResultType3) {
-  ResultType3["data"] = "data";
-  ResultType3["deferred"] = "deferred";
-  ResultType3["redirect"] = "redirect";
-  ResultType3["error"] = "error";
-})(ResultType || (ResultType = {}));
-function matchPath(pattern, pathname) {
-  if (typeof pattern === "string") {
-    pattern = {
-      path: pattern,
-      caseSensitive: false,
-      end: true
-    };
-  }
-  let [matcher, paramNames] = compilePath(pattern.path, pattern.caseSensitive, pattern.end);
-  let match = pathname.match(matcher);
-  if (!match)
-    return null;
-  let matchedPathname = match[0];
-  let pathnameBase = matchedPathname.replace(/(.)\/+$/, "$1");
-  let captureGroups = match.slice(1);
-  let params = paramNames.reduce((memo, paramName, index) => {
-    if (paramName === "*") {
-      let splatValue = captureGroups[index] || "";
-      pathnameBase = matchedPathname.slice(0, matchedPathname.length - splatValue.length).replace(/(.)\/+$/, "$1");
-    }
-    memo[paramName] = safelyDecodeURIComponent(captureGroups[index] || "", paramName);
-    return memo;
-  }, {});
-  return {
-    params,
-    pathname: matchedPathname,
-    pathnameBase,
-    pattern
-  };
-}
-function compilePath(path, caseSensitive, end) {
-  if (caseSensitive === void 0) {
-    caseSensitive = false;
-  }
-  if (end === void 0) {
-    end = true;
-  }
-  warning(path === "*" || !path.endsWith("*") || path.endsWith("/*"), 'Route path "' + path + '" will be treated as if it were ' + ('"' + path.replace(/\*$/, "/*") + '" because the `*` character must ') + "always follow a `/` in the pattern. To get rid of this warning, " + ('please change the route path to "' + path.replace(/\*$/, "/*") + '".'));
-  let paramNames = [];
-  let regexpSource = "^" + path.replace(/\/*\*?$/, "").replace(/^\/*/, "/").replace(/[\\.*+^$?{}|()[\]]/g, "\\$&").replace(/\/:(\w+)/g, (_, paramName) => {
-    paramNames.push(paramName);
-    return "/([^\\/]+)";
-  });
-  if (path.endsWith("*")) {
-    paramNames.push("*");
-    regexpSource += path === "*" || path === "/*" ? "(.*)$" : "(?:\\/(.+)|\\/*)$";
-  } else if (end) {
-    regexpSource += "\\/*$";
-  } else if (path !== "" && path !== "/") {
-    regexpSource += "(?:(?=\\/|$))";
-  } else
-    ;
-  let matcher = new RegExp(regexpSource, caseSensitive ? void 0 : "i");
-  return [matcher, paramNames];
-}
-function safelyDecodeURIComponent(value, paramName) {
-  try {
-    return decodeURIComponent(value);
-  } catch (error) {
-    warning(false, 'The value for the URL param "' + paramName + '" will not be decoded because' + (' the string "' + value + '" is a malformed URL segment. This is probably') + (" due to a bad percent encoding (" + error + ")."));
-    return value;
-  }
-}
-var json2 = function json3(data, init) {
-  if (init === void 0) {
-    init = {};
-  }
-  let responseInit = typeof init === "number" ? {
-    status: init
-  } : init;
-  let headers = new Headers(responseInit.headers);
-  if (!headers.has("Content-Type")) {
-    headers.set("Content-Type", "application/json; charset=utf-8");
-  }
-  return new Response(JSON.stringify(data), _extends({}, responseInit, {
-    headers
-  }));
-};
-var AbortedDeferredError = class extends Error {
-};
-var DeferredData = class {
-  constructor(data, responseInit) {
-    this.pendingKeysSet = /* @__PURE__ */ new Set();
-    this.subscribers = /* @__PURE__ */ new Set();
-    this.deferredKeys = [];
-    invariant(data && typeof data === "object" && !Array.isArray(data), "defer() only accepts plain objects");
-    let reject;
-    this.abortPromise = new Promise((_, r) => reject = r);
-    this.controller = new AbortController();
-    let onAbort = () => reject(new AbortedDeferredError("Deferred data aborted"));
-    this.unlistenAbortSignal = () => this.controller.signal.removeEventListener("abort", onAbort);
-    this.controller.signal.addEventListener("abort", onAbort);
-    this.data = Object.entries(data).reduce((acc, _ref) => {
-      let [key, value] = _ref;
-      return Object.assign(acc, {
-        [key]: this.trackPromise(key, value)
-      });
-    }, {});
-    if (this.done) {
-      this.unlistenAbortSignal();
-    }
-    this.init = responseInit;
-  }
-  trackPromise(key, value) {
-    if (!(value instanceof Promise)) {
-      return value;
-    }
-    this.deferredKeys.push(key);
-    this.pendingKeysSet.add(key);
-    let promise = Promise.race([value, this.abortPromise]).then((data) => this.onSettle(promise, key, void 0, data), (error) => this.onSettle(promise, key, error));
-    promise.catch(() => {
-    });
-    Object.defineProperty(promise, "_tracked", {
-      get: () => true
-    });
-    return promise;
-  }
-  onSettle(promise, key, error, data) {
-    if (this.controller.signal.aborted && error instanceof AbortedDeferredError) {
-      this.unlistenAbortSignal();
-      Object.defineProperty(promise, "_error", {
-        get: () => error
-      });
-      return Promise.reject(error);
-    }
-    this.pendingKeysSet.delete(key);
-    if (this.done) {
-      this.unlistenAbortSignal();
-    }
-    if (error === void 0 && data === void 0) {
-      let undefinedError = new Error('Deferred data for key "' + key + '" resolved/rejected with `undefined`, you must resolve/reject with a value or `null`.');
-      Object.defineProperty(promise, "_error", {
-        get: () => undefinedError
-      });
-      this.emit(false, key);
-      return Promise.reject(undefinedError);
-    }
-    if (data === void 0) {
-      Object.defineProperty(promise, "_error", {
-        get: () => error
-      });
-      this.emit(false, key);
-      return Promise.reject(error);
-    }
-    Object.defineProperty(promise, "_data", {
-      get: () => data
-    });
-    this.emit(false, key);
-    return data;
-  }
-  emit(aborted, settledKey) {
-    this.subscribers.forEach((subscriber) => subscriber(aborted, settledKey));
-  }
-  subscribe(fn) {
-    this.subscribers.add(fn);
-    return () => this.subscribers.delete(fn);
-  }
-  cancel() {
-    this.controller.abort();
-    this.pendingKeysSet.forEach((v, k2) => this.pendingKeysSet.delete(k2));
-    this.emit(true);
-  }
-  async resolveData(signal) {
-    let aborted = false;
-    if (!this.done) {
-      let onAbort = () => this.cancel();
-      signal.addEventListener("abort", onAbort);
-      aborted = await new Promise((resolve) => {
-        this.subscribe((aborted2) => {
-          signal.removeEventListener("abort", onAbort);
-          if (aborted2 || this.done) {
-            resolve(aborted2);
-          }
-        });
-      });
-    }
-    return aborted;
-  }
-  get done() {
-    return this.pendingKeysSet.size === 0;
-  }
-  get unwrappedData() {
-    invariant(this.data !== null && this.done, "Can only unwrap data on initialized and settled deferreds");
-    return Object.entries(this.data).reduce((acc, _ref2) => {
-      let [key, value] = _ref2;
-      return Object.assign(acc, {
-        [key]: unwrapTrackedPromise(value)
-      });
-    }, {});
-  }
-  get pendingKeys() {
-    return Array.from(this.pendingKeysSet);
-  }
-};
-function isTrackedPromise(value) {
-  return value instanceof Promise && value._tracked === true;
-}
-function unwrapTrackedPromise(value) {
-  if (!isTrackedPromise(value)) {
-    return value;
-  }
-  if (value._error) {
-    throw value._error;
-  }
-  return value._data;
-}
-var defer = function defer2(data, init) {
-  if (init === void 0) {
-    init = {};
-  }
-  let responseInit = typeof init === "number" ? {
-    status: init
-  } : init;
-  return new DeferredData(data, responseInit);
-};
-var redirect = function redirect2(url, init) {
-  if (init === void 0) {
-    init = 302;
-  }
-  let responseInit = init;
-  if (typeof responseInit === "number") {
-    responseInit = {
-      status: responseInit
-    };
-  } else if (typeof responseInit.status === "undefined") {
-    responseInit.status = 302;
-  }
-  let headers = new Headers(responseInit.headers);
-  headers.set("Location", url);
-  return new Response(null, _extends({}, responseInit, {
-    headers
-  }));
-};
-function isRouteErrorResponse(error) {
-  return error != null && typeof error.status === "number" && typeof error.statusText === "string" && typeof error.internal === "boolean" && "data" in error;
-}
-var validMutationMethodsArr = ["post", "put", "patch", "delete"];
-var validMutationMethods = new Set(validMutationMethodsArr);
-var validRequestMethodsArr = ["get", ...validMutationMethodsArr];
-var validRequestMethods = new Set(validRequestMethodsArr);
-var UNSAFE_DEFERRED_SYMBOL = Symbol("deferred");
-
-// app/routes/_app.flights.tsx
-var import_react3 = __toESM(require_react());
-var import_react4 = __toESM(require_react2());
-var import_jsx_runtime2 = __toESM(require_jsx_runtime());
-var workerAction = async ({ request, context }) => {
-  const formData = await request.formData();
-  const { database, fetchFromServer } = context;
-  try {
-    fetchFromServer();
-    await database.selections.add(Object.fromEntries(formData.entries()));
-    return redirect("/selection");
-  } catch (error) {
-    throw json2({ message: "Something went wrong", error }, 500);
-  }
-};
-var workerLoader2 = async ({ context }) => {
-  try {
-    const { fetchFromServer, database } = context;
-    const [serverResult, clientResult] = await Promise.allSettled([
-      // NOTE: If the user decides to use the server loader, must use the `context.event.request` object instead of `request`.
-      // This is because we strip the `_data` and `index` from the request object just to follow what Remix does.
-      fetchFromServer().then((response) => response.json()).then(({ flights: flights2 }) => flights2),
-      database.flights.toArray()
-    ]);
-    const flights = serverResult.value || clientResult.value;
-    if (serverResult.value) {
-      await database.flights.bulkPut(
-        flights.map((f2) => ({
-          ...f2,
-          flightNumber: `${f2.flightNumber.split("-")[0].trim()} - client`
-        }))
-      );
-    }
-    return defer({ flights });
-  } catch (error) {
-    console.error(error);
-    throw json2({ message: "Something went wrong", error }, 500);
-  }
-};
-
-// routes-module:routes/_app.flights.tsx?worker
-var hasWorkerAction2 = true;
-var hasWorkerLoader2 = true;
-
-// routes-module:routes/basic-action.tsx?worker
-var basic_action_exports = {};
-__export(basic_action_exports, {
-  hasWorkerAction: () => hasWorkerAction3,
-  hasWorkerLoader: () => hasWorkerLoader3,
-  workerAction: () => workerAction2
-});
-
-// app/routes/basic-action.tsx
-var import_node2 = __toESM(require_node());
-var import_react5 = __toESM(require_react());
-var import_jsx_runtime3 = __toESM(require_jsx_runtime());
-var workerAction2 = async ({ context }) => {
-  const { fetchFromServer } = context;
-  try {
-    await fetchFromServer();
-  } catch (error) {
-    console.error(error);
-  }
-  return new Response(JSON.stringify({
-    message: "Modified action response, Remix Actions are quite out of the picture here"
-  }), {
-    headers: {
-      "Content-Type": "application/json; charset=utf-8"
-    }
-  });
-};
-
-// routes-module:routes/basic-action.tsx?worker
-var hasWorkerAction3 = true;
-var hasWorkerLoader3 = false;
-
-// routes-module:routes/basic-loader.tsx?worker
-var basic_loader_exports = {};
-__export(basic_loader_exports, {
-  hasWorkerAction: () => hasWorkerAction4,
-  hasWorkerLoader: () => hasWorkerLoader4,
-  workerLoader: () => workerLoader3
-});
-
-// app/routes/basic-loader.tsx
-var import_node3 = __toESM(require_node());
-var import_react6 = __toESM(require_react());
-var import_react7 = __toESM(require_react2());
-var import_jsx_runtime4 = __toESM(require_jsx_runtime());
-var workerLoader3 = async ({ context }) => {
-  const { fetchFromServer } = context;
-  const message = await Promise.race([
-    fetchFromServer().then((response) => response.json()).then(({ message: message2 }) => message2),
-    new Promise((resolve) => setTimeout(resolve, 500, "Hello World!\n\n\u2022 This message is sent to you from the client \u{1F61C}!"))
-  ]);
-  return new Response(
-    JSON.stringify({
-      message
-    }),
-    {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    }
-  );
-};
-
-// routes-module:routes/basic-loader.tsx?worker
-var hasWorkerAction4 = false;
-var hasWorkerLoader4 = true;
-
-// routes-module:routes/strategies.tsx?worker
-var strategies_exports = {};
-__export(strategies_exports, {
-  hasWorkerAction: () => hasWorkerAction5,
-  hasWorkerLoader: () => hasWorkerLoader5,
-  workerAction: () => workerAction3
-});
-
-// app/routes/strategies.tsx
-var import_react8 = __toESM(require_react());
-var import_jsx_runtime5 = __toESM(require_jsx_runtime());
-var workerAction3 = async ({ context }) => {
-  const { event } = context;
-  const formData = await event.request.clone().formData();
-  const strategy = formData.get("strategy");
-  let customStrategy = void 0;
-  switch (strategy) {
-    case "cache-only":
-      customStrategy = await cacheOnly({
-        cache: "strategies-cache-only"
-      });
-      break;
-    case "cache-first":
-      customStrategy = await cacheFirst({
-        cache: "strategies-cache-first"
-      });
-      break;
-    case "network-first":
-      customStrategy = await networkFirst({
-        cache: "strategies-network-first"
-      });
-      break;
-    case "swr":
-      customStrategy = await staleWhileRevalidate({
-        cache: "strategies-swr"
-      });
-      break;
-    default:
-      break;
-  }
-  return null;
-};
-
-// routes-module:routes/strategies.tsx?worker
-var hasWorkerAction5 = true;
-var hasWorkerLoader5 = false;
-
-// routes-module:routes/selection.tsx?worker
-var selection_exports = {};
-__export(selection_exports, {
-  hasWorkerAction: () => hasWorkerAction6,
-  hasWorkerLoader: () => hasWorkerLoader6,
-  workerLoader: () => workerLoader4
-});
-
-// app/routes/selection.tsx
-var import_react9 = __toESM(require_react());
-var import_jsx_runtime6 = __toESM(require_jsx_runtime());
-async function workerLoader4({ context }) {
-  const { database } = context;
-  const selections = await database.selections.toArray();
-  return json2({ selections });
-}
-
-// routes-module:routes/selection.tsx?worker
-var hasWorkerAction6 = false;
-var hasWorkerLoader6 = true;
-
-// routes-module:routes/sync-away.tsx?worker
-var sync_away_exports = {};
-__export(sync_away_exports, {
-  hasWorkerAction: () => hasWorkerAction7,
-  hasWorkerLoader: () => hasWorkerLoader7,
-  workerAction: () => workerAction4
-});
-
-// ../packages/sync/dist/src/request.js
-var serializableProperties = [
-  "method",
-  "referrer",
-  "referrerPolicy",
-  "mode",
-  "credentials",
-  "cache",
-  "redirect",
-  "integrity",
-  "keepalive"
-];
-var StorableRequest = class _StorableRequest {
-  _requestData;
-  /**
-   * Converts a Request object to a plain object that can be structured
-   * cloned or JSON-stringified.
-   *
-   * @param {Request} request
-   * @return {Promise<StorableRequest>}
-   */
-  static async fromRequest(request) {
-    const requestData = {
-      url: request.url,
-      headers: {}
-    };
-    if (request.method !== "GET") {
-      requestData.body = await request.clone().arrayBuffer();
-    }
-    for (const [key, value] of request.headers.entries()) {
-      requestData.headers[key] = value;
-    }
-    for (const prop of serializableProperties) {
-      if (request[prop] !== void 0) {
-        requestData[prop] = request[prop];
-      }
-    }
-    return new _StorableRequest(requestData);
-  }
-  /**
-   * Accepts an object of request data that can be used to construct a
-   * `Request` but can also be stored in IndexedDB.
-   *
-   * @param {Object} requestData An object of request data that includes the
-   *     `url` plus any relevant properties of
-   *     [requestInit]{@link https://fetch.spec.whatwg.org/#requestinit}.
-   */
-  constructor(requestData) {
-    if (requestData.mode === "navigate") {
-      requestData.mode = "same-origin";
-    }
-    this._requestData = requestData;
-  }
-  /**
-   * Returns a deep clone of the instances `_requestData` object.
-   *
-   * @return {Object}
-   */
-  toObject() {
-    const requestData = Object.assign({}, this._requestData);
-    requestData.headers = Object.assign({}, this._requestData.headers);
-    if (requestData.body) {
-      requestData.body = requestData.body.slice(0);
-    }
-    return requestData;
-  }
-  /**
-   * Converts this instance to a Request.
-   *
-   * @return {Request}
-   */
-  toRequest() {
-    return new Request(this._requestData.url, this._requestData);
-  }
-  /**
-   * Creates and returns a deep clone of the instance.
-   *
-   * @return {StorableRequest}
-   */
-  clone() {
-    return new _StorableRequest(this.toObject());
-  }
-};
-
-// ../node_modules/idb/build/wrap-idb-value.js
-var instanceOfAny = (object, constructors) => constructors.some((c) => object instanceof c);
-var idbProxyableTypes;
-var cursorAdvanceMethods;
-function getIdbProxyableTypes() {
-  return idbProxyableTypes || (idbProxyableTypes = [
-    IDBDatabase,
-    IDBObjectStore,
-    IDBIndex,
-    IDBCursor,
-    IDBTransaction
-  ]);
-}
-function getCursorAdvanceMethods() {
-  return cursorAdvanceMethods || (cursorAdvanceMethods = [
-    IDBCursor.prototype.advance,
-    IDBCursor.prototype.continue,
-    IDBCursor.prototype.continuePrimaryKey
-  ]);
-}
-var cursorRequestMap = /* @__PURE__ */ new WeakMap();
-var transactionDoneMap = /* @__PURE__ */ new WeakMap();
-var transactionStoreNamesMap = /* @__PURE__ */ new WeakMap();
-var transformCache = /* @__PURE__ */ new WeakMap();
-var reverseTransformCache = /* @__PURE__ */ new WeakMap();
-function promisifyRequest(request) {
-  const promise = new Promise((resolve, reject) => {
-    const unlisten = () => {
-      request.removeEventListener("success", success);
-      request.removeEventListener("error", error);
-    };
-    const success = () => {
-      resolve(wrap(request.result));
-      unlisten();
-    };
-    const error = () => {
-      reject(request.error);
-      unlisten();
-    };
-    request.addEventListener("success", success);
-    request.addEventListener("error", error);
-  });
-  promise.then((value) => {
-    if (value instanceof IDBCursor) {
-      cursorRequestMap.set(value, request);
-    }
-  }).catch(() => {
-  });
-  reverseTransformCache.set(promise, request);
-  return promise;
-}
-function cacheDonePromiseForTransaction(tx) {
-  if (transactionDoneMap.has(tx))
-    return;
-  const done = new Promise((resolve, reject) => {
-    const unlisten = () => {
-      tx.removeEventListener("complete", complete);
-      tx.removeEventListener("error", error);
-      tx.removeEventListener("abort", error);
-    };
-    const complete = () => {
-      resolve();
-      unlisten();
-    };
-    const error = () => {
-      reject(tx.error || new DOMException("AbortError", "AbortError"));
-      unlisten();
-    };
-    tx.addEventListener("complete", complete);
-    tx.addEventListener("error", error);
-    tx.addEventListener("abort", error);
-  });
-  transactionDoneMap.set(tx, done);
-}
-var idbProxyTraps = {
-  get(target, prop, receiver) {
-    if (target instanceof IDBTransaction) {
-      if (prop === "done")
-        return transactionDoneMap.get(target);
-      if (prop === "objectStoreNames") {
-        return target.objectStoreNames || transactionStoreNamesMap.get(target);
-      }
-      if (prop === "store") {
-        return receiver.objectStoreNames[1] ? void 0 : receiver.objectStore(receiver.objectStoreNames[0]);
-      }
-    }
-    return wrap(target[prop]);
-  },
-  set(target, prop, value) {
-    target[prop] = value;
-    return true;
-  },
-  has(target, prop) {
-    if (target instanceof IDBTransaction && (prop === "done" || prop === "store")) {
-      return true;
-    }
-    return prop in target;
-  }
-};
-function replaceTraps(callback) {
-  idbProxyTraps = callback(idbProxyTraps);
-}
-function wrapFunction(func) {
-  if (func === IDBDatabase.prototype.transaction && !("objectStoreNames" in IDBTransaction.prototype)) {
-    return function(storeNames, ...args) {
-      const tx = func.call(unwrap(this), storeNames, ...args);
-      transactionStoreNamesMap.set(tx, storeNames.sort ? storeNames.sort() : [storeNames]);
-      return wrap(tx);
-    };
-  }
-  if (getCursorAdvanceMethods().includes(func)) {
-    return function(...args) {
-      func.apply(unwrap(this), args);
-      return wrap(cursorRequestMap.get(this));
-    };
-  }
-  return function(...args) {
-    return wrap(func.apply(unwrap(this), args));
-  };
-}
-function transformCachableValue(value) {
-  if (typeof value === "function")
-    return wrapFunction(value);
-  if (value instanceof IDBTransaction)
-    cacheDonePromiseForTransaction(value);
-  if (instanceOfAny(value, getIdbProxyableTypes()))
-    return new Proxy(value, idbProxyTraps);
-  return value;
-}
-function wrap(value) {
-  if (value instanceof IDBRequest)
-    return promisifyRequest(value);
-  if (transformCache.has(value))
-    return transformCache.get(value);
-  const newValue = transformCachableValue(value);
-  if (newValue !== value) {
-    transformCache.set(value, newValue);
-    reverseTransformCache.set(newValue, value);
-  }
-  return newValue;
-}
-var unwrap = (value) => reverseTransformCache.get(value);
-
-// ../node_modules/idb/build/index.js
-function openDB(name, version, { blocked, upgrade, blocking, terminated } = {}) {
-  const request = indexedDB.open(name, version);
-  const openPromise = wrap(request);
-  if (upgrade) {
-    request.addEventListener("upgradeneeded", (event) => {
-      upgrade(wrap(request.result), event.oldVersion, event.newVersion, wrap(request.transaction), event);
-    });
-  }
-  if (blocked) {
-    request.addEventListener("blocked", (event) => blocked(
-      // Casting due to https://github.com/microsoft/TypeScript-DOM-lib-generator/pull/1405
-      event.oldVersion,
-      event.newVersion,
-      event
-    ));
-  }
-  openPromise.then((db) => {
-    if (terminated)
-      db.addEventListener("close", () => terminated());
-    if (blocking) {
-      db.addEventListener("versionchange", (event) => blocking(event.oldVersion, event.newVersion, event));
-    }
-  }).catch(() => {
-  });
-  return openPromise;
-}
-var readMethods = ["get", "getKey", "getAll", "getAllKeys", "count"];
-var writeMethods = ["put", "add", "delete", "clear"];
-var cachedMethods = /* @__PURE__ */ new Map();
-function getMethod(target, prop) {
-  if (!(target instanceof IDBDatabase && !(prop in target) && typeof prop === "string")) {
-    return;
-  }
-  if (cachedMethods.get(prop))
-    return cachedMethods.get(prop);
-  const targetFuncName = prop.replace(/FromIndex$/, "");
-  const useIndex = prop !== targetFuncName;
-  const isWrite = writeMethods.includes(targetFuncName);
-  if (
-    // Bail if the target doesn't exist on the target. Eg, getAll isn't in Edge.
-    !(targetFuncName in (useIndex ? IDBIndex : IDBObjectStore).prototype) || !(isWrite || readMethods.includes(targetFuncName))
-  ) {
-    return;
-  }
-  const method = async function(storeName, ...args) {
-    const tx = this.transaction(storeName, isWrite ? "readwrite" : "readonly");
-    let target2 = tx.store;
-    if (useIndex)
-      target2 = target2.index(args.shift());
-    return (await Promise.all([
-      target2[targetFuncName](...args),
-      isWrite && tx.done
-    ]))[0];
-  };
-  cachedMethods.set(prop, method);
-  return method;
-}
-replaceTraps((oldTraps) => ({
-  ...oldTraps,
-  get: (target, prop, receiver) => getMethod(target, prop) || oldTraps.get(target, prop, receiver),
-  has: (target, prop) => !!getMethod(target, prop) || oldTraps.has(target, prop)
-}));
-
-// ../packages/sync/dist/src/db.js
-var DB_VERSION = 3;
-var DB_NAME = "remix-pwa-sync";
-var REQUEST_OBJECT_STORE_NAME = "failed-requests";
-var QUEUE_NAME_INDEX = "queueName";
-var QueueDb = class {
-  _db = null;
-  /**
-   * Add QueueStoreEntry to underlying db.
-   *
-   * @param {UnidentifiedQueueStoreEntry} entry
-   */
-  async addEntry(entry2) {
-    const db = await this.getDb();
-    const tx = db.transaction(REQUEST_OBJECT_STORE_NAME, "readwrite", {
-      durability: "relaxed"
-    });
-    await tx.store.add(entry2);
-    await tx.done;
-  }
-  /**
-   * Returns the first entry id in the ObjectStore.
-   *
-   * @return {number | undefined}
-   */
-  async getFirstEntryId() {
-    const db = await this.getDb();
-    const cursor = await db.transaction(REQUEST_OBJECT_STORE_NAME).store.openCursor();
-    return cursor?.value.id;
-  }
-  /**
-   * Get all the entries filtered by index
-   *
-   * @param queueName
-   * @return {Promise<QueueStoreEntry[]>}
-   */
-  async getAllEntriesByQueueName(queueName) {
-    const db = await this.getDb();
-    const results = await db.getAllFromIndex(REQUEST_OBJECT_STORE_NAME, QUEUE_NAME_INDEX, IDBKeyRange.only(queueName));
-    return results || new Array();
-  }
-  /**
-   * Returns the number of entries filtered by index
-   *
-   * @param queueName
-   * @return {Promise<number>}
-   */
-  async getEntryCountByQueueName(queueName) {
-    const db = await this.getDb();
-    return db.countFromIndex(REQUEST_OBJECT_STORE_NAME, QUEUE_NAME_INDEX, IDBKeyRange.only(queueName));
-  }
-  /**
-   * Deletes a single entry by id.
-   *
-   * @param {number} id the id of the entry to be deleted
-   */
-  async deleteEntry(id) {
-    const db = await this.getDb();
-    await db.delete(REQUEST_OBJECT_STORE_NAME, id);
-  }
-  /**
-   *
-   * @param queueName
-   * @returns {Promise<QueueStoreEntry | undefined>}
-   */
-  async getFirstEntryByQueueName(queueName) {
-    return await this.getEndEntryFromIndex(IDBKeyRange.only(queueName), "next");
-  }
-  /**
-   *
-   * @param queueName
-   * @returns {Promise<QueueStoreEntry | undefined>}
-   */
-  async getLastEntryByQueueName(queueName) {
-    return await this.getEndEntryFromIndex(IDBKeyRange.only(queueName), "prev");
-  }
-  /**
-   * Returns either the first or the last entries, depending on direction.
-   * Filtered by index.
-   *
-   * @param {IDBCursorDirection} direction
-   * @param {IDBKeyRange} query
-   * @return {Promise<QueueStoreEntry | undefined>}
-   * @private
-   */
-  async getEndEntryFromIndex(query, direction) {
-    const db = await this.getDb();
-    const cursor = await db.transaction(REQUEST_OBJECT_STORE_NAME).store.index(QUEUE_NAME_INDEX).openCursor(query, direction);
-    return cursor?.value;
-  }
-  /**
-   * Returns an open connection to the database.
-   *
-   * @private
-   */
-  async getDb() {
-    if (!this._db) {
-      this._db = await openDB(DB_NAME, DB_VERSION, {
-        upgrade: this._upgradeDb
-      });
-    }
-    return this._db;
-  }
-  /**
-   * Upgrades QueueDB
-   *
-   * @param {IDBPDatabase<QueueDBSchema>} db
-   * @param {number} oldVersion
-   * @private
-   */
-  _upgradeDb(db, oldVersion) {
-    if (oldVersion > 0 && oldVersion < DB_VERSION) {
-      if (db.objectStoreNames.contains(REQUEST_OBJECT_STORE_NAME)) {
-        db.deleteObjectStore(REQUEST_OBJECT_STORE_NAME);
-      }
-    }
-    const objStore = db.createObjectStore(REQUEST_OBJECT_STORE_NAME, {
-      autoIncrement: true,
-      keyPath: "id"
-    });
-    objStore.createIndex(QUEUE_NAME_INDEX, QUEUE_NAME_INDEX, { unique: false });
-  }
-};
-
-// ../packages/sync/dist/src/store.js
-var QueueStore = class {
-  _queueName;
-  _queueDb;
-  /**
-   * Associates this instance with a Queue instance, so entries added can be
-   * identified by their queue name.
-   *
-   * @param {string} queueName
-   */
-  constructor(queueName) {
-    this._queueName = queueName;
-    this._queueDb = new QueueDb();
-  }
-  /**
-   * Append an entry last in the queue.
-   *
-   * @param {Object} entry
-   * @param {Object} entry.requestData
-   * @param {number} [entry.timestamp]
-   * @param {Object} [entry.metadata]
-   */
-  async pushEntry(entry2) {
-    delete entry2.id;
-    entry2.queueName = this._queueName;
-    await this._queueDb.addEntry(entry2);
-  }
-  /**
-   * Prepend an entry first in the queue.
-   *
-   * @param {Object} entry
-   * @param {Object} entry.requestData
-   * @param {number} [entry.timestamp]
-   * @param {Object} [entry.metadata]
-   */
-  async unshiftEntry(entry2) {
-    const firstId = await this._queueDb.getFirstEntryId();
-    if (firstId) {
-      entry2.id = firstId - 1;
-    } else {
-      delete entry2.id;
-    }
-    entry2.queueName = this._queueName;
-    await this._queueDb.addEntry(entry2);
-  }
-  /**
-   * Removes and returns the last entry in the queue matching the `queueName`.
-   *
-   * @return {Promise<QueueStoreEntry|undefined>}
-   */
-  async popEntry() {
-    return this._removeEntry(await this._queueDb.getLastEntryByQueueName(this._queueName));
-  }
-  /**
-   * Removes and returns the first entry in the queue matching the `queueName`.
-   *
-   * @return {Promise<QueueStoreEntry|undefined>}
-   */
-  async shiftEntry() {
-    return this._removeEntry(await this._queueDb.getFirstEntryByQueueName(this._queueName));
-  }
-  /**
-   * Returns all entries in the store matching the `queueName`.
-   *
-   * @param {Object} options See {@link workbox-background-sync.Queue~getAll}
-   * @return {Promise<Array<Object>>}
-   */
-  async getAll() {
-    return await this._queueDb.getAllEntriesByQueueName(this._queueName);
-  }
-  /**
-   * Returns the number of entries in the store matching the `queueName`.
-   *
-   * @param {Object} options See {@link workbox-background-sync.Queue~size}
-   * @return {Promise<number>}
-   */
-  async size() {
-    return await this._queueDb.getEntryCountByQueueName(this._queueName);
-  }
-  /**
-   * Deletes the entry for the given ID.
-   *
-   * WARNING: this method does not ensure the deleted entry belongs to this
-   * queue (i.e. matches the `queueName`). But this limitation is acceptable
-   * as this class is not publicly exposed. An additional check would make
-   * this method slower than it needs to be.
-   *
-   * @param {number} id
-   */
-  async deleteEntry(id) {
-    await this._queueDb.deleteEntry(id);
-  }
-  /**
-   * Removes and returns the first or last entry in the queue (based on the
-   * `direction` argument) matching the `queueName`.
-   *
-   * @return {Promise<QueueStoreEntry|undefined>}
-   * @private
-   */
-  async _removeEntry(entry2) {
-    if (entry2) {
-      await this.deleteEntry(entry2.id);
-    }
-    return entry2;
-  }
-};
-
-// ../packages/sync/dist/src/queue.js
-var TAG_PREFIX = "rp-sync";
-var MAX_RETENTION_TIME = 60 * 24 * 7;
-var queueNames = /* @__PURE__ */ new Set();
-var convertEntry = (queueStoreEntry) => {
-  const queueEntry = {
-    request: new StorableRequest(queueStoreEntry.requestData).toRequest(),
-    timestamp: queueStoreEntry.timestamp
-  };
-  if (queueStoreEntry.metadata) {
-    queueEntry.metadata = queueStoreEntry.metadata;
-  }
-  return queueEntry;
-};
-var Queue = class {
-  _name;
-  _onSync;
-  _maxRetentionTime;
-  _queueStore;
-  _syncInProgress = false;
-  _requestsAddedDuringSync = false;
-  /**
-   * Creates an instance of Queue with the given options
-   *
-   * @param {string} name The unique name for this queue. This name must be
-   *     unique as it's used to register sync events and store requests
-   *     in IndexedDB specific to this instance. An error will be thrown if
-   *     a duplicate name is detected.
-   * @param {Object} [options]
-   * @param {Function} [options.onSync] A function that gets invoked whenever
-   *     the 'sync' event fires. The function is invoked with an object
-   *     containing the `queue` property (referencing this instance), and you
-   *     can use the callback to customize the replay behavior of the queue.
-   *     When not set the `replayRequests()` method is called.
-   *     Note: if the replay fails after a sync event, make sure you throw an
-   *     error, so the browser knows to retry the sync event later.
-   * @param {number} [options.maxRetentionTime=7 days] The amount of time (in
-   *     minutes) a request may be retried. After this amount of time has
-   *     passed, the request will be deleted from the queue.
-   */
-  constructor(name, { maxRetentionTime, onSync } = {}) {
-    this._name = name;
-    this._onSync = onSync || this.replayRequests;
-    this._maxRetentionTime = maxRetentionTime || MAX_RETENTION_TIME;
-    this._queueStore = new QueueStore(this._name);
-    this._addSyncListener();
-  }
-  /**
-   * @return {string}
-   */
-  get name() {
-    return this._name;
-  }
-  /**
-   * Stores the passed request in IndexedDB (with its timestamp and any
-   * metadata) at the end of the queue.
-   *
-   * @param {QueueEntry} entry
-   * @param {Request} entry.request The request to store in the queue.
-   * @param {Object} [entry.metadata] Any metadata you want associated with the
-   *     stored request. When requests are replayed you'll have access to this
-   *     metadata object in case you need to modify the request beforehand.
-   * @param {number} [entry.timestamp] The timestamp (Epoch time in
-   *     milliseconds) when the request was first added to the queue. This is
-   *     used along with `maxRetentionTime` to remove outdated requests. In
-   *     general you don't need to set this value, as it's automatically set
-   *     for you (defaulting to `Date.now()`), but you can update it if you
-   *     don't want particular requests to expire.
-   */
-  async pushRequest(entry2) {
-    await this._addRequest(entry2, "push");
-  }
-  /**
-   * Stores the passed request in IndexedDB (with its timestamp and any
-   * metadata) at the beginning of the queue.
-   *
-   * @param {QueueEntry} entry
-   * @param {Request} entry.request The request to store in the queue.
-   * @param {Object} [entry.metadata] Any metadata you want associated with the
-   *     stored request. When requests are replayed you'll have access to this
-   *     metadata object in case you need to modify the request beforehand.
-   * @param {number} [entry.timestamp] The timestamp (Epoch time in
-   *     milliseconds) when the request was first added to the queue. This is
-   *     used along with `maxRetentionTime` to remove outdated requests. In
-   *     general you don't need to set this value, as it's automatically set
-   *     for you (defaulting to `Date.now()`), but you can update it if you
-   *     don't want particular requests to expire.
-   */
-  async unshiftRequest(entry2) {
-    await this._addRequest(entry2, "unshift");
-  }
-  /**
-   * Removes and returns the last request in the queue (along with its
-   * timestamp and any metadata). The returned object takes the form:
-   * `{request, timestamp, metadata}`.
-   *
-   * @return {Promise<QueueEntry | undefined>}
-   */
-  async popRequest() {
-    return this._removeRequest("pop");
-  }
-  /**
-   * Removes and returns the first request in the queue (along with its
-   * timestamp and any metadata). The returned object takes the form:
-   * `{request, timestamp, metadata}`.
-   *
-   * @return {Promise<QueueEntry | undefined>}
-   */
-  async shiftRequest() {
-    return this._removeRequest("shift");
-  }
-  /**
-   * Returns all the entries that have not expired (per `maxRetentionTime`).
-   * Any expired entries are removed from the queue.
-   *
-   * @return {Promise<Array<QueueEntry>>}
-   */
-  async getAll() {
-    const allEntries = await this._queueStore.getAll();
-    const now = Date.now();
-    const unexpiredEntries = [];
-    for (const entry2 of allEntries) {
-      const maxRetentionTimeInMs = this._maxRetentionTime * 60 * 1e3;
-      if (now - entry2.timestamp > maxRetentionTimeInMs) {
-        await this._queueStore.deleteEntry(entry2.id);
-      } else {
-        unexpiredEntries.push(convertEntry(entry2));
-      }
-    }
-    return unexpiredEntries;
-  }
-  /**
-   * Returns the number of entries present in the queue.
-   * Note that expired entries (per `maxRetentionTime`) are also included in this count.
-   *
-   * @return {Promise<number>}
-   */
-  async size() {
-    return await this._queueStore.size();
-  }
-  /**
-   * Adds the entry to the QueueStore and registers for a sync event.
-   *
-   * @param {Object} entry
-   * @param {Request} entry.request
-   * @param {Object} [entry.metadata]
-   * @param {number} [entry.timestamp=Date.now()]
-   * @param {string} operation ('push' or 'unshift')
-   * @private
-   */
-  async _addRequest({ metadata, request, timestamp = Date.now() }, operation) {
-    const storableRequest = await StorableRequest.fromRequest(request.clone());
-    const entry2 = {
-      requestData: storableRequest.toObject(),
-      timestamp
-    };
-    if (metadata) {
-      entry2.metadata = metadata;
-    }
-    switch (operation) {
-      case "push":
-        await this._queueStore.pushEntry(entry2);
-        break;
-      case "unshift":
-        await this._queueStore.unshiftEntry(entry2);
-        break;
-    }
-    if (true) {
-    }
-    if (this._syncInProgress) {
-      this._requestsAddedDuringSync = true;
-    } else {
-      await this.registerSync();
-    }
-  }
-  /**
-   * Removes and returns the first or last (depending on `operation`) entry
-   * from the QueueStore that's not older than the `maxRetentionTime`.
-   *
-   * @param {string} operation ('pop' or 'shift')
-   * @return {Object|undefined}
-   * @private
-   */
-  async _removeRequest(operation) {
-    const now = Date.now();
-    let entry2;
-    switch (operation) {
-      case "pop":
-        entry2 = await this._queueStore.popEntry();
-        break;
-      case "shift":
-        entry2 = await this._queueStore.shiftEntry();
-        break;
-    }
-    if (entry2) {
-      const maxRetentionTimeInMs = this._maxRetentionTime * 60 * 1e3;
-      if (now - entry2.timestamp > maxRetentionTimeInMs) {
-        return this._removeRequest(operation);
-      }
-      return convertEntry(entry2);
-    } else {
-      return void 0;
-    }
-  }
-  /**
-   * Loops through each request in the queue and attempts to re-fetch it.
-   * If any request fails to re-fetch, it's put back in the same position in
-   * the queue (which registers a retry for the next sync event).
-   */
-  async replayRequests() {
-    let entry2;
-    while (entry2 = await this.shiftRequest()) {
-      try {
-        await fetch(entry2.request.clone());
-        if (true) {
-        }
-      } catch (error) {
-        await this.unshiftRequest(entry2);
-        if (true) {
-        }
-      }
-    }
-    if (true) {
-    }
-  }
-  /**
-   * Registers a sync event with a tag unique to this instance.
-   */
-  async registerSync() {
-    if ("sync" in self.registration) {
-      try {
-        await self.registration.sync.register(`${TAG_PREFIX}:${this._name}`);
-      } catch (err) {
-      }
-    }
-  }
-  /**
-   * In sync-supporting browsers, this adds a listener for the sync event.
-   * In non-sync-supporting browsers, or if _forceSyncFallback is true, this
-   * will retry the queue on service worker startup.
-   *
-   * @private
-   */
-  _addSyncListener() {
-    if ("sync" in self.registration) {
-      self.addEventListener("sync", (event) => {
-        if (event.tag === `${TAG_PREFIX}:${this._name}`) {
-          const syncComplete = async () => {
-            this._syncInProgress = true;
-            let syncError;
-            try {
-              await this._onSync({ queue: this });
-            } catch (error) {
-              if (error instanceof Error) {
-                syncError = error;
-                throw syncError;
-              }
-            } finally {
-              if (this._requestsAddedDuringSync && !(syncError && !event.lastChance)) {
-                await this.registerSync();
-              }
-              this._syncInProgress = false;
-              this._requestsAddedDuringSync = false;
-            }
-          };
-          event.waitUntil(syncComplete());
-        }
-      });
-    } else {
-      void this._onSync({ queue: this });
-    }
-  }
-  /**
-   * Returns the set of queue names. This is primarily used to reset the list
-   * of queue names in tests.
-   *
-   * @return {Set<string>}
-   *
-   * @private
-   */
-  static get _queueNames() {
-    return queueNames;
-  }
-};
-
-// ../packages/sync/dist/src/export.js
-var SyncQueue = class {
-  static queues = /* @__PURE__ */ new Map();
-  static createQueue(name) {
-    if (this.queues.has(name)) {
-      throw new Error(`Queue "${name}" already exists`);
-    }
-    const _q = new Queue(name);
-    this.queues.set(name, _q);
-    return _q;
-  }
-  static getQueue(name) {
-    return this.queues.get(name);
-  }
-  static removeQueue(name) {
-    this.queues.delete(name);
-  }
-  static async getQueueNames() {
-    return Array.from(this.queues.keys());
-  }
-  static async getQueueSizes() {
-    const sizes = /* @__PURE__ */ new Map();
-    for (const [name, queue] of this.queues) {
-      sizes.set(name, await queue.size());
-    }
-    return sizes;
-  }
-  /* WIP */
-  async getQueueByTag(tag) {
-    for (const [name, queue] of /* @__PURE__ */ new Map()) {
-      if (name === tag) {
-        return queue;
-      }
-    }
-    return void 0;
-  }
-};
-var queueToServer = ({ name, request }) => {
-  let queue;
-  try {
-    queue = SyncQueue.createQueue(name);
-  } catch (e) {
-    queue = SyncQueue.getQueue(name);
-  }
-  queue.pushRequest({ request });
-};
-var registerQueue = (name) => {
-  SyncQueue.createQueue(name);
-};
-
-// app/routes/sync-away.tsx
-var import_node4 = __toESM(require_node());
-var import_react10 = __toESM(require_react());
-var import_jsx_runtime7 = __toESM(require_jsx_runtime());
-var workerAction4 = async ({ context }) => {
-  const { fetchFromServer, event } = context;
-  try {
-    await fetchFromServer();
-  } catch (error) {
-    console.error(error);
-    queueToServer({
-      name: "offline-action",
-      request: event.request.clone()
-    });
-  }
-  return new Response(JSON.stringify({
-    message: "Offline or Online. I shall always respond!"
-  }), {
-    headers: {
-      "Content-Type": "application/json; charset=utf-8"
-    }
-  });
-};
-
-// routes-module:routes/sync-away.tsx?worker
-var hasWorkerAction7 = true;
-var hasWorkerLoader7 = false;
-
-// entry-module:@remix-pwa/build/magic
-var route8 = __toESM(require_index());
-
-// routes-module:routes/_app.tsx?worker
-var app_exports = {};
-__export(app_exports, {
-  hasWorkerAction: () => hasWorkerAction8,
-  hasWorkerLoader: () => hasWorkerLoader8,
-  workerLoader: () => workerLoader5
-});
-
-// app/routes/_app.tsx
-var import_node5 = __toESM(require_node());
-var import_react11 = __toESM(require_react());
-var import_jsx_runtime8 = __toESM(require_jsx_runtime());
-async function workerLoader5({ context }) {
-  const { fetchFromServer } = context;
-  const data = await fetchFromServer().then((response) => response.json());
-  console.log(data);
-  return new Response(JSON.stringify(data), {
-    headers: {
-      "Content-Type": "application/json"
-    }
-  });
-}
-
-// routes-module:routes/_app.tsx?worker
-var hasWorkerAction8 = false;
-var hasWorkerLoader8 = true;
-
-// app/entry.worker.ts
-var entry_worker_exports = {};
-__export(entry_worker_exports, {
-  defaultFetchHandler: () => defaultFetchHandler,
-  getLoadContext: () => getLoadContext
-});
-
-// ../packages/sw/dist/src/private/logger.js
-var methodToColorMap = {
-  debug: `#7f8c8d`,
-  log: `#2ecc71`,
-  info: `#3498db`,
-  warn: `#f39c12`,
-  error: `#c0392b`,
-  groupCollapsed: `#3498db`,
-  groupEnd: null
-  // No colored prefix on groupEnd
-};
-var logger = false ? (() => {
-  const api = {};
-  const loggerMethods = Object.keys(methodToColorMap);
-  for (const key of loggerMethods) {
-    const method = key;
-    api[method] = noop;
-  }
-  return api;
-})() : (() => {
-  let inGroup = false;
-  const print = function(method, args) {
-    if (self.__DISABLE_PWA_DEV_LOGS) {
-      return;
-    }
-    if (method === "debug" && self.__DISABLE_PWA_DEBUG_LOGS) {
-      return;
-    }
-    if (method === "info" && self.__DISABLE_PWA_INFO_LOGS) {
-      return;
-    }
-    if (method === "warn" && self.__DISABLE_PWA_WARN_LOGS) {
-      return;
-    }
-    if (method === "error" && self.__DISABLE_PWA_ERROR_LOGS) {
-      return;
-    }
-    if (method === "groupCollapsed") {
-      if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
-        console[method](...args);
-        return;
-      }
-    }
-    const styles = [
-      `background: ${methodToColorMap[method]}`,
-      `border-radius: 0.5em`,
-      `color: white`,
-      `font-weight: bold`,
-      `padding: 2px 0.5em`
-    ];
-    const logPrefix = inGroup ? [] : ["%cremix-pwa", styles.join(";")];
-    console[method](...logPrefix, ...args);
-    if (method === "groupCollapsed") {
-      inGroup = true;
-    }
-    if (method === "groupEnd") {
-      inGroup = false;
-    }
-  };
-  const api = {};
-  const loggerMethods = Object.keys(methodToColorMap);
-  for (const key of loggerMethods) {
-    const method = key;
-    api[method] = (...args) => {
-      print(method, args);
-    };
-  }
-  return api;
-})();
-
-// ../packages/sw/dist/src/utils/worker.js
-function isMethod(request, methods) {
-  return methods.includes(request.method.toLowerCase());
-}
-function isAssetRequest(request, assetUrls = ["/build/", "/icons"]) {
-  return isMethod(request, ["get"]) && assetUrls.some((publicPath) => request.url.includes(publicPath));
-}
-function isLoaderRequest(request) {
-  const url = new URL(request.url);
-  return isMethod(request, ["get"]) && url.searchParams.get("_data");
-}
-var matchRequest = (request, assetUrls = ["/build/", "/icons"]) => {
-  if (isAssetRequest(request, assetUrls)) {
-    return "asset";
-  } else if (isLoaderRequest(request)) {
-    return "loader";
-  } else {
-    return null;
-  }
-};
-
-// ../packages/sw/dist/src/message/message.js
-var MessageHandler = class {
-  /**
-   * The plugins array is used to run plugins before and after the message handler.
-   * They are passed in when the handler is initialised.
-   */
-  plugins;
-  /**
-   * The state object is used to pass data between plugins.
-   */
-  state;
-  constructor({ plugins, state } = {}) {
-    this.plugins = plugins || [];
-    this.state = state || {};
-  }
-  /**
-   * The method that handles the message event.
-   *
-   * Takes in the MessageEvent as a mandatory argument as well as an optional
-   * object that can be used to pass further information/data.
-   */
-  async handle(event, state = {}) {
-    await this._handleMessage(event, state);
-  }
-  /**
-   * Runs the plugins that are passed in when the handler is initialised.
-   */
-  async runPlugins(hook, env) {
-    for (const plugin of this.plugins) {
-      if (plugin[hook]) {
-        plugin[hook](env);
-      }
-    }
-  }
-};
-
 // ../packages/sw/dist/src/message/remixNavigationHandler.js
 var RemixNavigationHandler = class extends MessageHandler {
   dataCacheName;
@@ -5653,7 +4041,6 @@ var RemixNavigationHandler = class extends MessageHandler {
         const response = await fetch(documentUrl);
         cachePromises.set(documentUrl, documentCache.put(documentUrl, response).catch((error) => {
           logger.error(`Failed to cache document for ${documentUrl}:`, error);
-          console.error(`Failed to cache document for ${documentUrl}:`, error);
         }));
       }
       if (isMount) {
@@ -5666,11 +4053,9 @@ var RemixNavigationHandler = class extends MessageHandler {
             const url = location2.pathname + search + location2.hash;
             if (!cachePromises.has(url)) {
               logger.debug("Caching data for:", url);
-              console.debug("Caching data for:", url);
               const response = await fetch(url);
               cachePromises.set(url, dataCache.put(url, response).catch((error) => {
                 logger.error(`Failed to cache data for ${url}:`, error);
-                console.error(`Failed to cache data for ${url}:`, error);
               }));
             }
           }
@@ -5679,6 +4064,19 @@ var RemixNavigationHandler = class extends MessageHandler {
     }
     await Promise.all(cachePromises.values());
   }
+};
+
+// ../packages/sw/dist/src/react/utils.js
+var json = (data, init = {}) => {
+  const responseInit = typeof init === "number" ? { status: init } : init;
+  const headers = new Headers(responseInit.headers);
+  if (!headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json; charset=utf-8");
+  }
+  return new Response(JSON.stringify(data), {
+    ...responseInit,
+    headers
+  });
 };
 
 // ../node_modules/dexie/dist/modern/dexie.mjs
@@ -6616,7 +5014,7 @@ function markErrorAsHandled(promise) {
 function PromiseReject(reason) {
   return new DexiePromise(INTERNAL, false, reason);
 }
-function wrap2(fn, errorCatcher) {
+function wrap(fn, errorCatcher) {
   var psd = PSD;
   return function() {
     var wasRootExec = beginMicroTickScope(), outerScope = PSD;
@@ -7264,7 +5662,7 @@ function iter(ctx, fn, coreTrans, coreTable) {
 }
 function iterate(cursorPromise, filter, fn, valueMapper) {
   var mappedFn = valueMapper ? (x, c, a) => fn(valueMapper(x), c, a) : fn;
-  var wrappedFn = wrap2(mappedFn);
+  var wrappedFn = wrap(mappedFn);
   return cursorPromise.then((cursor) => {
     if (cursor) {
       return cursor.start(() => {
@@ -8098,7 +6496,7 @@ function createWhereClauseConstructor(db) {
   });
 }
 function eventRejectHandler(reject) {
-  return wrap2(function(event) {
+  return wrap(function(event) {
     preventDefault(event);
     reject(event.target.error);
     return false;
@@ -8159,17 +6557,17 @@ var Transaction = class {
       throw new exceptions.TransactionInactive();
     assert(this._completion._state === null);
     idbtrans = this.idbtrans = idbtrans || (this.db.core ? this.db.core.transaction(this.storeNames, this.mode, { durability: this.chromeTransactionDurability }) : idbdb.transaction(this.storeNames, this.mode, { durability: this.chromeTransactionDurability }));
-    idbtrans.onerror = wrap2((ev) => {
+    idbtrans.onerror = wrap((ev) => {
       preventDefault(ev);
       this._reject(idbtrans.error);
     });
-    idbtrans.onabort = wrap2((ev) => {
+    idbtrans.onabort = wrap((ev) => {
       preventDefault(ev);
       this.active && this._reject(new exceptions.Abort(idbtrans.error));
       this.active = false;
       this.on("abort").fire(ev);
     });
-    idbtrans.oncomplete = wrap2(() => {
+    idbtrans.oncomplete = wrap(() => {
       this.active = false;
       this._resolve();
       if ("mutatedParts" in idbtrans) {
@@ -8233,7 +6631,7 @@ var Transaction = class {
     }
     var currentWaitPromise = root._waitingFor;
     return new DexiePromise((resolve, reject) => {
-      promise.then((res) => root._waitingQueue.push(wrap2(resolve.bind(null, res))), (err) => root._waitingQueue.push(wrap2(reject.bind(null, err)))).finally(() => {
+      promise.then((res) => root._waitingQueue.push(wrap(resolve.bind(null, res))), (err) => root._waitingQueue.push(wrap(reject.bind(null, err)))).finally(() => {
         if (root._waitingFor === currentWaitPromise) {
           root._waitingFor = null;
         }
@@ -8418,7 +6816,7 @@ function createDBCore(db, IdbKeyRange, tmpTrans) {
     const tableName = tableSchema.name;
     function mutate({ trans, type: type2, keys: keys2, values, range }) {
       return new Promise((resolve, reject) => {
-        resolve = wrap2(resolve);
+        resolve = wrap(resolve);
         const store = trans.objectStore(tableName);
         const outbound = store.keyPath == null;
         const isAddOrPut = type2 === "put" || type2 === "add";
@@ -8478,14 +6876,14 @@ function createDBCore(db, IdbKeyRange, tmpTrans) {
     }
     function openCursor2({ trans, values, query: query2, reverse, unique }) {
       return new Promise((resolve, reject) => {
-        resolve = wrap2(resolve);
+        resolve = wrap(resolve);
         const { index, range } = query2;
         const store = trans.objectStore(tableName);
         const source = index.isPrimaryKey ? store : store.index(index.name);
         const direction = reverse ? unique ? "prevunique" : "prev" : unique ? "nextunique" : "next";
         const req = values || !("openKeyCursor" in source) ? source.openCursor(makeIDBKeyRange(range), direction) : source.openKeyCursor(makeIDBKeyRange(range), direction);
         req.onerror = eventRejectHandler(reject);
-        req.onsuccess = wrap2((ev) => {
+        req.onsuccess = wrap((ev) => {
           const cursor = req.result;
           if (!cursor) {
             resolve(null);
@@ -8506,14 +6904,14 @@ function createDBCore(db, IdbKeyRange, tmpTrans) {
           };
           cursor.trans = trans;
           cursor.stop = cursor.continue = cursor.continuePrimaryKey = cursor.advance = doThrowCursorIsNotStarted;
-          cursor.fail = wrap2(reject);
+          cursor.fail = wrap(reject);
           cursor.next = function() {
             let gotOne = 1;
             return this.start(() => gotOne-- ? this.continue() : this.stop()).then(() => this);
           };
           cursor.start = (callback) => {
             const iterationPromise = new Promise((resolveIteration, rejectIteration) => {
-              resolveIteration = wrap2(resolveIteration);
+              resolveIteration = wrap(resolveIteration);
               req.onerror = eventRejectHandler(rejectIteration);
               cursor.fail = rejectIteration;
               cursor.stop = (value) => {
@@ -8536,7 +6934,7 @@ function createDBCore(db, IdbKeyRange, tmpTrans) {
                 cursor.stop();
               }
             };
-            req.onsuccess = wrap2((ev2) => {
+            req.onsuccess = wrap((ev2) => {
               req.onsuccess = guardedCallback;
               guardedCallback();
             });
@@ -8553,7 +6951,7 @@ function createDBCore(db, IdbKeyRange, tmpTrans) {
     function query(hasGetAll2) {
       return (request) => {
         return new Promise((resolve, reject) => {
-          resolve = wrap2(resolve);
+          resolve = wrap(resolve);
           const { trans, values, limit, query: query2 } = request;
           const nonInfinitLimit = limit === Infinity ? void 0 : limit;
           const { index, range } = query2;
@@ -8590,7 +6988,7 @@ function createDBCore(db, IdbKeyRange, tmpTrans) {
       mutate,
       getMany({ trans, keys: keys2 }) {
         return new Promise((resolve, reject) => {
-          resolve = wrap2(resolve);
+          resolve = wrap(resolve);
           const store = trans.objectStore(tableName);
           const length = keys2.length;
           const result = new Array(length);
@@ -8621,7 +7019,7 @@ function createDBCore(db, IdbKeyRange, tmpTrans) {
       },
       get({ trans, key }) {
         return new Promise((resolve, reject) => {
-          resolve = wrap2(resolve);
+          resolve = wrap(resolve);
           const store = trans.objectStore(tableName);
           const req = store.get(key);
           req.onsuccess = (event) => resolve(event.target.result);
@@ -8637,7 +7035,7 @@ function createDBCore(db, IdbKeyRange, tmpTrans) {
           const source = index.isPrimaryKey ? store : store.index(index.name);
           const idbKeyRange = makeIDBKeyRange(range);
           const req = idbKeyRange ? source.count(idbKeyRange) : source.count();
-          req.onsuccess = wrap2((ev) => resolve(ev.target.result));
+          req.onsuccess = wrap((ev) => resolve(ev.target.result));
           req.onerror = eventRejectHandler(reject);
         });
       }
@@ -9063,15 +7461,15 @@ function dexieOpen(db) {
     if (!req)
       throw new exceptions.MissingAPI();
     req.onerror = eventRejectHandler(reject);
-    req.onblocked = wrap2(db._fireOnBlocked);
-    req.onupgradeneeded = wrap2((e) => {
+    req.onblocked = wrap(db._fireOnBlocked);
+    req.onupgradeneeded = wrap((e) => {
       upgradeTransaction = req.transaction;
       if (state.autoSchema && !db._options.allowEmptyDB) {
         req.onerror = preventDefault;
         upgradeTransaction.abort();
         req.result.close();
         const delreq = indexedDB2.deleteDatabase(dbName);
-        delreq.onsuccess = delreq.onerror = wrap2(() => {
+        delreq.onsuccess = delreq.onerror = wrap(() => {
           reject(new exceptions.NoSuchDatabase(`Database ${dbName} doesnt exist`));
         });
       } else {
@@ -9082,7 +7480,7 @@ function dexieOpen(db) {
         runUpgraders(db, oldVer / 10, upgradeTransaction, reject);
       }
     }, reject);
-    req.onsuccess = wrap2(() => {
+    req.onsuccess = wrap(() => {
       upgradeTransaction = null;
       const idbdb = db._novip.idbdb = req.result;
       const objectStoreNames = slice(idbdb.objectStoreNames);
@@ -9101,11 +7499,11 @@ function dexieOpen(db) {
         } catch (e) {
         }
       connections.push(db);
-      idbdb.onversionchange = wrap2((ev) => {
+      idbdb.onversionchange = wrap((ev) => {
         state.vcFired = true;
         db.on("versionchange").fire(ev);
       });
-      idbdb.onclose = wrap2((ev) => {
+      idbdb.onclose = wrap((ev) => {
         db.on("close").fire(ev);
       });
       if (wasCreated)
@@ -10034,7 +8432,7 @@ var Dexie$1 = class _Dexie$1 {
       const doDelete = () => {
         this.close();
         var req = this._deps.indexedDB.deleteDatabase(this.name);
-        req.onsuccess = wrap2(() => {
+        req.onsuccess = wrap(() => {
           _onDatabaseDeleted(this._deps, this.name);
           resolve();
         });
@@ -10430,6 +8828,863 @@ function createStorageRepository() {
 }
 var database_default = createStorageRepository;
 
+// ../packages/sync/dist/src/request.js
+var serializableProperties = [
+  "method",
+  "referrer",
+  "referrerPolicy",
+  "mode",
+  "credentials",
+  "cache",
+  "redirect",
+  "integrity",
+  "keepalive"
+];
+var StorableRequest = class _StorableRequest {
+  _requestData;
+  /**
+   * Converts a Request object to a plain object that can be structured
+   * cloned or JSON-stringified.
+   *
+   * @param {Request} request
+   * @return {Promise<StorableRequest>}
+   */
+  static async fromRequest(request) {
+    const requestData = {
+      url: request.url,
+      headers: {}
+    };
+    if (request.method !== "GET") {
+      requestData.body = await request.clone().arrayBuffer();
+    }
+    for (const [key, value] of request.headers.entries()) {
+      requestData.headers[key] = value;
+    }
+    for (const prop of serializableProperties) {
+      if (request[prop] !== void 0) {
+        requestData[prop] = request[prop];
+      }
+    }
+    return new _StorableRequest(requestData);
+  }
+  /**
+   * Accepts an object of request data that can be used to construct a
+   * `Request` but can also be stored in IndexedDB.
+   *
+   * @param {Object} requestData An object of request data that includes the
+   *     `url` plus any relevant properties of
+   *     [requestInit]{@link https://fetch.spec.whatwg.org/#requestinit}.
+   */
+  constructor(requestData) {
+    if (requestData.mode === "navigate") {
+      requestData.mode = "same-origin";
+    }
+    this._requestData = requestData;
+  }
+  /**
+   * Returns a deep clone of the instances `_requestData` object.
+   *
+   * @return {Object}
+   */
+  toObject() {
+    const requestData = Object.assign({}, this._requestData);
+    requestData.headers = Object.assign({}, this._requestData.headers);
+    if (requestData.body) {
+      requestData.body = requestData.body.slice(0);
+    }
+    return requestData;
+  }
+  /**
+   * Converts this instance to a Request.
+   *
+   * @return {Request}
+   */
+  toRequest() {
+    return new Request(this._requestData.url, this._requestData);
+  }
+  /**
+   * Creates and returns a deep clone of the instance.
+   *
+   * @return {StorableRequest}
+   */
+  clone() {
+    return new _StorableRequest(this.toObject());
+  }
+};
+
+// ../node_modules/idb/build/wrap-idb-value.js
+var instanceOfAny = (object, constructors) => constructors.some((c) => object instanceof c);
+var idbProxyableTypes;
+var cursorAdvanceMethods;
+function getIdbProxyableTypes() {
+  return idbProxyableTypes || (idbProxyableTypes = [
+    IDBDatabase,
+    IDBObjectStore,
+    IDBIndex,
+    IDBCursor,
+    IDBTransaction
+  ]);
+}
+function getCursorAdvanceMethods() {
+  return cursorAdvanceMethods || (cursorAdvanceMethods = [
+    IDBCursor.prototype.advance,
+    IDBCursor.prototype.continue,
+    IDBCursor.prototype.continuePrimaryKey
+  ]);
+}
+var cursorRequestMap = /* @__PURE__ */ new WeakMap();
+var transactionDoneMap = /* @__PURE__ */ new WeakMap();
+var transactionStoreNamesMap = /* @__PURE__ */ new WeakMap();
+var transformCache = /* @__PURE__ */ new WeakMap();
+var reverseTransformCache = /* @__PURE__ */ new WeakMap();
+function promisifyRequest(request) {
+  const promise = new Promise((resolve, reject) => {
+    const unlisten = () => {
+      request.removeEventListener("success", success);
+      request.removeEventListener("error", error);
+    };
+    const success = () => {
+      resolve(wrap2(request.result));
+      unlisten();
+    };
+    const error = () => {
+      reject(request.error);
+      unlisten();
+    };
+    request.addEventListener("success", success);
+    request.addEventListener("error", error);
+  });
+  promise.then((value) => {
+    if (value instanceof IDBCursor) {
+      cursorRequestMap.set(value, request);
+    }
+  }).catch(() => {
+  });
+  reverseTransformCache.set(promise, request);
+  return promise;
+}
+function cacheDonePromiseForTransaction(tx) {
+  if (transactionDoneMap.has(tx))
+    return;
+  const done = new Promise((resolve, reject) => {
+    const unlisten = () => {
+      tx.removeEventListener("complete", complete);
+      tx.removeEventListener("error", error);
+      tx.removeEventListener("abort", error);
+    };
+    const complete = () => {
+      resolve();
+      unlisten();
+    };
+    const error = () => {
+      reject(tx.error || new DOMException("AbortError", "AbortError"));
+      unlisten();
+    };
+    tx.addEventListener("complete", complete);
+    tx.addEventListener("error", error);
+    tx.addEventListener("abort", error);
+  });
+  transactionDoneMap.set(tx, done);
+}
+var idbProxyTraps = {
+  get(target, prop, receiver) {
+    if (target instanceof IDBTransaction) {
+      if (prop === "done")
+        return transactionDoneMap.get(target);
+      if (prop === "objectStoreNames") {
+        return target.objectStoreNames || transactionStoreNamesMap.get(target);
+      }
+      if (prop === "store") {
+        return receiver.objectStoreNames[1] ? void 0 : receiver.objectStore(receiver.objectStoreNames[0]);
+      }
+    }
+    return wrap2(target[prop]);
+  },
+  set(target, prop, value) {
+    target[prop] = value;
+    return true;
+  },
+  has(target, prop) {
+    if (target instanceof IDBTransaction && (prop === "done" || prop === "store")) {
+      return true;
+    }
+    return prop in target;
+  }
+};
+function replaceTraps(callback) {
+  idbProxyTraps = callback(idbProxyTraps);
+}
+function wrapFunction(func) {
+  if (func === IDBDatabase.prototype.transaction && !("objectStoreNames" in IDBTransaction.prototype)) {
+    return function(storeNames, ...args) {
+      const tx = func.call(unwrap(this), storeNames, ...args);
+      transactionStoreNamesMap.set(tx, storeNames.sort ? storeNames.sort() : [storeNames]);
+      return wrap2(tx);
+    };
+  }
+  if (getCursorAdvanceMethods().includes(func)) {
+    return function(...args) {
+      func.apply(unwrap(this), args);
+      return wrap2(cursorRequestMap.get(this));
+    };
+  }
+  return function(...args) {
+    return wrap2(func.apply(unwrap(this), args));
+  };
+}
+function transformCachableValue(value) {
+  if (typeof value === "function")
+    return wrapFunction(value);
+  if (value instanceof IDBTransaction)
+    cacheDonePromiseForTransaction(value);
+  if (instanceOfAny(value, getIdbProxyableTypes()))
+    return new Proxy(value, idbProxyTraps);
+  return value;
+}
+function wrap2(value) {
+  if (value instanceof IDBRequest)
+    return promisifyRequest(value);
+  if (transformCache.has(value))
+    return transformCache.get(value);
+  const newValue = transformCachableValue(value);
+  if (newValue !== value) {
+    transformCache.set(value, newValue);
+    reverseTransformCache.set(newValue, value);
+  }
+  return newValue;
+}
+var unwrap = (value) => reverseTransformCache.get(value);
+
+// ../node_modules/idb/build/index.js
+function openDB(name, version, { blocked, upgrade, blocking, terminated } = {}) {
+  const request = indexedDB.open(name, version);
+  const openPromise = wrap2(request);
+  if (upgrade) {
+    request.addEventListener("upgradeneeded", (event) => {
+      upgrade(wrap2(request.result), event.oldVersion, event.newVersion, wrap2(request.transaction), event);
+    });
+  }
+  if (blocked) {
+    request.addEventListener("blocked", (event) => blocked(
+      // Casting due to https://github.com/microsoft/TypeScript-DOM-lib-generator/pull/1405
+      event.oldVersion,
+      event.newVersion,
+      event
+    ));
+  }
+  openPromise.then((db) => {
+    if (terminated)
+      db.addEventListener("close", () => terminated());
+    if (blocking) {
+      db.addEventListener("versionchange", (event) => blocking(event.oldVersion, event.newVersion, event));
+    }
+  }).catch(() => {
+  });
+  return openPromise;
+}
+var readMethods = ["get", "getKey", "getAll", "getAllKeys", "count"];
+var writeMethods = ["put", "add", "delete", "clear"];
+var cachedMethods = /* @__PURE__ */ new Map();
+function getMethod(target, prop) {
+  if (!(target instanceof IDBDatabase && !(prop in target) && typeof prop === "string")) {
+    return;
+  }
+  if (cachedMethods.get(prop))
+    return cachedMethods.get(prop);
+  const targetFuncName = prop.replace(/FromIndex$/, "");
+  const useIndex = prop !== targetFuncName;
+  const isWrite = writeMethods.includes(targetFuncName);
+  if (
+    // Bail if the target doesn't exist on the target. Eg, getAll isn't in Edge.
+    !(targetFuncName in (useIndex ? IDBIndex : IDBObjectStore).prototype) || !(isWrite || readMethods.includes(targetFuncName))
+  ) {
+    return;
+  }
+  const method = async function(storeName, ...args) {
+    const tx = this.transaction(storeName, isWrite ? "readwrite" : "readonly");
+    let target2 = tx.store;
+    if (useIndex)
+      target2 = target2.index(args.shift());
+    return (await Promise.all([
+      target2[targetFuncName](...args),
+      isWrite && tx.done
+    ]))[0];
+  };
+  cachedMethods.set(prop, method);
+  return method;
+}
+replaceTraps((oldTraps) => ({
+  ...oldTraps,
+  get: (target, prop, receiver) => getMethod(target, prop) || oldTraps.get(target, prop, receiver),
+  has: (target, prop) => !!getMethod(target, prop) || oldTraps.has(target, prop)
+}));
+
+// ../packages/sync/dist/src/db.js
+var DB_VERSION = 3;
+var DB_NAME = "remix-pwa-sync";
+var REQUEST_OBJECT_STORE_NAME = "failed-requests";
+var QUEUE_NAME_INDEX = "queueName";
+var QueueDb = class {
+  _db = null;
+  /**
+   * Add QueueStoreEntry to underlying db.
+   *
+   * @param {UnidentifiedQueueStoreEntry} entry
+   */
+  async addEntry(entry2) {
+    const db = await this.getDb();
+    const tx = db.transaction(REQUEST_OBJECT_STORE_NAME, "readwrite", {
+      durability: "relaxed"
+    });
+    await tx.store.add(entry2);
+    await tx.done;
+  }
+  /**
+   * Returns the first entry id in the ObjectStore.
+   *
+   * @return {number | undefined}
+   */
+  async getFirstEntryId() {
+    const db = await this.getDb();
+    const cursor = await db.transaction(REQUEST_OBJECT_STORE_NAME).store.openCursor();
+    return cursor?.value.id;
+  }
+  /**
+   * Get all the entries filtered by index
+   *
+   * @param queueName
+   * @return {Promise<QueueStoreEntry[]>}
+   */
+  async getAllEntriesByQueueName(queueName) {
+    const db = await this.getDb();
+    const results = await db.getAllFromIndex(REQUEST_OBJECT_STORE_NAME, QUEUE_NAME_INDEX, IDBKeyRange.only(queueName));
+    return results || new Array();
+  }
+  /**
+   * Returns the number of entries filtered by index
+   *
+   * @param queueName
+   * @return {Promise<number>}
+   */
+  async getEntryCountByQueueName(queueName) {
+    const db = await this.getDb();
+    return db.countFromIndex(REQUEST_OBJECT_STORE_NAME, QUEUE_NAME_INDEX, IDBKeyRange.only(queueName));
+  }
+  /**
+   * Deletes a single entry by id.
+   *
+   * @param {number} id the id of the entry to be deleted
+   */
+  async deleteEntry(id) {
+    const db = await this.getDb();
+    await db.delete(REQUEST_OBJECT_STORE_NAME, id);
+  }
+  /**
+   *
+   * @param queueName
+   * @returns {Promise<QueueStoreEntry | undefined>}
+   */
+  async getFirstEntryByQueueName(queueName) {
+    return await this.getEndEntryFromIndex(IDBKeyRange.only(queueName), "next");
+  }
+  /**
+   *
+   * @param queueName
+   * @returns {Promise<QueueStoreEntry | undefined>}
+   */
+  async getLastEntryByQueueName(queueName) {
+    return await this.getEndEntryFromIndex(IDBKeyRange.only(queueName), "prev");
+  }
+  /**
+   * Returns either the first or the last entries, depending on direction.
+   * Filtered by index.
+   *
+   * @param {IDBCursorDirection} direction
+   * @param {IDBKeyRange} query
+   * @return {Promise<QueueStoreEntry | undefined>}
+   * @private
+   */
+  async getEndEntryFromIndex(query, direction) {
+    const db = await this.getDb();
+    const cursor = await db.transaction(REQUEST_OBJECT_STORE_NAME).store.index(QUEUE_NAME_INDEX).openCursor(query, direction);
+    return cursor?.value;
+  }
+  /**
+   * Returns an open connection to the database.
+   *
+   * @private
+   */
+  async getDb() {
+    if (!this._db) {
+      this._db = await openDB(DB_NAME, DB_VERSION, {
+        upgrade: this._upgradeDb
+      });
+    }
+    return this._db;
+  }
+  /**
+   * Upgrades QueueDB
+   *
+   * @param {IDBPDatabase<QueueDBSchema>} db
+   * @param {number} oldVersion
+   * @private
+   */
+  _upgradeDb(db, oldVersion) {
+    if (oldVersion > 0 && oldVersion < DB_VERSION) {
+      if (db.objectStoreNames.contains(REQUEST_OBJECT_STORE_NAME)) {
+        db.deleteObjectStore(REQUEST_OBJECT_STORE_NAME);
+      }
+    }
+    const objStore = db.createObjectStore(REQUEST_OBJECT_STORE_NAME, {
+      autoIncrement: true,
+      keyPath: "id"
+    });
+    objStore.createIndex(QUEUE_NAME_INDEX, QUEUE_NAME_INDEX, { unique: false });
+  }
+};
+
+// ../packages/sync/dist/src/store.js
+var QueueStore = class {
+  _queueName;
+  _queueDb;
+  /**
+   * Associates this instance with a Queue instance, so entries added can be
+   * identified by their queue name.
+   *
+   * @param {string} queueName
+   */
+  constructor(queueName) {
+    this._queueName = queueName;
+    this._queueDb = new QueueDb();
+  }
+  /**
+   * Append an entry last in the queue.
+   *
+   * @param {Object} entry
+   * @param {Object} entry.requestData
+   * @param {number} [entry.timestamp]
+   * @param {Object} [entry.metadata]
+   */
+  async pushEntry(entry2) {
+    delete entry2.id;
+    entry2.queueName = this._queueName;
+    await this._queueDb.addEntry(entry2);
+  }
+  /**
+   * Prepend an entry first in the queue.
+   *
+   * @param {Object} entry
+   * @param {Object} entry.requestData
+   * @param {number} [entry.timestamp]
+   * @param {Object} [entry.metadata]
+   */
+  async unshiftEntry(entry2) {
+    const firstId = await this._queueDb.getFirstEntryId();
+    if (firstId) {
+      entry2.id = firstId - 1;
+    } else {
+      delete entry2.id;
+    }
+    entry2.queueName = this._queueName;
+    await this._queueDb.addEntry(entry2);
+  }
+  /**
+   * Removes and returns the last entry in the queue matching the `queueName`.
+   *
+   * @return {Promise<QueueStoreEntry|undefined>}
+   */
+  async popEntry() {
+    return this._removeEntry(await this._queueDb.getLastEntryByQueueName(this._queueName));
+  }
+  /**
+   * Removes and returns the first entry in the queue matching the `queueName`.
+   *
+   * @return {Promise<QueueStoreEntry|undefined>}
+   */
+  async shiftEntry() {
+    return this._removeEntry(await this._queueDb.getFirstEntryByQueueName(this._queueName));
+  }
+  /**
+   * Returns all entries in the store matching the `queueName`.
+   *
+   * @param {Object} options See {@link workbox-background-sync.Queue~getAll}
+   * @return {Promise<Array<Object>>}
+   */
+  async getAll() {
+    return await this._queueDb.getAllEntriesByQueueName(this._queueName);
+  }
+  /**
+   * Returns the number of entries in the store matching the `queueName`.
+   *
+   * @param {Object} options See {@link workbox-background-sync.Queue~size}
+   * @return {Promise<number>}
+   */
+  async size() {
+    return await this._queueDb.getEntryCountByQueueName(this._queueName);
+  }
+  /**
+   * Deletes the entry for the given ID.
+   *
+   * WARNING: this method does not ensure the deleted entry belongs to this
+   * queue (i.e. matches the `queueName`). But this limitation is acceptable
+   * as this class is not publicly exposed. An additional check would make
+   * this method slower than it needs to be.
+   *
+   * @param {number} id
+   */
+  async deleteEntry(id) {
+    await this._queueDb.deleteEntry(id);
+  }
+  /**
+   * Removes and returns the first or last entry in the queue (based on the
+   * `direction` argument) matching the `queueName`.
+   *
+   * @return {Promise<QueueStoreEntry|undefined>}
+   * @private
+   */
+  async _removeEntry(entry2) {
+    if (entry2) {
+      await this.deleteEntry(entry2.id);
+    }
+    return entry2;
+  }
+};
+
+// ../packages/sync/dist/src/queue.js
+var TAG_PREFIX = "rp-sync";
+var MAX_RETENTION_TIME = 60 * 24 * 7;
+var queueNames = /* @__PURE__ */ new Set();
+var convertEntry = (queueStoreEntry) => {
+  const queueEntry = {
+    request: new StorableRequest(queueStoreEntry.requestData).toRequest(),
+    timestamp: queueStoreEntry.timestamp
+  };
+  if (queueStoreEntry.metadata) {
+    queueEntry.metadata = queueStoreEntry.metadata;
+  }
+  return queueEntry;
+};
+var Queue = class {
+  _name;
+  _onSync;
+  _maxRetentionTime;
+  _queueStore;
+  _syncInProgress = false;
+  _requestsAddedDuringSync = false;
+  /**
+   * Creates an instance of Queue with the given options
+   *
+   * @param {string} name The unique name for this queue. This name must be
+   *     unique as it's used to register sync events and store requests
+   *     in IndexedDB specific to this instance. An error will be thrown if
+   *     a duplicate name is detected.
+   * @param {Object} [options]
+   * @param {Function} [options.onSync] A function that gets invoked whenever
+   *     the 'sync' event fires. The function is invoked with an object
+   *     containing the `queue` property (referencing this instance), and you
+   *     can use the callback to customize the replay behavior of the queue.
+   *     When not set the `replayRequests()` method is called.
+   *     Note: if the replay fails after a sync event, make sure you throw an
+   *     error, so the browser knows to retry the sync event later.
+   * @param {number} [options.maxRetentionTime=7 days] The amount of time (in
+   *     minutes) a request may be retried. After this amount of time has
+   *     passed, the request will be deleted from the queue.
+   */
+  constructor(name, { maxRetentionTime, onSync } = {}) {
+    this._name = name;
+    this._onSync = onSync || this.replayRequests;
+    this._maxRetentionTime = maxRetentionTime || MAX_RETENTION_TIME;
+    this._queueStore = new QueueStore(this._name);
+    this._addSyncListener();
+  }
+  /**
+   * @return {string}
+   */
+  get name() {
+    return this._name;
+  }
+  /**
+   * Stores the passed request in IndexedDB (with its timestamp and any
+   * metadata) at the end of the queue.
+   *
+   * @param {QueueEntry} entry
+   * @param {Request} entry.request The request to store in the queue.
+   * @param {Object} [entry.metadata] Any metadata you want associated with the
+   *     stored request. When requests are replayed you'll have access to this
+   *     metadata object in case you need to modify the request beforehand.
+   * @param {number} [entry.timestamp] The timestamp (Epoch time in
+   *     milliseconds) when the request was first added to the queue. This is
+   *     used along with `maxRetentionTime` to remove outdated requests. In
+   *     general you don't need to set this value, as it's automatically set
+   *     for you (defaulting to `Date.now()`), but you can update it if you
+   *     don't want particular requests to expire.
+   */
+  async pushRequest(entry2) {
+    await this._addRequest(entry2, "push");
+  }
+  /**
+   * Stores the passed request in IndexedDB (with its timestamp and any
+   * metadata) at the beginning of the queue.
+   *
+   * @param {QueueEntry} entry
+   * @param {Request} entry.request The request to store in the queue.
+   * @param {Object} [entry.metadata] Any metadata you want associated with the
+   *     stored request. When requests are replayed you'll have access to this
+   *     metadata object in case you need to modify the request beforehand.
+   * @param {number} [entry.timestamp] The timestamp (Epoch time in
+   *     milliseconds) when the request was first added to the queue. This is
+   *     used along with `maxRetentionTime` to remove outdated requests. In
+   *     general you don't need to set this value, as it's automatically set
+   *     for you (defaulting to `Date.now()`), but you can update it if you
+   *     don't want particular requests to expire.
+   */
+  async unshiftRequest(entry2) {
+    await this._addRequest(entry2, "unshift");
+  }
+  /**
+   * Removes and returns the last request in the queue (along with its
+   * timestamp and any metadata). The returned object takes the form:
+   * `{request, timestamp, metadata}`.
+   *
+   * @return {Promise<QueueEntry | undefined>}
+   */
+  async popRequest() {
+    return this._removeRequest("pop");
+  }
+  /**
+   * Removes and returns the first request in the queue (along with its
+   * timestamp and any metadata). The returned object takes the form:
+   * `{request, timestamp, metadata}`.
+   *
+   * @return {Promise<QueueEntry | undefined>}
+   */
+  async shiftRequest() {
+    return this._removeRequest("shift");
+  }
+  /**
+   * Returns all the entries that have not expired (per `maxRetentionTime`).
+   * Any expired entries are removed from the queue.
+   *
+   * @return {Promise<Array<QueueEntry>>}
+   */
+  async getAll() {
+    const allEntries = await this._queueStore.getAll();
+    const now = Date.now();
+    const unexpiredEntries = [];
+    for (const entry2 of allEntries) {
+      const maxRetentionTimeInMs = this._maxRetentionTime * 60 * 1e3;
+      if (now - entry2.timestamp > maxRetentionTimeInMs) {
+        await this._queueStore.deleteEntry(entry2.id);
+      } else {
+        unexpiredEntries.push(convertEntry(entry2));
+      }
+    }
+    return unexpiredEntries;
+  }
+  /**
+   * Returns the number of entries present in the queue.
+   * Note that expired entries (per `maxRetentionTime`) are also included in this count.
+   *
+   * @return {Promise<number>}
+   */
+  async size() {
+    return await this._queueStore.size();
+  }
+  /**
+   * Adds the entry to the QueueStore and registers for a sync event.
+   *
+   * @param {Object} entry
+   * @param {Request} entry.request
+   * @param {Object} [entry.metadata]
+   * @param {number} [entry.timestamp=Date.now()]
+   * @param {string} operation ('push' or 'unshift')
+   * @private
+   */
+  async _addRequest({ metadata, request, timestamp = Date.now() }, operation) {
+    const storableRequest = await StorableRequest.fromRequest(request.clone());
+    const entry2 = {
+      requestData: storableRequest.toObject(),
+      timestamp
+    };
+    if (metadata) {
+      entry2.metadata = metadata;
+    }
+    switch (operation) {
+      case "push":
+        await this._queueStore.pushEntry(entry2);
+        break;
+      case "unshift":
+        await this._queueStore.unshiftEntry(entry2);
+        break;
+    }
+    if (true) {
+    }
+    if (this._syncInProgress) {
+      this._requestsAddedDuringSync = true;
+    } else {
+      await this.registerSync();
+    }
+  }
+  /**
+   * Removes and returns the first or last (depending on `operation`) entry
+   * from the QueueStore that's not older than the `maxRetentionTime`.
+   *
+   * @param {string} operation ('pop' or 'shift')
+   * @return {Object|undefined}
+   * @private
+   */
+  async _removeRequest(operation) {
+    const now = Date.now();
+    let entry2;
+    switch (operation) {
+      case "pop":
+        entry2 = await this._queueStore.popEntry();
+        break;
+      case "shift":
+        entry2 = await this._queueStore.shiftEntry();
+        break;
+    }
+    if (entry2) {
+      const maxRetentionTimeInMs = this._maxRetentionTime * 60 * 1e3;
+      if (now - entry2.timestamp > maxRetentionTimeInMs) {
+        return this._removeRequest(operation);
+      }
+      return convertEntry(entry2);
+    } else {
+      return void 0;
+    }
+  }
+  /**
+   * Loops through each request in the queue and attempts to re-fetch it.
+   * If any request fails to re-fetch, it's put back in the same position in
+   * the queue (which registers a retry for the next sync event).
+   */
+  async replayRequests() {
+    let entry2;
+    while (entry2 = await this.shiftRequest()) {
+      try {
+        await fetch(entry2.request.clone());
+        if (true) {
+        }
+      } catch (error) {
+        await this.unshiftRequest(entry2);
+        if (true) {
+        }
+      }
+    }
+    if (true) {
+    }
+  }
+  /**
+   * Registers a sync event with a tag unique to this instance.
+   */
+  async registerSync() {
+    if ("sync" in self.registration) {
+      try {
+        await self.registration.sync.register(`${TAG_PREFIX}:${this._name}`);
+      } catch (err) {
+      }
+    }
+  }
+  /**
+   * In sync-supporting browsers, this adds a listener for the sync event.
+   * In non-sync-supporting browsers, or if _forceSyncFallback is true, this
+   * will retry the queue on service worker startup.
+   *
+   * @private
+   */
+  _addSyncListener() {
+    if ("sync" in self.registration) {
+      self.addEventListener("sync", (event) => {
+        if (event.tag === `${TAG_PREFIX}:${this._name}`) {
+          const syncComplete = async () => {
+            this._syncInProgress = true;
+            let syncError;
+            try {
+              await this._onSync({ queue: this });
+            } catch (error) {
+              if (error instanceof Error) {
+                syncError = error;
+                throw syncError;
+              }
+            } finally {
+              if (this._requestsAddedDuringSync && !(syncError && !event.lastChance)) {
+                await this.registerSync();
+              }
+              this._syncInProgress = false;
+              this._requestsAddedDuringSync = false;
+            }
+          };
+          event.waitUntil(syncComplete());
+        }
+      });
+    } else {
+      void this._onSync({ queue: this });
+    }
+  }
+  /**
+   * Returns the set of queue names. This is primarily used to reset the list
+   * of queue names in tests.
+   *
+   * @return {Set<string>}
+   *
+   * @private
+   */
+  static get _queueNames() {
+    return queueNames;
+  }
+};
+
+// ../packages/sync/dist/src/export.js
+var SyncQueue = class {
+  static queues = /* @__PURE__ */ new Map();
+  static createQueue(name) {
+    if (this.queues.has(name)) {
+      throw new Error(`Queue "${name}" already exists`);
+    }
+    const _q = new Queue(name);
+    this.queues.set(name, _q);
+    return _q;
+  }
+  static getQueue(name) {
+    return this.queues.get(name);
+  }
+  static removeQueue(name) {
+    this.queues.delete(name);
+  }
+  static async getQueueNames() {
+    return Array.from(this.queues.keys());
+  }
+  static async getQueueSizes() {
+    const sizes = /* @__PURE__ */ new Map();
+    for (const [name, queue] of this.queues) {
+      sizes.set(name, await queue.size());
+    }
+    return sizes;
+  }
+  /* WIP */
+  async getQueueByTag(tag) {
+    for (const [name, queue] of /* @__PURE__ */ new Map()) {
+      if (name === tag) {
+        return queue;
+      }
+    }
+    return void 0;
+  }
+};
+var queueToServer = ({ name, request }) => {
+  let queue;
+  try {
+    queue = SyncQueue.createQueue(name);
+  } catch (e) {
+    queue = SyncQueue.getQueue(name);
+  }
+  queue.pushRequest({ request });
+};
+var registerQueue = (name) => {
+  SyncQueue.createQueue(name);
+};
+
 // app/entry.worker.ts
 var PAGES = "page-cache";
 var DATA = "data-cache";
@@ -10445,7 +9700,6 @@ var getLoadContext = () => {
   };
 };
 var defaultFetchHandler = ({ context, request }) => {
-  const type2 = matchRequest(request);
   return context.fetchFromServer();
 };
 self.addEventListener("install", (event) => {
@@ -10459,10 +9713,768 @@ self.addEventListener("message", (event) => {
 });
 
 // entry-module:@remix-pwa/build/magic
+var route0 = __toESM(require_root());
+
+// routes-module:routes/basic-caching.tsx?worker
+var basic_caching_exports = {};
+__export(basic_caching_exports, {
+  hasWorkerAction: () => hasWorkerAction,
+  hasWorkerLoader: () => hasWorkerLoader,
+  workerLoader: () => workerLoader
+});
+
+// ../packages/strategy/dist/src/utils.js
+var isHttpRequest = (request) => {
+  if (request instanceof Request) {
+    return request.url.startsWith("http");
+  }
+  return request.toString().startsWith("http");
+};
+var toJSON = async (response) => {
+  if (response instanceof Response) {
+    return await response.clone().json();
+  }
+  return response;
+};
+
+// ../packages/strategy/dist/src/cacheFirst.js
+var cacheFirst = async ({ cache: cacheName, cacheOptions, fetchDidFail = void 0 }) => {
+  return async (request) => {
+    if (!isHttpRequest(request)) {
+      return new Response("Not a HTTP request", { status: 403 });
+    }
+    let remixCache;
+    if (typeof cacheName === "string") {
+      Storage.init();
+      remixCache = Storage.has(cacheName) ? Storage.get(cacheName) : createCache({ name: cacheName, ...cacheOptions });
+    } else {
+      Storage.init();
+      remixCache = cacheName;
+    }
+    const response = await remixCache.match(request);
+    if (!response) {
+      try {
+        const networkResponse = await fetch(request);
+        remixCache.put(request, networkResponse.clone());
+        return networkResponse;
+      } catch (err) {
+        if (fetchDidFail) {
+          await Promise.all(fetchDidFail.map((cb) => cb()));
+        }
+        throw err;
+      }
+    }
+    return response;
+  };
+};
+
+// ../packages/strategy/dist/src/cacheOnly.js
+var cacheOnly = async ({ cache: cacheName, cacheMatchOptions: matchOptions = { ignoreSearch: false, ignoreVary: false, ignoreMethod: true }, cacheOptions }) => {
+  return async (request) => {
+    if (!isHttpRequest(request)) {
+      return new Response("Not a HTTP request", { status: 403 });
+    }
+    let remixCache;
+    if (typeof cacheName === "string") {
+      Storage.init();
+      remixCache = Storage.has(cacheName) ? Storage.get(cacheName) : createCache({ name: cacheName, ...cacheOptions });
+    } else {
+      Storage.init();
+      remixCache = cacheName;
+    }
+    const response = await remixCache.match(request, matchOptions);
+    if (!response) {
+      const req = request instanceof Request ? request : new Request(request.toString());
+      const isGet = req.method.toLowerCase() === "get";
+      return new Response(JSON.stringify({
+        message: isGet ? "Not Found" : "No idea what you are trying to accomplish but this ain't it!"
+      }), {
+        status: isGet ? 404 : 400,
+        statusText: isGet ? "Not Found" : "Bad Request"
+      });
+    }
+    return response.clone();
+  };
+};
+
+// ../packages/strategy/dist/src/networkFirst.js
+var networkFirst = async ({ cache: cacheName, cacheOptions, fetchDidFail = void 0, fetchDidSucceed = void 0, networkTimeoutSeconds = 10 }) => {
+  return async (request) => {
+    if (!isHttpRequest(request)) {
+      return new Response("Not a HTTP request", { status: 403 });
+    }
+    let remixCache;
+    if (typeof cacheName === "string") {
+      Storage.init();
+      remixCache = Storage.has(cacheName) ? Storage.get(cacheName) : createCache({ name: cacheName, ...cacheOptions });
+    } else {
+      Storage.init();
+      remixCache = cacheName;
+    }
+    try {
+      const timeoutPromise = networkTimeoutSeconds !== Infinity ? new Promise((_resolve, reject) => {
+        setTimeout(() => {
+          reject(new Error(`Network timed out after ${networkTimeoutSeconds} seconds`));
+        }, networkTimeoutSeconds * 1e3);
+      }) : null;
+      const response = timeoutPromise ? await Promise.race([fetch(request), timeoutPromise]) : await fetch(request);
+      if (response) {
+        if (fetchDidSucceed) {
+          await Promise.all(fetchDidSucceed.map((cb) => cb()));
+        }
+        await remixCache.put(request, response.clone());
+        return response.clone();
+      }
+    } catch (error) {
+      if (fetchDidFail) {
+        await Promise.all(fetchDidFail.map((cb) => cb()));
+      }
+      const cachedResponse = await remixCache.match(request);
+      if (cachedResponse) {
+        return cachedResponse.clone();
+      }
+      return new Response(JSON.stringify({ message: "Network Error" }), {
+        status: 500
+      });
+    }
+    throw new Error("Failed to fetch. Network timed out.");
+  };
+};
+
+// ../packages/strategy/dist/src/staleWhileRevalidate.js
+var staleWhileRevalidate = async ({ cache: cacheName, cacheOptions, fetchDidFail = void 0 }) => {
+  return async (request) => {
+    if (!isHttpRequest(request)) {
+      return new Response("Not a HTTP request", { status: 403 });
+    }
+    let remixCache;
+    if (typeof cacheName === "string") {
+      Storage.init();
+      remixCache = Storage.has(cacheName) ? Storage.get(cacheName) : createCache({ name: cacheName, ...cacheOptions });
+    } else {
+      Storage.init();
+      remixCache = cacheName;
+    }
+    return remixCache.match(request).then(async (response) => {
+      const fetchPromise = fetch(request).then(async (networkResponse) => {
+        await remixCache.put(request, networkResponse.clone());
+        return networkResponse;
+      }).catch(async (_err) => {
+        if (fetchDidFail) {
+          await Promise.all(fetchDidFail.map((cb) => cb()));
+        }
+        return new Response(JSON.stringify({ error: "Network request failed" }), {
+          status: 500,
+          statusText: "Network request failed"
+        });
+      });
+      return response ? response.clone() : fetchPromise;
+    });
+  };
+};
+
+// app/routes/basic-caching.tsx
+var import_node = __toESM(require_node());
+var import_react = __toESM(require_react());
+var import_react2 = __toESM(require_react2());
+var import_jsx_runtime = __toESM(require_jsx_runtime());
+var workerLoader = async ({ context }) => {
+  const customStrategy = await cacheFirst({
+    cache: "basic-caching",
+    cacheOptions: {
+      maxItems: 5,
+      ttl: 30 * 1e3
+      // 30 seconds time-to-live (maxAge)
+    },
+    fetchDidFail: [
+      () => console.log("Fetch failed!")
+    ]
+  });
+  let response = await customStrategy(context.event.request);
+  let data = await toJSON(response);
+  const date = /* @__PURE__ */ new Date();
+  return new Response(JSON.stringify({
+    data: data.data,
+    // Only this shows an updated time, the other one doesn't because it's cached.
+    // Try deleting the cache and reloading the page to see the difference.
+    message: `Server already up and running! Time: ${date.getMinutes()}:${date.getSeconds()}`
+  }), {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+};
+
+// routes-module:routes/basic-caching.tsx?worker
+var hasWorkerAction = false;
+var hasWorkerLoader = true;
+
+// routes-module:routes/_app.flights.tsx?worker
+var app_flights_exports = {};
+__export(app_flights_exports, {
+  hasWorkerAction: () => hasWorkerAction2,
+  hasWorkerLoader: () => hasWorkerLoader2,
+  workerAction: () => workerAction,
+  workerLoader: () => workerLoader2
+});
+
+// ../node_modules/@remix-run/router/dist/router.js
+function _extends() {
+  _extends = Object.assign ? Object.assign.bind() : function(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+    return target;
+  };
+  return _extends.apply(this, arguments);
+}
+var Action;
+(function(Action3) {
+  Action3["Pop"] = "POP";
+  Action3["Push"] = "PUSH";
+  Action3["Replace"] = "REPLACE";
+})(Action || (Action = {}));
+function invariant(value, message) {
+  if (value === false || value === null || typeof value === "undefined") {
+    throw new Error(message);
+  }
+}
+function warning(cond, message) {
+  if (!cond) {
+    if (typeof console !== "undefined")
+      console.warn(message);
+    try {
+      throw new Error(message);
+    } catch (e) {
+    }
+  }
+}
+var ResultType;
+(function(ResultType3) {
+  ResultType3["data"] = "data";
+  ResultType3["deferred"] = "deferred";
+  ResultType3["redirect"] = "redirect";
+  ResultType3["error"] = "error";
+})(ResultType || (ResultType = {}));
+function matchPath(pattern, pathname) {
+  if (typeof pattern === "string") {
+    pattern = {
+      path: pattern,
+      caseSensitive: false,
+      end: true
+    };
+  }
+  let [matcher, paramNames] = compilePath(pattern.path, pattern.caseSensitive, pattern.end);
+  let match = pathname.match(matcher);
+  if (!match)
+    return null;
+  let matchedPathname = match[0];
+  let pathnameBase = matchedPathname.replace(/(.)\/+$/, "$1");
+  let captureGroups = match.slice(1);
+  let params = paramNames.reduce((memo, paramName, index) => {
+    if (paramName === "*") {
+      let splatValue = captureGroups[index] || "";
+      pathnameBase = matchedPathname.slice(0, matchedPathname.length - splatValue.length).replace(/(.)\/+$/, "$1");
+    }
+    memo[paramName] = safelyDecodeURIComponent(captureGroups[index] || "", paramName);
+    return memo;
+  }, {});
+  return {
+    params,
+    pathname: matchedPathname,
+    pathnameBase,
+    pattern
+  };
+}
+function compilePath(path, caseSensitive, end) {
+  if (caseSensitive === void 0) {
+    caseSensitive = false;
+  }
+  if (end === void 0) {
+    end = true;
+  }
+  warning(path === "*" || !path.endsWith("*") || path.endsWith("/*"), 'Route path "' + path + '" will be treated as if it were ' + ('"' + path.replace(/\*$/, "/*") + '" because the `*` character must ') + "always follow a `/` in the pattern. To get rid of this warning, " + ('please change the route path to "' + path.replace(/\*$/, "/*") + '".'));
+  let paramNames = [];
+  let regexpSource = "^" + path.replace(/\/*\*?$/, "").replace(/^\/*/, "/").replace(/[\\.*+^$?{}|()[\]]/g, "\\$&").replace(/\/:(\w+)/g, (_, paramName) => {
+    paramNames.push(paramName);
+    return "/([^\\/]+)";
+  });
+  if (path.endsWith("*")) {
+    paramNames.push("*");
+    regexpSource += path === "*" || path === "/*" ? "(.*)$" : "(?:\\/(.+)|\\/*)$";
+  } else if (end) {
+    regexpSource += "\\/*$";
+  } else if (path !== "" && path !== "/") {
+    regexpSource += "(?:(?=\\/|$))";
+  } else
+    ;
+  let matcher = new RegExp(regexpSource, caseSensitive ? void 0 : "i");
+  return [matcher, paramNames];
+}
+function safelyDecodeURIComponent(value, paramName) {
+  try {
+    return decodeURIComponent(value);
+  } catch (error) {
+    warning(false, 'The value for the URL param "' + paramName + '" will not be decoded because' + (' the string "' + value + '" is a malformed URL segment. This is probably') + (" due to a bad percent encoding (" + error + ")."));
+    return value;
+  }
+}
+var json3 = function json4(data, init) {
+  if (init === void 0) {
+    init = {};
+  }
+  let responseInit = typeof init === "number" ? {
+    status: init
+  } : init;
+  let headers = new Headers(responseInit.headers);
+  if (!headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json; charset=utf-8");
+  }
+  return new Response(JSON.stringify(data), _extends({}, responseInit, {
+    headers
+  }));
+};
+var AbortedDeferredError = class extends Error {
+};
+var DeferredData = class {
+  constructor(data, responseInit) {
+    this.pendingKeysSet = /* @__PURE__ */ new Set();
+    this.subscribers = /* @__PURE__ */ new Set();
+    this.deferredKeys = [];
+    invariant(data && typeof data === "object" && !Array.isArray(data), "defer() only accepts plain objects");
+    let reject;
+    this.abortPromise = new Promise((_, r) => reject = r);
+    this.controller = new AbortController();
+    let onAbort = () => reject(new AbortedDeferredError("Deferred data aborted"));
+    this.unlistenAbortSignal = () => this.controller.signal.removeEventListener("abort", onAbort);
+    this.controller.signal.addEventListener("abort", onAbort);
+    this.data = Object.entries(data).reduce((acc, _ref) => {
+      let [key, value] = _ref;
+      return Object.assign(acc, {
+        [key]: this.trackPromise(key, value)
+      });
+    }, {});
+    if (this.done) {
+      this.unlistenAbortSignal();
+    }
+    this.init = responseInit;
+  }
+  trackPromise(key, value) {
+    if (!(value instanceof Promise)) {
+      return value;
+    }
+    this.deferredKeys.push(key);
+    this.pendingKeysSet.add(key);
+    let promise = Promise.race([value, this.abortPromise]).then((data) => this.onSettle(promise, key, void 0, data), (error) => this.onSettle(promise, key, error));
+    promise.catch(() => {
+    });
+    Object.defineProperty(promise, "_tracked", {
+      get: () => true
+    });
+    return promise;
+  }
+  onSettle(promise, key, error, data) {
+    if (this.controller.signal.aborted && error instanceof AbortedDeferredError) {
+      this.unlistenAbortSignal();
+      Object.defineProperty(promise, "_error", {
+        get: () => error
+      });
+      return Promise.reject(error);
+    }
+    this.pendingKeysSet.delete(key);
+    if (this.done) {
+      this.unlistenAbortSignal();
+    }
+    if (error === void 0 && data === void 0) {
+      let undefinedError = new Error('Deferred data for key "' + key + '" resolved/rejected with `undefined`, you must resolve/reject with a value or `null`.');
+      Object.defineProperty(promise, "_error", {
+        get: () => undefinedError
+      });
+      this.emit(false, key);
+      return Promise.reject(undefinedError);
+    }
+    if (data === void 0) {
+      Object.defineProperty(promise, "_error", {
+        get: () => error
+      });
+      this.emit(false, key);
+      return Promise.reject(error);
+    }
+    Object.defineProperty(promise, "_data", {
+      get: () => data
+    });
+    this.emit(false, key);
+    return data;
+  }
+  emit(aborted, settledKey) {
+    this.subscribers.forEach((subscriber) => subscriber(aborted, settledKey));
+  }
+  subscribe(fn) {
+    this.subscribers.add(fn);
+    return () => this.subscribers.delete(fn);
+  }
+  cancel() {
+    this.controller.abort();
+    this.pendingKeysSet.forEach((v, k2) => this.pendingKeysSet.delete(k2));
+    this.emit(true);
+  }
+  async resolveData(signal) {
+    let aborted = false;
+    if (!this.done) {
+      let onAbort = () => this.cancel();
+      signal.addEventListener("abort", onAbort);
+      aborted = await new Promise((resolve) => {
+        this.subscribe((aborted2) => {
+          signal.removeEventListener("abort", onAbort);
+          if (aborted2 || this.done) {
+            resolve(aborted2);
+          }
+        });
+      });
+    }
+    return aborted;
+  }
+  get done() {
+    return this.pendingKeysSet.size === 0;
+  }
+  get unwrappedData() {
+    invariant(this.data !== null && this.done, "Can only unwrap data on initialized and settled deferreds");
+    return Object.entries(this.data).reduce((acc, _ref2) => {
+      let [key, value] = _ref2;
+      return Object.assign(acc, {
+        [key]: unwrapTrackedPromise(value)
+      });
+    }, {});
+  }
+  get pendingKeys() {
+    return Array.from(this.pendingKeysSet);
+  }
+};
+function isTrackedPromise(value) {
+  return value instanceof Promise && value._tracked === true;
+}
+function unwrapTrackedPromise(value) {
+  if (!isTrackedPromise(value)) {
+    return value;
+  }
+  if (value._error) {
+    throw value._error;
+  }
+  return value._data;
+}
+var defer = function defer2(data, init) {
+  if (init === void 0) {
+    init = {};
+  }
+  let responseInit = typeof init === "number" ? {
+    status: init
+  } : init;
+  return new DeferredData(data, responseInit);
+};
+var redirect2 = function redirect3(url, init) {
+  if (init === void 0) {
+    init = 302;
+  }
+  let responseInit = init;
+  if (typeof responseInit === "number") {
+    responseInit = {
+      status: responseInit
+    };
+  } else if (typeof responseInit.status === "undefined") {
+    responseInit.status = 302;
+  }
+  let headers = new Headers(responseInit.headers);
+  headers.set("Location", url);
+  return new Response(null, _extends({}, responseInit, {
+    headers
+  }));
+};
+function isRouteErrorResponse(error) {
+  return error != null && typeof error.status === "number" && typeof error.statusText === "string" && typeof error.internal === "boolean" && "data" in error;
+}
+var validMutationMethodsArr = ["post", "put", "patch", "delete"];
+var validMutationMethods = new Set(validMutationMethodsArr);
+var validRequestMethodsArr = ["get", ...validMutationMethodsArr];
+var validRequestMethods = new Set(validRequestMethodsArr);
+var UNSAFE_DEFERRED_SYMBOL = Symbol("deferred");
+
+// app/routes/_app.flights.tsx
+var import_react3 = __toESM(require_react());
+var import_react4 = __toESM(require_react2());
+var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+var workerAction = async ({ request, context }) => {
+  const formData = await request.formData();
+  const { database, fetchFromServer } = context;
+  try {
+    fetchFromServer();
+    await database.selections.add(Object.fromEntries(formData.entries()));
+    return redirect2("/selection");
+  } catch (error) {
+    throw json3({ message: "Something went wrong", error }, 500);
+  }
+};
+var workerLoader2 = async ({ context }) => {
+  try {
+    const { fetchFromServer, database } = context;
+    const [serverResult, clientResult] = await Promise.allSettled([
+      // NOTE: If the user decides to use the server loader, must use the `context.event.request` object instead of `request`.
+      // This is because we strip the `_data` and `index` from the request object just to follow what Remix does.
+      fetchFromServer().then((response) => response.json()).then(({ flights: flights2 }) => flights2),
+      database.flights.toArray()
+    ]);
+    const flights = serverResult.value || clientResult.value;
+    if (serverResult.value) {
+      await database.flights.bulkPut(
+        flights.map((f2) => ({
+          ...f2,
+          flightNumber: `${f2.flightNumber.split("-")[0].trim()} - client`
+        }))
+      );
+    }
+    return defer({ flights });
+  } catch (error) {
+    console.error(error);
+    throw json3({ message: "Something went wrong", error }, 500);
+  }
+};
+
+// routes-module:routes/_app.flights.tsx?worker
+var hasWorkerAction2 = true;
+var hasWorkerLoader2 = true;
+
+// routes-module:routes/basic-action.tsx?worker
+var basic_action_exports = {};
+__export(basic_action_exports, {
+  hasWorkerAction: () => hasWorkerAction3,
+  hasWorkerLoader: () => hasWorkerLoader3,
+  workerAction: () => workerAction2
+});
+
+// app/routes/basic-action.tsx
+var import_node2 = __toESM(require_node());
+var import_react5 = __toESM(require_react());
+var import_jsx_runtime3 = __toESM(require_jsx_runtime());
+var workerAction2 = async ({ context }) => {
+  const { fetchFromServer } = context;
+  try {
+    await fetchFromServer();
+  } catch (error) {
+    console.error(error);
+  }
+  return new Response(JSON.stringify({
+    message: "Modified action response, Remix Actions are quite out of the picture here"
+  }), {
+    headers: {
+      "Content-Type": "application/json; charset=utf-8"
+    }
+  });
+};
+
+// routes-module:routes/basic-action.tsx?worker
+var hasWorkerAction3 = true;
+var hasWorkerLoader3 = false;
+
+// routes-module:routes/basic-loader.tsx?worker
+var basic_loader_exports = {};
+__export(basic_loader_exports, {
+  hasWorkerAction: () => hasWorkerAction4,
+  hasWorkerLoader: () => hasWorkerLoader4,
+  workerLoader: () => workerLoader3
+});
+
+// app/routes/basic-loader.tsx
+var import_node3 = __toESM(require_node());
+var import_react6 = __toESM(require_react());
+var import_react7 = __toESM(require_react2());
+var import_jsx_runtime4 = __toESM(require_jsx_runtime());
+var workerLoader3 = async ({ context }) => {
+  const { fetchFromServer } = context;
+  const message = await Promise.race([
+    fetchFromServer().then((response) => response.json()).then(({ message: message2 }) => message2),
+    new Promise((resolve) => setTimeout(resolve, 500, "Hello World!\n\n\u2022 This message is sent to you from the client \u{1F61C}!"))
+  ]);
+  return new Response(
+    JSON.stringify({
+      message
+    }),
+    {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+  );
+};
+
+// routes-module:routes/basic-loader.tsx?worker
+var hasWorkerAction4 = false;
+var hasWorkerLoader4 = true;
+
+// routes-module:routes/strategies.tsx?worker
+var strategies_exports = {};
+__export(strategies_exports, {
+  hasWorkerAction: () => hasWorkerAction5,
+  hasWorkerLoader: () => hasWorkerLoader5,
+  workerAction: () => workerAction3
+});
+
+// app/routes/strategies.tsx
+var import_react8 = __toESM(require_react());
+var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+var workerAction3 = async ({ context }) => {
+  const { event } = context;
+  const formData = await event.request.clone().formData();
+  const strategy = formData.get("strategy");
+  let customStrategy = void 0;
+  switch (strategy) {
+    case "cache-only":
+      customStrategy = await cacheOnly({
+        cache: "strategies-cache-only"
+      });
+      break;
+    case "cache-first":
+      customStrategy = await cacheFirst({
+        cache: "strategies-cache-first"
+      });
+      break;
+    case "network-first":
+      customStrategy = await networkFirst({
+        cache: "strategies-network-first"
+      });
+      break;
+    case "swr":
+      customStrategy = await staleWhileRevalidate({
+        cache: "strategies-swr"
+      });
+      break;
+    default:
+      break;
+  }
+  return null;
+};
+
+// routes-module:routes/strategies.tsx?worker
+var hasWorkerAction5 = true;
+var hasWorkerLoader5 = false;
+
+// routes-module:routes/selection.tsx?worker
+var selection_exports = {};
+__export(selection_exports, {
+  hasWorkerAction: () => hasWorkerAction6,
+  hasWorkerLoader: () => hasWorkerLoader6,
+  workerLoader: () => workerLoader4
+});
+
+// app/routes/selection.tsx
+var import_react9 = __toESM(require_react());
+var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+async function workerLoader4({ context }) {
+  const { database } = context;
+  const selections = await database.selections.toArray();
+  return json3({ selections });
+}
+
+// routes-module:routes/selection.tsx?worker
+var hasWorkerAction6 = false;
+var hasWorkerLoader6 = true;
+
+// routes-module:routes/sync-away.tsx?worker
+var sync_away_exports = {};
+__export(sync_away_exports, {
+  hasWorkerAction: () => hasWorkerAction7,
+  hasWorkerLoader: () => hasWorkerLoader7,
+  workerAction: () => workerAction4
+});
+
+// app/routes/sync-away.tsx
+var import_node4 = __toESM(require_node());
+var import_react10 = __toESM(require_react());
+var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+var workerAction4 = async ({ context }) => {
+  const { fetchFromServer, event } = context;
+  try {
+    await fetchFromServer();
+  } catch (error) {
+    console.error(error);
+    queueToServer({
+      name: "offline-action",
+      request: event.request.clone()
+    });
+  }
+  return new Response(JSON.stringify({
+    message: "Offline or Online. I shall always respond!"
+  }), {
+    headers: {
+      "Content-Type": "application/json; charset=utf-8"
+    }
+  });
+};
+
+// routes-module:routes/sync-away.tsx?worker
+var hasWorkerAction7 = true;
+var hasWorkerLoader7 = false;
+
+// routes-module:routes/a.$slug.tsx?worker
+var a_slug_exports = {};
+__export(a_slug_exports, {
+  hasWorkerAction: () => hasWorkerAction8,
+  hasWorkerLoader: () => hasWorkerLoader8,
+  workerLoader: () => workerLoader5
+});
+
+// app/routes/a.$slug.tsx
+var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+var workerLoader5 = async ({ params }) => {
+  console.log("workerLoader", params, /* @__PURE__ */ new Date());
+  return json({ params });
+};
+
+// routes-module:routes/a.$slug.tsx?worker
+var hasWorkerAction8 = false;
+var hasWorkerLoader8 = true;
+
+// entry-module:@remix-pwa/build/magic
+var route9 = __toESM(require_index());
+
+// routes-module:routes/_app.tsx?worker
+var app_exports = {};
+__export(app_exports, {
+  hasWorkerAction: () => hasWorkerAction9,
+  hasWorkerLoader: () => hasWorkerLoader9,
+  workerLoader: () => workerLoader6
+});
+
+// app/routes/_app.tsx
+var import_node5 = __toESM(require_node());
+var import_react11 = __toESM(require_react());
+var import_jsx_runtime9 = __toESM(require_jsx_runtime());
+async function workerLoader6({ context }) {
+  const { fetchFromServer } = context;
+  const data = await fetchFromServer().then((response) => response.json());
+  console.log(data);
+  return new Response(JSON.stringify(data), {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+}
+
+// routes-module:routes/_app.tsx?worker
+var hasWorkerAction9 = false;
+var hasWorkerLoader9 = true;
+
+// assets-module:@remix-sas/dev?assets
+var assets = ["/build/root-3MYNVNTT.js", "/build/manifest-9B6B6750.js", "/build/entry.client-6J4DH4PZ.js", "/build/__remix_entry_dev-FSECTCTA.js", "/build/_shared/runtime-JC7ERE5X.js", "/build/_shared/remix_hmr-KOXB6O7Z.js", "/build/_shared/react-dom-SNQ2UIZM.js", "/build/_shared/react-XL6EHOTX.js", "/build/_shared/jsx-runtime-7KJOCM5J.js", "/build/_shared/jsx-dev-runtime-D5NCTVC4.js", "/build/_shared/esm-QACGES7W.js", "/build/_shared/client-LQHWDDYA.js", "/build/_shared/chunk-YYS55PRY.js", "/build/_shared/chunk-TWSZTAQ6.js", "/build/_shared/chunk-TLBAXOHZ.js", "/build/_shared/chunk-STMUDJCL.js", "/build/_shared/chunk-PNG5AS42.js", "/build/_shared/chunk-NXSRMYPB.js", "/build/_shared/chunk-LOYKRDJM.js", "/build/_shared/chunk-GF52RS3E.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-FXD4XYGV.js", "/build/_shared/chunk-DXWUJZAV.js", "/build/routes/sync-away-E6FNDNFW.js", "/build/routes/strategies-ZKX2T7V4.js", "/build/routes/selection-2GMTP227.js", "/build/routes/basic-loader-EKJTK7TH.js", "/build/routes/basic-caching-NKJVJIBG.js", "/build/routes/basic-action-J2N7IBBE.js", "/build/routes/a.$slug-43HOABXQ.js", "/build/routes/_index-S6HFQ5PC.js", "/build/routes/_app.flights-N6VPIPKN.js", "/build/routes/_app-INYRVKJJ.js", "/build/_assets/tailwind-JOKRYXHU.css"];
+
+// entry-module:@remix-pwa/build/magic
 var routes = {
   "root": {
     id: "root",
-    parentId: "undefined",
+    parentId: void 0,
     path: "",
     index: void 0,
     caseSensitive: void 0,
@@ -10540,25 +10552,35 @@ var routes = {
     hasWorkerAction: Boolean(hasWorkerAction7),
     hasWorkerLoader: Boolean(hasWorkerLoader7)
   },
+  "routes/a.$slug": {
+    id: "routes/a.$slug",
+    parentId: "root",
+    path: "a/:slug",
+    index: void 0,
+    caseSensitive: void 0,
+    module: a_slug_exports,
+    hasWorkerAction: Boolean(hasWorkerAction8),
+    hasWorkerLoader: Boolean(hasWorkerLoader8)
+  },
   "routes/_index": {
     id: "routes/_index",
     parentId: "root",
-    path: "undefined",
+    path: void 0,
     index: true,
     caseSensitive: void 0,
-    module: route8,
-    hasWorkerAction: Boolean(route8.hasWorkerAction),
-    hasWorkerLoader: Boolean(route8.hasWorkerLoader)
+    module: route9,
+    hasWorkerAction: Boolean(route9.hasWorkerAction),
+    hasWorkerLoader: Boolean(route9.hasWorkerLoader)
   },
   "routes/_app": {
     id: "routes/_app",
     parentId: "root",
-    path: "undefined",
+    path: void 0,
     index: void 0,
     caseSensitive: void 0,
     module: app_exports,
-    hasWorkerAction: Boolean(hasWorkerAction8),
-    hasWorkerLoader: Boolean(hasWorkerLoader8)
+    hasWorkerAction: Boolean(hasWorkerAction9),
+    hasWorkerLoader: Boolean(hasWorkerLoader9)
   }
 };
 var entry = { module: entry_worker_exports };
@@ -10612,16 +10634,16 @@ function createArgumentsFrom({ event, loadContext, path }) {
     context: loadContext
   };
 }
-function isMethod2(request, methods) {
+function isMethod(request, methods) {
   return methods.includes(request.method.toLowerCase());
 }
 function isActionRequest(request) {
   const url = new URL(request.url);
-  return isMethod2(request, ["post", "delete", "put", "patch"]) && url.searchParams.get("_data");
+  return isMethod(request, ["post", "delete", "put", "patch"]) && url.searchParams.get("_data");
 }
-function isLoaderRequest2(request) {
+function isLoaderRequest(request) {
   const url = new URL(request.url);
-  return isMethod2(request, ["get"]) && url.searchParams.get("_data");
+  return isMethod(request, ["get"]) && url.searchParams.get("_data");
 }
 
 // ../packages/worker-runtime/dist/src/utils/response.js
@@ -10646,12 +10668,12 @@ async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, ev
   const routeId = url.searchParams.get("_data");
   const route = routeId ? routes2[routeId] : void 0;
   const _arguments = {
-    request: event.request,
+    request: event.request.clone(),
     params: getURLParameters(event.request, route?.path),
     context: loadContext
   };
   try {
-    if (isLoaderRequest2(request) && route?.module.workerLoader) {
+    if (isLoaderRequest(request) && route?.module.workerLoader) {
       return await handleLoader({
         event,
         loader: route.module.workerLoader,
@@ -10757,7 +10779,10 @@ var defaultErrorHandler = entry.module.handleError || ((error, { request }) => {
     console.error(error);
   }
 });
-_self.__workerManifest = routes;
+_self.__workerManifest = {
+  assets,
+  routes
+};
 _self.addEventListener(
   "fetch",
   /**
