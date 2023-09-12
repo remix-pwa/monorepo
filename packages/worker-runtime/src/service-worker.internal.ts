@@ -34,9 +34,9 @@ const defaultHandler =
   (build.entry.module.defaultFetchHandler as build.DefaultFetchHandler) ||
   ((event: FetchEvent) => fetch(event.request.clone()));
 
-// if the user export a `handleError` inside the entry.worker.js, we use that one as default handler
+// if the user export a `errorHandler` inside the entry.worker.js, we use that one as default handler
 const defaultErrorHandler =
-  (build.entry.module.handleError as build.DefaultErrorHandler) ||
+  (build.entry.module.errorHandler as build.DefaultErrorHandler) ||
   ((error: Error, { request }: build.WorkerDataFunctionArgs) => {
     if (!request.signal.aborted) {
       console.error(error);
