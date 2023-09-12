@@ -170,14 +170,14 @@ export class PrecacheHandler extends MessageHandler {
 
       if (route.imports) {
         for (const assetUrl of route.imports) {
-          // logger.groupCollapsed('Caching asset: ', assetUrl);
+          logger.groupCollapsed('Caching asset: ', assetUrl);
 
-          // logger.log('Is index:', route.index || false);
-          // logger.log('Parent ID:', route.parentId);
-          // logger.log('Imports:', route.imports);
-          // logger.log('Module:', route.module);
+          logger.log('Is index:', route.index || false);
+          logger.log('Parent ID:', route.parentId);
+          logger.log('Imports:', route.imports);
+          logger.log('Module:', route.module);
 
-          // logger.groupEnd();
+          logger.groupEnd();
 
           if (cachePromises.has(assetUrl)) {
             continue;
@@ -187,7 +187,7 @@ export class PrecacheHandler extends MessageHandler {
         }
       }
 
-      // logger.info('Caching document:', pathname);
+      logger.info('Caching document:', pathname);
 
       const response = await fetch(pathname);
 
