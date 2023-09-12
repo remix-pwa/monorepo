@@ -1,13 +1,10 @@
 /// <reference lib="WebWorker" />
 
-import { RemixNavigationHandler, matchRequest } from '@remix-pwa/sw';
+import { RemixNavigationHandler } from '@remix-pwa/sw';
 import createStorageRepository from './database';
 import { registerQueue } from '@remix-pwa/sync';
 
-declare let self: ServiceWorkerGlobalScope &
-  typeof globalThis & {
-    __workerManifest: any;
-  }; // wrap this up into one type
+declare let self: ServiceWorkerGlobalScope;
 
 const PAGES = 'page-cache';
 const DATA = 'data-cache';
@@ -46,7 +43,7 @@ export const getLoadContext = () => {
 
 // The default fetch event handler will be invoke if the route is not matched by any of the worker action/loader.
 export const defaultFetchHandler = ({ context, request }: any) => {
-  const type = matchRequest(request);
+  // const type = matchRequest(request);
 
   // if (type === 'asset') {
   //   return assetsHandler.handle(request);
