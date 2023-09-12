@@ -1,22 +1,32 @@
-import { useSWEffect } from "@remix-pwa/sw";
+import { useSWEffect, LiveReload } from "@remix-pwa/sw";
 import { cssBundleHref } from "@remix-run/css-bundle";
 import type { LinksFunction } from "@remix-run/node";
 import {
   Links,
-  LiveReload,
+  // LiveReload,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
 
+import stylesheet from './tailwind.css';
+import { useEffect } from "react";
+
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
+  { rel: "stylesheet", href: stylesheet },
 ];
 
 export default function App() {
   useSWEffect();
   
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // ...
+    }
+  })
+
   return (
     <html lang="en">
       <head>

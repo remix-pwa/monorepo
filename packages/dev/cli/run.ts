@@ -42,7 +42,7 @@ ${underline(whiteBright('Options:'))}
 --version, -v                   Print the CLI version and exit
 --docs                          Print the link to the remix-pwa docs and exit`;
 
-export type PWAFeatures = 'sw' | 'manifest' | 'push' | 'utils' | 'icons';
+export type PWAFeatures = 'sw' | 'manifest' | 'push' | 'utils' | 'icons' | 'sync';
 
 export async function run(argv: string[] = process.argv.slice(2), projectDir: string = process.cwd()) {
   // todo: Allow passing configs via CLI like minify build, worker path, etc.
@@ -125,6 +125,10 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
     packageManager = args['--package-manager'];
   }
 
+  if (input[0].startsWith('-')) {
+    input.unshift('create');
+  }
+
   const cmd = input[0];
 
   switch (cmd) {
@@ -135,13 +139,19 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
       await commands.build(projectDir);
       break;
     case 'push':
+      await commands.push();
       break; // A delayed todo: More or less init push api and a test server route
+    case 'packages':
+      await commands.packages(projectDir);
+      break;
     case 'init':
     case 'new':
     case 'create':
     default: // Todo: Add a better error message - Deprecating this. For now tho, it would be the same as create
       if (cmd !== 'create' && cmd !== 'init' && cmd !== 'new') {
-        console.warn(bold(red('This command is getting deprecated soon. Please use `npx remix-pwa create` instead.')));
+        console.warn(
+          bold(red('This command is getting deprecated soon. Please use `npx remix-pwa@latest create` instead.'))
+        );
       }
 
       // const featLookup: Record<PWAFeatures, string> = {
@@ -202,49 +212,6 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
           initial: false,
           skip: flags.precache !== undefined,
         },
-        /**
-         * Passing skip option to multiselect throws an error below is the workaround
-         * until this get resolved https://github.com/enquirer/enquirer/issues/339
-         *
-         * But this syntax breaks the entire prompt. So, we are not using it for now.
-         */
-        // ...(feat === null
-        //   ? [
-        //       {
-        //         name: 'feat',
-        //         type: 'multiselect',
-        //         // @ts-ignore
-        //         hint: '(Use <space> to select, <return> to submit)',
-        //         message: "What features of remix-pwa do you need? Don't be afraid to pick all!",
-        //         indicator(state: any, choice: any) {
-        //           return choice.enabled ? ' ' + green('✔') : ' ' + gray('o');
-        //         },
-        //         choices: [
-        //           {
-        //             name: 'Service Workers',
-        //             value: 'sw',
-        //           },
-        //           {
-        //             name: 'Web Manifest',
-        //             value: 'manifest',
-        //           },
-        //           {
-        //             name: 'Push Notifications',
-        //             value: 'push',
-        //           },
-        //           {
-        //             name: 'PWA Client Utilities',
-        //             value: 'utils',
-        //           },
-        //           {
-        //             name: 'Development Icons',
-        //             value: 'icons',
-        //           },
-        //         ],
-        //         initialChoices: ['sw', 'manifest'],
-        //       },
-        //     ]
-        //   : []),
         {
           name: 'features',
           type: 'multiselect',
@@ -258,6 +225,10 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
             {
               message: 'Service Workers',
               name: 'sw',
+            },
+            {
+              message: 'Background Sync',
+              name: 'sync',
             },
             {
               message: 'Web Manifest',

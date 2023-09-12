@@ -1,6 +1,16 @@
 import { redirect, defer, json } from "@remix-run/router";
 import { useLoaderData, Form, useNavigation, Await } from "@remix-run/react";
 import { Suspense } from "react";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+
+export async function action({ request }: ActionArgs) {
+  const formData = await request.formData();
+  const flight = formData.get("flightId");
+
+  console.log(flight, "here is the flight id");
+
+  return redirect("/server-redirect");
+}
 
 export function loader() {
   return json({
@@ -23,11 +33,9 @@ export function loader() {
   });
 }
 
-/**
- * @param {import('@remix-run/node').ActionArgs} args
- */
-export const workerAction = async ({ request, context }) => {
+export const workerAction = async ({ request, context }: LoaderArgs) => {
   const formData = await request.formData();
+  
   const { database, fetchFromServer } = context;
 
   try {
@@ -35,15 +43,13 @@ export const workerAction = async ({ request, context }) => {
     fetchFromServer();
     // Save selection in client
     await database.selections.add(Object.fromEntries(formData.entries()));
+    // Redirect to selection page
     return redirect("/selection");
   } catch (error) {
     throw json({ message: "Something went wrong", error }, 500);
   }
 };
 
-/**
- * @param {import('@remix-run/node').LoaderArgs} args
- */
 export const workerLoader = async ({ context }) => {
   try {
     const { fetchFromServer, database } = context;
@@ -73,15 +79,6 @@ export const workerLoader = async ({ context }) => {
     throw json({ message: "Something went wrong", error }, 500);
   }
 };
-
-export async function action({ request }) {
-  const formData = await request.formData();
-  const flight = formData.get("flightId");
-
-  console.log(flight, "here is the flight id");
-
-  return redirect("/server-redirect");
-}
 
 export default function FlightsRoute() {
   const { flights } = useLoaderData();

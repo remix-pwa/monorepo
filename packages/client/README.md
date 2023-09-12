@@ -1,3 +1,10 @@
 # `@remix-pwa/client`
 
-New one, this contains client APIs to boost your PWA development and enhance your application. It's a set of tools to help you build your PWA and give it a native feel, still WIP - progress: _delayed_.
+The `client` package is a set of utilities that you can easily plug into your Remix app to supercharge it's native capabilities. More
+features are being added as we speak, so stay tuned!
+
+## Installation
+
+```bash
+npm install @remix-pwa/client
+```

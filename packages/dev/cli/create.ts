@@ -66,7 +66,7 @@ async function integrateManifest(projectDir: string, lang: 'ts' | 'js' = 'ts', d
   const templateDir = resolve(__dirname, 'templates');
   const manifestDir = resolve(projectDir, dir, `routes/manifest[.]webmanifest.${lang}`);
 
-  console.log('Integrating Web Manifest...'); // todo: ora spinners for each step
+  console.log('Integrating Web Manifest...');
 
   if (pkg.pathExistsSync(manifestDir)) {
     return;
@@ -79,7 +79,13 @@ async function integrateManifest(projectDir: string, lang: 'ts' | 'js' = 'ts', d
 async function integrateIcons(projectDir: string) {
   const iconDir = resolve(__dirname, 'templates', 'icons');
 
-  cpSync(iconDir, resolve(projectDir, 'public/icons'), { recursive: true, errorOnExist: false });
+  cpSync(iconDir, resolve(projectDir, 'public/icons'), { recursive: true, errorOnExist: false, force: false });
+}
+
+// temporary
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function integratePush(projectDir: string, lang: 'ts' | 'js' = 'ts', dir: string = 'app') {
+  return null;
 }
 
 export async function createPWA(
@@ -127,6 +133,10 @@ export async function createPWA(
     throw new Error('Template directory not found');
   }
 
+  let push = false;
+  let utils = false;
+  let sync = false;
+
   features.map(async feature => {
     switch (feature) {
       case 'sw':
@@ -147,9 +157,15 @@ export async function createPWA(
         integrateIcons(projectDir);
         break;
       case 'push':
-        console.log('install');
+        push = true;
+        integratePush(projectDir, lang, dir);
         break;
       case 'utils':
+        utils = true;
+        break;
+      case 'sync':
+        sync = true;
+        break;
       default:
         break;
     }
@@ -172,11 +188,29 @@ export async function createPWA(
     json.scripts = {};
   }
 
+  json.dependencies['@remix-pwa/worker-runtime'] = '^1.0.1';
   json.dependencies.dotenv = '^16.0.3';
 
-  // Todo: Add `remix-pwa` dependencies here
-
+  json.devDependencies['@remix-pwa/dev'] = '^2.0.0';
   json.devDependencies['npm-run-all'] = '^4.1.5';
+
+  if (features.includes('sw')) {
+    json.dependencies['@remix-pwa/cache'] = '^2.0.0';
+    json.dependencies['@remix-pwa/sw'] = '^2.0.0';
+    json.dependencies['@remix-pwa/strategy'] = '^2.0.0';
+  }
+
+  if (push) {
+    json.dependencies['@remix-pwa/push'] = '^2.0.0';
+  }
+
+  if (utils) {
+    json.dependencies['@remix-pwa/client'] = '^2.0.0';
+  }
+
+  if (sync) {
+    json.dependencies['@remix-pwa/sync'] = '^2.0.0';
+  }
 
   json.scripts.build = 'run-s build:*';
   json.scripts['build:remix'] = 'remix build';

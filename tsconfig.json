@@ -1,9 +1,12 @@
 {
   "files": [],
   "references": [
+    { "path": "packages/cache" },
     { "path": "packages/client" },
     { "path": "packages/dev" },
+    { "path": "packages/strategy" },
     { "path": "packages/sw" },
+    { "path": "packages/sync" },
     // { "path": "packages/workbox-runtime" },
     { "path": "packages/worker-runtime" }
   ],
