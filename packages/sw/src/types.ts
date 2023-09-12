@@ -89,6 +89,9 @@ export type GetLoadContextFunction = (event: FetchEvent) => WorkerLoadContext;
 
 declare global {
   interface ServiceWorkerGlobalScope {
-    __workerManifest: WorkerRouteManifest;
+    __workerManifest: {
+      routes: WorkerRouteManifest;
+      assets: string[];
+    };
   }
 }
