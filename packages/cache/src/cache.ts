@@ -134,52 +134,41 @@ export class RemixCache implements CustomCache {
   private async _lruCleanup() {
     if ((await this.length()) >= this.maxItems) {
       this._values().then(async values => {
-        values
-          .sort((a, b) => {
-            // @ts-ignore
-            const aMeta = a.clone().json().metadata;
-            //  @ts-ignore
-            const bMeta = b.clone().json().metadata;
+        const val = values.sort((a, b) => {
+          // @ts-ignore
+          const aMeta = a.clone().json().metadata;
+          //  @ts-ignore
+          const bMeta = b.clone().json().metadata;
 
-            return aMeta.accessedAt - bMeta.accessedAt;
-          })
-          // This runs everytime a new entry is added so that means the array maximum size can never
-          // exceed `maxItems + 1` (the new entry + the maxItems), so we can safely slice the array
-          // to the maxItems length starting from the first index.
-          .slice(1);
+          return aMeta.accessedAt - bMeta.accessedAt;
+        })[0];
+        // This runs everytime a new entry is added so that means the array maximum size can never
+        // exceed `maxItems + 1` (the new entry + the maxItems), so we can safely slice the array
+        // to the maxItems length starting from the first index.
+        this.delete(val.url);
       });
     }
   }
 
-  private async _getResponseValue(request: Request, response: Response) {
+  private async _getResponseValue(request: Request, response: Response): Promise<Response | undefined> {
     const { metadata, value }: ResponseBody = await response.clone().json();
 
     const deleted = await this._getOrDeleteIfExpired(request.clone(), metadata);
+    const headers = new Headers(response.clone().headers);
 
     if (!deleted) {
-      const res = new Response(
-        JSON.stringify({
-          metadata: {
-            ...metadata,
-            accessedAt: Date.now(),
-          },
-          value,
-        }),
-        {
-          status: response.status,
-          statusText: response.statusText,
-          headers: {
-            ...Object.fromEntries(response.clone().headers.entries()),
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const res = new Response(value, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: {
+          ...Object.fromEntries(headers.entries()),
+          'Content-Type': headers.get('x-remix-pwa-original-content-type') || 'application/json',
+        },
+      });
 
-      await this.put(request, res.clone(), undefined, true);
-      return res
-        .clone()
-        .json()
-        .then(({ value }) => value);
+      await this.put(request, res.clone(), undefined);
+
+      return res;
     }
 
     return undefined;
@@ -256,7 +245,7 @@ export class RemixCache implements CustomCache {
    *
    * @param {RequestInfo | URL} request - The request to add.
    * @param {Response} response - The response to add.
-   * @param {boolean} modified - Whether the response has been modified.
+   * @param {number | undefined} ttl - The time-to-live of the cache entry in ms. Defaults to cache ttl.
    * @returns {Promise<void>} A `Promise` that resolves when the entry is added to the cache.
    *
    * @example
@@ -268,12 +257,7 @@ export class RemixCache implements CustomCache {
    *
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Cache/put
    */
-  async put(
-    request: RequestInfo | URL,
-    response: Response,
-    ttl: number | undefined = undefined,
-    modified: boolean = false
-  ): Promise<void> {
+  async put(request: RequestInfo | URL, response: Response, ttl: number | undefined = undefined): Promise<void> {
     const cache = await this._openCache();
     if (request instanceof URL || typeof request === 'string') {
       request = new Request(request);
@@ -282,25 +266,35 @@ export class RemixCache implements CustomCache {
     // If ttl is negative, don't cache
     if (this.ttl <= 0 || (ttl && ttl <= 0)) return;
 
-    if (!modified) {
-      response = new Response(
-        JSON.stringify({
-          metadata: {
-            accessedAt: Date.now(),
-            expiresAt: Date.now() + (ttl ?? this.ttl),
-          },
-          value: await response.clone().json(),
-        }),
-        {
-          status: response.status,
-          statusText: response.statusText,
-          headers: {
-            ...Object.fromEntries(response.clone().headers.entries()),
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+    const contentType = response.headers.get('Content-Type');
+
+    let data;
+    if (contentType && contentType.includes('application/json')) {
+      // If the response is JSON, parse it
+      data = await response.clone().json();
+    } else {
+      // If the response is not JSON, treat it as text
+      data = await response.clone().text();
     }
+
+    response = new Response(
+      JSON.stringify({
+        metadata: {
+          accessedAt: Date.now(),
+          expiresAt: Date.now() + (ttl ?? this.ttl),
+        },
+        value: data,
+      }),
+      {
+        status: response.status,
+        statusText: response.statusText,
+        headers: {
+          ...Object.fromEntries(response.clone().headers.entries()),
+          'Content-Type': 'application/json',
+          'x-remix-pwa-original-content-type': contentType || 'text/plain',
+        },
+      }
+    );
 
     // Cache the updated response and maintain the cache
     try {
