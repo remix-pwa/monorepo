@@ -63,7 +63,7 @@ export async function handleRequest({
   // if the request is not a loader or action request, we call the default handler and the routeId will be undefined
   const route = routeId ? routes[routeId] : undefined;
   const _arguments = {
-    request: event.request,
+    request: event.request.clone(),
     params: getURLParameters(event.request, route?.path),
     context: loadContext,
   };
