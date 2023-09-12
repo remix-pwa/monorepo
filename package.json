@@ -11,7 +11,8 @@
     "packages/strategy",
     "packages/sw",
     "packages/sync",
-    "packages/worker-runtime"
+    "packages/worker-runtime",
+    "playground"
   ],
   "type": "module",
   "scripts": {
