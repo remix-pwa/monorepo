@@ -4,10 +4,12 @@ import { afterAll, afterEach, describe, expect, test, vi } from 'vitest';
 
 const REMIX_ROOT = '.';
 const mockResolve = vi.hoisted(() => vi.fn());
+const mockRelative = vi.hoisted(() => vi.fn());
 const mockExists = vi.hoisted(() => vi.fn());
 
 vi.doMock('node:path', () => ({
   resolve: mockResolve,
+  relative: mockRelative,
 }));
 vi.doMock('node:fs', () => ({
   existsSync: mockExists,
@@ -68,6 +70,7 @@ describe('readConfig', () => {
 
   test('should find the user entry file', async () => {
     mockResolve.mockReturnValue('mock.entry.worker.js');
+    mockRelative.mockReturnValue('relative-path/mock.entry.worker.js');
     mockExists.mockReturnValue(true);
 
     vi.doMock('./remix.config.ts', () => {
@@ -77,7 +80,7 @@ describe('readConfig', () => {
     const { default: readConfig } = await import('../config.js');
     const config = await readConfig(REMIX_ROOT, ServerMode.Test);
 
-    expect(config).toHaveProperty('entryWorkerFile', 'mock.entry.worker.js');
+    expect(config).toHaveProperty('entryWorkerFile', 'relative-path/mock.entry.worker.js');
   });
 
   test('should return the resolved config object with custom worker options', async () => {

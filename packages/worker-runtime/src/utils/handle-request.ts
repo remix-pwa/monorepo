@@ -32,7 +32,6 @@ interface HandleArgs {
   event: FetchEvent;
   loadContext: WorkerLoadContext;
   routeId: string;
-  routePath?: string;
 }
 interface HandleLoaderArgs extends HandleArgs {
   loader: WorkerLoaderFunction;
@@ -47,8 +46,7 @@ interface HandleError {
 
 /**
  * A FetchEvent handler for Remix.
- * If the `event.request` has a worker loader/action defined, it will call it and return the response.
- * Otherwise, it will call the default handler...
+ * If the `event.request` has a worker loader/action defined, it will call it and return the response. Otherwise, it will call the default handler..
  */
 export async function handleRequest({
   defaultHandler,
@@ -57,56 +55,52 @@ export async function handleRequest({
   loadContext,
   routes,
 }: HandleRequestArgs): Promise<Response> {
-  const { request } = event;
-  const url = new URL(request.url);
+  const url = new URL(event.request.url);
   const routeId = url.searchParams.get('_data');
   // if the request is not a loader or action request, we call the default handler and the routeId will be undefined
   const route = routeId ? routes[routeId] : undefined;
-  const _arguments = {
-    request: event.request.clone(),
-    params: getURLParameters(event.request, route?.path),
-    context: loadContext,
-  };
 
   try {
-    if (isLoaderRequest(request) && route?.module.workerLoader) {
+    if (isLoaderRequest(event.request) && route?.module.workerLoader) {
       return await handleLoader({
         event,
         loader: route.module.workerLoader,
         routeId: route.id,
-        routePath: route.path,
         loadContext,
       }).then(responseHandler);
     }
 
-    if (isActionRequest(request) && route?.module?.workerAction) {
+    if (isActionRequest(event.request) && route?.module?.workerAction) {
       return await handleAction({
         event,
         action: route.module.workerAction,
         routeId: route.id,
-        routePath: route.path,
         loadContext,
       }).then(responseHandler);
     }
   } catch (error) {
-    const handler = (error: Error) => errorHandler(error, _arguments);
+    const handler = (error: Error) => errorHandler(error, createArgumentsFrom({ event, loadContext }));
     return _errorHandler({ error, handler });
   }
 
-  return defaultHandler(_arguments);
+  return defaultHandler({
+    request: event.request,
+    params: getURLParameters(event.request),
+    context: loadContext,
+  });
 }
 
 /**
  * Handle a Remix worker loader request.
  */
-async function handleLoader({ event, loadContext, loader, routeId, routePath }: HandleLoaderArgs): Promise<Response> {
-  const _arguments = createArgumentsFrom({ event, loadContext, path: routePath });
+async function handleLoader({ event, loadContext, loader, routeId }: HandleLoaderArgs): Promise<Response> {
+  const _arguments = createArgumentsFrom({ event, loadContext });
   const result = await loader(_arguments);
 
   if (result === undefined) {
     throw new Error(
       `You defined a loader for route "${routeId}" but didn't return ` +
-        `anything from your \`worker loader\` function. Please return a value or \`null\`.`
+        `anything from your \`loader\` function. Please return a value or \`null\`.`
     );
   }
 
@@ -130,14 +124,14 @@ async function handleLoader({ event, loadContext, loader, routeId, routePath }: 
 /**
  * Handle a Remix worker action request.
  */
-async function handleAction({ action, event, loadContext, routeId, routePath }: HandleActionArgs): Promise<Response> {
-  const _arguments = createArgumentsFrom({ event, loadContext, path: routePath });
+async function handleAction({ action, event, loadContext, routeId }: HandleActionArgs): Promise<Response> {
+  const _arguments = createArgumentsFrom({ event, loadContext });
   const result = await action(_arguments);
 
   if (result === undefined) {
     throw new Error(
       `You defined an action for route "${routeId}" but didn't return ` +
-        `anything from your \`worker action\` function. Please return a value or \`null\`.`
+        `anything from your \`action\` function. Please return a value or \`null\`.`
     );
   }
 

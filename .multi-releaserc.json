@@ -1,7 +1,0 @@
-{
-  "noCi": true,
-  "debug": true,
-  "deps": {
-    "prefix": "^"
-  }
-}

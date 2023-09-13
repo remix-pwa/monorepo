@@ -3,14 +3,14 @@ import type { OnLoadResult, OnResolveArgs, Plugin, PluginBuild } from 'esbuild';
 
 import type { ResolvedWorkerConfig } from '../utils/config.js';
 
-const FILTER_REGEX = /@remix-pwa\/build\/magic$/;
+const FILTER_REGEX = /@remix-pwa\/dev\/worker-build$/;
 const NAMESPACE = 'entry-module';
 
 /**
  * Creates a string representation of the routes to be imported
  */
 function createRouteImports(routes: ConfigRoute[]): string {
-  return routes.map((route, index) => `import * as route${index} from '${route.file}?worker';`).join('\n');
+  return routes.map((route, index) => `import * as route${index} from '${route.file}?worker'`).join(';\n');
 }
 
 /**
@@ -22,8 +22,8 @@ function createRouteManifest(routes: RouteManifest): string {
       ([key, route], index) =>
         `${JSON.stringify(key)}: {
           id: "${route.id}",
-          parentId: ${JSON.stringify(route.parentId)},
-          path: ${JSON.stringify(route.path)},
+          parentId: "${route.parentId}",
+          path: "${route.path}",
           index: ${JSON.stringify(route.index)},
           caseSensitive: ${JSON.stringify(route.caseSensitive)},
           module: route${index},
@@ -37,7 +37,7 @@ function createRouteManifest(routes: RouteManifest): string {
 /**
  * The `sw-entry-module` plugin looks for the `FILTER_REGEX`string throught the esbuild entry point and injects all the `@remix-run` routes modules and information
  * that are available in the given configuration into the ESBuild entry point.
- * @param {import('../utils/config.js').ResolvedWorkerConfig} config The resolved worker config.
+ * @param {import('../utils/config').ResolvedWorkerConfig} config The resolved worker config.
  * @returns {import('esbuild').Plugin} Esbuild plugin
  */
 export default function entryModulePlugin(config: ResolvedWorkerConfig): Plugin {
@@ -49,15 +49,13 @@ export default function entryModulePlugin(config: ResolvedWorkerConfig): Plugin 
     const onLoad = () => {
       const routes = Object.values(config.routes);
       const contents = `
-      import * as entryWorker from  '${config.entryWorkerFile}?user';
-
     ${createRouteImports(routes)}
 
     export const routes = {
       ${createRouteManifest(config.routes)}
     };
 
-    export { assets } from '@remix-sas/dev?assets';
+    import * as entryWorker from  '${config.entryWorkerFile}?user';
     export const entry = { module: entryWorker };
     `;
 
@@ -67,7 +65,6 @@ export default function entryModulePlugin(config: ResolvedWorkerConfig): Plugin 
         loader: 'js',
       } as OnLoadResult;
     };
-
     build.onResolve({ filter: FILTER_REGEX }, onResolve);
     build.onLoad({ filter: FILTER_REGEX, namespace: NAMESPACE }, onLoad);
   }

@@ -1,7 +1,7 @@
 {
   "name": "@remix-pwa/worker-runtime",
-  "version": "1.1.1",
-  "description": "A vanilla JavaScript worker runtime for Remix service workers",
+  "version": "0.0.0",
+  "description": "A vanilla JavaScript worker runtime for remix service worker",
   "license": "MIT",
   "sideEffects": false,
   "main": "dist/src/service-worker.internal.js",
@@ -11,15 +11,12 @@
   },
   "type": "module",
   "files": [
-    "dist/",
-    "README.md",
-    "CHANGELOG.md"
+    "dist/**/*"
   ],
   "scripts": {
     "build": "rimraf ./dist && tsc",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "TIMING=1 eslint --fix src/",
-    "prepublish": "npm run build",
     "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
   },
   "dependencies": {

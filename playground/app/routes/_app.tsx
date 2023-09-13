@@ -1,35 +1,27 @@
 import { json } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
+import { CacheFirst } from "@remix-pwa/sw";
+
+const strategy = new CacheFirst({
+  cacheName: "app-loader",
+});
 
 export function loader() {
   return json({
     user: {
       email: "email@provider.co",
-      name: "Sandboxxxy",
+      name: "Scandinavian",
     },
   });
 }
 
-export async function workerLoader({ context }) {
-  const { fetchFromServer } = context;
-
-  const data = await fetchFromServer().then((response: Response) => response.json());
-
-  console.log(data);
-
-  // This also works here!
-  // This is a bit useless, ik. But it's just to show that you can use
-  // worker loader and actions in pathless routes too!
-  return new Response(JSON.stringify(data), {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+export function workerLoader({ context }) {
+  // The strategy needs the original untouch request.
+  return strategy.handle(context.event.request);
 }
 
 export default function AppLayout() {
   const { user } = useLoaderData();
-
   return (
     <main>
       <header>

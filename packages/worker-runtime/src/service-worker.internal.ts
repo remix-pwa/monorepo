@@ -1,19 +1,8 @@
-// @ts-expect-error
-// eslint-disable-next-line import/no-unresolved
-import * as build from '@remix-pwa/build/magic';
+import * as build from '@remix-pwa/dev/worker-build.js';
 
 import { handleRequest } from './utils/handle-request.js';
 
 const _self = self as unknown as ServiceWorkerGlobalScope & typeof globalThis;
-
-declare global {
-  interface ServiceWorkerGlobalScope {
-    __workerManifest: {
-      assets: string[];
-      routes: build.WorkerRouteManifest;
-    };
-  }
-}
 
 /**
  * Creates the load context for the worker action and loader.
@@ -23,7 +12,7 @@ function createContext(event: FetchEvent): build.WorkerLoadContext {
   const context = build.entry.module.getLoadContext?.(event) || {};
   return {
     event,
-    fetchFromServer: () => fetch(event.request.clone()),
+    fetchFromServer: () => fetch(event.request),
     // NOTE: we want the user to override the above properties if needed.
     ...context,
   };
@@ -33,22 +22,15 @@ function createContext(event: FetchEvent): build.WorkerLoadContext {
 const defaultHandler =
   (build.entry.module.defaultFetchHandler as build.DefaultFetchHandler) ||
   ((event: FetchEvent) => fetch(event.request.clone()));
-
-// if the user export a `errorHandler` inside the entry.worker.js, we use that one as default handler
+// if the user export a `handleError` inside the entry.worker.js, we use that one as default handler
 const defaultErrorHandler =
-  (build.entry.module.errorHandler as build.DefaultErrorHandler) ||
+  (build.entry.module.handleError as build.DefaultErrorHandler) ||
   ((error: Error, { request }: build.WorkerDataFunctionArgs) => {
     if (!request.signal.aborted) {
       console.error(error);
     }
   });
 
-_self.__workerManifest = {
-  assets: build.assets,
-  routes: build.routes,
-};
-
-// DO NOT OVERRIDE!!!
 _self.addEventListener(
   'fetch',
   /**

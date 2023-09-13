@@ -1,4 +1,0 @@
-{
-  "extends": ["@remix-pwa/eslint-config"],
-  "root": true
-}

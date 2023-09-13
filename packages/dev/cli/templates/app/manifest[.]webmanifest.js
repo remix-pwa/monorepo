@@ -55,14 +55,10 @@ export const loader = async () => {
           density: '3.0',
         },
         {
-          src: '/icons/android-chrome-192x192.png',
+          src: '/icons/android-icon-192x192.png',
           sizes: '192x192',
           type: 'image/png',
-        },
-        {
-          src: '/icons/android-chrome-256x256.png',
-          sizes: '256x256',
-          type: 'image/png',
+          density: '4.0',
         },
       ],
     },

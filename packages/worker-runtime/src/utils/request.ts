@@ -1,5 +1,4 @@
 import type { WorkerLoadContext } from '@remix-pwa/dev/worker-build.js';
-import { matchPath } from '@remix-run/router';
 
 /**
  * Clones an object
@@ -15,14 +14,8 @@ export function clone<T extends Record<string | number | symbol, unknown> | Requ
 /**
  * Gets the URL search parameters from a request.
  */
-export function getURLParameters(request: Request, path: string = ''): Record<string, string | undefined> {
-  const url = new URL(request.url);
-  const match = matchPath(path, url.pathname);
-
-  return {
-    ...Object.fromEntries(new URL(request.url).searchParams.entries()),
-    ...match?.params,
-  };
+export function getURLParameters(request: Request): Record<string, string> {
+  return Object.fromEntries(new URL(request.url).searchParams.entries());
 }
 
 /**
@@ -62,17 +55,9 @@ export function stripDataParameter(request: Request): Request {
 /**
  * Creates arguments for the Worker Actions and Loaders.
  */
-export function createArgumentsFrom({
-  event,
-  loadContext,
-  path,
-}: {
-  event: FetchEvent;
-  loadContext: WorkerLoadContext;
-  path?: string;
-}) {
+export function createArgumentsFrom({ event, loadContext }: { event: FetchEvent; loadContext: WorkerLoadContext }) {
   const request = stripDataParameter(stripIndexParameter(event.request.clone()));
-  const parameters = getURLParameters(request, path);
+  const parameters = getURLParameters(request);
 
   return {
     request,

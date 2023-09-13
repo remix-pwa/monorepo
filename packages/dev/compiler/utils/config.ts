@@ -3,7 +3,7 @@ import { readConfig as _readConfig, findConfig } from '@remix-run/dev/dist/confi
 import type { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';
 import { existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { resolve } from 'node:path';
+import { relative, resolve } from 'node:path';
 
 const _require = createRequire(import.meta.url);
 
@@ -57,7 +57,7 @@ function findEntry(dirname: string, basename: string): string | undefined {
   for (const extension of EXTENSIONS) {
     const file = resolve(dirname, `${basename}${extension}`);
     if (existsSync(file)) {
-      return file;
+      return relative(dirname, file);
     }
   }
 }

@@ -3,7 +3,7 @@
   "exclude": ["dist", "**/__tests__/", "node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
-    "lib": ["ES2021", "ESNext", "WebWorker", "DOM"],
+    "lib": ["ES2020", "ESNext", "WebWorker"],
     "target": "es2022",
     "module": "ES2022",
     "allowImportingTsExtensions": false,

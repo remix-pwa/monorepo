@@ -1,7 +1,7 @@
 {
   "name": "@remix-pwa/client",
-  "version": "1.1.0",
-  "description": "A set of utilities for client-side development to enhance the native feel of your Remix App",
+  "version": "0.0.0",
+  "description": "None of my business",
   "repository": {
     "type": "git",
     "url": "git@github.com:remix-pwa/monorepo",
@@ -12,19 +12,19 @@
   "license": "MIT",
   "type": "module",
   "files": [
-    "dist/",
-    "README.md",
-    "CHANGELOG.md"
+    "dist"
   ],
   "scripts": {
     "build": "rimraf ./dist && tsc",
     "format": "prettier --write \"**/*.ts\"",
     "lint": "TIMING=1 eslint --fix \"lib/**/*.ts\"",
-    "prepublish": "npm run build",
-    "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
+    "test": "vitest --run --environment happy-dom --threads --single-thread --pass-with-no-tests"
   },
   "engines": {
     "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "happy-dom": "^10.9.0"
   },
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",

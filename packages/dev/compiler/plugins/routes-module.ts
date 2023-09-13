@@ -18,9 +18,7 @@ export default function routesModulesPlugin(config: ResolvedWorkerConfig): Plugi
       const file = path.replace(/\?worker$/, '');
       const route = routesByFile.get(file);
       const sourceExports = await getRouteModuleExports(config, route.id);
-      const theExports = sourceExports.filter(
-        exp => exp === 'workerAction' || exp === 'workerLoader' || exp === 'handle'
-      );
+      const theExports = sourceExports.filter(exp => exp === 'workerAction' || exp === 'workerLoader');
 
       let contents = 'module.exports = {};';
       if (theExports.length > 0) {

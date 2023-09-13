@@ -4,7 +4,7 @@ import { describe, expect, test, vi } from 'vitest';
 import type { ResolvedWorkerConfig } from '../../utils/config.js';
 import entryModulePlugin from '../entry-module.js';
 
-describe('entry-module plugin', () => {
+describe('entryModulePlugin', () => {
   const config = {
     appDirectory: '/path/to/app',
     entryWorkerFile: 'entry-worker.js',
@@ -27,9 +27,9 @@ describe('entry-module plugin', () => {
       onLoad: vi.fn(),
     } as unknown as PluginBuild;
     await plugin.setup(build);
-    expect(build.onResolve).toHaveBeenCalledWith({ filter: /@remix-pwa\/build\/magic$/ }, expect.any(Function));
+    expect(build.onResolve).toHaveBeenCalledWith({ filter: /@remix-pwa\/dev\/worker-build$/ }, expect.any(Function));
     expect(build.onLoad).toHaveBeenCalledWith(
-      { filter: /@remix-pwa\/build\/magic$/, namespace: 'entry-module' },
+      { filter: /@remix-pwa\/dev\/worker-build$/, namespace: 'entry-module' },
       expect.any(Function)
     );
   });
@@ -59,15 +59,13 @@ describe('entry-module plugin', () => {
     expect(result).toHaveProperty('contents');
     expect(result.contents).toMatchInlineSnapshot(`
       "
-            import * as entryWorker from  'entry-worker.js?user';
-
           import * as route0 from 'routes/home.js?worker';
-      import * as route1 from 'routes/about.js?worker';
+      import * as route1 from 'routes/about.js?worker'
 
           export const routes = {
             \\"/\\": {
                 id: \\"/\\",
-                parentId: undefined,
+                parentId: \\"undefined\\",
                 path: \\"/\\",
                 index: undefined,
                 caseSensitive: undefined,
@@ -77,7 +75,7 @@ describe('entry-module plugin', () => {
               },
       \\"/about\\": {
                 id: \\"/about\\",
-                parentId: undefined,
+                parentId: \\"undefined\\",
                 path: \\"/about\\",
                 index: undefined,
                 caseSensitive: undefined,
@@ -87,7 +85,7 @@ describe('entry-module plugin', () => {
               }
           };
 
-          export { assets } from '@remix-sas/dev?assets';
+          import * as entryWorker from  'entry-worker.js?user';
           export const entry = { module: entryWorker };
           "
     `);

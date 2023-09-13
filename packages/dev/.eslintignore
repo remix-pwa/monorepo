@@ -2,4 +2,3 @@
 **/__test__/**/*.ts
 **/templates/**/*.ts
 **/templates/**/*.js
-**/dist/**
