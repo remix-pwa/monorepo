@@ -1,3 +1,28 @@
+# @remix-pwa/dev 2.0.0 (2023-09-14)
+
+
+### Features
+
+* **compiler:** adding assets to the manifest 8006781
+* **dev:** added `packages` command to CLI b8671f4
+* **dev:** added `packages` command to CLI a158caa
+* **dev:** added `sync` option to the CLI fd79fc3
+* **dev:** prepping `dev` for v2 release 1ac704f
+* **dev:** updated `packages` command to correctly install deps dc16886
+
+
+### BREAKING CHANGES
+
+* **dev:** Gotten README ready for next release
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/worker-runtime:** upgraded to 2.0.0
+
 ## @remix-pwa/dev 1.1.4 (2023-09-03)
 
 
