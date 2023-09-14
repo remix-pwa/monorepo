@@ -92,6 +92,14 @@ export const registerQueue = (name: string): void => {
 };
 
 /**
+ * Alias for `registerQueue`.
+ * @param {string} name
+ * @returns {void}
+ * @see registerQueue
+ */
+export const registerSync = registerQueue;
+
+/**
  * Create multiple `Queue`s to handle syncing for tags. This is a useful short-hand
  * for `registerQueue` with multiple tags.
  *
@@ -104,3 +112,11 @@ export const registerAllQueues = (names: string[]): void => {
     SyncQueue.createQueue(name);
   }
 };
+
+/**
+ * Alias for `registerAllQueues`.
+ * @param {string[]} names
+ * @returns {void}
+ * @see registerAllQueues
+ */
+export const registerAllSyncs = registerAllQueues;
