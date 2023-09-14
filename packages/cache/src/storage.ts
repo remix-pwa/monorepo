@@ -116,7 +116,7 @@ export class RemixCacheStorage {
    * const cache = Storage.open('my-cache');
    * ```
    */
-  static open(name: string, opts: Omit<RemixCacheOptions, 'name'>): RemixCache {
+  static open(name: string, opts?: Omit<RemixCacheOptions, 'name'>): RemixCache {
     const cache = this._instances.get(name);
 
     if (!cache) {
