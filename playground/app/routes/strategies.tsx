@@ -1,5 +1,5 @@
 import { cacheFirst, cacheOnly, networkFirst, staleWhileRevalidate } from "@remix-pwa/strategy";
-import type { StrategyResponse  } from "@remix-pwa/strategy";
+import type { StrategyResponse } from "@remix-pwa/strategy";
 import type { WorkerActionFunction } from "@remix-pwa/sw";
 import type { ActionArgs } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";

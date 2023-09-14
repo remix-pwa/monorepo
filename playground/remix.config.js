@@ -1,7 +1,7 @@
 /** @type {import('@remix-pwa/dev').WorkerConfig} */
 module.exports = {
-  ignoredRouteFiles: ["**/.*"],
-  serverModuleFormat: "cjs",
+  ignoredRouteFiles: ['**/.*'],
+  serverModuleFormat: 'cjs',
   future: {
     v2_dev: true,
     v2_errorBoundary: true,
@@ -17,6 +17,6 @@ module.exports = {
     '@remix-pwa/dev',
     '@remix-pwa/sync',
     '@remix-pwa/cache',
-    'idb'
-  ]
+    'idb',
+  ],
 };

@@ -5,8 +5,8 @@ import type { ServerRoute } from '@remix-run/server-runtime/dist/routes.js';
 
 throw new Error(
   '@remix-pwa/dev/worker-build is not meant to be used directly from node_modules.' +
-    ' It exists to provide type definitions for a virtual module provided' +
-    ' by the Remix PWA compiler at build time.'
+  ' It exists to provide type definitions for a virtual module provided' +
+  ' by the Remix PWA compiler at build time.'
 );
 
 export interface WorkerLoadContext extends AppLoadContext {

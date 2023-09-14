@@ -21,7 +21,7 @@ export const workerAction = async ({ context }: WorkerActionArgs) => {
   const { fetchFromServer, event } = context;
 
   try {
-    // We are now calling the actual Remix action here, but like you can see 
+    // We are now calling the actual Remix action here, but like you can see
     // we are doing nothing with it, so no redirect happens 😏
     //
     // But open up the 'Cookies' section in your devtools for a little surprise.
@@ -63,12 +63,12 @@ export default function Sync() {
         <div className="mt-6">
           <h3 className="font-medium text-lg">How does it work?</h3>
           <p className="indent-5 px-1">
-            To fully understand what's happening here, you need to replicate the behaviour first. Head to the next step, when you 
+            To fully understand what's happening here, you need to replicate the behaviour first. Head to the next step, when you
             are done, come back here and read on.
           </p>
           <p className="indent-5 px-1">
             First thing, what you just witnessed is called <a href="https://github.com/WICG/background-sync/blob/main/explainers/sync-explainer.md#background-synchronization-explained" className="font-medium underline">background Sync</a>.
-            It's a new API that allows you to queue requests when you are offline and then send them when you are back online. What just happened was that when you went offline and submitted 
+            It's a new API that allows you to queue requests when you are offline and then send them when you are back online. What just happened was that when you went offline and submitted
             the form, the request attempted to go to the action but failed. The service worker then intercepted the request and queued it. When you came back online, the service worker
             automatically sent the request to the action and it succeeded. The cookie getting updated was as a result of a redirect in the action (check the network tab) with a <code>Set-Cookie</code> header.
           </p>
@@ -84,14 +84,14 @@ export default function Sync() {
         <div className="mt-6">
           <h3 className="font-medium text-lg">See the behaviour in action</h3>
           <p className="indent-5 px-1">
-            First things first, clear your storage (in devtools) the go offline. You can head into the 'Service Worker', tab in devtools, 'Network' tab or 
+            First things first, clear your storage (in devtools) the go offline. You can head into the 'Service Worker', tab in devtools, 'Network' tab or
             'Network Conditions' tab and check the 'Offline' checkbox. Now, try to submit the form below. You should see
             a 'Failed to fetch' error in your console (forget about the failed to cache error). This is because we are offline
             and the service worker is unable to call the Remix action.
           </p>
           <p className="indent-5 px-1">
             We still get a response from the service worker though, and that's because we are calling the <code>workerAction</code>
-            function and returning a response from it. Now, wait for 5-10 seconds, then go back online. Head over to the 'Cookies' tab and 
+            function and returning a response from it. Now, wait for 5-10 seconds, then go back online. Head over to the 'Cookies' tab and
             refresh the tab in there. You should see a new cookie with the name <code>userToken</code> and a value of <code>9eU3n4_x55</code>.
           </p>
           <p className="indent-0 px-1">

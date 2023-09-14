@@ -12,7 +12,7 @@ A challenge with Typescript is handling dependencies that aren't written in Type
 
 ### Decision
 
-Utilising Typescript for all packages and dependencies where applicable especially the published packages (like `@remix-pwa/sw`), in order to benefit from the advantages of Typescript. 
+Utilising Typescript for all packages and dependencies where applicable especially the published packages (like `@remix-pwa/sw`), in order to benefit from the advantages of Typescript.
 
 In internal tools and scripts, like `/scripts`, javascript as a language would still be a no-brainer in a lot of cases.
 

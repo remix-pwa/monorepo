@@ -15,7 +15,7 @@ let handler = new RemixNavigationHandler({
   documentCacheName: PAGES,
 });
 
-// const documentHandler = new NetworkFirst({ 
+// const documentHandler = new NetworkFirst({
 //   cacheName: PAGES,
 // });
 
