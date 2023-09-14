@@ -38,8 +38,12 @@ export const packages = async (dir: string) => {
   );
 
   execSync(
+    `${pkgManager ?? 'npm'} ${pkgManager === 'yarn' ? 'add' : 'install'} @remix-pwa/sw@latest @remix-pwa/cache@latest`
+  );
+
+  execSync(
     `${pkgManager ?? 'npm'} ${
       pkgManager === 'yarn' ? 'add' : 'install'
-    } @remix-pwa/sw@latest @remix-pwa/dev@latest @remix-pwa/worker-runtime@latest @remix-pwa/cache@latest`
+    } -D @remix-pwa/dev@latest @remix-pwa/worker-runtime@latest`
   );
 };
