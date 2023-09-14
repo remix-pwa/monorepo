@@ -1,3 +1,21 @@
+# @remix-pwa/worker-runtime 2.0.0 (2023-09-14)
+
+
+### Bug Fixes
+
+* revert 'event.request.clone()' when creating arguments 7ad2fb1
+
+
+### Features
+
+* **compiler:** adding assets to the manifest 8006781
+* **worker-runtime:** preparing runtime for a v2 release 482f39a
+
+
+### BREAKING CHANGES
+
+* **worker-runtime:** bumping to `v2`
+
 ## @remix-pwa/worker-runtime 1.1.1 (2023-09-03)
 
 
