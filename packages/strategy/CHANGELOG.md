@@ -1,3 +1,23 @@
+# @remix-pwa/strategy 2.0.0 (2023-09-14)
+
+
+### Features
+
+* **strategy:** v2 prep da921a7
+
+
+### BREAKING CHANGES
+
+* **strategy:** Added description and some README context
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/cache:** upgraded to 2.0.0
+
 ## @remix-pwa/strategy 1.0.1 (2023-09-02)
 
 
