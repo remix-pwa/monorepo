@@ -1,3 +1,15 @@
+# @remix-pwa/sync 2.0.0 (2023-09-14)
+
+
+### Features
+
+* **sync:** added README 15ee14a
+
+
+### BREAKING CHANGES
+
+* **sync:** bumping to `v2`
+
 # @remix-pwa/sync 1.1.0 (2023-09-02)
 
 
