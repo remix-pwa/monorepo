@@ -1,3 +1,16 @@
+# @remix-pwa/client 2.0.0 (2023-09-14)
+
+
+### Features
+
+* **client:** added README and description for `v2` release f24fbd1
+* **client:** new APIs plus client API checker 29b0fe7
+
+
+### BREAKING CHANGES
+
+* **client:** Built README file for `client`
+
 # @remix-pwa/client 1.1.0 (2023-08-18)
 
 
