@@ -14,8 +14,8 @@ was a great approach, but it had a few issues:
 - It was extensible but had some limitations, especially when it came to document caching.
 - It was quite opinionated, and it was hard to override some of the default behaviors without digging into the source code.
 
-Due to this, we decided to take a step back and rethink the approach. We wanted to make it more flexible, extensible, and less opinionated. Plus, something that even if we get wrong on our first try, it would be easy to go back to the drawing board and have a 
-second look at. 
+Due to this, we decided to take a step back and rethink the approach. We wanted to make it more flexible, extensible, and less opinionated. Plus, something that even if we get wrong on our first try, it would be easy to go back to the drawing board and have a
+second look at.
 
 ### Decision
 

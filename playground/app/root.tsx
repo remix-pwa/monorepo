@@ -20,7 +20,7 @@ export const links: LinksFunction = () => [
 
 export default function App() {
   useSWEffect();
-  
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       // ...
