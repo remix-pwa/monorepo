@@ -1,3 +1,4 @@
+/// <reference lib="WebWorker" />
 import type { RemixCacheOptions } from './cache.js';
 import { RemixCache } from './cache.js';
 
@@ -192,3 +193,22 @@ export const initCache = (options: RemixCacheOptions): RemixCache => {
  * @alias `initCache`
  */
 export const createCache = initCache;
+
+declare global {
+  interface WorkerGlobalScope {
+    /**
+     * Remix Cache Storage
+     *
+     * This is a wrapper around the Cache Storage API that allows you to create and manage
+     * multiple caches (`RemixCache`). It also provides interfaces to interact with the caches.
+     *
+     * Recommended to call `init` in your service worker installation or activation script in order to
+     * wrap all existing caches in `RemixCache` instances and supercharge them.
+     *
+     * @alias `Storage`
+     */
+    RemixCacheStorage: typeof RemixCacheStorage;
+  }
+}
+
+self.RemixCacheStorage = RemixCacheStorage;
