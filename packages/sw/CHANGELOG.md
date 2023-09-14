@@ -1,3 +1,38 @@
+# @remix-pwa/sw 2.0.0 (2023-09-14)
+
+
+### Bug Fixes
+
+* **packages:** testing actions f6b4b6e
+* **sw:** fixed exports not found due to wrong entry e698faa
+* **sw:** fixed version numbers? d9d4274
+
+
+### Features
+
+* `logger` implementation 0e8e8d9
+* **sw:** `LiveReload` available for service workers cc110f2
+* **sw:** added typings for remix-pwa 588eb4c
+* **sw:** bumped major verson: `2.0.0` b99af93
+* **sw:** new `indexedDBStore` API - exposed APIs for indexedDB usage aa06eb5
+* **sw:** service worker loader function 381f8d5
+* **sw:** v2 is ready 597d67a
+
+
+### BREAKING CHANGES
+
+* **packages:** bump to `v2`
+* **sw:** fix semantic versioning error
+* **sw:** Moving to `v2`
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/cache:** upgraded to 2.0.0
+
 # @remix-pwa/sw 1.1.0 (2023-09-02)
 
 
