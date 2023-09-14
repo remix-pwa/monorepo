@@ -1,6 +1,6 @@
 import { errorBlock } from './utils';
 
-export const checkConnectivity = async (online: () => 'online', offline: () => 'offline') => {
+export const checkConnectivity = async (online: () => void, offline: () => void) => {
   try {
     if (navigator.onLine) {
       online();

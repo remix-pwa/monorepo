@@ -77,3 +77,11 @@ export const checkVisibility = async (isVisible: () => void, notAvailable: () =>
     return errorBlock(error);
   }
 };
+
+export const wakeLockSupported = () => {
+  try {
+    return 'wakeLock' in navigator;
+  } catch (error) {
+    return errorBlock(error);
+  }
+};

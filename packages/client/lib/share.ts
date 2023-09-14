@@ -21,3 +21,19 @@ export const shareData = async (data: ShareData) => {
     return errorBlock(error);
   }
 };
+
+export const shareSupported = () => {
+  try {
+    return 'share' in navigator;
+  } catch (error) {
+    return errorBlock(error);
+  }
+};
+
+export const shareFilesSupported = () => {
+  try {
+    return 'canShare' in navigator;
+  } catch (error) {
+    return errorBlock(error);
+  }
+};

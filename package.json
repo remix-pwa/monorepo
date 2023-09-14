@@ -16,12 +16,12 @@
   ],
   "type": "module",
   "scripts": {
-    "build": "turbo build",
+    "build": "npm run build --workspaces --if-present",
     "commit": "commit",
     "dev": "npm run dev --workspace @remix-pwa/playground",
     "lint-staged": "lint-staged",
-    "lint": "turbo lint",
-    "format": "turbo format",
+    "lint": "npm run lint --workspaces --if-present",
+    "format": "npm run format --workspaces --if-present",
     "postclone": "npm install && npm run test && npm run build",
     "test": "turbo test -- --coverage"
   },
@@ -39,7 +39,7 @@
     "prettier": "^3.0.0",
     "prettier-plugin-organize-imports": "^3.2.3",
     "semver": "^7.5.4",
-    "turbo": "^1.10.12",
+    "turbo": "1.10.13",
     "typescript": "^5.1.6",
     "vitest": "^0.34.1"
   },

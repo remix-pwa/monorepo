@@ -1,3 +1,4 @@
+import type { WorkerActionArgs } from "@remix-pwa/sw";
 import { queueToServer } from "@remix-pwa/sync";
 import { redirect } from "@remix-run/node";
 import type { ActionFunction } from "@remix-run/node";
@@ -16,7 +17,7 @@ export const action: ActionFunction = () => {
   });
 }
 
-export const workerAction = async ({ context }) => {
+export const workerAction = async ({ context }: WorkerActionArgs) => {
   const { fetchFromServer, event } = context;
 
   try {

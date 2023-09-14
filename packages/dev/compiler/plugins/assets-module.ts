@@ -1,6 +1,5 @@
-/* eslint-disable unicorn/consistent-function-scoping */
-import { ResolvedWorkerConfig } from 'compiler/utils/config.js';
-import { OnLoadResult, OnResolveArgs, OnResolveResult, Plugin, PluginBuild } from 'esbuild';
+import type { ResolvedWorkerConfig } from 'compiler/utils/config.js';
+import type { OnLoadResult, OnResolveArgs, OnResolveResult, Plugin, PluginBuild } from 'esbuild';
 import { glob } from 'glob';
 const FILTER_REGEX = /@remix-sas\/dev\?assets/;
 const NAMESPACE = 'assets-module';

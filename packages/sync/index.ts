@@ -1,1 +1,1 @@
-export { queueToServer, registerAllQueues, registerQueue } from './src/export.js';
+export { queueToServer, registerAllQueues, registerAllSyncs, registerQueue, registerSync } from './src/export.js';
