@@ -1,3 +1,22 @@
+# @remix-pwa/cache 2.0.0 (2023-09-14)
+
+
+### Bug Fixes
+
+* **cache:** added creation options to `open` cache method 7ddb6ae
+* **cache:** fixed `open` function mandatory params 5c75383
+* **cache:** fixed `RemixCache` putting mechanism for non-JSON responses 1a9c10b
+
+
+### Features
+
+* **cache:** prepped for `v2` 63957d9
+
+
+### BREAKING CHANGES
+
+* **cache:** Fixed up the `README.md` file
+
 # @remix-pwa/cache 1.3.0 (2023-09-02)
 
 
