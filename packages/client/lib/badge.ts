@@ -28,3 +28,11 @@ export const clearBadge = async () => {
     return errorBlock(error);
   }
 };
+
+export const badgingSupported = async () => {
+  try {
+    return !!('setAppBadge' in navigator && 'clearAppBadge' in navigator);
+  } catch (error) {
+    return errorBlock(error);
+  }
+};

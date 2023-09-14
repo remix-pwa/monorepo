@@ -57,7 +57,7 @@ export const copyImageToClipboard = async (imgURL: string): Promise<{ ok: boolea
   }
 };
 
-export const readFiles = async (): Promise<{ ok: boolean; message: string; files: File[] | null }> => {
+export const readFilesFromClipboard = async (): Promise<{ ok: boolean; message: string; files: File[] | null }> => {
   try {
     if (navigator.clipboard) {
       const files = [] as File[];
@@ -71,11 +71,19 @@ export const readFiles = async (): Promise<{ ok: boolean; message: string; files
         }
       }
 
-      return { ok: true, message: 'Read files successfully', files };
+      return { ok: true, message: 'Read files from clipboard successfully', files };
     } else {
       return { ok: false, message: "Clipboard API not supported! Can't read files", files: null };
     }
   } catch (error) {
     return { ...errorBlock(error), files: null };
+  }
+};
+
+export const clipboardSupported = async () => {
+  try {
+    return 'clipboard' in navigator;
+  } catch (error) {
+    return errorBlock(error);
   }
 };
