@@ -105,7 +105,8 @@ export class RemixCacheStorage {
   /**
    * Get a cache by name. If no cache with the given name exists, create one.
    *
-   * @param name
+   * @param name Name of the cache - **must be unique**
+   * @param opts Options to pass to the `RemixCache` constructor if the cache is getting created
    * @returns {RemixCache}
    *
    * @example
@@ -115,11 +116,11 @@ export class RemixCacheStorage {
    * const cache = Storage.open('my-cache');
    * ```
    */
-  static open(name: string): RemixCache {
+  static open(name: string, opts: Omit<RemixCacheOptions, 'name'>): RemixCache {
     const cache = this._instances.get(name);
 
     if (!cache) {
-      return this.createCache({ name });
+      return this.createCache({ name, ...opts });
     }
 
     return cache;
@@ -196,6 +197,21 @@ export const createCache = initCache;
 
 declare global {
   interface WorkerGlobalScope {
+    /**
+     * Remix Cache Storage
+     *
+     * This is a wrapper around the Cache Storage API that allows you to create and manage
+     * multiple caches (`RemixCache`). It also provides interfaces to interact with the caches.
+     *
+     * Recommended to call `init` in your service worker installation or activation script in order to
+     * wrap all existing caches in `RemixCache` instances and supercharge them.
+     *
+     * @alias `Storage`
+     */
+    RemixCacheStorage: typeof RemixCacheStorage;
+  }
+
+  interface Window {
     /**
      * Remix Cache Storage
      *
