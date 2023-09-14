@@ -57,19 +57,18 @@ export async function handleRequest({
   loadContext,
   routes,
 }: HandleRequestArgs): Promise<Response> {
-  const { request } = event;
-  const url = new URL(request.url);
+  const url = new URL(event.request.url);
   const routeId = url.searchParams.get('_data');
   // if the request is not a loader or action request, we call the default handler and the routeId will be undefined
   const route = routeId ? routes[routeId] : undefined;
   const _arguments = {
-    request: event.request.clone(),
+    request: event.request,
     params: getURLParameters(event.request, route?.path),
     context: loadContext,
   };
 
   try {
-    if (isLoaderRequest(request) && route?.module.workerLoader) {
+    if (isLoaderRequest(event.request) && route?.module.workerLoader) {
       return await handleLoader({
         event,
         loader: route.module.workerLoader,
@@ -79,7 +78,7 @@ export async function handleRequest({
       }).then(responseHandler);
     }
 
-    if (isActionRequest(request) && route?.module?.workerAction) {
+    if (isActionRequest(event.request) && route?.module?.workerAction) {
       return await handleAction({
         event,
         action: route.module.workerAction,
@@ -106,7 +105,7 @@ async function handleLoader({ event, loadContext, loader, routeId, routePath }: 
   if (result === undefined) {
     throw new Error(
       `You defined a loader for route "${routeId}" but didn't return ` +
-        `anything from your \`worker loader\` function. Please return a value or \`null\`.`
+      `anything from your \`worker loader\` function. Please return a value or \`null\`.`
     );
   }
 
@@ -137,7 +136,7 @@ async function handleAction({ action, event, loadContext, routeId, routePath }: 
   if (result === undefined) {
     throw new Error(
       `You defined an action for route "${routeId}" but didn't return ` +
-        `anything from your \`worker action\` function. Please return a value or \`null\`.`
+      `anything from your \`worker action\` function. Please return a value or \`null\`.`
     );
   }
 
