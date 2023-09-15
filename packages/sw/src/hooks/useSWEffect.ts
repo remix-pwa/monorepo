@@ -1,6 +1,6 @@
 import type { RouteMatch } from '@remix-run/react';
 import { useLocation, useMatches } from '@remix-run/react';
-import React, { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 // let isMount = true;
 
@@ -27,7 +27,7 @@ export function useSWEffect(): void {
     return false;
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     const mounted = isMount;
     isMount.current = false;
 

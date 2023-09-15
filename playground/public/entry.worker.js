@@ -121,12 +121,12 @@ __export(router_exports, {
   isDeferredData: () => isDeferredData,
   isRouteErrorResponse: () => isRouteErrorResponse2,
   joinPaths: () => joinPaths,
-  json: () => json6,
+  json: () => json5,
   matchPath: () => matchPath2,
   matchRoutes: () => matchRoutes,
   normalizePathname: () => normalizePathname,
   parsePath: () => parsePath,
-  redirect: () => redirect6,
+  redirect: () => redirect5,
   resolvePath: () => resolvePath,
   resolveTo: () => resolveTo,
   stripBasename: () => stripBasename
@@ -1390,13 +1390,13 @@ function createRouter(init) {
       pendingNavigationController.signal.removeEventListener("abort", abortPendingFetchRevalidations);
     }
     revalidatingFetchers.forEach((rf) => fetchControllers.delete(rf.key));
-    let redirect9 = findRedirect(results);
-    if (redirect9) {
-      if (redirect9.idx >= matchesToLoad.length) {
-        let fetcherKey = revalidatingFetchers[redirect9.idx - matchesToLoad.length].key;
+    let redirect8 = findRedirect(results);
+    if (redirect8) {
+      if (redirect8.idx >= matchesToLoad.length) {
+        let fetcherKey = revalidatingFetchers[redirect8.idx - matchesToLoad.length].key;
         fetchRedirectIds.add(fetcherKey);
       }
-      await startRedirectNavigation(state, redirect9.result, {
+      await startRedirectNavigation(state, redirect8.result, {
         replace
       });
       return {
@@ -1580,13 +1580,13 @@ function createRouter(init) {
     fetchReloadIds.delete(key);
     fetchControllers.delete(key);
     revalidatingFetchers.forEach((r) => fetchControllers.delete(r.key));
-    let redirect9 = findRedirect(results);
-    if (redirect9) {
-      if (redirect9.idx >= matchesToLoad.length) {
-        let fetcherKey = revalidatingFetchers[redirect9.idx - matchesToLoad.length].key;
+    let redirect8 = findRedirect(results);
+    if (redirect8) {
+      if (redirect8.idx >= matchesToLoad.length) {
+        let fetcherKey = revalidatingFetchers[redirect8.idx - matchesToLoad.length].key;
         fetchRedirectIds.add(fetcherKey);
       }
-      return startRedirectNavigation(state, redirect9.result);
+      return startRedirectNavigation(state, redirect8.result);
     }
     let {
       loaderData,
@@ -1669,18 +1669,18 @@ function createRouter(init) {
       fetchers: new Map(state.fetchers)
     });
   }
-  async function startRedirectNavigation(state2, redirect9, _temp) {
+  async function startRedirectNavigation(state2, redirect8, _temp) {
     let {
       submission,
       replace,
       isFetchActionRedirect
     } = _temp === void 0 ? {} : _temp;
-    if (redirect9.revalidate) {
+    if (redirect8.revalidate) {
       isRevalidationRequired = true;
     }
     let redirectLocation = createLocation(
       state2.location,
-      redirect9.location,
+      redirect8.location,
       // TODO: This can be removed once we get rid of useTransition in Remix v2
       _extends2({
         _isRedirect: true
@@ -1689,14 +1689,14 @@ function createRouter(init) {
       } : {})
     );
     invariant2(redirectLocation, "Expected a location on the redirect navigation");
-    if (ABSOLUTE_URL_REGEX.test(redirect9.location) && isBrowser) {
-      let url = init.history.createURL(redirect9.location);
+    if (ABSOLUTE_URL_REGEX.test(redirect8.location) && isBrowser) {
+      let url = init.history.createURL(redirect8.location);
       let isDifferentBasename = stripBasename(url.pathname, basename) == null;
       if (routerWindow.location.origin !== url.origin || isDifferentBasename) {
         if (replace) {
-          routerWindow.location.replace(redirect9.location);
+          routerWindow.location.replace(redirect8.location);
         } else {
-          routerWindow.location.assign(redirect9.location);
+          routerWindow.location.assign(redirect8.location);
         }
         return;
       }
@@ -1704,10 +1704,10 @@ function createRouter(init) {
     pendingNavigationController = null;
     let redirectHistoryAction = replace === true ? Action2.Replace : Action2.Push;
     let activeSubmission = submission || getSubmissionFromNavigation(state2.navigation);
-    if (redirectPreserveMethodStatusCodes.has(redirect9.status) && activeSubmission && isMutationMethod(activeSubmission.formMethod)) {
+    if (redirectPreserveMethodStatusCodes.has(redirect8.status) && activeSubmission && isMutationMethod(activeSubmission.formMethod)) {
       await startNavigation(redirectHistoryAction, redirectLocation, {
         submission: _extends2({}, activeSubmission, {
-          formAction: redirect9.location
+          formAction: redirect8.location
         }),
         // Preserve this flag across redirects
         preventScrollReset: pendingPreventScrollReset
@@ -2353,7 +2353,7 @@ function normalizeNavigateOptions(normalizeFormMethod, isFetcher, path, opts) {
         return getInvalidBodyError();
       }
       try {
-        let json10 = typeof opts.body === "string" ? JSON.parse(opts.body) : opts.body;
+        let json9 = typeof opts.body === "string" ? JSON.parse(opts.body) : opts.body;
         return {
           path,
           submission: {
@@ -2361,7 +2361,7 @@ function normalizeNavigateOptions(normalizeFormMethod, isFetcher, path, opts) {
             formAction,
             formEncType: opts.formEncType,
             formData: void 0,
-            json: json10,
+            json: json9,
             text: void 0
           }
         };
@@ -3039,7 +3039,7 @@ function getSubmissionFromNavigation(navigation) {
     formEncType,
     text,
     formData,
-    json: json10
+    json: json9
   } = navigation;
   if (!formMethod || !formAction || !formEncType) {
     return;
@@ -3062,13 +3062,13 @@ function getSubmissionFromNavigation(navigation) {
       json: void 0,
       text: void 0
     };
-  } else if (json10 !== void 0) {
+  } else if (json9 !== void 0) {
     return {
       formMethod,
       formAction,
       formEncType,
       formData: void 0,
-      json: json10,
+      json: json9,
       text: void 0
     };
   }
@@ -3170,7 +3170,7 @@ function getDoneFetcher(data) {
   };
   return fetcher;
 }
-var Action2, PopStateEventType, ResultType2, immutableRouteKeys, paramRe, dynamicSegmentValue, indexRouteValue, emptySegmentValue, staticSegmentValue, splatPenalty, isSplat, joinPaths, normalizePathname, normalizeSearch, normalizeHash, json6, AbortedDeferredError2, DeferredData2, defer4, redirect6, ErrorResponse, validMutationMethodsArr2, validMutationMethods2, validRequestMethodsArr2, validRequestMethods2, redirectStatusCodes, redirectPreserveMethodStatusCodes, IDLE_NAVIGATION, IDLE_FETCHER, IDLE_BLOCKER, ABSOLUTE_URL_REGEX, defaultMapRouteProperties, UNSAFE_DEFERRED_SYMBOL2;
+var Action2, PopStateEventType, ResultType2, immutableRouteKeys, paramRe, dynamicSegmentValue, indexRouteValue, emptySegmentValue, staticSegmentValue, splatPenalty, isSplat, joinPaths, normalizePathname, normalizeSearch, normalizeHash, json5, AbortedDeferredError2, DeferredData2, defer4, redirect5, ErrorResponse, validMutationMethodsArr2, validMutationMethods2, validRequestMethodsArr2, validRequestMethods2, redirectStatusCodes, redirectPreserveMethodStatusCodes, IDLE_NAVIGATION, IDLE_FETCHER, IDLE_BLOCKER, ABSOLUTE_URL_REGEX, defaultMapRouteProperties, UNSAFE_DEFERRED_SYMBOL2;
 var init_router = __esm({
   "../node_modules/@remix-run/server-runtime/node_modules/@remix-run/router/dist/router.js"() {
     (function(Action3) {
@@ -3197,7 +3197,7 @@ var init_router = __esm({
     normalizePathname = (pathname) => pathname.replace(/\/+$/, "").replace(/^\/*/, "/");
     normalizeSearch = (search) => !search || search === "?" ? "" : search.startsWith("?") ? search : "?" + search;
     normalizeHash = (hash) => !hash || hash === "#" ? "" : hash.startsWith("#") ? hash : "#" + hash;
-    json6 = function json7(data, init) {
+    json5 = function json6(data, init) {
       if (init === void 0) {
         init = {};
       }
@@ -3337,7 +3337,7 @@ var init_router = __esm({
       } : init;
       return new DeferredData2(data, responseInit);
     };
-    redirect6 = function redirect7(url, init) {
+    redirect5 = function redirect6(url, init) {
       if (init === void 0) {
         init = 302;
       }
@@ -3485,13 +3485,13 @@ var require_responses = __commonJS({
     Object.defineProperty(exports, "__esModule", { value: true });
     var router = (init_router(), __toCommonJS(router_exports));
     var errors = require_errors();
-    var json10 = (data, init = {}) => {
+    var json9 = (data, init = {}) => {
       return router.json(data, init);
     };
     var defer6 = (data, init = {}) => {
       return router.defer(data, init);
     };
-    var redirect9 = (url, init = 302) => {
+    var redirect8 = (url, init = 302) => {
       return router.redirect(url, init);
     };
     function isDeferredData3(value) {
@@ -3561,8 +3561,8 @@ var require_responses = __commonJS({
     exports.isRedirectResponse = isRedirectResponse3;
     exports.isRedirectStatusCode = isRedirectStatusCode2;
     exports.isResponse = isResponse3;
-    exports.json = json10;
-    exports.redirect = redirect9;
+    exports.json = json9;
+    exports.redirect = redirect8;
   }
 });
 
@@ -3695,24 +3695,28 @@ var Strategy;
 })(Strategy || (Strategy = {}));
 var RemixCache = class {
   /**
-   * Create a new `RemixCache` instance. Don't invoke this directly! Use `initCache` instead.
+   * Create a new `RemixCache` instance. Don't invoke this directly! Use `RemixCacheStorage.open()` instead.
    * @constructor
    * @param {object} options - Options for the RemixCache instance.
    */
   constructor(options) {
-    this.ttl = Infinity;
-    this.strategy = Strategy.NetworkFirst;
-    this.maxItems = 100;
-    this.name = options.name;
-    this.maxItems = options.maxItems || 100;
-    this.strategy = options.strategy || Strategy.NetworkFirst;
-    this.ttl = options.ttl || Infinity;
-    if (this.strategy === Strategy.NetworkOnly) {
-      this.ttl = -1;
+    this._ttl = Infinity;
+    this._strategy = Strategy.NetworkFirst;
+    this._maxItems = 100;
+    this.set = false;
+    this.name = "rp-" + options.name;
+    this._maxItems = options.maxItems || 100;
+    this._strategy = options.strategy || Strategy.NetworkFirst;
+    this._ttl = options.ttl || Infinity;
+    if (this._strategy === Strategy.NetworkOnly) {
+      this._ttl = -1;
+    }
+    if (options.maxItems || options.ttl || options.strategy) {
+      this.set = true;
     }
   }
   async _openCache() {
-    return await caches.open(this.name);
+    return await caches.open(`${this.name}`);
   }
   async _getOrDeleteIfExpired(key, metadata) {
     if (metadata.expiresAt <= Date.now()) {
@@ -3726,7 +3730,7 @@ var RemixCache = class {
     return await Promise.all(keys2.map((key) => cache.match(key)));
   }
   async _lruCleanup() {
-    if (await this.length() >= this.maxItems) {
+    if (await this.length() >= this._maxItems) {
       this._values().then(async (values) => {
         const val = values.sort((a, b2) => {
           const aMeta = a.clone().json().metadata;
@@ -3741,6 +3745,12 @@ var RemixCache = class {
     const { metadata, value } = await response.clone().json();
     const deleted = await this._getOrDeleteIfExpired(request.clone(), metadata);
     const headers = new Headers(response.clone().headers);
+    if (!this.set) {
+      this.set = true;
+      this._ttl = metadata.cacheTtl;
+      this._maxItems = metadata.cacheMaxItems;
+      this._strategy = metadata.cacheStrategy;
+    }
     if (!deleted) {
       const res = new Response(value, {
         status: response.status,
@@ -3819,7 +3829,7 @@ var RemixCache = class {
    *
    * @param {RequestInfo | URL} request - The request to add.
    * @param {Response} response - The response to add.
-   * @param {boolean} modified - Whether the response has been modified.
+   * @param {number | undefined} ttl - The time-to-live of the cache entry in ms. Defaults to cache ttl.
    * @returns {Promise<void>} A `Promise` that resolves when the entry is added to the cache.
    *
    * @example
@@ -3836,7 +3846,7 @@ var RemixCache = class {
     if (request instanceof URL || typeof request === "string") {
       request = new Request(request);
     }
-    if (this.ttl <= 0 || ttl && ttl <= 0)
+    if (this._ttl <= 0 || ttl && ttl <= 0)
       return;
     const contentType = response.headers.get("Content-Type");
     let data;
@@ -3845,10 +3855,24 @@ var RemixCache = class {
     } else {
       data = await response.clone().text();
     }
+    if (!this.set) {
+      this.set = true;
+      const keys2 = await cache.keys();
+      const firstVal = await cache.match(keys2[0]);
+      if (firstVal) {
+        const { metadata } = await firstVal.clone().json();
+        this._ttl = metadata.cacheTtl;
+        this._maxItems = metadata.cacheMaxItems;
+        this._strategy = metadata.cacheStrategy;
+      }
+    }
     response = new Response(JSON.stringify({
       metadata: {
         accessedAt: Date.now(),
-        expiresAt: Date.now() + (ttl ?? this.ttl)
+        expiresAt: Date.now() + (ttl ?? this._ttl),
+        cacheTtl: this._ttl,
+        cacheMaxItems: this._maxItems,
+        cacheStrategy: this._strategy
       },
       value: data
     }), {
@@ -3867,6 +3891,12 @@ var RemixCache = class {
       console.error("Failed to put to cache:", error);
     }
   }
+  get ttl() {
+    return this._ttl;
+  }
+  get strategy() {
+    return this._strategy;
+  }
 };
 
 // ../packages/cache/dist/src/storage.js
@@ -3878,7 +3908,8 @@ var RemixCacheStorage = class {
    * Initialize the Remix PWA Cache Storage. This will create a special cache for each
    * existing cache in the browser or create a new map if none exist.
    *
-   * Use in your service worker installation script.
+   * Use in your service worker installation script. Make sure to call this before
+   * initializing any `RemixCache` instance.
    *
    * @example
    * ```js
@@ -3892,25 +3923,31 @@ var RemixCacheStorage = class {
    * });
    * ```
    */
-  static async init() {
-    if (typeof caches === "undefined") {
-      throw new Error("Cache API is not available in this environment.");
-    }
-    if (this._instances.size > 0) {
-      return;
-    }
-    const cachesNames = await caches.keys();
-    for (const name of cachesNames) {
-      this._instances.set(name, new RemixCache({ name }));
-    }
-  }
+  // static async init() {
+  //   if (typeof caches === 'undefined') {
+  //     throw new Error('Cache API is not available in this environment.');
+  //   }
+  //   if (this._instances.size > 0) {
+  //     return;
+  //   }
+  //   const cachesNames = await caches.keys();
+  //   for (const name of cachesNames) {
+  //     if (name.startsWith('rp-')) {
+  //       this._instances.set(name, new RemixCache({ name }));
+  //     }
+  //   }
+  // }
   /**
    * Create a custom cache that you can use across your application.
    * Use this instead of initialising `RemixCache` directly.
    */
   static createCache(opts) {
+    const { name } = opts;
+    if (this._instances.has(name)) {
+      return this._instances.get(name);
+    }
     const newCache = new RemixCache(opts);
-    this._instances.set(opts.name, newCache);
+    this._instances.set(`${name}`, newCache);
     return newCache;
   }
   /**
@@ -3941,7 +3978,8 @@ var RemixCacheStorage = class {
   /**
    * Get a cache by name. If no cache with the given name exists, create one.
    *
-   * @param name
+   * @param name Name of the cache - **must be unique**
+   * @param opts Options to pass to the `RemixCache` constructor if the cache is getting created
    * @returns {RemixCache}
    *
    * @example
@@ -3951,10 +3989,10 @@ var RemixCacheStorage = class {
    * const cache = Storage.open('my-cache');
    * ```
    */
-  static open(name) {
+  static open(name, opts) {
     const cache = this._instances.get(name);
     if (!cache) {
-      return this.createCache({ name });
+      return this.createCache({ name, ...opts });
     }
     return cache;
   }
@@ -4006,10 +4044,6 @@ var RemixCacheStorage = class {
 };
 RemixCacheStorage._instances = /* @__PURE__ */ new Map();
 var Storage = RemixCacheStorage;
-var initCache = (options) => {
-  return Storage.createCache(options);
-};
-var createCache = initCache;
 
 // ../packages/sw/dist/src/message/remixNavigationHandler.js
 var RemixNavigationHandler = class extends MessageHandler {
@@ -4064,19 +4098,6 @@ var RemixNavigationHandler = class extends MessageHandler {
     }
     await Promise.all(cachePromises.values());
   }
-};
-
-// ../packages/sw/dist/src/react/utils.js
-var json = (data, init = {}) => {
-  const responseInit = typeof init === "number" ? { status: init } : init;
-  const headers = new Headers(responseInit.headers);
-  if (!headers.has("Content-Type")) {
-    headers.set("Content-Type", "application/json; charset=utf-8");
-  }
-  return new Response(JSON.stringify(data), {
-    ...responseInit,
-    headers
-  });
 };
 
 // ../node_modules/dexie/dist/modern/dexie.mjs
@@ -9745,10 +9766,8 @@ var cacheFirst = async ({ cache: cacheName, cacheOptions, fetchDidFail = void 0 
     }
     let remixCache;
     if (typeof cacheName === "string") {
-      Storage.init();
-      remixCache = Storage.has(cacheName) ? Storage.get(cacheName) : createCache({ name: cacheName, ...cacheOptions });
+      remixCache = Storage.open(cacheName, cacheOptions);
     } else {
-      Storage.init();
       remixCache = cacheName;
     }
     const response = await remixCache.match(request);
@@ -9776,10 +9795,8 @@ var cacheOnly = async ({ cache: cacheName, cacheMatchOptions: matchOptions = { i
     }
     let remixCache;
     if (typeof cacheName === "string") {
-      Storage.init();
-      remixCache = Storage.has(cacheName) ? Storage.get(cacheName) : createCache({ name: cacheName, ...cacheOptions });
+      remixCache = Storage.open(cacheName, cacheOptions);
     } else {
-      Storage.init();
       remixCache = cacheName;
     }
     const response = await remixCache.match(request, matchOptions);
@@ -9805,10 +9822,8 @@ var networkFirst = async ({ cache: cacheName, cacheOptions, fetchDidFail = void 
     }
     let remixCache;
     if (typeof cacheName === "string") {
-      Storage.init();
-      remixCache = Storage.has(cacheName) ? Storage.get(cacheName) : createCache({ name: cacheName, ...cacheOptions });
+      remixCache = Storage.open(cacheName, cacheOptions);
     } else {
-      Storage.init();
       remixCache = cacheName;
     }
     try {
@@ -9849,10 +9864,8 @@ var staleWhileRevalidate = async ({ cache: cacheName, cacheOptions, fetchDidFail
     }
     let remixCache;
     if (typeof cacheName === "string") {
-      Storage.init();
-      remixCache = Storage.has(cacheName) ? Storage.get(cacheName) : createCache({ name: cacheName, ...cacheOptions });
+      remixCache = Storage.open(cacheName, cacheOptions);
     } else {
-      Storage.init();
       remixCache = cacheName;
     }
     return remixCache.match(request).then(async (response) => {
@@ -10024,7 +10037,7 @@ function safelyDecodeURIComponent(value, paramName) {
     return value;
   }
 }
-var json3 = function json4(data, init) {
+var json2 = function json3(data, init) {
   if (init === void 0) {
     init = {};
   }
@@ -10176,7 +10189,7 @@ var defer = function defer2(data, init) {
   } : init;
   return new DeferredData(data, responseInit);
 };
-var redirect2 = function redirect3(url, init) {
+var redirect = function redirect2(url, init) {
   if (init === void 0) {
     init = 302;
   }
@@ -10213,9 +10226,9 @@ var workerAction = async ({ request, context }) => {
   try {
     fetchFromServer();
     await database.selections.add(Object.fromEntries(formData.entries()));
-    return redirect2("/selection");
+    return redirect("/selection");
   } catch (error) {
-    throw json3({ message: "Something went wrong", error }, 500);
+    throw json2({ message: "Something went wrong", error }, 500);
   }
 };
 var workerLoader2 = async ({ context }) => {
@@ -10239,7 +10252,7 @@ var workerLoader2 = async ({ context }) => {
     return defer({ flights });
   } catch (error) {
     console.error(error);
-    throw json3({ message: "Something went wrong", error }, 500);
+    throw json2({ message: "Something went wrong", error }, 500);
   }
 };
 
@@ -10258,11 +10271,13 @@ __export(basic_action_exports, {
 // app/routes/basic-action.tsx
 var import_node2 = __toESM(require_node());
 var import_react5 = __toESM(require_react());
+var import_react6 = __toESM(require_react2());
 var import_jsx_runtime3 = __toESM(require_jsx_runtime());
 var workerAction2 = async ({ context }) => {
   const { fetchFromServer } = context;
   try {
-    await fetchFromServer();
+    const response = await fetchFromServer();
+    console.log(Object.fromEntries(response.headers.entries()));
   } catch (error) {
     console.error(error);
   }
@@ -10289,8 +10304,8 @@ __export(basic_loader_exports, {
 
 // app/routes/basic-loader.tsx
 var import_node3 = __toESM(require_node());
-var import_react6 = __toESM(require_react());
-var import_react7 = __toESM(require_react2());
+var import_react7 = __toESM(require_react());
+var import_react8 = __toESM(require_react2());
 var import_jsx_runtime4 = __toESM(require_jsx_runtime());
 var workerLoader3 = async ({ context }) => {
   const { fetchFromServer } = context;
@@ -10323,7 +10338,7 @@ __export(strategies_exports, {
 });
 
 // app/routes/strategies.tsx
-var import_react8 = __toESM(require_react());
+var import_react9 = __toESM(require_react());
 var import_jsx_runtime5 = __toESM(require_jsx_runtime());
 var workerAction3 = async ({ context }) => {
   const { event } = context;
@@ -10370,12 +10385,12 @@ __export(selection_exports, {
 });
 
 // app/routes/selection.tsx
-var import_react9 = __toESM(require_react());
+var import_react10 = __toESM(require_react());
 var import_jsx_runtime6 = __toESM(require_jsx_runtime());
 async function workerLoader4({ context }) {
   const { database } = context;
   const selections = await database.selections.toArray();
-  return json3({ selections });
+  return json2({ selections });
 }
 
 // routes-module:routes/selection.tsx?worker
@@ -10392,7 +10407,7 @@ __export(sync_away_exports, {
 
 // app/routes/sync-away.tsx
 var import_node4 = __toESM(require_node());
-var import_react10 = __toESM(require_react());
+var import_react11 = __toESM(require_react());
 var import_jsx_runtime7 = __toESM(require_jsx_runtime());
 var workerAction4 = async ({ context }) => {
   const { fetchFromServer, event } = context;
@@ -10418,41 +10433,22 @@ var workerAction4 = async ({ context }) => {
 var hasWorkerAction7 = true;
 var hasWorkerLoader7 = false;
 
-// routes-module:routes/a.$slug.tsx?worker
-var a_slug_exports = {};
-__export(a_slug_exports, {
+// entry-module:@remix-pwa/build/magic
+var route8 = __toESM(require_index());
+
+// routes-module:routes/_app.tsx?worker
+var app_exports = {};
+__export(app_exports, {
   hasWorkerAction: () => hasWorkerAction8,
   hasWorkerLoader: () => hasWorkerLoader8,
   workerLoader: () => workerLoader5
 });
 
-// app/routes/a.$slug.tsx
-var import_jsx_runtime8 = __toESM(require_jsx_runtime());
-var workerLoader5 = async ({ params }) => {
-  console.log("workerLoader", params, /* @__PURE__ */ new Date());
-  return json({ params });
-};
-
-// routes-module:routes/a.$slug.tsx?worker
-var hasWorkerAction8 = false;
-var hasWorkerLoader8 = true;
-
-// entry-module:@remix-pwa/build/magic
-var route9 = __toESM(require_index());
-
-// routes-module:routes/_app.tsx?worker
-var app_exports = {};
-__export(app_exports, {
-  hasWorkerAction: () => hasWorkerAction9,
-  hasWorkerLoader: () => hasWorkerLoader9,
-  workerLoader: () => workerLoader6
-});
-
 // app/routes/_app.tsx
 var import_node5 = __toESM(require_node());
-var import_react11 = __toESM(require_react());
-var import_jsx_runtime9 = __toESM(require_jsx_runtime());
-async function workerLoader6({ context }) {
+var import_react12 = __toESM(require_react());
+var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+async function workerLoader5({ context }) {
   const { fetchFromServer } = context;
   const data = await fetchFromServer().then((response) => response.json());
   console.log(data);
@@ -10464,11 +10460,11 @@ async function workerLoader6({ context }) {
 }
 
 // routes-module:routes/_app.tsx?worker
-var hasWorkerAction9 = false;
-var hasWorkerLoader9 = true;
+var hasWorkerAction8 = false;
+var hasWorkerLoader8 = true;
 
 // assets-module:@remix-sas/dev?assets
-var assets = ["/build/root-3MYNVNTT.js", "/build/manifest-9B6B6750.js", "/build/entry.client-6J4DH4PZ.js", "/build/__remix_entry_dev-FSECTCTA.js", "/build/_shared/runtime-JC7ERE5X.js", "/build/_shared/remix_hmr-KOXB6O7Z.js", "/build/_shared/react-dom-SNQ2UIZM.js", "/build/_shared/react-XL6EHOTX.js", "/build/_shared/jsx-runtime-7KJOCM5J.js", "/build/_shared/jsx-dev-runtime-D5NCTVC4.js", "/build/_shared/esm-QACGES7W.js", "/build/_shared/client-LQHWDDYA.js", "/build/_shared/chunk-YYS55PRY.js", "/build/_shared/chunk-TWSZTAQ6.js", "/build/_shared/chunk-TLBAXOHZ.js", "/build/_shared/chunk-STMUDJCL.js", "/build/_shared/chunk-PNG5AS42.js", "/build/_shared/chunk-NXSRMYPB.js", "/build/_shared/chunk-LOYKRDJM.js", "/build/_shared/chunk-GF52RS3E.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-FXD4XYGV.js", "/build/_shared/chunk-DXWUJZAV.js", "/build/routes/sync-away-E6FNDNFW.js", "/build/routes/strategies-ZKX2T7V4.js", "/build/routes/selection-2GMTP227.js", "/build/routes/basic-loader-EKJTK7TH.js", "/build/routes/basic-caching-NKJVJIBG.js", "/build/routes/basic-action-J2N7IBBE.js", "/build/routes/a.$slug-43HOABXQ.js", "/build/routes/_index-S6HFQ5PC.js", "/build/routes/_app.flights-N6VPIPKN.js", "/build/routes/_app-INYRVKJJ.js", "/build/_assets/tailwind-JOKRYXHU.css"];
+var assets = ["/build/root-OCCPGGB4.js", "/build/manifest-87E32E4B.js", "/build/entry.client-NV6C6WQL.js", "/build/__remix_entry_dev-GGUNVKXG.js", "/build/routes/sync-away-P6JMB4ZQ.js", "/build/routes/strategies-56L6B772.js", "/build/routes/selection-3RF3B7XH.js", "/build/routes/basic-loader-DUHMVYMA.js", "/build/routes/basic-caching-RIFJFAHL.js", "/build/routes/basic-action-37OGD3JA.js", "/build/routes/_index-LRLQFN4E.js", "/build/routes/_app.flights-GZW6UTHH.js", "/build/routes/_app-DPFPWRI5.js", "/build/_assets/tailwind-JOKRYXHU.css", "/build/_shared/runtime-JC7ERE5X.js", "/build/_shared/remix_hmr-KOXB6O7Z.js", "/build/_shared/react-dom-SNQ2UIZM.js", "/build/_shared/react-XL6EHOTX.js", "/build/_shared/jsx-runtime-7KJOCM5J.js", "/build/_shared/jsx-dev-runtime-D5NCTVC4.js", "/build/_shared/esm-QACGES7W.js", "/build/_shared/client-LQHWDDYA.js", "/build/_shared/chunk-WIDFYYG3.js", "/build/_shared/chunk-TWSZTAQ6.js", "/build/_shared/chunk-TUFFZULX.js", "/build/_shared/chunk-TLBAXOHZ.js", "/build/_shared/chunk-STMUDJCL.js", "/build/_shared/chunk-PNG5AS42.js", "/build/_shared/chunk-NXSRMYPB.js", "/build/_shared/chunk-LOYKRDJM.js", "/build/_shared/chunk-GF52RS3E.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-FXD4XYGV.js"];
 
 // entry-module:@remix-pwa/build/magic
 var routes = {
@@ -10552,25 +10548,15 @@ var routes = {
     hasWorkerAction: Boolean(hasWorkerAction7),
     hasWorkerLoader: Boolean(hasWorkerLoader7)
   },
-  "routes/a.$slug": {
-    id: "routes/a.$slug",
-    parentId: "root",
-    path: "a/:slug",
-    index: void 0,
-    caseSensitive: void 0,
-    module: a_slug_exports,
-    hasWorkerAction: Boolean(hasWorkerAction8),
-    hasWorkerLoader: Boolean(hasWorkerLoader8)
-  },
   "routes/_index": {
     id: "routes/_index",
     parentId: "root",
     path: void 0,
     index: true,
     caseSensitive: void 0,
-    module: route9,
-    hasWorkerAction: Boolean(route9.hasWorkerAction),
-    hasWorkerLoader: Boolean(route9.hasWorkerLoader)
+    module: route8,
+    hasWorkerAction: Boolean(route8.hasWorkerAction),
+    hasWorkerLoader: Boolean(route8.hasWorkerLoader)
   },
   "routes/_app": {
     id: "routes/_app",
@@ -10579,8 +10565,8 @@ var routes = {
     index: void 0,
     caseSensitive: void 0,
     module: app_exports,
-    hasWorkerAction: Boolean(hasWorkerAction9),
-    hasWorkerLoader: Boolean(hasWorkerLoader9)
+    hasWorkerAction: Boolean(hasWorkerAction8),
+    hasWorkerLoader: Boolean(hasWorkerLoader8)
   }
 };
 var entry = { module: entry_worker_exports };
@@ -10663,17 +10649,16 @@ function isRemixResponse(response) {
 
 // ../packages/worker-runtime/dist/src/utils/handle-request.js
 async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, event, loadContext, routes: routes2 }) {
-  const { request } = event;
-  const url = new URL(request.url);
+  const url = new URL(event.request.url);
   const routeId = url.searchParams.get("_data");
   const route = routeId ? routes2[routeId] : void 0;
   const _arguments = {
-    request: event.request.clone(),
+    request: event.request,
     params: getURLParameters(event.request, route?.path),
     context: loadContext
   };
   try {
-    if (isLoaderRequest(request) && route?.module.workerLoader) {
+    if (isLoaderRequest(event.request) && route?.module.workerLoader) {
       return await handleLoader({
         event,
         loader: route.module.workerLoader,
@@ -10682,7 +10667,7 @@ async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, ev
         loadContext
       }).then(responseHandler);
     }
-    if (isActionRequest(request) && route?.module?.workerAction) {
+    if (isActionRequest(event.request) && route?.module?.workerAction) {
       return await handleAction({
         event,
         action: route.module.workerAction,
@@ -10730,9 +10715,7 @@ function _errorHandler({ error, handler: handleError }) {
     return error;
   }
   if (isRouteErrorResponse(error)) {
-    if (error.error) {
-      handleError(error.error);
-    }
+    error.error && handleError(error.error);
     return errorResponseToJson(error);
   }
   const errorInstance = error instanceof Error ? error : new Error("Unexpected Server Error");
@@ -10774,7 +10757,7 @@ function createContext(event) {
   };
 }
 var defaultHandler = entry.module.defaultFetchHandler || ((event) => fetch(event.request.clone()));
-var defaultErrorHandler = entry.module.handleError || ((error, { request }) => {
+var defaultErrorHandler = entry.module.errorHandler || ((error, { request }) => {
   if (!request.signal.aborted) {
     console.error(error);
   }
@@ -10851,7 +10834,7 @@ _self.addEventListener(
 
 @remix-run/router/dist/router.js:
   (**
-   * @remix-run/router v1.8.0
+   * @remix-run/router v1.9.0
    *
    * Copyright (c) Remix Software Inc.
    *

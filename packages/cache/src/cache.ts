@@ -37,6 +37,9 @@ interface CustomCache extends Omit<Cache, 'add' | 'addAll' | 'matchAll'> {
 type Metadata = {
   accessedAt: number;
   expiresAt: number;
+  cacheTtl: number;
+  cacheMaxItems: number;
+  cacheStrategy: Strategy;
 };
 
 type ResponseBody = {
@@ -87,34 +90,41 @@ export class RemixCache implements CustomCache {
    * @readonly
    * @default Infinity
    */
-  public readonly ttl: number = Infinity;
+  private _ttl: number = Infinity;
   /**
    * The caching strategy to use. Intended to provide strategies with cachified.
    * @readonly
    * @default Strategy.NetworkFirst
    */
-  public readonly strategy: Strategy = Strategy.NetworkFirst;
-  private readonly maxItems: number = 100;
+  private _strategy: Strategy = Strategy.NetworkFirst;
+  private _maxItems: number = 100;
+
+  private set = false;
 
   /**
-   * Create a new `RemixCache` instance. Don't invoke this directly! Use `initCache` instead.
+   * Create a new `RemixCache` instance. Don't invoke this directly! Use `RemixCacheStorage.open()` instead.
    * @constructor
    * @param {object} options - Options for the RemixCache instance.
    */
   constructor(options: RemixCacheOptions) {
-    this.name = options.name;
-    this.maxItems = options.maxItems || 100;
-    this.strategy = options.strategy || Strategy.NetworkFirst;
-    this.ttl = options.ttl || Infinity;
+    this.name = 'rp-' + options.name;
+    this._maxItems = options.maxItems || 100;
+    this._strategy = options.strategy || Strategy.NetworkFirst;
+    this._ttl = options.ttl || Infinity;
 
-    if (this.strategy === Strategy.NetworkOnly) {
+    if (this._strategy === Strategy.NetworkOnly) {
       // Don't use the cache at all
-      this.ttl = -1;
+      this._ttl = -1;
+    }
+
+    // If it is user initiated, set the cache
+    if (options.maxItems || options.ttl || options.strategy) {
+      this.set = true;
     }
   }
 
   private async _openCache() {
-    return await caches.open(this.name);
+    return await caches.open(`${this.name}`);
   }
 
   private async _getOrDeleteIfExpired(key: Request, metadata: Metadata) {
@@ -132,7 +142,7 @@ export class RemixCache implements CustomCache {
   }
 
   private async _lruCleanup() {
-    if ((await this.length()) >= this.maxItems) {
+    if ((await this.length()) >= this._maxItems) {
       this._values().then(async values => {
         const val = values.sort((a, b) => {
           // @ts-ignore
@@ -155,6 +165,15 @@ export class RemixCache implements CustomCache {
 
     const deleted = await this._getOrDeleteIfExpired(request.clone(), metadata);
     const headers = new Headers(response.clone().headers);
+
+    // Temporary. Need to come up with a method to restore `RemixCache` from the browser's
+    // cache storage ASAP. This is a (*hic*) temporary fix to ensure that the cache is always up to date
+    if (!this.set) {
+      this.set = true;
+      this._ttl = metadata.cacheTtl;
+      this._maxItems = metadata.cacheMaxItems;
+      this._strategy = metadata.cacheStrategy;
+    }
 
     if (!deleted) {
       const res = new Response(value, {
@@ -264,7 +283,7 @@ export class RemixCache implements CustomCache {
     }
 
     // If ttl is negative, don't cache
-    if (this.ttl <= 0 || (ttl && ttl <= 0)) return;
+    if (this._ttl <= 0 || (ttl && ttl <= 0)) return;
 
     const contentType = response.headers.get('Content-Type');
 
@@ -277,11 +296,29 @@ export class RemixCache implements CustomCache {
       data = await response.clone().text();
     }
 
+    // Temporary. Actually slows this process down by an average of 2ms. Not good enough.
+    if (!this.set) {
+      this.set = true;
+
+      const keys = await cache.keys();
+      const firstVal = await cache.match(keys[0]);
+
+      if (firstVal) {
+        const { metadata }: ResponseBody = await firstVal.clone().json();
+        this._ttl = metadata.cacheTtl;
+        this._maxItems = metadata.cacheMaxItems;
+        this._strategy = metadata.cacheStrategy;
+      }
+    }
+
     response = new Response(
       JSON.stringify({
         metadata: {
           accessedAt: Date.now(),
-          expiresAt: Date.now() + (ttl ?? this.ttl),
+          expiresAt: Date.now() + (ttl ?? this._ttl),
+          cacheTtl: this._ttl,
+          cacheMaxItems: this._maxItems,
+          cacheStrategy: this._strategy,
         },
         value: data,
       }),
@@ -304,4 +341,14 @@ export class RemixCache implements CustomCache {
       console.error('Failed to put to cache:', error);
     }
   }
+
+  get ttl() {
+    return this._ttl;
+  }
+
+  get strategy() {
+    return this._strategy;
+  }
+
+  // get maxItems() {}
 }
