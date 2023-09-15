@@ -1,6 +1,8 @@
+import { WorkerActionArgs } from "@remix-pwa/sw";
 import { redirect } from "@remix-run/node";
 import type { ActionFunction } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import { Form, useActionData, useFetcher } from "@remix-run/react";
+import { useEffect } from "react";
 
 export const action: ActionFunction = () => {
   const actionData = {
@@ -14,7 +16,7 @@ export const action: ActionFunction = () => {
   });
 }
 
-export const workerAction = async ({ context }) => {
+export const workerAction = async ({ context }: WorkerActionArgs) => {
   const { fetchFromServer } = context;
 
   try {
@@ -22,7 +24,9 @@ export const workerAction = async ({ context }) => {
     // we are doing nothing with it, so no redirect happens 😏
     //
     // But open up the 'Cookies' section in your devtools for a little surprise.
-    await fetchFromServer() as unknown as Response;
+    const response = await fetchFromServer() as unknown as Response;
+
+    console.log(Object.fromEntries(response.headers.entries()));
   } catch (error) {
     console.error(error);
   }
@@ -37,7 +41,22 @@ export const workerAction = async ({ context }) => {
 }
 
 export default function BasicAction() {
+  const fetcher = useFetcher();
   const actionData = useActionData<typeof workerAction>();
+
+  const submit = () => {
+    fetcher.submit({
+      message: "Payload"
+    }, {
+      method: 'POST'
+    })
+  }
+
+  useEffect(() => {
+    if (fetcher.data) {
+      console.log(fetcher.data);
+    }
+  }, [fetcher.data])
 
   return (
     <div className="w-full h-screen px-6 flex flex-col mx-auto max-w-3xl">
@@ -82,9 +101,13 @@ export default function BasicAction() {
             set by the <code>action</code> redirect. Actions still run like normal, but we are now able to modify
             the response and extend the functionality of Remix Actions like never before.
           </p>
+          <p className="indent-5 px-1">
+            The <code>useFetcher</code> response won't show up though. Check the console to see that one in action.
+          </p>
           <Form method="post" className="mt-4">
-            <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-fuchsia-600 hover:bg-fuchsia-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-fuchsia-500">Submit</button>
+            <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-fuchsia-600 hover:bg-fuchsia-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-fuchsia-500">Submit via&nbsp;<code>Form</code></button>
           </Form>
+          <button onClick={submit} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-fuchsia-600 hover:bg-fuchsia-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-fuchsia-500 mt-4">Submit via&nbsp;<code>useFetcher</code></button>
         </div>
       </div>
     </div>

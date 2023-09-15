@@ -38,11 +38,17 @@ export const LiveReload =
                     8002;
 
                   let ws = new WebSocket(url.href);
+                  let inverter = true;
                   ws.onmessage = async (message) => {
                     let event = JSON.parse(message.data);
                     if (event.type === "LOG") {
                       console.log(event.message);
-                      window.$ServiceWorkerHMRHandler$().then(() => console.log(...['%cremix-pwa', 'background: #3498db;border-radius: 0.5em;color: white;font-weight: bold;padding: 2px 0.5em'], "Service Worker successfully updated!"));
+                      if (inverter) {
+                        window.$ServiceWorkerHMRHandler$().then(() => console.log(...['%cremix-pwa', 'background: #3498db;border-radius: 0.5em;color: white;font-weight: bold;padding: 2px 0.5em'], "Service Worker successfully updated!"));
+                        inverter = false;
+                      } else {
+                        inverter = true;
+                      }
                     }
                     if (event.type === "RELOAD") {
                       console.log("💿 Reloading window ...");
