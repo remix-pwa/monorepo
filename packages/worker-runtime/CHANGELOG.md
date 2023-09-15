@@ -1,3 +1,10 @@
+## @remix-pwa/worker-runtime 2.0.1 (2023-09-15)
+
+
+### Bug Fixes
+
+* **error-response:** replace ErrorResponse by it's implementor class d5ef4d3
+
 # @remix-pwa/worker-runtime 2.0.0 (2023-09-14)
 
 
