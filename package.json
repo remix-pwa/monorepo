@@ -16,12 +16,12 @@
   ],
   "type": "module",
   "scripts": {
-    "build": "npm run build --workspaces --if-present",
+    "build": "turbo build",
     "commit": "commit",
     "dev": "npm run dev --workspace @remix-pwa/playground",
     "lint-staged": "lint-staged",
-    "lint": "npm run lint --workspaces --if-present",
-    "format": "npm run format --workspaces --if-present",
+    "lint": "turbo lint -- --fix",
+    "format": "turbo format -- --write",
     "postclone": "npm install && npm run test && npm run build",
     "test": "turbo test -- --coverage"
   },
