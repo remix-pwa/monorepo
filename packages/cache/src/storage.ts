@@ -1,4 +1,3 @@
-/// <reference lib="WebWorker" />
 import type { RemixCacheOptions } from './cache.js';
 import { RemixCache } from './cache.js';
 
@@ -35,7 +34,8 @@ export class RemixCacheStorage {
    * Initialize the Remix PWA Cache Storage. This will create a special cache for each
    * existing cache in the browser or create a new map if none exist.
    *
-   * Use in your service worker installation script.
+   * Use in your service worker installation script. Make sure to call this before
+   * initializing any `RemixCache` instance.
    *
    * @example
    * ```js
@@ -49,29 +49,38 @@ export class RemixCacheStorage {
    * });
    * ```
    */
-  static async init() {
-    if (typeof caches === 'undefined') {
-      throw new Error('Cache API is not available in this environment.');
-    }
+  // static async init() {
+  //   if (typeof caches === 'undefined') {
+  //     throw new Error('Cache API is not available in this environment.');
+  //   }
 
-    if (this._instances.size > 0) {
-      return;
-    }
+  //   if (this._instances.size > 0) {
+  //     return;
+  //   }
 
-    const cachesNames = await caches.keys();
+  //   const cachesNames = await caches.keys();
 
-    for (const name of cachesNames) {
-      this._instances.set(name, new RemixCache({ name }));
-    }
-  }
+  //   for (const name of cachesNames) {
+  //     if (name.startsWith('rp-')) {
+  //       this._instances.set(name, new RemixCache({ name }));
+  //     }
+  //   }
+  // }
 
   /**
    * Create a custom cache that you can use across your application.
    * Use this instead of initialising `RemixCache` directly.
    */
   static createCache(opts: RemixCacheOptions) {
+    const { name } = opts;
+
+    if (this._instances.has(name)) {
+      // throw new Error(`A cache with the name '${name}' already exists.`);
+      return this._instances.get(name) as RemixCache;
+    }
+
     const newCache = new RemixCache(opts);
-    this._instances.set(opts.name, newCache);
+    this._instances.set(`${name}`, newCache);
     return newCache;
   }
 
@@ -204,7 +213,7 @@ declare global {
      * multiple caches (`RemixCache`). It also provides interfaces to interact with the caches.
      *
      * Recommended to call `init` in your service worker installation or activation script in order to
-     * wrap all existing caches in `RemixCache` instances and supercharge them.
+     * wrap all existing caches in `RemixCache` instances and supercharge them. Defaults to `undefined`.
      *
      * @alias `Storage`
      */
@@ -219,12 +228,10 @@ declare global {
      * multiple caches (`RemixCache`). It also provides interfaces to interact with the caches.
      *
      * Recommended to call `init` in your service worker installation or activation script in order to
-     * wrap all existing caches in `RemixCache` instances and supercharge them.
+     * wrap all existing caches in `RemixCache` instances and supercharge them. Defaults to `undefined`.
      *
      * @alias `Storage`
      */
     RemixCacheStorage: typeof RemixCacheStorage;
   }
 }
-
-self.RemixCacheStorage = RemixCacheStorage;
