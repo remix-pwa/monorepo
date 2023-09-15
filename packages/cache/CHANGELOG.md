@@ -1,3 +1,10 @@
+## @remix-pwa/cache 2.0.1 (2023-09-15)
+
+
+### Bug Fixes
+
+* **cache:** fixed cache options getting mixed up on multiple recalls 27a7073
+
 # @remix-pwa/cache 2.0.0 (2023-09-14)
 
 
