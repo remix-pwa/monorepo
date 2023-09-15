@@ -1,5 +1,5 @@
 import type { RemixCache } from '@remix-pwa/cache';
-import { Storage, createCache } from '@remix-pwa/cache';
+import { Storage } from '@remix-pwa/cache';
 
 import type { StrategyOptions, StrategyResponse } from './types.js';
 import { isHttpRequest } from './utils.js';
@@ -28,12 +28,8 @@ export const staleWhileRevalidate = async ({
     let remixCache: RemixCache;
 
     if (typeof cacheName === 'string') {
-      Storage.init();
-      remixCache = Storage.has(cacheName)
-        ? (Storage.get(cacheName) as RemixCache)
-        : createCache({ name: cacheName, ...cacheOptions });
+      remixCache = Storage.open(cacheName, cacheOptions);
     } else {
-      Storage.init();
       remixCache = cacheName;
     }
 
