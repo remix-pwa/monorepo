@@ -1,3 +1,18 @@
+## @remix-pwa/sw 2.0.1 (2023-09-15)
+
+
+### Bug Fixes
+
+* **sw:** fixed double HMR reload on route reload by Remix 0d2f65c
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/cache:** upgraded to 2.0.1
+
 # @remix-pwa/sw 2.0.0 (2023-09-14)
 
 
