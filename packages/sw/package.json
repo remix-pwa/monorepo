@@ -30,6 +30,7 @@
   "peerDependencies": {
     "@remix-pwa/cache": "^2.0.1"
   },
+  "homepage": "https://remix-pwa.run",
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
