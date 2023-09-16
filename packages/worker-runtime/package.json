@@ -9,6 +9,7 @@
   "engines": {
     "node": ">=18.0.0"
   },
+  "homepage": "https://remix-pwa.run",
   "type": "module",
   "files": [
     "dist/",
