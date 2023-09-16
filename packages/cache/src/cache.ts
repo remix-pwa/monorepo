@@ -30,8 +30,8 @@ export enum Strategy {
   StaleWhileRevalidate = 'stale-while-revalidate',
 }
 
-interface CustomCache extends Omit<Cache, 'add' | 'addAll' | 'matchAll'> {
-  put(request: RequestInfo | URL, response: Response, ttl?: number | undefined, modified?: boolean): Promise<void>;
+interface CustomCache extends Omit<Cache, 'addAll' | 'matchAll'> {
+  put(request: RequestInfo | URL, response: Response, ttl?: number | undefined): Promise<void>;
 }
 
 type Metadata = {
@@ -107,7 +107,7 @@ export class RemixCache implements CustomCache {
    * @param {object} options - Options for the RemixCache instance.
    */
   constructor(options: RemixCacheOptions) {
-    this.name = 'rp-' + options.name;
+    this.name = options.name;
     this._maxItems = options.maxItems || 100;
     this._strategy = options.strategy || Strategy.NetworkFirst;
     this._ttl = options.ttl || Infinity;
@@ -124,7 +124,7 @@ export class RemixCache implements CustomCache {
   }
 
   private async _openCache() {
-    return await caches.open(`${this.name}`);
+    return await caches.open(`rp-${this.name}`);
   }
 
   private async _getOrDeleteIfExpired(key: Request, metadata: Metadata) {
@@ -181,7 +181,7 @@ export class RemixCache implements CustomCache {
         statusText: response.statusText,
         headers: {
           ...Object.fromEntries(headers.entries()),
-          'Content-Type': headers.get('x-remix-pwa-original-content-type') || 'application/json',
+          'Content-Type': headers.get('X-Remix-PWA-Original-Content-Type') || 'application/json',
         },
       });
 
@@ -244,7 +244,7 @@ export class RemixCache implements CustomCache {
    * @returns {Promise<Response | undefined>} A `Promise` that resolves to the response, or `undefined` if not found.
    */
   async match(request: RequestInfo | URL, options?: CacheQueryOptions | undefined): Promise<Response | undefined> {
-    const cache = await caches.open(this.name);
+    const cache = await this._openCache();
     if (request instanceof URL || typeof request === 'string') {
       request = new Request(request);
     }
@@ -328,7 +328,7 @@ export class RemixCache implements CustomCache {
         headers: {
           ...Object.fromEntries(response.clone().headers.entries()),
           'Content-Type': 'application/json',
-          'x-remix-pwa-original-content-type': contentType || 'text/plain',
+          'X-Remix-PWA-Original-Content-Type': contentType || 'text/plain',
         },
       }
     );
@@ -340,6 +340,16 @@ export class RemixCache implements CustomCache {
     } catch (error) {
       console.error('Failed to put to cache:', error);
     }
+  }
+
+  async add(request: RequestInfo | URL): Promise<void> {
+    return /* await - should this be awaited? */ fetch(request).then(res => {
+      if (!res.ok) {
+        throw new Error('Failed to fetch');
+      }
+
+      return this.put(request, res.clone());
+    });
   }
 
   get ttl() {
