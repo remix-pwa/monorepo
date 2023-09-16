@@ -36,6 +36,7 @@
   "dependencies": {
     "@remix-pwa/cache": "^2.0.1"
   },
+  "homepage": "https://remix-pwa.run",
   "keywords": [
     "remix",
     "remix-run",
