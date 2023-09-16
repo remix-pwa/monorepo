@@ -8,6 +8,7 @@
     "directory": "packages/sync"
   },
   "license": "MIT",
+  "homepage": "https://remix-pwa.run",
   "sideEffects": false,
   "type": "module",
   "engines": {
