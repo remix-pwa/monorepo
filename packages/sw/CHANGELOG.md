@@ -1,3 +1,23 @@
+# @remix-pwa/sw 2.1.0 (2023-09-17)
+
+
+### Bug Fixes
+
+* **sw:** attmpted fix for `@remix-pwa/sw` mismatched version 2a8f6bc
+
+
+### Features
+
+* **sw:** upgraded `PrecacheHandler` - still WiP 8cb21fd
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/cache:** upgraded to 2.0.2
+
 ## @remix-pwa/sw 2.0.1 (2023-09-15)
 
 
