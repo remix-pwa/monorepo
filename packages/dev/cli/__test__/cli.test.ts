@@ -34,7 +34,7 @@ describe('CLI engine test suite', () => {
         expect.stringContaining(`
 Usage:  npx remix-pwa@latest [OPTIONS]
 
-A stand-alone package for integrating PWA solutions into Remix application.
+A complete PWA framework solution for integrating PWA into your Remix application.
 `)
       );
     });
@@ -138,7 +138,7 @@ A stand-alone package for integrating PWA solutions into Remix application.
 
         const swContent = readFileSync('__mock-app/app/entry.worker.ts', 'utf-8');
 
-        assert.ok(swContent.includes('// Precache Worker'));
+        assert.ok(swContent.includes('const handler = new PrecacheHandler({'));
         expect(true).toBe(true);
       });
     });
