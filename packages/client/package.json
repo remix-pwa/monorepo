@@ -7,6 +7,7 @@
     "url": "git@github.com:remix-pwa/monorepo",
     "directory": "packages/client"
   },
+  "homepage": "https://remix-pwa.run",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",

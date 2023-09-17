@@ -1,4 +1,4 @@
-import { WorkerActionArgs } from "@remix-pwa/sw";
+import type { WorkerActionArgs } from "@remix-pwa/sw";
 import { redirect } from "@remix-run/node";
 import type { ActionFunction } from "@remix-run/node";
 import { Form, useActionData, useFetcher } from "@remix-run/react";

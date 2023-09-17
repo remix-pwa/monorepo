@@ -81,6 +81,7 @@ export class RemixCacheStorage {
 
     const newCache = new RemixCache(opts);
     this._instances.set(`${name}`, newCache);
+    caches.open(`rp-${name}`);
     return newCache;
   }
 
@@ -144,7 +145,7 @@ export class RemixCacheStorage {
     const cache = this._instances.get(name);
 
     if (cache) {
-      caches.delete(name);
+      caches.delete(`rp-${name}`);
       this._instances.delete(name);
     }
   }
@@ -153,7 +154,7 @@ export class RemixCacheStorage {
    * Delete all caches.
    */
   static clear() {
-    this._instances.forEach(cache => caches.delete(cache.name));
+    caches.keys().then(keys => keys.forEach(key => (key.startsWith('rp-') ? caches.delete(key) : null)));
     this._instances = new Map();
   }
 
@@ -180,10 +181,12 @@ export class RemixCacheStorage {
    *
    * Experimental. Use at your own risk!
    *
-   * @param {RequestInfo | URL} request
+   * @param {RequestInfo | URL} request The request to check.
+   * @param {CacheQueryOptions} [options] Options to pass to the `Cache.match` method.
+   * @returns {Promise<Response | undefined>} A promise that resolves to the response if found, otherwise `undefined`.
    */
-  static _match(request: RequestInfo | URL) {
-    return caches.match(request);
+  static _match(request: RequestInfo | URL, options?: CacheQueryOptions): Promise<Response | undefined> {
+    return caches.match(request, options);
   }
 }
 

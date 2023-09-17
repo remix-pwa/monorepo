@@ -1,7 +1,8 @@
 import type { StrategyOptions, StrategyResponse } from './types.js';
 import { isHttpRequest } from './utils.js';
 
-export interface NetworkOnlyStrategyOptions extends Omit<StrategyOptions, 'cacheOptions' | 'cache'> {
+export interface NetworkOnlyStrategyOptions
+  extends Omit<StrategyOptions, 'cacheOptions' | 'cache' | 'cacheQueryOptions'> {
   /**
    * The maximum number of milliseconds to wait before considering the request to have timed out.
    * In seconds.
@@ -25,11 +26,11 @@ export interface NetworkOnlyStrategyOptions extends Omit<StrategyOptions, 'cache
   fetchDidSucceed?: (() => void | (() => Promise<void>))[] | undefined;
 }
 
-export const networkOnly = async ({
+export const networkOnly = ({
   fetchDidFail = undefined,
   fetchDidSucceed = undefined,
   networkTimeoutSeconds = 10,
-}: NetworkOnlyStrategyOptions): Promise<StrategyResponse> => {
+}: NetworkOnlyStrategyOptions): StrategyResponse => {
   return async (request: Request | URL) => {
     if (!isHttpRequest(request)) {
       return new Response('Not a HTTP request', { status: 403 });

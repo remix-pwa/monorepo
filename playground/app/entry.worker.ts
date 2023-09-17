@@ -1,31 +1,40 @@
 /// <reference lib="WebWorker" />
 
-import { RemixNavigationHandler } from '@remix-pwa/sw';
-import createStorageRepository from './database';
+import { Storage } from '@remix-pwa/cache';
+import { cacheFirst, networkFirst } from '@remix-pwa/strategy';
+import type { DefaultFetchHandler } from '@remix-pwa/sw';
+import { RemixNavigationHandler, matchRequest } from '@remix-pwa/sw';
 import { registerQueue } from '@remix-pwa/sync';
+import createStorageRepository from './database';
 
 declare let self: ServiceWorkerGlobalScope;
 
 const PAGES = 'page-cache';
 const DATA = 'data-cache';
-// const ASSETS = 'assets-cache';
+const ASSETS = 'assets-cache';
+
+const dataCache = Storage.open(DATA, {
+  ttl: 60 * 60 * 24 * 7 * 1_000, // 7 days
+});
+const documentCache = Storage.open(PAGES);
+const assetCache = Storage.open(ASSETS);
 
 let handler = new RemixNavigationHandler({
-  dataCacheName: DATA,
-  documentCacheName: PAGES,
+  dataCache: dataCache,
+  documentCache: documentCache,
 });
 
-// const documentHandler = new NetworkFirst({
-//   cacheName: PAGES,
-// });
+const dataHandler = networkFirst({
+  cache: dataCache,
+});
 
-// const loadersHandler = new NetworkFirst({
-//   cacheName: DATA,
-// });
-
-// const assetsHandler = new CacheFirst({
-//   cacheName: ASSETS,
-// });
+const assetsHandler = cacheFirst({
+  cache: assetCache,
+  cacheQueryOptions: {
+    ignoreSearch: true,
+    ignoreVary: true,
+  },
+});
 
 registerQueue('offline-action');
 
@@ -36,26 +45,24 @@ registerQueue('offline-action');
  */
 export const getLoadContext = () => {
   const stores = createStorageRepository();
+
   return {
     database: stores,
   };
 };
 
-// The default fetch event handler will be invoke if the route is not matched by any of the worker action/loader.
-export const defaultFetchHandler = ({ context, request }: any) => {
-  // const type = matchRequest(request);
+// The default fetch event handler will be invoke if the
+// route is not matched by any of the worker action/loader.
+export const defaultFetchHandler: DefaultFetchHandler = ({ context, request }) => {
+  const type = matchRequest(request);
 
-  // if (type === 'asset') {
-  //   return assetsHandler.handle(request);
-  // }
+  if (type === 'asset') {
+    return assetsHandler(context.event.request);
+  }
 
-  // if (type === 'loader') {
-  //   return loadersHandler.handle(request);
-  // }
-
-  // if (type === 'document') {
-  //   return documentHandler.handle(request);
-  // }
+  if (type === 'loader') {
+    return dataHandler(context.event.request);
+  }
 
   return context.fetchFromServer();
 };

@@ -15,11 +15,12 @@ export interface StaleWhileRevalidateStrategyOptions extends StrategyOptions {
   fetchDidFail?: (() => void | (() => Promise<void>))[] | undefined;
 }
 
-export const staleWhileRevalidate = async ({
+export const staleWhileRevalidate = ({
   cache: cacheName,
   cacheOptions,
+  cacheQueryOptions,
   fetchDidFail = undefined,
-}: StaleWhileRevalidateStrategyOptions): Promise<StrategyResponse> => {
+}: StaleWhileRevalidateStrategyOptions): StrategyResponse => {
   return async (request: Request | URL) => {
     if (!isHttpRequest(request)) {
       return new Response('Not a HTTP request', { status: 403 });
@@ -33,7 +34,7 @@ export const staleWhileRevalidate = async ({
       remixCache = cacheName;
     }
 
-    return remixCache.match(request).then(async response => {
+    return remixCache.match(request, cacheQueryOptions).then(async response => {
       const fetchPromise = fetch(request)
         .then(async networkResponse => {
           await remixCache.put(request, networkResponse.clone());

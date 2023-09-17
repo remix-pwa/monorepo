@@ -30,8 +30,8 @@ export enum Strategy {
   StaleWhileRevalidate = 'stale-while-revalidate',
 }
 
-interface CustomCache extends Omit<Cache, 'add' | 'addAll' | 'matchAll'> {
-  put(request: RequestInfo | URL, response: Response, ttl?: number | undefined, modified?: boolean): Promise<void>;
+interface CustomCache extends Omit<Cache, 'addAll' | 'matchAll'> {
+  put(request: RequestInfo | URL, response: Response, ttl?: number | undefined): Promise<void>;
 }
 
 type Metadata = {
@@ -107,7 +107,7 @@ export class RemixCache implements CustomCache {
    * @param {object} options - Options for the RemixCache instance.
    */
   constructor(options: RemixCacheOptions) {
-    this.name = 'rp-' + options.name;
+    this.name = options.name;
     this._maxItems = options.maxItems || 100;
     this._strategy = options.strategy || Strategy.NetworkFirst;
     this._ttl = options.ttl || Infinity;
@@ -120,14 +120,21 @@ export class RemixCache implements CustomCache {
     // If it is user initiated, set the cache
     if (options.maxItems || options.ttl || options.strategy) {
       this.set = true;
+    } else {
+      this.set = false;
     }
   }
 
   private async _openCache() {
-    return await caches.open(`${this.name}`);
+    return await caches.open(`rp-${this.name}`);
   }
 
   private async _getOrDeleteIfExpired(key: Request, metadata: Metadata) {
+    // @ts-ignore
+    if (metadata.expiresAt === 'Infinity') {
+      return false;
+    }
+
     if (metadata.expiresAt <= Date.now()) {
       return await this.delete(key);
     }
@@ -181,7 +188,7 @@ export class RemixCache implements CustomCache {
         statusText: response.statusText,
         headers: {
           ...Object.fromEntries(headers.entries()),
-          'Content-Type': headers.get('x-remix-pwa-original-content-type') || 'application/json',
+          'Content-Type': headers.get('X-Remix-PWA-Original-Content-Type') || 'application/json',
         },
       });
 
@@ -244,7 +251,7 @@ export class RemixCache implements CustomCache {
    * @returns {Promise<Response | undefined>} A `Promise` that resolves to the response, or `undefined` if not found.
    */
   async match(request: RequestInfo | URL, options?: CacheQueryOptions | undefined): Promise<Response | undefined> {
-    const cache = await caches.open(this.name);
+    const cache = await this._openCache();
     if (request instanceof URL || typeof request === 'string') {
       request = new Request(request);
     }
@@ -308,6 +315,10 @@ export class RemixCache implements CustomCache {
         this._ttl = metadata.cacheTtl;
         this._maxItems = metadata.cacheMaxItems;
         this._strategy = metadata.cacheStrategy;
+      } else {
+        this._ttl = Infinity;
+        this._maxItems = 100;
+        this._strategy = Strategy.NetworkFirst;
       }
     }
 
@@ -315,8 +326,9 @@ export class RemixCache implements CustomCache {
       JSON.stringify({
         metadata: {
           accessedAt: Date.now(),
-          expiresAt: Date.now() + (ttl ?? this._ttl),
-          cacheTtl: this._ttl,
+          // JSON can't store Infinity, so we store it as a string
+          expiresAt: Date.now() + (ttl ?? this._ttl) === Infinity ? 'Infinity' : Date.now() + (ttl ?? this._ttl),
+          cacheTtl: this._ttl === Infinity ? 'Infinity' : this._ttl,
           cacheMaxItems: this._maxItems,
           cacheStrategy: this._strategy,
         },
@@ -328,7 +340,7 @@ export class RemixCache implements CustomCache {
         headers: {
           ...Object.fromEntries(response.clone().headers.entries()),
           'Content-Type': 'application/json',
-          'x-remix-pwa-original-content-type': contentType || 'text/plain',
+          'X-Remix-PWA-Original-Content-Type': contentType || 'text/plain',
         },
       }
     );
@@ -340,6 +352,16 @@ export class RemixCache implements CustomCache {
     } catch (error) {
       console.error('Failed to put to cache:', error);
     }
+  }
+
+  async add(request: RequestInfo | URL): Promise<void> {
+    return /* await - should this be awaited? */ fetch(request).then(res => {
+      if (!res.ok) {
+        throw new Error('Failed to fetch');
+      }
+
+      return this.put(request, res.clone());
+    });
   }
 
   get ttl() {

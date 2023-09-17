@@ -4,29 +4,13 @@ import { Storage } from '@remix-pwa/cache';
 import type { StrategyOptions, StrategyResponse } from './types.js';
 import { isHttpRequest } from './utils.js';
 
-export interface CacheOnlyStrategyOptions extends StrategyOptions {
-  /**
-   * The options to pass to the cache's `match` method.
-   *
-   * Defaults to:
-   * ```js
-   * {
-   *   ignoreSearch: false,
-   *   ignoreVary: false,
-   *   ignoreMethod: true
-   * }
-   *```
-   *
-   * @see https://developer.chrome.com/blog/cache-query-options/
-   */
-  cacheMatchOptions?: CacheQueryOptions;
-}
+export interface CacheOnlyStrategyOptions extends StrategyOptions {}
 
-export const cacheOnly = async ({
+export const cacheOnly = ({
   cache: cacheName,
-  cacheMatchOptions: matchOptions = { ignoreSearch: false, ignoreVary: false, ignoreMethod: true },
   cacheOptions,
-}: CacheOnlyStrategyOptions): Promise<StrategyResponse> => {
+  cacheQueryOptions,
+}: CacheOnlyStrategyOptions): StrategyResponse => {
   return async (request: Request | URL) => {
     if (!isHttpRequest(request)) {
       return new Response('Not a HTTP request', { status: 403 });
@@ -40,7 +24,7 @@ export const cacheOnly = async ({
       remixCache = cacheName;
     }
 
-    const response = await remixCache.match(request, matchOptions);
+    const response = await remixCache.match(request, cacheQueryOptions);
 
     if (!response) {
       // Return this if it is a loader request

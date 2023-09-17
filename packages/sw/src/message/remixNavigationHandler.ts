@@ -1,3 +1,4 @@
+import type { RemixCache } from '@remix-pwa/cache';
 import { Storage } from '@remix-pwa/cache';
 
 import { logger } from '../private/logger.js';
@@ -5,27 +6,28 @@ import type { MessageHandlerParams } from './message.js';
 import { MessageHandler } from './message.js';
 
 export interface RemixNavigationHandlerOptions extends MessageHandlerParams {
-  dataCacheName: string;
-  documentCacheName: string;
+  dataCache: string | RemixCache;
+  documentCache: string | RemixCache;
 }
 
 export class RemixNavigationHandler extends MessageHandler {
-  dataCacheName: string;
-  documentCacheName: string;
+  dataCacheName: string | RemixCache;
+  documentCacheName: string | RemixCache;
 
-  constructor({ dataCacheName, documentCacheName, plugins, state }: RemixNavigationHandlerOptions) {
+  constructor({ dataCache, documentCache, plugins, state }: RemixNavigationHandlerOptions) {
     super({ plugins, state });
 
-    this.dataCacheName = dataCacheName;
-    this.documentCacheName = documentCacheName;
+    this.dataCacheName = dataCache;
+    this.documentCacheName = documentCache;
     this._handleMessage = this._handleMessage.bind(this);
   }
 
   override async _handleMessage(event: ExtendableMessageEvent): Promise<void> {
     const { data } = event;
+    let dataCache: RemixCache | string, documentCache: RemixCache | string;
 
-    const DATA = this.dataCacheName;
-    const PAGES = this.documentCacheName;
+    dataCache = this.dataCacheName;
+    documentCache = this.documentCacheName;
 
     this.runPlugins('messageDidReceive', {
       event,
@@ -37,11 +39,15 @@ export class RemixNavigationHandler extends MessageHandler {
       const { isMount, location, manifest, matches } = data;
       const documentUrl = location.pathname + location.search + location.hash;
 
-      const [dataCache, documentCache, existingDocument] = await Promise.all([
-        Storage.open(DATA),
-        Storage.open(PAGES),
-        caches.match(documentUrl),
-      ]);
+      if (typeof dataCache === 'string') {
+        dataCache = Storage.open(dataCache);
+      }
+
+      if (typeof documentCache === 'string') {
+        documentCache = Storage.open(documentCache);
+      }
+
+      const existingDocument = await Storage._match(documentUrl);
 
       if (!existingDocument || !isMount) {
         const response = await fetch(documentUrl);

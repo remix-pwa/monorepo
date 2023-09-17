@@ -28,13 +28,14 @@ export interface NetworkFirstStrategyOptions extends StrategyOptions {
   fetchDidSucceed?: (() => void | (() => Promise<void>))[] | undefined;
 }
 
-export const networkFirst = async ({
+export const networkFirst = ({
   cache: cacheName,
   cacheOptions,
+  cacheQueryOptions,
   fetchDidFail = undefined,
   fetchDidSucceed = undefined,
   networkTimeoutSeconds = 10,
-}: NetworkFirstStrategyOptions): Promise<StrategyResponse> => {
+}: NetworkFirstStrategyOptions): StrategyResponse => {
   return async (request: Request | URL) => {
     if (!isHttpRequest(request)) {
       return new Response('Not a HTTP request', { status: 403 });
@@ -77,7 +78,7 @@ export const networkFirst = async ({
         await Promise.all(fetchDidFail.map(cb => cb()));
       }
 
-      const cachedResponse = await remixCache.match(request);
+      const cachedResponse = await remixCache.match(request, cacheQueryOptions);
 
       if (cachedResponse) {
         return cachedResponse.clone();

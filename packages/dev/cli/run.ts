@@ -26,9 +26,17 @@ ${bold(
 
 Usage:  npx remix-pwa@latest [OPTIONS]
 
-A stand-alone package for integrating PWA solutions into Remix application.
+A complete PWA framework solution for integrating PWA into your Remix application.
 
 ${underline(whiteBright('Options:'))}
+
+init, create, new               Create a new remix-pwa project
+dev                             Start the development server
+build                           Build your remix-pwa project
+packages                        Install the base, necessary packages for remix-pwa
+
+${underline(whiteBright('Create/Init Flags:'))}
+
 --typescript, --ts              Create project with typescript template
 --no-typescript, --no-ts, --js  Create project with javascript template
 --workbox                       Integrate workbox into your project
