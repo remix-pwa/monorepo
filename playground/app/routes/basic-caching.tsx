@@ -14,7 +14,7 @@ export const loader = async () => {
 }
 
 export const workerLoader = async ({ context }: any) => {
-  const customStrategy = await cacheFirst({
+  const customStrategy = cacheFirst({
     cache: 'basic-caching',
     cacheOptions: {
       maxItems: 5,
