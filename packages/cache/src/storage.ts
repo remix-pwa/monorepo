@@ -181,10 +181,12 @@ export class RemixCacheStorage {
    *
    * Experimental. Use at your own risk!
    *
-   * @param {RequestInfo | URL} request
+   * @param {RequestInfo | URL} request The request to check.
+   * @param {CacheQueryOptions} [options] Options to pass to the `Cache.match` method.
+   * @returns {Promise<Response | undefined>} A promise that resolves to the response if found, otherwise `undefined`.
    */
-  static _match(request: RequestInfo | URL) {
-    return caches.match(request);
+  static _match(request: RequestInfo | URL, options?: CacheQueryOptions): Promise<Response | undefined> {
+    return caches.match(request, options);
   }
 }
 
