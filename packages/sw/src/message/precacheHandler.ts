@@ -1,4 +1,5 @@
 /* eslint-disable prefer-const */
+import type { RemixCache } from '@remix-pwa/cache';
 import { Storage } from '@remix-pwa/cache';
 import type { AssetsManifest } from '@remix-run/dev';
 import type { EntryRoute } from '@remix-run/react/dist/routes.js';
@@ -36,39 +37,44 @@ export interface PrecacheHandlerState {
    * ```
    */
   ignoredRoutes?: RegExp[] | string[] | ((route: EntryRoute) => boolean)[] | ((route: EntryRoute) => boolean) | null;
+  // whiteListRoutes?: RegExp[] | string[] | ((route: EntryRoute) => boolean)[] | ((route: EntryRoute) => boolean) | null;
+  // staticAssets: string[];
 }
 
 export interface PrecacheHandlerOptions extends Omit<MessageHandlerParams, 'state'> {
-  dataCacheName: string;
-  documentCacheName: string;
-  assetCacheName: string;
+  dataCache: RemixCache | string;
+  documentCache: string | RemixCache;
+  assetCache: RemixCache | string;
   state?: PrecacheHandlerState;
 }
 
 export class PrecacheHandler extends MessageHandler {
-  dataCacheName: string;
-  documentCacheName: string;
-  assetCacheName: string;
+  dataCacheName: string | RemixCache;
+  documentCacheName: string | RemixCache;
+  assetCacheName: string | RemixCache;
 
   private _ignoredFiles: PrecacheHandlerState['ignoredRoutes'] = null;
+  // private _whiteListRoutes: PrecacheHandlerState['whiteListRoutes'] = null;
+  // private _staticAssets: PrecacheHandlerState['staticAssets'] = [];
 
-  constructor({ assetCacheName, dataCacheName, documentCacheName, plugins, state }: PrecacheHandlerOptions) {
+  constructor({ assetCache, dataCache, documentCache, plugins, state }: PrecacheHandlerOptions) {
     super({ plugins, state: {} });
 
-    this.dataCacheName = dataCacheName;
-    this.documentCacheName = documentCacheName;
-    this.assetCacheName = assetCacheName;
+    this.dataCacheName = dataCache;
+    this.documentCacheName = documentCache;
+    this.assetCacheName = assetCache;
     this._handleMessage = this._handleMessage.bind(this);
     this._ignoredFiles = state?.ignoredRoutes || null;
+    // this._whiteListRoutes = state?.whiteListRoutes || null;
+    // this._staticAssets = state?.staticAssets || [];
   }
 
   override async _handleMessage(event: ExtendableMessageEvent): Promise<void> {
     const { data } = event;
-    let DATA_CACHE, DOCUMENT_CACHE, ASSET_CACHE;
+    let dataCache: RemixCache | string, documentCache: RemixCache | string, assetCache: RemixCache;
 
-    DATA_CACHE = this.dataCacheName;
-    DOCUMENT_CACHE = this.documentCacheName;
-    ASSET_CACHE = this.assetCacheName;
+    dataCache = this.dataCacheName;
+    documentCache = this.documentCacheName;
 
     if (data.type !== 'REMIX_NAVIGATION' || !data.isMount) return;
 
@@ -77,18 +83,26 @@ export class PrecacheHandler extends MessageHandler {
     });
 
     const cachePromises: Map<string, Promise<void>> = new Map();
-    const [dataCache, documentCache, assetCache] = await Promise.all([
-      Storage.open(DATA_CACHE),
-      Storage.open(DOCUMENT_CACHE),
-      Storage.open(ASSET_CACHE),
-    ]);
+
+    if (typeof dataCache === 'string') {
+      dataCache = Storage.open(dataCache);
+    }
+
+    if (typeof documentCache === 'string') {
+      documentCache = Storage.open(documentCache);
+    }
+
+    if (typeof this.assetCacheName === 'string') {
+      // @ts-expect-error
+      assetCache = Storage.open(assetCache);
+    }
 
     const manifest: AssetsManifest = data.manifest;
     const routes = Object.values(manifest?.routes || {});
 
     for (const route of routes) {
       if (route.id.includes('$')) {
-        // logger.info('Skipping parametrized route:', route.id);
+        logger.info('Skipping parametrized route:', route.id);
         continue;
       }
 
@@ -96,6 +110,12 @@ export class PrecacheHandler extends MessageHandler {
       if (Array.isArray(this._ignoredFiles)) {
         // E.g '/dashboard' or 'dashboard'
         if (typeof this._ignoredFiles[0] === 'string') {
+          // @ts-ignore
+          if (this._ignoredFiles.includes('*')) {
+            // logger.debug('Skipping ignored route:', route.id);
+            break;
+          }
+
           const map = this._ignoredFiles.map(ignoredRoute => {
             ignoredRoute = ignoredRoute as unknown as string;
             ignoredRoute = ignoredRoute.charAt(0) === '/' ? ignoredRoute : (ignoredRoute = '/' + ignoredRoute);
@@ -151,9 +171,87 @@ export class PrecacheHandler extends MessageHandler {
         }
       }
 
+      // Todo...
+      // if (this._ignoredFiles === null) {
+      //   if (Array.isArray(this._whiteListRoutes)) {
+      //     // E.g '/dashboard' or 'dashboard'
+      //     if (typeof this._whiteListRoutes[0] === 'string') {
+      //       const map = this._whiteListRoutes.map(whiteListedReoute => {
+      //         whiteListedReoute = whiteListedReoute as unknown as string;
+      //         whiteListedReoute =
+      //           whiteListedReoute.charAt(0) === '/' ? whiteListedReoute : (whiteListedReoute = '/' + whiteListedReoute);
+
+      //         if (getPathname(route) === whiteListedReoute) {
+      //           return true;
+      //         } else {
+      //           return false;
+      //         }
+      //       });
+
+      //       if (!map.includes(true)) continue;
+      //     }
+      //     // E.g (route) => route.id.includes('dashboard')
+      //     else if (typeof this._whiteListRoutes[0] === 'function') {
+      //       const map = this._whiteListRoutes.map(ignoredRoute => {
+      //         ignoredRoute = ignoredRoute as unknown as (route: EntryRoute) => boolean;
+
+      //         if (ignoredRoute(route)) {
+      //           // logger.debug('Skipping ignored route:', route.id);
+      //           return true;
+      //         } else {
+      //           return false;
+      //         }
+      //       });
+
+      //       if (!map.includes(true)) continue;
+      //     }
+      //     // E.g /dashboard/
+      //     else if (this._whiteListRoutes[0] instanceof RegExp) {
+      //       const map = this._whiteListRoutes.map(ignoredRoute => {
+      //         ignoredRoute = ignoredRoute as unknown as RegExp;
+
+      //         if (ignoredRoute.test(getPathname(route))) {
+      //           // logger.debug('Skipping ignored route:', route.id);
+      //           return true;
+      //         } else {
+      //           return false;
+      //         }
+      //       });
+
+      //       if (!map.includes(true)) continue;
+      //     } else {
+      //       logger.error('Invalid ignoredRoutes type:', this._whiteListRoutes);
+      //     }
+      //   } else if (typeof this._whiteListRoutes === 'function') {
+      //     if (!this._whiteListRoutes(route)) {
+      //       // logger.debug('Skipping ignored route:', route.id);
+      //       continue;
+      //     }
+      //   }
+      // }
+
       // logger.log('Precaching route:', route.id);
       cacheRoute(route);
     }
+
+    // if (this._staticAssets.length > 0) {
+    //   for (const assetUrl of this._staticAssets) {
+    //     logger.groupCollapsed('Caching asset: ', assetUrl);
+
+    //     logger.log('Is index:', false);
+    //     logger.log('Parent ID:', 'root');
+    //     logger.log('Imports:', []);
+    //     logger.log('Module:', null);
+
+    //     logger.groupEnd();
+
+    //     if (cachePromises.has(assetUrl)) {
+    //       continue;
+    //     }
+
+    //     cachePromises.set(assetUrl, cacheAsset(assetUrl));
+    //   }
+    // }
 
     await Promise.all(cachePromises.values());
 
@@ -193,6 +291,7 @@ export class PrecacheHandler extends MessageHandler {
 
       cachePromises.set(
         pathname,
+        // @ts-expect-error
         documentCache.put(pathname, response).catch((error: unknown) => {
           if (error instanceof TypeError) {
             logger.error(`TypeError when caching document ${pathname}:`, error.message);
@@ -216,6 +315,7 @@ export class PrecacheHandler extends MessageHandler {
         // logger.debug('caching loader data', url);
         cachePromises.set(
           url,
+          // @ts-expect-error
           dataCache.put(url, data).catch(error => {
             if (error instanceof TypeError) {
               logger.error(`TypeError when caching data ${pathname}:`, error.message);
@@ -230,7 +330,12 @@ export class PrecacheHandler extends MessageHandler {
     }
 
     async function cacheAsset(assetUrl: string) {
-      if (await assetCache.match(assetUrl)) {
+      if (
+        await assetCache.match(assetUrl, {
+          ignoreSearch: true,
+          ignoreVary: true,
+        })
+      ) {
         return;
       }
 
