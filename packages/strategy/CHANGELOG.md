@@ -1,3 +1,18 @@
+# @remix-pwa/strategy 2.1.0 (2023-09-17)
+
+
+### Features
+
+* **strategy:** strategies no longer returns `Promise` + `cacheQueryOptions` available c912ad8
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/cache:** upgraded to 2.0.2
+
 ## @remix-pwa/strategy 2.0.1 (2023-09-15)
 
 
