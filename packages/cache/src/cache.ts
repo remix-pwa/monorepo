@@ -120,6 +120,8 @@ export class RemixCache implements CustomCache {
     // If it is user initiated, set the cache
     if (options.maxItems || options.ttl || options.strategy) {
       this.set = true;
+    } else {
+      this.set = false;
     }
   }
 
@@ -128,6 +130,11 @@ export class RemixCache implements CustomCache {
   }
 
   private async _getOrDeleteIfExpired(key: Request, metadata: Metadata) {
+    // @ts-ignore
+    if (metadata.expiresAt === 'Infinity') {
+      return false;
+    }
+
     if (metadata.expiresAt <= Date.now()) {
       return await this.delete(key);
     }
@@ -308,6 +315,10 @@ export class RemixCache implements CustomCache {
         this._ttl = metadata.cacheTtl;
         this._maxItems = metadata.cacheMaxItems;
         this._strategy = metadata.cacheStrategy;
+      } else {
+        this._ttl = Infinity;
+        this._maxItems = 100;
+        this._strategy = Strategy.NetworkFirst;
       }
     }
 
@@ -315,8 +326,9 @@ export class RemixCache implements CustomCache {
       JSON.stringify({
         metadata: {
           accessedAt: Date.now(),
-          expiresAt: Date.now() + (ttl ?? this._ttl),
-          cacheTtl: this._ttl,
+          // JSON can't store Infinity, so we store it as a string
+          expiresAt: Date.now() + (ttl ?? this._ttl) === Infinity ? 'Infinity' : Date.now() + (ttl ?? this._ttl),
+          cacheTtl: this._ttl === Infinity ? 'Infinity' : this._ttl,
           cacheMaxItems: this._maxItems,
           cacheStrategy: this._strategy,
         },
