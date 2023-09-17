@@ -15,11 +15,12 @@ export interface CacheFirstStrategyOptions extends StrategyOptions {
   fetchDidFail?: (() => void | (() => Promise<void>))[] | undefined;
 }
 
-export const cacheFirst = async ({
+export const cacheFirst = ({
   cache: cacheName,
   cacheOptions,
+  cacheQueryOptions,
   fetchDidFail = undefined,
-}: CacheFirstStrategyOptions): Promise<StrategyResponse> => {
+}: CacheFirstStrategyOptions): StrategyResponse => {
   return async (request: Request | URL) => {
     if (!isHttpRequest(request)) {
       return new Response('Not a HTTP request', { status: 403 });
@@ -33,7 +34,7 @@ export const cacheFirst = async ({
       remixCache = cacheName;
     }
 
-    const response = await remixCache.match(request);
+    const response = await remixCache.match(request, cacheQueryOptions);
 
     if (!response) {
       try {
