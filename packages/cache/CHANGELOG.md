@@ -1,3 +1,10 @@
+## @remix-pwa/cache 2.0.2 (2023-09-17)
+
+
+### Bug Fixes
+
+* **cache:** fixed JSON error with stringifying `Inifinity` fd5408a
+
 ## @remix-pwa/cache 2.0.1 (2023-09-15)
 
 
