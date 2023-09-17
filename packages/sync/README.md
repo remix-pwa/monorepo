@@ -7,3 +7,7 @@
 ```bash
 npm install @remix-pwa/sync
 ```
+
+## Usage
+
+https://remix-pwa.run/docs/background-sync
