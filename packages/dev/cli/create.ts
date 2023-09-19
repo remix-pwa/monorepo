@@ -46,7 +46,7 @@ async function integrateServiceWorker(
     } else {
       const workerContent = pkg.readFileSync(resolve(templateDir, 'app', `precache.worker.${lang}`), 'utf-8');
 
-      await pkg.writeFile(workerDir, workerContent, 'utf-8');
+      pkg.writeFileSync(workerDir, workerContent, 'utf-8');
     }
   } else {
     // if (workbox) { return; }
@@ -58,7 +58,7 @@ async function integrateServiceWorker(
     } else {
       const workerContent = pkg.readFileSync(resolve(templateDir, 'app', `entry.worker.${lang}`), 'utf-8');
 
-      await pkg.writeFile(workerDir, workerContent, 'utf-8');
+      pkg.writeFileSync(workerDir, workerContent, 'utf-8');
     }
   }
 }
@@ -74,7 +74,7 @@ async function integrateManifest(projectDir: string, lang: 'ts' | 'js' = 'ts', d
   }
 
   const manifestContent = pkg.readFileSync(resolve(templateDir, 'app', `manifest[.]webmanifest.js`), 'utf-8');
-  await pkg.writeFile(manifestDir, manifestContent, 'utf-8');
+  pkg.writeFileSync(manifestDir, manifestContent, 'utf-8');
 }
 
 async function integrateIcons(projectDir: string) {
@@ -194,27 +194,27 @@ export async function createPWA(
   }}`;
   json.dependencies.dotenv = '^16.0.3';
 
-  json.devDependencies['@remix-pwa/dev'] = `${await getPkgVersion('@remix-pwa/dev')}}`;
+  json.devDependencies['@remix-pwa/dev'] = `${await getPkgVersion('@remix-pwa/dev')}`;
   // Todo, expose the CLI via dev
-  // json.devDependencies['remix-pwa'] = `${await getPkgVersion('remix-pwa')}}`;
+  // json.devDependencies['remix-pwa'] = `${await getPkgVersion('remix-pwa')}`;
   json.devDependencies['npm-run-all'] = '^4.1.5';
 
   if (features.includes('sw')) {
-    json.dependencies['@remix-pwa/cache'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/cache')}}`;
-    json.dependencies['@remix-pwa/sw'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/sw')}}`;
-    json.dependencies['@remix-pwa/strategy'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/strategy')}}`;
+    json.dependencies['@remix-pwa/cache'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/cache')}`;
+    json.dependencies['@remix-pwa/sw'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/sw')}`;
+    json.dependencies['@remix-pwa/strategy'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/strategy')}`;
   }
 
   if (push) {
-    json.dependencies['@remix-pwa/push'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/push')}}`;
+    json.dependencies['@remix-pwa/push'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/push')}`;
   }
 
   if (utils) {
-    json.dependencies['@remix-pwa/client'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/client')}}`;
+    json.dependencies['@remix-pwa/client'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/client')}`;
   }
 
   if (sync) {
-    json.dependencies['@remix-pwa/sync'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/sync')}}`;
+    json.dependencies['@remix-pwa/sync'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/sync')}`;
   }
 
   json.scripts.build = 'run-s build:*';

@@ -1,4 +1,6 @@
-import { run } from './index.js';
+#!/usr/bin/env node
+import * as dev from './index.js';
+const { run } = dev;
 
 run().then(
   () => {
