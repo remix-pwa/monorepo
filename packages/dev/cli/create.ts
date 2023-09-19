@@ -44,9 +44,9 @@ async function integrateServiceWorker(
     if (pkg.pathExistsSync(workerDir)) {
       console.log(red('Service worker already exists'));
     } else {
-      const workerContent = pkg.readFileSync(resolve(templateDir, 'app', `precache.worker.${lang}`), 'utf-8');
+      const workerContent = await pkg.readFile(resolve(templateDir, 'app', `precache.worker.${lang}`), 'utf-8');
 
-      pkg.writeFileSync(workerDir, workerContent, 'utf-8');
+      await pkg.writeFile(workerDir, workerContent, 'utf-8');
     }
   } else {
     // if (workbox) { return; }
@@ -56,9 +56,9 @@ async function integrateServiceWorker(
     if (pkg.pathExistsSync(workerDir)) {
       console.log(red('Service worker already exists'));
     } else {
-      const workerContent = pkg.readFileSync(resolve(templateDir, 'app', `entry.worker.${lang}`), 'utf-8');
+      const workerContent = await pkg.readFile(resolve(templateDir, 'app', `entry.worker.${lang}`), 'utf-8');
 
-      pkg.writeFileSync(workerDir, workerContent, 'utf-8');
+      await pkg.writeFile(workerDir, workerContent, 'utf-8');
     }
   }
 }
@@ -74,7 +74,7 @@ async function integrateManifest(projectDir: string, lang: 'ts' | 'js' = 'ts', d
   }
 
   const manifestContent = pkg.readFileSync(resolve(templateDir, 'app', `manifest[.]webmanifest.js`), 'utf-8');
-  pkg.writeFileSync(manifestDir, manifestContent, 'utf-8');
+  await pkg.writeFile(manifestDir, manifestContent, 'utf-8');
 }
 
 async function integrateIcons(projectDir: string) {
@@ -155,11 +155,11 @@ export async function createPWA(
         }
         break;
       case 'icons':
-        integrateIcons(projectDir);
+        await integrateIcons(projectDir);
         break;
       case 'push':
         push = true;
-        integratePush(projectDir, lang, dir);
+        await integratePush(projectDir, lang, dir);
         break;
       case 'utils':
         utils = true;
@@ -191,7 +191,7 @@ export async function createPWA(
 
   json.dependencies['@remix-pwa/worker-runtime'] = `^${
     _isTest ? '' : await getPkgVersion('@remix-pwa/worker-runtime')
-  }}`;
+  }`;
   json.dependencies.dotenv = '^16.0.3';
 
   json.devDependencies['@remix-pwa/dev'] = `${await getPkgVersion('@remix-pwa/dev')}`;
@@ -229,7 +229,7 @@ export async function createPWA(
 
   if (install) {
     const spinner = ora({
-      text: blueBright(`Running ${packageManager} install...`),
+      text: blueBright(`Running ${packageManager} install...\n`),
       spinner: 'dots',
     }).start();
 
@@ -239,7 +239,7 @@ export async function createPWA(
         stdio: 'inherit',
       });
 
-      spinner.succeed(`Successfully ran ${packageManager} install!`);
+      spinner.succeed(`Successfully ran ${packageManager} install!\n`);
       spinner.clear();
     } else {
       spinner.succeed(`Successfully installed dependencies!`).clear();

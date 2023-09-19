@@ -2,7 +2,7 @@
 import * as dev from './index.js';
 const { run } = dev;
 
-run().then(
+await run().then(
   () => {
     process.exit(0);
   },

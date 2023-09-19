@@ -104,7 +104,7 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
   }
 
   if (flags.docs) {
-    console.log('https://remix-pwa-docs.vercel.app');
+    console.log('https://remix-pwa.run');
     return;
   }
 
@@ -339,6 +339,6 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
 
       const answer = { ...inquiry, ...initialChoices } as unknown as FlagOptionType;
 
-      commands.init(projectDir, answer);
+      await commands.init(projectDir, answer);
   }
 }
