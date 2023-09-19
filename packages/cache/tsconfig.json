@@ -1,6 +1,6 @@
 {
   "include": ["**/*.ts", "package.json"],
-  "exclude": ["dist", "./**/__tests__", "node_modules"],
+  "exclude": ["dist", "./**/__tests__/**", "node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
     "lib": ["ES2021", "WebWorker", "DOM.Iterable"],
