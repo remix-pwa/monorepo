@@ -90,6 +90,9 @@ A complete PWA framework solution for integrating PWA into your Remix applicatio
         );
 
         assert.ok(existsSync('__mock-app/app/entry.worker.ts'));
+        expect(readFileSync('__mock-app/app/entry.worker.ts').toString()).toBe(
+          readFileSync(resolve(__dirname, '../../../../templates/app/entry.worker.ts')).toString()
+        );
         expect(true).toBe(true); // Added this line due to eslint error
       });
 

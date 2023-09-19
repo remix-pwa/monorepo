@@ -7,6 +7,7 @@ import ora from 'ora';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
+import { getPkgVersion } from './getPkgVersion.js';
 import type { PWAFeatures } from './run.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -188,28 +189,30 @@ export async function createPWA(
     json.scripts = {};
   }
 
-  json.dependencies['@remix-pwa/worker-runtime'] = '^1.0.1';
+  json.dependencies['@remix-pwa/worker-runtime'] = `^${
+    _isTest ? '' : await getPkgVersion('@remix-pwa/worker-runtime')
+  }}`;
   json.dependencies.dotenv = '^16.0.3';
 
-  json.devDependencies['@remix-pwa/dev'] = '^2.0.0';
+  json.devDependencies['@remix-pwa/dev'] = `${await getPkgVersion('@remix-pwa/dev')}}`;
   json.devDependencies['npm-run-all'] = '^4.1.5';
 
   if (features.includes('sw')) {
-    json.dependencies['@remix-pwa/cache'] = '^2.0.0';
-    json.dependencies['@remix-pwa/sw'] = '^2.0.0';
-    json.dependencies['@remix-pwa/strategy'] = '^2.0.0';
+    json.dependencies['@remix-pwa/cache'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/cache')}}`;
+    json.dependencies['@remix-pwa/sw'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/sw')}}`;
+    json.dependencies['@remix-pwa/strategy'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/strategy')}}`;
   }
 
   if (push) {
-    json.dependencies['@remix-pwa/push'] = '^2.0.0';
+    json.dependencies['@remix-pwa/push'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/push')}}`;
   }
 
   if (utils) {
-    json.dependencies['@remix-pwa/client'] = '^2.0.0';
+    json.dependencies['@remix-pwa/client'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/client')}}`;
   }
 
   if (sync) {
-    json.dependencies['@remix-pwa/sync'] = '^2.0.0';
+    json.dependencies['@remix-pwa/sync'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/sync')}}`;
   }
 
   json.scripts.build = 'run-s build:*';
