@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import { execSync } from 'child_process';
-import { blueBright, green, red } from 'colorette';
+import { blueBright, green, red, white } from 'colorette';
 import { cpSync } from 'fs';
 import pkg from 'fs-extra';
 import ora from 'ora';
@@ -86,6 +86,7 @@ async function integrateIcons(projectDir: string) {
 // temporary
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function integratePush(projectDir: string, lang: 'ts' | 'js' = 'ts', dir: string = 'app') {
+  console.log('Push API is still coming to v3.0 later...');
   return null;
 }
 
@@ -142,14 +143,30 @@ export async function createPWA(
     switch (feature) {
       case 'sw':
         try {
+          const spinnerWorker = ora({
+            text: white(`Integrating Service Worker...`),
+            spinner: 'dots',
+          }).start();
+
           await integrateServiceWorker(projectDir, precache, workbox, lang, dir);
+
+          spinnerWorker.succeed(`Successfully integrated Service Worker!`);
+          spinnerWorker.clear();
         } catch (err) {
           console.log(typeof err === 'string' ? red(err) : err);
         }
         break;
       case 'manifest':
         try {
+          const spinnerManifest = ora({
+            text: white(`Integrating Web Manifest...`),
+            spinner: 'dots',
+          }).start();
+
           await integrateManifest(projectDir, lang, dir);
+
+          spinnerManifest.succeed(`Successfully integrated Web Manifest!`);
+          spinnerManifest.clear();
         } catch (err) {
           console.log(typeof err === 'string' ? red(err) : err);
         }

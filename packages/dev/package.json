@@ -34,9 +34,10 @@
     "README.md",
     "CHANGELOG.md"
   ],
+  "peerDependencies": {
+    "@remix-run/dev": "^1.19.3 || ^2.0.0"
+  },
   "dependencies": {
-    "@remix-pwa/worker-runtime": "^2.0.2",
-    "@remix-run/dev": "^1.19.3",
     "arg": "^5.0.2",
     "colorette": "^2.0.20",
     "enquirer": "^2.4.1",
@@ -46,6 +47,8 @@
     "stdin-discarder": "^0.1.0"
   },
   "devDependencies": {
+    "@remix-run/dev": "^1.19.3",
+    "@remix-pwa/worker-runtime": "^2.0.2",
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
     "@types/fs-extra": "^11.0.2",
