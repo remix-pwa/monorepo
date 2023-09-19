@@ -1,10 +1,11 @@
 {
   "name": "@remix-pwa/playground",
   "version": "0.0.0",
+  "type": "module",
   "description": "A Playground for Remix PWA 3.0",
   "repository": {
     "type": "git",
-    "url": "git@github.com:remix-pwa/monorepo",
+    "url": "git+ssh://git@github.com/remix-pwa/monorepo.git",
     "directory": "playground"
   },
   "license": "MIT",
@@ -14,14 +15,14 @@
     "dev": "run-p dev:*",
     "start": "remix-serve build",
     "typecheck": "tsc",
-    "dev:worker": "node ./sw.mjs -- dev",
+    "dev:worker": "remix-pwa dev",
     "dev:remix": "remix dev"
   },
   "dependencies": {
-    "@remix-pwa/strategy": "^2.0.0",
-    "@remix-pwa/sw": "2.1.1",
-    "@remix-pwa/sync": "^2.0.0",
-    "@remix-pwa/worker-runtime": "^2.0.0",
+    "@remix-pwa/strategy": "^2.1.2",
+    "@remix-pwa/sw": "2.1.2",
+    "@remix-pwa/sync": "^2.0.1",
+    "@remix-pwa/worker-runtime": "^2.0.2",
     "@remix-run/css-bundle": "^1.19.3",
     "@remix-run/node": "^1.19.3",
     "@remix-run/react": "^1.19.3",
@@ -33,7 +34,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@remix-pwa/dev": "^2.0.0",
+    "@remix-pwa/dev": "^2.0.12",
     "@remix-run/dev": "^1.19.3",
     "@remix-run/eslint-config": "^1.19.3",
     "@types/react": "^18.2.21",

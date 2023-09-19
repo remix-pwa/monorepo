@@ -1,10 +1,10 @@
 {
   "name": "@remix-pwa/sw",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Service Worker APIs and utilities for Remix PWA",
   "repository": {
     "type": "git",
-    "url": "git@github.com:remix-pwa/monorepo",
+    "url": "git+ssh://git@github.com/remix-pwa/monorepo.git",
     "directory": "packages/sw"
   },
   "license": "MIT",
@@ -28,7 +28,7 @@
     "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
   },
   "peerDependencies": {
-    "@remix-pwa/cache": "^2.0.2"
+    "@remix-pwa/cache": "^2.0.3"
   },
   "homepage": "https://remix-pwa.run",
   "devDependencies": {
@@ -40,7 +40,7 @@
     "rimraf": "^5.0.1"
   },
   "dependencies": {
-    "@remix-pwa/cache": "^2.0.2",
+    "@remix-pwa/cache": "^2.0.3",
     "@remix-run/dev": "^1.19.3",
     "@remix-run/react": "^1.19.3",
     "idb": "^7.1.1",

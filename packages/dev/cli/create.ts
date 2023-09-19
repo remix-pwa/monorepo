@@ -7,6 +7,7 @@ import ora from 'ora';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
+import { getPkgVersion } from './getPkgVersion.js';
 import type { PWAFeatures } from './run.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -43,7 +44,7 @@ async function integrateServiceWorker(
     if (pkg.pathExistsSync(workerDir)) {
       console.log(red('Service worker already exists'));
     } else {
-      const workerContent = pkg.readFileSync(resolve(templateDir, 'app', `precache.worker.${lang}`), 'utf-8');
+      const workerContent = await pkg.readFile(resolve(templateDir, 'app', `precache.worker.${lang}`), 'utf-8');
 
       await pkg.writeFile(workerDir, workerContent, 'utf-8');
     }
@@ -55,7 +56,7 @@ async function integrateServiceWorker(
     if (pkg.pathExistsSync(workerDir)) {
       console.log(red('Service worker already exists'));
     } else {
-      const workerContent = pkg.readFileSync(resolve(templateDir, 'app', `entry.worker.${lang}`), 'utf-8');
+      const workerContent = await pkg.readFile(resolve(templateDir, 'app', `entry.worker.${lang}`), 'utf-8');
 
       await pkg.writeFile(workerDir, workerContent, 'utf-8');
     }
@@ -154,11 +155,11 @@ export async function createPWA(
         }
         break;
       case 'icons':
-        integrateIcons(projectDir);
+        await integrateIcons(projectDir);
         break;
       case 'push':
         push = true;
-        integratePush(projectDir, lang, dir);
+        await integratePush(projectDir, lang, dir);
         break;
       case 'utils':
         utils = true;
@@ -188,28 +189,32 @@ export async function createPWA(
     json.scripts = {};
   }
 
-  json.dependencies['@remix-pwa/worker-runtime'] = '^1.0.1';
+  json.dependencies['@remix-pwa/worker-runtime'] = `^${
+    _isTest ? '' : await getPkgVersion('@remix-pwa/worker-runtime')
+  }`;
   json.dependencies.dotenv = '^16.0.3';
 
-  json.devDependencies['@remix-pwa/dev'] = '^2.0.0';
+  json.devDependencies['@remix-pwa/dev'] = `${await getPkgVersion('@remix-pwa/dev')}`;
+  // Todo, expose the CLI via dev
+  // json.devDependencies['remix-pwa'] = `${await getPkgVersion('remix-pwa')}`;
   json.devDependencies['npm-run-all'] = '^4.1.5';
 
   if (features.includes('sw')) {
-    json.dependencies['@remix-pwa/cache'] = '^2.0.0';
-    json.dependencies['@remix-pwa/sw'] = '^2.0.0';
-    json.dependencies['@remix-pwa/strategy'] = '^2.0.0';
+    json.dependencies['@remix-pwa/cache'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/cache')}`;
+    json.dependencies['@remix-pwa/sw'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/sw')}`;
+    json.dependencies['@remix-pwa/strategy'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/strategy')}`;
   }
 
   if (push) {
-    json.dependencies['@remix-pwa/push'] = '^2.0.0';
+    json.dependencies['@remix-pwa/push'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/push')}`;
   }
 
   if (utils) {
-    json.dependencies['@remix-pwa/client'] = '^2.0.0';
+    json.dependencies['@remix-pwa/client'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/client')}`;
   }
 
   if (sync) {
-    json.dependencies['@remix-pwa/sync'] = '^2.0.0';
+    json.dependencies['@remix-pwa/sync'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/sync')}`;
   }
 
   json.scripts.build = 'run-s build:*';
@@ -224,7 +229,7 @@ export async function createPWA(
 
   if (install) {
     const spinner = ora({
-      text: blueBright(`Running ${packageManager} install...`),
+      text: blueBright(`Running ${packageManager} install...\n`),
       spinner: 'dots',
     }).start();
 
@@ -234,7 +239,7 @@ export async function createPWA(
         stdio: 'inherit',
       });
 
-      spinner.succeed(`Successfully ran ${packageManager} install!`);
+      spinner.succeed(`Successfully ran ${packageManager} install!\n`);
       spinner.clear();
     } else {
       spinner.succeed(`Successfully installed dependencies!`).clear();

@@ -1,10 +1,10 @@
 {
   "name": "@remix-pwa/dev",
-  "version": "2.0.1",
+  "version": "2.0.13",
   "description": "An esbuild compiler for Service Workers in Remix.run",
   "repository": {
     "type": "git",
-    "url": "git@github.com:remix-pwa/monorepo",
+    "url": "git+ssh://git@github.com/remix-pwa/monorepo.git",
     "directory": "packages/dev"
   },
   "homepage": "https://remix-pwa.run",
@@ -14,10 +14,14 @@
   "engines": {
     "node": ">=18.0.0"
   },
+  "bin": {
+    "remix-pwa": "dist/cli.js"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rimraf ./dist && tsc && npm run copy",
+    "prepublishOnly": "npm run build",
     "compile": "tsc && node ./build.cjs",
     "copy": "cp -r cli/templates dist/cli/templates",
     "format": "prettier --write \"cli/**/*.ts\" \"compiler/**/*.ts\"",
@@ -31,7 +35,7 @@
     "CHANGELOG.md"
   ],
   "dependencies": {
-    "@remix-pwa/worker-runtime": "^2.0.1",
+    "@remix-pwa/worker-runtime": "^2.0.2",
     "@remix-run/dev": "^1.19.3",
     "arg": "^5.0.2",
     "colorette": "^2.0.20",
