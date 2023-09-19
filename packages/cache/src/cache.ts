@@ -189,6 +189,7 @@ export class RemixCache implements CustomCache {
         headers: {
           ...Object.fromEntries(headers.entries()),
           'Content-Type': headers.get('X-Remix-PWA-Original-Content-Type') || 'application/json',
+          'X-Remix-PWA-TTL': metadata.expiresAt.toString(),
         },
       });
 

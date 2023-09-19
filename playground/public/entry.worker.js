@@ -3656,7 +3656,8 @@ var RemixCache = class {
         statusText: response.statusText,
         headers: {
           ...Object.fromEntries(headers.entries()),
-          "Content-Type": headers.get("X-Remix-PWA-Original-Content-Type") || "application/json"
+          "Content-Type": headers.get("X-Remix-PWA-Original-Content-Type") || "application/json",
+          "X-Remix-PWA-TTL": metadata.expiresAt.toString()
         }
       });
       await this.put(request, res.clone(), void 0);
@@ -3769,10 +3770,10 @@ var RemixCache = class {
         this._strategy = Strategy.NetworkFirst;
       }
     }
-    console.log("putting", request.url, "in cache -", this._ttl);
     response = new Response(JSON.stringify({
       metadata: {
         accessedAt: Date.now(),
+        // JSON can't store Infinity, so we store it as a string
         expiresAt: Date.now() + (ttl ?? this._ttl) === Infinity ? "Infinity" : Date.now() + (ttl ?? this._ttl),
         cacheTtl: this._ttl === Infinity ? "Infinity" : this._ttl,
         cacheMaxItems: this._maxItems,
@@ -10536,7 +10537,7 @@ var hasWorkerAction8 = false;
 var hasWorkerLoader8 = true;
 
 // assets-module:@remix-sas/dev?assets
-var assets = ["/build/root-OCCPGGB4.js", "/build/manifest-08502959.js", "/build/entry.client-NV6C6WQL.js", "/build/__remix_entry_dev-GGUNVKXG.js", "/build/_assets/tailwind-JOKRYXHU.css", "/build/routes/sync-away-P6JMB4ZQ.js", "/build/routes/strategies-XSNONEK2.js", "/build/routes/selection-3RF3B7XH.js", "/build/routes/basic-loader-TTJUGF2H.js", "/build/routes/basic-caching-4Y5UBUHK.js", "/build/routes/basic-action-LKYZPOAI.js", "/build/routes/_index-LRLQFN4E.js", "/build/routes/_app.flights-GZW6UTHH.js", "/build/routes/_app-DPFPWRI5.js", "/build/_shared/runtime-JC7ERE5X.js", "/build/_shared/remix_hmr-KOXB6O7Z.js", "/build/_shared/react-dom-SNQ2UIZM.js", "/build/_shared/react-XL6EHOTX.js", "/build/_shared/jsx-runtime-7KJOCM5J.js", "/build/_shared/jsx-dev-runtime-D5NCTVC4.js", "/build/_shared/esm-QACGES7W.js", "/build/_shared/client-LQHWDDYA.js", "/build/_shared/chunk-WIDFYYG3.js", "/build/_shared/chunk-TWSZTAQ6.js", "/build/_shared/chunk-TLBAXOHZ.js", "/build/_shared/chunk-TELWXURW.js", "/build/_shared/chunk-STMUDJCL.js", "/build/_shared/chunk-PNG5AS42.js", "/build/_shared/chunk-NXSRMYPB.js", "/build/_shared/chunk-LOYKRDJM.js", "/build/_shared/chunk-GF52RS3E.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-FXD4XYGV.js"];
+var assets = ["/build/root-OCCPGGB4.js", "/build/manifest-4EDCC74F.js", "/build/entry.client-NV6C6WQL.js", "/build/__remix_entry_dev-GGUNVKXG.js", "/build/routes/sync-away-P6JMB4ZQ.js", "/build/routes/strategies-7NEMAJQG.js", "/build/routes/selection-3RF3B7XH.js", "/build/routes/basic-loader-TTJUGF2H.js", "/build/routes/basic-caching-LBNH7FK6.js", "/build/routes/basic-action-47DQBYY7.js", "/build/routes/_index-LRLQFN4E.js", "/build/routes/_app.flights-GZW6UTHH.js", "/build/routes/_app-DPFPWRI5.js", "/build/_shared/runtime-JC7ERE5X.js", "/build/_shared/remix_hmr-KOXB6O7Z.js", "/build/_shared/react-dom-SNQ2UIZM.js", "/build/_shared/react-XL6EHOTX.js", "/build/_shared/jsx-runtime-7KJOCM5J.js", "/build/_shared/jsx-dev-runtime-D5NCTVC4.js", "/build/_shared/esm-QACGES7W.js", "/build/_shared/client-LQHWDDYA.js", "/build/_shared/chunk-WIDFYYG3.js", "/build/_shared/chunk-TWSZTAQ6.js", "/build/_shared/chunk-TLBAXOHZ.js", "/build/_shared/chunk-STMUDJCL.js", "/build/_shared/chunk-PNG5AS42.js", "/build/_shared/chunk-NXSRMYPB.js", "/build/_shared/chunk-LOYKRDJM.js", "/build/_shared/chunk-GF52RS3E.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-FXD4XYGV.js", "/build/_shared/chunk-64ZGQPAW.js", "/build/_assets/tailwind-JOKRYXHU.css"];
 
 // entry-module:@remix-pwa/build/magic
 var routes = {
