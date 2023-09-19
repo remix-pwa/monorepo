@@ -1,3 +1,10 @@
+## @remix-pwa/strategy 2.1.1 (2023-09-19)
+
+
+### Bug Fixes
+
+* **strategy:** fixed `swr` swr capabilities based on cache's `ttl` ae6c7df
+
 # @remix-pwa/strategy 2.1.0 (2023-09-17)
 
 
