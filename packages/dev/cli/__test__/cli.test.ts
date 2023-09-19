@@ -46,7 +46,7 @@ A complete PWA framework solution for integrating PWA into your Remix applicatio
       await run(['--docs']);
 
       expect(log).toHaveBeenCalled();
-      expect(log).toHaveBeenCalledWith(expect.stringMatching('https://remix-pwa-docs.vercel.app'));
+      expect(log).toHaveBeenCalledWith(expect.stringMatching('https://remix-pwa.run'));
     });
   });
 

@@ -14,7 +14,7 @@
     "dev": "run-p dev:*",
     "start": "remix-serve build",
     "typecheck": "tsc",
-    "dev:worker": "node ./sw.mjs -- dev",
+    "dev:worker": "remix-pwa dev",
     "dev:remix": "remix dev"
   },
   "dependencies": {
