@@ -4,7 +4,7 @@
   "description": "A collection of service worker strategies for Remix PWA",
   "repository": {
     "type": "git",
-    "url": "git@github.com:remix-pwa/monorepo",
+    "url": "git+ssh://git@github.com/remix-pwa/monorepo.git",
     "directory": "packages/strategy"
   },
   "main": "dist/index.js",

@@ -4,7 +4,7 @@
   "description": "A Playground for Remix PWA 3.0",
   "repository": {
     "type": "git",
-    "url": "git@github.com:remix-pwa/monorepo",
+    "url": "git+ssh://git@github.com/remix-pwa/monorepo.git",
     "directory": "playground"
   },
   "license": "MIT",

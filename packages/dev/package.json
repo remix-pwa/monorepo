@@ -4,7 +4,7 @@
   "description": "An esbuild compiler for Service Workers in Remix.run",
   "repository": {
     "type": "git",
-    "url": "git@github.com:remix-pwa/monorepo",
+    "url": "git+ssh://git@github.com/remix-pwa/monorepo.git",
     "directory": "packages/dev"
   },
   "homepage": "https://remix-pwa.run",
