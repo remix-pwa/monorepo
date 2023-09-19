@@ -35,6 +35,16 @@ export const staleWhileRevalidate = ({
     }
 
     return remixCache.match(request, cacheQueryOptions).then(async response => {
+      const res = response ? response.clone() : undefined;
+
+      if (res) {
+        const ttl = Number(res.headers.get('X-Remix-PWA-TTL')) ?? 0;
+
+        if (ttl > Date.now()) {
+          return res;
+        }
+      }
+
       const fetchPromise = fetch(request)
         .then(async networkResponse => {
           await remixCache.put(request, networkResponse.clone());
