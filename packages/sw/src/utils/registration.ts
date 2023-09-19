@@ -8,5 +8,3 @@ export async function unregisterServiceWorker() {
   await registration?.unregister();
   logger.log('Service worker unregistered successfully.');
 }
-
-// Awaiting for Sarabadu PR --- https://github.com/remix-pwa/sw/pull/25

@@ -2,8 +2,6 @@ import type { RouteMatch } from '@remix-run/react';
 import { useLocation, useMatches } from '@remix-run/react';
 import { useEffect, useRef } from 'react';
 
-// let isMount = true;
-
 /**
  * This hook is used to send navigation events to the service worker.
  * It is to be called in the `root` file of your Remix application.
