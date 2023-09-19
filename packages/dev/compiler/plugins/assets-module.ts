@@ -1,7 +1,7 @@
-import type { OnLoadResult, OnResolveArgs, OnResolveResult, Plugin, PluginBuild } from 'esbuild';
-import { glob } from 'glob';
-
 import type { ResolvedWorkerConfig } from 'compiler/utils/config.js';
+import type { OnLoadResult, OnResolveArgs, OnResolveResult, Plugin, PluginBuild } from 'esbuild';
+import * as pkg from 'glob';
+const { glob } = pkg;
 
 const FILTER_REGEX = /@remix-sas\/dev\?assets/;
 const NAMESPACE = 'assets-module';

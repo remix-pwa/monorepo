@@ -133,7 +133,7 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
     packageManager = args['--package-manager'];
   }
 
-  if (input[0].startsWith('-')) {
+  if (input[0] && input[0].startsWith('-')) {
     input.unshift('create');
   }
 
@@ -158,7 +158,7 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
     default: // Todo: Add a better error message - Deprecating this. For now tho, it would be the same as create
       if (cmd !== 'create' && cmd !== 'init' && cmd !== 'new') {
         console.warn(
-          bold(red('This command is getting deprecated soon. Please use `npx remix-pwa@latest create` instead.'))
+          bold(red('This command is getting deprecated soon. Please use `npx remix-pwa@latest init` instead.'))
         );
       }
 
