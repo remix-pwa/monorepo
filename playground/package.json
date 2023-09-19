@@ -1,6 +1,7 @@
 {
   "name": "@remix-pwa/playground",
   "version": "0.0.0",
+  "type": "module",
   "description": "A Playground for Remix PWA 3.0",
   "repository": {
     "type": "git",
@@ -33,7 +34,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@remix-pwa/dev": "^2.0.7",
+    "@remix-pwa/dev": "^2.0.12",
     "@remix-run/dev": "^1.19.3",
     "@remix-run/eslint-config": "^1.19.3",
     "@types/react": "^18.2.21",

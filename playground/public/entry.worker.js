@@ -4089,6 +4089,13 @@ var staleWhileRevalidate = ({ cache: cacheName, cacheOptions, cacheQueryOptions,
       remixCache = cacheName;
     }
     return remixCache.match(request, cacheQueryOptions).then(async (response) => {
+      const res = response ? response.clone() : void 0;
+      if (res) {
+        const ttl = Number(res.headers.get("X-Remix-PWA-TTL")) ?? 0;
+        if (ttl > Date.now()) {
+          return res;
+        }
+      }
       const fetchPromise = fetch(request).then(async (networkResponse) => {
         await remixCache.put(request, networkResponse.clone());
         return networkResponse;
@@ -9960,10 +9967,10 @@ __export(basic_caching_exports, {
 });
 
 // app/routes/basic-caching.tsx
-var import_node = __toESM(require_node());
-var import_react = __toESM(require_react());
-var import_react2 = __toESM(require_react2());
-var import_jsx_runtime = __toESM(require_jsx_runtime());
+var import_node = __toESM(require_node(), 1);
+var import_react = __toESM(require_react(), 1);
+var import_react2 = __toESM(require_react2(), 1);
+var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
 var workerLoader = async ({ context }) => {
   const customStrategy = cacheFirst({
     cache: "basic-caching",
@@ -10290,9 +10297,9 @@ var validRequestMethods = new Set(validRequestMethodsArr);
 var UNSAFE_DEFERRED_SYMBOL = Symbol("deferred");
 
 // app/routes/_app.flights.tsx
-var import_react3 = __toESM(require_react());
-var import_react4 = __toESM(require_react2());
-var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+var import_react3 = __toESM(require_react(), 1);
+var import_react4 = __toESM(require_react2(), 1);
+var import_jsx_runtime2 = __toESM(require_jsx_runtime(), 1);
 var workerAction = async ({ request, context }) => {
   const formData = await request.formData();
   const { database, fetchFromServer } = context;
@@ -10342,10 +10349,10 @@ __export(basic_action_exports, {
 });
 
 // app/routes/basic-action.tsx
-var import_node2 = __toESM(require_node());
-var import_react5 = __toESM(require_react());
-var import_react6 = __toESM(require_react2());
-var import_jsx_runtime3 = __toESM(require_jsx_runtime());
+var import_node2 = __toESM(require_node(), 1);
+var import_react5 = __toESM(require_react(), 1);
+var import_react6 = __toESM(require_react2(), 1);
+var import_jsx_runtime3 = __toESM(require_jsx_runtime(), 1);
 var workerAction2 = async ({ context }) => {
   const { fetchFromServer } = context;
   try {
@@ -10376,10 +10383,10 @@ __export(basic_loader_exports, {
 });
 
 // app/routes/basic-loader.tsx
-var import_node3 = __toESM(require_node());
-var import_react7 = __toESM(require_react());
-var import_react8 = __toESM(require_react2());
-var import_jsx_runtime4 = __toESM(require_jsx_runtime());
+var import_node3 = __toESM(require_node(), 1);
+var import_react7 = __toESM(require_react(), 1);
+var import_react8 = __toESM(require_react2(), 1);
+var import_jsx_runtime4 = __toESM(require_jsx_runtime(), 1);
 var workerLoader3 = async ({ context }) => {
   const { fetchFromServer } = context;
   const message = await Promise.race([
@@ -10411,8 +10418,8 @@ __export(strategies_exports, {
 });
 
 // app/routes/strategies.tsx
-var import_react9 = __toESM(require_react());
-var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+var import_react9 = __toESM(require_react(), 1);
+var import_jsx_runtime5 = __toESM(require_jsx_runtime(), 1);
 var workerAction3 = async ({ context }) => {
   const { event } = context;
   const formData = await event.request.clone().formData();
@@ -10458,8 +10465,8 @@ __export(selection_exports, {
 });
 
 // app/routes/selection.tsx
-var import_react10 = __toESM(require_react());
-var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+var import_react10 = __toESM(require_react(), 1);
+var import_jsx_runtime6 = __toESM(require_jsx_runtime(), 1);
 async function workerLoader4({ context }) {
   const { database } = context;
   const selections = await database.selections.toArray();
@@ -10479,9 +10486,9 @@ __export(sync_away_exports, {
 });
 
 // app/routes/sync-away.tsx
-var import_node4 = __toESM(require_node());
-var import_react11 = __toESM(require_react());
-var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+var import_node4 = __toESM(require_node(), 1);
+var import_react11 = __toESM(require_react(), 1);
+var import_jsx_runtime7 = __toESM(require_jsx_runtime(), 1);
 var workerAction4 = async ({ context }) => {
   const { fetchFromServer, event } = context;
   try {
@@ -10518,9 +10525,9 @@ __export(app_exports, {
 });
 
 // app/routes/_app.tsx
-var import_node5 = __toESM(require_node());
-var import_react12 = __toESM(require_react());
-var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+var import_node5 = __toESM(require_node(), 1);
+var import_react12 = __toESM(require_react(), 1);
+var import_jsx_runtime8 = __toESM(require_jsx_runtime(), 1);
 async function workerLoader5({ context }) {
   const { fetchFromServer } = context;
   const data = await fetchFromServer().then((response) => response.json());

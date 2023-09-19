@@ -2,12 +2,4 @@
 import * as dev from './index.js';
 const { run } = dev;
 
-await run().then(
-  () => {
-    process.exit(0);
-  },
-  err => {
-    console.error(err);
-    process.exit(1);
-  }
-);
+await run();
