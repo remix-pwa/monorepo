@@ -35,8 +35,6 @@ async function integrateServiceWorker(
 ) {
   const templateDir = resolve(__dirname, 'templates');
 
-  console.log('Integrating Service Worker...'); // todo: ora spinners for each step
-
   if (precache) {
     // if (workbox) { return; }
     const workerDir = resolve(projectDir, dir, `entry.worker.${lang}`);
@@ -66,8 +64,6 @@ async function integrateServiceWorker(
 async function integrateManifest(projectDir: string, lang: 'ts' | 'js' = 'ts', dir: string = 'app') {
   const templateDir = resolve(__dirname, 'templates');
   const manifestDir = resolve(projectDir, dir, `routes/manifest[.]webmanifest.${lang}`);
-
-  console.log('Integrating Web Manifest...');
 
   if (pkg.pathExistsSync(manifestDir)) {
     return;
@@ -211,7 +207,7 @@ export async function createPWA(
   }`;
   json.dependencies.dotenv = '^16.0.3';
 
-  json.devDependencies['@remix-pwa/dev'] = `${await getPkgVersion('@remix-pwa/dev')}`;
+  json.devDependencies['@remix-pwa/dev'] = `${_isTest ? '' : await getPkgVersion('@remix-pwa/dev')}`;
   json.devDependencies['remix-pwa'] = `^${_isTest ? '' : await getPkgVersion('remix-pwa')}`;
   json.devDependencies['npm-run-all'] = '^4.1.5';
 
