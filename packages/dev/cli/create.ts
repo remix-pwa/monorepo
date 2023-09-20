@@ -140,7 +140,7 @@ export async function createPWA(
       case 'sw':
         try {
           const spinnerWorker = ora({
-            text: white(`Integrating Service Worker...`),
+            text: white(`Integrating Service Worker...\n`),
             spinner: 'dots',
           }).start();
 
@@ -155,7 +155,7 @@ export async function createPWA(
       case 'manifest':
         try {
           const spinnerManifest = ora({
-            text: white(`Integrating Web Manifest...`),
+            text: white(`Integrating Web Manifest...\n`),
             spinner: 'dots',
           }).start();
 

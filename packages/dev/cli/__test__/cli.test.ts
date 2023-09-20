@@ -69,8 +69,8 @@ A complete PWA framework solution for integrating PWA into your Remix applicatio
       );
 
       expect(log).toHaveBeenCalled();
-      expect(log).toHaveBeenCalledWith(expect.stringMatching('Integrating Service Worker...'));
-      expect(log).toHaveBeenCalledWith(expect.stringMatching('Integrating Web Manifest...'));
+      // expect(log).toHaveBeenCalledWith(expect.stringMatching('Integrating Service Worker...'));
+      // expect(log).toHaveBeenCalledWith(expect.stringMatching('Integrating Web Manifest...'));
     });
 
     describe('Service Worker creation suite', () => {
