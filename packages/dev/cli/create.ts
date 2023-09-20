@@ -212,8 +212,7 @@ export async function createPWA(
   json.dependencies.dotenv = '^16.0.3';
 
   json.devDependencies['@remix-pwa/dev'] = `${await getPkgVersion('@remix-pwa/dev')}`;
-  // Todo, expose the CLI via dev
-  // json.devDependencies['remix-pwa'] = `${await getPkgVersion('remix-pwa')}`;
+  json.devDependencies['remix-pwa'] = `^${_isTest ? '' : await getPkgVersion('remix-pwa')}`;
   json.devDependencies['npm-run-all'] = '^4.1.5';
 
   if (features.includes('sw')) {
