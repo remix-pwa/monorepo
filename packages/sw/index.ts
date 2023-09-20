@@ -20,7 +20,7 @@ export { defer } from './src/react/defer.js';
 export { LoadServiceWorkerOptions, loadServiceWorker } from './src/react/loader.js';
 export { json, redirect } from './src/react/utils.js';
 
-export { LiveReload } from './src/react/LiveReload.js';
+export { LiveReload, LiveReloadV1 } from './src/react/LiveReload.js';
 
 export type {
   DefaultErrorHandler,

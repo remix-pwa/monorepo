@@ -3618,7 +3618,7 @@ var RemixCache = class {
     if (metadata.expiresAt === "Infinity") {
       return false;
     }
-    if (metadata.expiresAt <= Date.now()) {
+    if (Number(metadata.expiresAt) <= Date.now()) {
       return await this.delete(key);
     }
     return false;
@@ -3657,7 +3657,8 @@ var RemixCache = class {
         headers: {
           ...Object.fromEntries(headers.entries()),
           "Content-Type": headers.get("X-Remix-PWA-Original-Content-Type") || "application/json",
-          "X-Remix-PWA-TTL": metadata.expiresAt.toString()
+          // 'X-Remix-PWA-TTL': metadata.expiresAt.toString(),
+          "X-Remix-PWA-AccessTime": metadata.accessedAt.toString()
         }
       });
       await this.put(request, res.clone(), void 0);
@@ -3770,12 +3771,15 @@ var RemixCache = class {
         this._strategy = Strategy.NetworkFirst;
       }
     }
+    const expiresAt = Date.now() + (ttl ?? this._ttl);
+    const accessedAt = Date.now();
+    const resHeaders = response.clone().headers;
     response = new Response(JSON.stringify({
       metadata: {
-        accessedAt: Date.now(),
-        // JSON can't store Infinity, so we store it as a string
-        expiresAt: Date.now() + (ttl ?? this._ttl) === Infinity ? "Infinity" : Date.now() + (ttl ?? this._ttl),
-        cacheTtl: this._ttl === Infinity ? "Infinity" : this._ttl,
+        accessedAt,
+        // JSON can't store `Infinity`, so we store it as a string
+        expiresAt: expiresAt.toString(),
+        cacheTtl: this._ttl.toString(),
         cacheMaxItems: this._maxItems,
         cacheStrategy: this._strategy
       },
@@ -3784,9 +3788,11 @@ var RemixCache = class {
       status: response.status,
       statusText: response.statusText,
       headers: {
-        ...Object.fromEntries(response.clone().headers.entries()),
+        ...Object.fromEntries(resHeaders.entries()),
         "Content-Type": "application/json",
-        "X-Remix-PWA-Original-Content-Type": contentType || "text/plain"
+        "X-Remix-PWA-Original-Content-Type": contentType || "text/plain",
+        // 'X-Remix-PWA-TTL': expiresAt.toString(),
+        "X-Remix-PWA-AccessTime": resHeaders.get("X-Remix-PWA-AccessTime") || accessedAt.toString()
       }
     });
     try {
@@ -4077,7 +4083,7 @@ var networkFirst = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDi
 };
 
 // ../packages/strategy/dist/src/staleWhileRevalidate.js
-var staleWhileRevalidate = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0 }) => {
+var staleWhileRevalidate = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0, swr: swr2 }) => {
   return async (request) => {
     if (!isHttpRequest(request)) {
       return new Response("Not a HTTP request", { status: 403 });
@@ -4088,10 +4094,11 @@ var staleWhileRevalidate = ({ cache: cacheName, cacheOptions, cacheQueryOptions,
     } else {
       remixCache = cacheName;
     }
+    swr2 = swr2 ?? remixCache.ttl;
     return remixCache.match(request, cacheQueryOptions).then(async (response) => {
       const res = response ? response.clone() : void 0;
       if (res) {
-        const ttl = Number(res.headers.get("X-Remix-PWA-TTL")) ?? 0;
+        const ttl = Number(res.headers.get("X-Remix-PWA-AccessTime")) ?? 0;
         if (ttl > Date.now()) {
           return res;
         }
@@ -4113,7 +4120,7 @@ var staleWhileRevalidate = ({ cache: cacheName, cacheOptions, cacheQueryOptions,
   };
 };
 
-// ../packages/sw/dist/src/private/logger.js
+// node_modules/@remix-pwa/sw/dist/src/private/logger.js
 var methodToColorMap = {
   debug: `#7f8c8d`,
   log: `#2ecc71`,
@@ -4183,7 +4190,7 @@ var logger = false ? (() => {
   return api;
 })();
 
-// ../packages/sw/dist/src/utils/worker.js
+// node_modules/@remix-pwa/sw/dist/src/utils/worker.js
 function isMethod(request, methods) {
   return methods.includes(request.method.toLowerCase());
 }
@@ -4204,7 +4211,7 @@ var matchRequest = (request, assetUrls = ["/build/", "/icons"]) => {
   }
 };
 
-// ../packages/sw/dist/src/message/message.js
+// node_modules/@remix-pwa/sw/dist/src/message/message.js
 var MessageHandler = class {
   /**
    * The plugins array is used to run plugins before and after the message handler.
@@ -4240,7 +4247,7 @@ var MessageHandler = class {
   }
 };
 
-// ../packages/sw/dist/src/message/remixNavigationHandler.js
+// node_modules/@remix-pwa/sw/dist/src/message/remixNavigationHandler.js
 var RemixNavigationHandler = class extends MessageHandler {
   dataCacheName;
   documentCacheName;
@@ -9967,10 +9974,10 @@ __export(basic_caching_exports, {
 });
 
 // app/routes/basic-caching.tsx
-var import_node = __toESM(require_node(), 1);
-var import_react = __toESM(require_react(), 1);
-var import_react2 = __toESM(require_react2(), 1);
-var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
+var import_node = __toESM(require_node());
+var import_react = __toESM(require_react());
+var import_react2 = __toESM(require_react2());
+var import_jsx_runtime = __toESM(require_jsx_runtime());
 var workerLoader = async ({ context }) => {
   const customStrategy = cacheFirst({
     cache: "basic-caching",
@@ -10297,9 +10304,9 @@ var validRequestMethods = new Set(validRequestMethodsArr);
 var UNSAFE_DEFERRED_SYMBOL = Symbol("deferred");
 
 // app/routes/_app.flights.tsx
-var import_react3 = __toESM(require_react(), 1);
-var import_react4 = __toESM(require_react2(), 1);
-var import_jsx_runtime2 = __toESM(require_jsx_runtime(), 1);
+var import_react3 = __toESM(require_react());
+var import_react4 = __toESM(require_react2());
+var import_jsx_runtime2 = __toESM(require_jsx_runtime());
 var workerAction = async ({ request, context }) => {
   const formData = await request.formData();
   const { database, fetchFromServer } = context;
@@ -10349,10 +10356,10 @@ __export(basic_action_exports, {
 });
 
 // app/routes/basic-action.tsx
-var import_node2 = __toESM(require_node(), 1);
-var import_react5 = __toESM(require_react(), 1);
-var import_react6 = __toESM(require_react2(), 1);
-var import_jsx_runtime3 = __toESM(require_jsx_runtime(), 1);
+var import_node2 = __toESM(require_node());
+var import_react5 = __toESM(require_react());
+var import_react6 = __toESM(require_react2());
+var import_jsx_runtime3 = __toESM(require_jsx_runtime());
 var workerAction2 = async ({ context }) => {
   const { fetchFromServer } = context;
   try {
@@ -10383,10 +10390,10 @@ __export(basic_loader_exports, {
 });
 
 // app/routes/basic-loader.tsx
-var import_node3 = __toESM(require_node(), 1);
-var import_react7 = __toESM(require_react(), 1);
-var import_react8 = __toESM(require_react2(), 1);
-var import_jsx_runtime4 = __toESM(require_jsx_runtime(), 1);
+var import_node3 = __toESM(require_node());
+var import_react7 = __toESM(require_react());
+var import_react8 = __toESM(require_react2());
+var import_jsx_runtime4 = __toESM(require_jsx_runtime());
 var workerLoader3 = async ({ context }) => {
   const { fetchFromServer } = context;
   const message = await Promise.race([
@@ -10418,8 +10425,8 @@ __export(strategies_exports, {
 });
 
 // app/routes/strategies.tsx
-var import_react9 = __toESM(require_react(), 1);
-var import_jsx_runtime5 = __toESM(require_jsx_runtime(), 1);
+var import_react9 = __toESM(require_react());
+var import_jsx_runtime5 = __toESM(require_jsx_runtime());
 var workerAction3 = async ({ context }) => {
   const { event } = context;
   const formData = await event.request.clone().formData();
@@ -10465,8 +10472,8 @@ __export(selection_exports, {
 });
 
 // app/routes/selection.tsx
-var import_react10 = __toESM(require_react(), 1);
-var import_jsx_runtime6 = __toESM(require_jsx_runtime(), 1);
+var import_react10 = __toESM(require_react());
+var import_jsx_runtime6 = __toESM(require_jsx_runtime());
 async function workerLoader4({ context }) {
   const { database } = context;
   const selections = await database.selections.toArray();
@@ -10486,9 +10493,9 @@ __export(sync_away_exports, {
 });
 
 // app/routes/sync-away.tsx
-var import_node4 = __toESM(require_node(), 1);
-var import_react11 = __toESM(require_react(), 1);
-var import_jsx_runtime7 = __toESM(require_jsx_runtime(), 1);
+var import_node4 = __toESM(require_node());
+var import_react11 = __toESM(require_react());
+var import_jsx_runtime7 = __toESM(require_jsx_runtime());
 var workerAction4 = async ({ context }) => {
   const { fetchFromServer, event } = context;
   try {
@@ -10525,9 +10532,9 @@ __export(app_exports, {
 });
 
 // app/routes/_app.tsx
-var import_node5 = __toESM(require_node(), 1);
-var import_react12 = __toESM(require_react(), 1);
-var import_jsx_runtime8 = __toESM(require_jsx_runtime(), 1);
+var import_node5 = __toESM(require_node());
+var import_react12 = __toESM(require_react());
+var import_jsx_runtime8 = __toESM(require_jsx_runtime());
 async function workerLoader5({ context }) {
   const { fetchFromServer } = context;
   const data = await fetchFromServer().then((response) => response.json());
@@ -10544,7 +10551,7 @@ var hasWorkerAction8 = false;
 var hasWorkerLoader8 = true;
 
 // assets-module:@remix-sas/dev?assets
-var assets = ["/build/root-OCCPGGB4.js", "/build/manifest-4EDCC74F.js", "/build/entry.client-NV6C6WQL.js", "/build/__remix_entry_dev-GGUNVKXG.js", "/build/routes/sync-away-P6JMB4ZQ.js", "/build/routes/strategies-7NEMAJQG.js", "/build/routes/selection-3RF3B7XH.js", "/build/routes/basic-loader-TTJUGF2H.js", "/build/routes/basic-caching-LBNH7FK6.js", "/build/routes/basic-action-47DQBYY7.js", "/build/routes/_index-LRLQFN4E.js", "/build/routes/_app.flights-GZW6UTHH.js", "/build/routes/_app-DPFPWRI5.js", "/build/_shared/runtime-JC7ERE5X.js", "/build/_shared/remix_hmr-KOXB6O7Z.js", "/build/_shared/react-dom-SNQ2UIZM.js", "/build/_shared/react-XL6EHOTX.js", "/build/_shared/jsx-runtime-7KJOCM5J.js", "/build/_shared/jsx-dev-runtime-D5NCTVC4.js", "/build/_shared/esm-QACGES7W.js", "/build/_shared/client-LQHWDDYA.js", "/build/_shared/chunk-WIDFYYG3.js", "/build/_shared/chunk-TWSZTAQ6.js", "/build/_shared/chunk-TLBAXOHZ.js", "/build/_shared/chunk-STMUDJCL.js", "/build/_shared/chunk-PNG5AS42.js", "/build/_shared/chunk-NXSRMYPB.js", "/build/_shared/chunk-LOYKRDJM.js", "/build/_shared/chunk-GF52RS3E.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-FXD4XYGV.js", "/build/_shared/chunk-64ZGQPAW.js", "/build/_assets/tailwind-JOKRYXHU.css"];
+var assets = ["/build/root-UO4P6TW2.js", "/build/manifest-CD084529.js", "/build/entry.client-DDLUZKIV.js", "/build/__remix_entry_dev-GGUNVKXG.js", "/build/routes/sync-away-2OHIS6QM.js", "/build/routes/strategies-XCDSCNU6.js", "/build/routes/selection-ZCR5OI2Z.js", "/build/routes/basic-loader-JWH437LF.js", "/build/routes/basic-caching-2KRNRPWS.js", "/build/routes/basic-action-QXFUX6IJ.js", "/build/routes/_index-6XBFZTMV.js", "/build/routes/_app.flights-ISAA4IYL.js", "/build/routes/_app-34YYPPMD.js", "/build/_shared/runtime-JC7ERE5X.js", "/build/_shared/remix_hmr-KOXB6O7Z.js", "/build/_shared/react-dom-SNQ2UIZM.js", "/build/_shared/react-XL6EHOTX.js", "/build/_shared/jsx-runtime-7KJOCM5J.js", "/build/_shared/jsx-dev-runtime-D5NCTVC4.js", "/build/_shared/esm-QACGES7W.js", "/build/_shared/client-LQHWDDYA.js", "/build/_shared/chunk-TWSZTAQ6.js", "/build/_shared/chunk-TLBAXOHZ.js", "/build/_shared/chunk-STMUDJCL.js", "/build/_shared/chunk-S4YNHKOY.js", "/build/_shared/chunk-PNG5AS42.js", "/build/_shared/chunk-NXSRMYPB.js", "/build/_shared/chunk-LOYKRDJM.js", "/build/_shared/chunk-GF52RS3E.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-FXD4XYGV.js", "/build/_shared/chunk-A733LYHU.js", "/build/_assets/tailwind-JOKRYXHU.css"];
 
 // entry-module:@remix-pwa/build/magic
 var routes = {

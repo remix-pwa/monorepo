@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/sw",
-  "version": "2.1.2",
+  "version": "2.1.4",
   "description": "Service Worker APIs and utilities for Remix PWA",
   "repository": {
     "type": "git",
@@ -28,23 +28,26 @@
     "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
   },
   "peerDependencies": {
-    "@remix-pwa/cache": "^2.0.3"
+    "@remix-pwa/cache": "^2.0.3",
+    "@remix-run/dev": "^1.15.0 || ^2.0.0",
+    "@remix-run/react": "^1.15.0 || ^2.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "homepage": "https://remix-pwa.run",
   "devDependencies": {
+    "@remix-pwa/cache": "^2.0.3",
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
-    "@remix-run/server-runtime": "^1.19.3",
+    "@remix-run/react": "^1.19.3",
+    "@remix-run/dev": "^1.19.3",
     "@types/react": "^18.2.21",
     "react": "^18.2.0",
     "rimraf": "^5.0.1"
   },
   "dependencies": {
-    "@remix-pwa/cache": "^2.0.3",
-    "@remix-run/dev": "^1.19.3",
-    "@remix-run/react": "^1.19.3",
+    "@remix-run/server-runtime": "^1.19.3",
     "idb": "^7.1.1",
-    "react-router-dom": "^6.16.0",
     "tiny-invariant": "^1.3.1"
   }
 }
