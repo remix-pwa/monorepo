@@ -135,7 +135,7 @@ export class RemixCache implements CustomCache {
       return false;
     }
 
-    if (metadata.expiresAt <= Date.now()) {
+    if (Number(metadata.expiresAt) <= Date.now()) {
       return await this.delete(key);
     }
 
@@ -189,7 +189,8 @@ export class RemixCache implements CustomCache {
         headers: {
           ...Object.fromEntries(headers.entries()),
           'Content-Type': headers.get('X-Remix-PWA-Original-Content-Type') || 'application/json',
-          'X-Remix-PWA-TTL': metadata.expiresAt.toString(),
+          // 'X-Remix-PWA-TTL': metadata.expiresAt.toString(),
+          'X-Remix-PWA-AccessTime': metadata.accessedAt.toString(),
         },
       });
 
@@ -323,13 +324,17 @@ export class RemixCache implements CustomCache {
       }
     }
 
+    const expiresAt = Date.now() + (ttl ?? this._ttl);
+    const accessedAt = Date.now();
+    const resHeaders = response.clone().headers;
+
     response = new Response(
       JSON.stringify({
         metadata: {
-          accessedAt: Date.now(),
-          // JSON can't store Infinity, so we store it as a string
-          expiresAt: Date.now() + (ttl ?? this._ttl) === Infinity ? 'Infinity' : Date.now() + (ttl ?? this._ttl),
-          cacheTtl: this._ttl === Infinity ? 'Infinity' : this._ttl,
+          accessedAt,
+          // JSON can't store `Infinity`, so we store it as a string
+          expiresAt: expiresAt.toString(),
+          cacheTtl: this._ttl.toString(),
           cacheMaxItems: this._maxItems,
           cacheStrategy: this._strategy,
         },
@@ -339,9 +344,11 @@ export class RemixCache implements CustomCache {
         status: response.status,
         statusText: response.statusText,
         headers: {
-          ...Object.fromEntries(response.clone().headers.entries()),
+          ...Object.fromEntries(resHeaders.entries()),
           'Content-Type': 'application/json',
           'X-Remix-PWA-Original-Content-Type': contentType || 'text/plain',
+          // 'X-Remix-PWA-TTL': expiresAt.toString(),
+          'X-Remix-PWA-AccessTime': resHeaders.get('X-Remix-PWA-AccessTime') || accessedAt.toString(),
         },
       }
     );
