@@ -210,6 +210,7 @@ export async function createPWA(
   json.devDependencies['@remix-pwa/dev'] = `${_isTest ? '' : await getPkgVersion('@remix-pwa/dev')}`;
   json.devDependencies['remix-pwa'] = `^${_isTest ? '' : await getPkgVersion('remix-pwa')}`;
   json.devDependencies['npm-run-all'] = '^4.1.5';
+  json.devDependencies.glob = `^${_isTest ? '' : await getPkgVersion('glob')}`;
 
   if (features.includes('sw')) {
     json.dependencies['@remix-pwa/cache'] = `^${_isTest ? '' : await getPkgVersion('@remix-pwa/cache')}`;
