@@ -189,7 +189,7 @@ export class RemixCache implements CustomCache {
         headers: {
           ...Object.fromEntries(headers.entries()),
           'Content-Type': headers.get('X-Remix-PWA-Original-Content-Type') || 'application/json',
-          // 'X-Remix-PWA-TTL': metadata.expiresAt.toString(),
+          'X-Remix-PWA-TTL': metadata.expiresAt.toString(),
           'X-Remix-PWA-AccessTime': metadata.accessedAt.toString(),
         },
       });
@@ -347,7 +347,7 @@ export class RemixCache implements CustomCache {
           ...Object.fromEntries(resHeaders.entries()),
           'Content-Type': 'application/json',
           'X-Remix-PWA-Original-Content-Type': contentType || 'text/plain',
-          // 'X-Remix-PWA-TTL': expiresAt.toString(),
+          'X-Remix-PWA-TTL': expiresAt.toString(),
           'X-Remix-PWA-AccessTime': resHeaders.get('X-Remix-PWA-AccessTime') || accessedAt.toString(),
         },
       }
