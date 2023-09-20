@@ -23,11 +23,19 @@
     "prepublish": "npm run build",
     "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
   },
+  "peerDependencies": {
+    "@remix-run/server-runtime": "^1.19.2 || ^2.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@remix-run/server-runtime": {
+      "optional": true
+    }
+  },
   "dependencies": {
-    "@remix-run/router": "^1.9.0",
-    "@remix-run/server-runtime": "^1.19.3"
+    "@remix-run/router": "^1.9.0"
   },
   "devDependencies": {
+    "@remix-run/server-runtime": "^1.19.3",
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
     "cross-env": "^7.0.3",
