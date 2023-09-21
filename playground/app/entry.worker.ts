@@ -3,7 +3,7 @@
 import { Storage } from '@remix-pwa/cache';
 import { cacheFirst, networkFirst } from '@remix-pwa/strategy';
 import type { DefaultFetchHandler } from '@remix-pwa/sw';
-import { RemixNavigationHandler, matchRequest } from '@remix-pwa/sw';
+import { RemixNavigationHandler, logger, matchRequest } from '@remix-pwa/sw';
 import { registerQueue } from '@remix-pwa/sync';
 import createStorageRepository from './database';
 
@@ -68,6 +68,7 @@ export const defaultFetchHandler: DefaultFetchHandler = ({ context, request }) =
 };
 
 self.addEventListener('install', event => {
+  logger.log('installing service worker');
   event.waitUntil(self.skipWaiting());
 });
 
