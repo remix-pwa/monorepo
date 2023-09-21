@@ -1,3 +1,5 @@
+import { mergeHeaders } from './utils.js';
+
 export enum Strategy {
   /**
    * Cache first, then network.
@@ -43,7 +45,7 @@ type Metadata = {
 };
 
 type ResponseBody = {
-  value: any;
+  value: unknown | string;
   metadata: Metadata;
 };
 
@@ -170,7 +172,7 @@ export class RemixCache implements CustomCache {
   private async _getResponseValue(request: Request, response: Response): Promise<Response | undefined> {
     const { metadata, value }: ResponseBody = await response.clone().json();
 
-    const deleted = await this._getOrDeleteIfExpired(request.clone(), metadata);
+    const deleted = await this._getOrDeleteIfExpired(request, metadata);
     const headers = new Headers(response.clone().headers);
 
     // Temporary. Need to come up with a method to restore `RemixCache` from the browser's
@@ -182,16 +184,24 @@ export class RemixCache implements CustomCache {
       this._strategy = metadata.cacheStrategy;
     }
 
+    const newHeader = new Headers();
+    newHeader.set('X-Remix-PWA-TTL', metadata.expiresAt.toString());
+    newHeader.set('X-Remix-PWA-AccessTime', Date.now().toString());
+    newHeader.set('Content-Type', headers.get('X-Remix-PWA-Original-Content-Type') || 'application/json');
+
+    let data;
+
+    if (typeof value === 'object' && value !== null) {
+      data = JSON.stringify(value);
+    } else {
+      data = value as string;
+    }
+
     if (!deleted) {
-      const res = new Response(value, {
+      const res = new Response(data, {
         status: response.status,
         statusText: response.statusText,
-        headers: {
-          ...Object.fromEntries(headers.entries()),
-          'Content-Type': headers.get('X-Remix-PWA-Original-Content-Type') || 'application/json',
-          'X-Remix-PWA-TTL': metadata.expiresAt.toString(),
-          'X-Remix-PWA-AccessTime': metadata.accessedAt.toString(),
-        },
+        headers: mergeHeaders(headers, newHeader),
       });
 
       await this.put(request, res.clone(), undefined);
@@ -324,9 +334,15 @@ export class RemixCache implements CustomCache {
       }
     }
 
-    const expiresAt = Date.now() + (ttl ?? this._ttl);
-    const accessedAt = Date.now();
-    const resHeaders = response.clone().headers;
+    const resHeaders = response.headers;
+    const expiresAt = resHeaders.get('X-Remix-PWA-TTL') || Date.now() + (ttl ?? this._ttl);
+    const accessedAt = resHeaders.get('X-Remix-PWA-AccessTime') || Date.now().toString();
+
+    const newHeaders = new Headers();
+    newHeaders.set('Content-Type', 'application/json');
+    newHeaders.set('X-Remix-PWA-AccessTime', accessedAt);
+    newHeaders.set('X-Remix-PWA-Original-Content-Type', contentType || 'text/plain');
+    newHeaders.set('X-Remix-PWA-TTL', expiresAt.toString());
 
     response = new Response(
       JSON.stringify({
@@ -343,13 +359,7 @@ export class RemixCache implements CustomCache {
       {
         status: response.status,
         statusText: response.statusText,
-        headers: {
-          ...Object.fromEntries(resHeaders.entries()),
-          'Content-Type': 'application/json',
-          'X-Remix-PWA-Original-Content-Type': contentType || 'text/plain',
-          'X-Remix-PWA-TTL': expiresAt.toString(),
-          'X-Remix-PWA-AccessTime': resHeaders.get('X-Remix-PWA-AccessTime') || accessedAt.toString(),
-        },
+        headers: mergeHeaders(resHeaders, newHeaders),
       }
     );
 
