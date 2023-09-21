@@ -1,3 +1,10 @@
+## @remix-pwa/worker-runtime 2.0.2 (2023-09-21)
+
+
+### Bug Fixes
+
+* **typescript:** use new types from remix@2 db36fce
+
 ## @remix-pwa/worker-runtime 2.0.1 (2023-09-15)
 
 
