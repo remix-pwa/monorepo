@@ -1,5 +1,5 @@
 /// <reference lib="WebWorker" />
-import type { AppData, AppLoadContext, DataFunctionArgs } from '@remix-run/server-runtime';
+import type { ActionFunction, AppLoadContext, DataFunctionArgs, LoaderFunction } from '@remix-run/server-runtime';
 import type { ServerRouteModule } from '@remix-run/server-runtime/dist/routeModules.js';
 import type { ServerRoute } from '@remix-run/server-runtime/dist/routes.js';
 
@@ -19,12 +19,12 @@ export type WorkerDataFunctionArgs = Omit<DataFunctionArgs, 'context'> & {
 export type WorkerLoaderArgs = WorkerDataFunctionArgs;
 export type WorkerActionArgs = WorkerDataFunctionArgs;
 export interface WorkerActionFunction {
-  (args: WorkerActionArgs): Promise<Response> | Response | Promise<AppData> | AppData;
+  (args: WorkerActionArgs): ReturnType<ActionFunction>;
 }
 export interface WorkerLoaderFunction {
-  (args: WorkerLoaderArgs): Promise<Response> | Response | Promise<AppData> | AppData;
+  (args: WorkerLoaderArgs): ReturnType<LoaderFunction>;
 }
-export type DefaultFetchHandler = WorkerActionFunction | WorkerLoaderFunction;
+export type DefaultFetchHandler = (args: WorkerDataFunctionArgs) => Promise<Response>;
 export type DefaultErrorHandler = (error: Error, args: WorkerDataFunctionArgs) => void;
 export interface WorkerRouteModule extends ServerRouteModule {
   workerAction?: WorkerActionFunction;

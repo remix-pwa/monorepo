@@ -1,5 +1,5 @@
 /// <reference lib="WebWorker" />
-import type { AppData, AppLoadContext, DataFunctionArgs } from '@remix-run/server-runtime';
+import type { ActionFunction, AppLoadContext, DataFunctionArgs, LoaderFunction } from '@remix-run/server-runtime';
 import type { ServerRouteModule } from '@remix-run/server-runtime/dist/routeModules.js';
 import type { ServerRoute } from '@remix-run/server-runtime/dist/routes.js';
 
@@ -36,14 +36,14 @@ export type WorkerActionArgs = WorkerDataFunctionArgs;
  * A worker action function.
  */
 export interface WorkerActionFunction {
-  (args: WorkerActionArgs): Promise<Response> | Response | Promise<AppData> | AppData;
+  (args: WorkerActionArgs): ReturnType<ActionFunction>;
 }
 
 /**
  * A worker loader function.
  */
 export interface WorkerLoaderFunction {
-  (args: WorkerLoaderArgs): Promise<Response> | Response | Promise<AppData> | AppData;
+  (args: WorkerLoaderArgs): ReturnType<LoaderFunction>;
 }
 
 export interface WorkerRouteModule extends ServerRouteModule {
@@ -69,9 +69,7 @@ export interface WorkerRouteManifest {
  *
  * This acts as a fallback when a route doesn't have a worker action or loader.
  */
-export type DefaultFetchHandler = (
-  args: WorkerDataFunctionArgs
-) => Promise<Response> | Response | Promise<AppData> | AppData;
+export type DefaultFetchHandler = (args: WorkerDataFunctionArgs) => Promise<Response>;
 
 /**
  * The default error handler.

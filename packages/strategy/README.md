@@ -10,4 +10,6 @@ npm install @remix-pwa/strategy
 
 ## API
 
-Check out the [repository](https://github.com/remix-pwa/monorepo) for more information on when the docs would be available.
+Check out the [repository][repository] for more information on when the docs would be available.
+
+[repository]: https://github.com/remix-pwa/monorepo

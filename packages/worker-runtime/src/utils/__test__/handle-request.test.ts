@@ -75,7 +75,7 @@ describe('handleRequest', () => {
     const event = {
       request: new Request('https://example.com/route2'),
     } as FetchEvent;
-    const defaultHandler = vi.fn(() => new Response('Default handler response'));
+    const defaultHandler = vi.fn().mockResolvedValue(new Response('Default handler response'));
     const errorHandler = vi.fn();
     const loadContext = {} as WorkerLoadContext;
 
