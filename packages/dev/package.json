@@ -53,7 +53,7 @@
     "stdin-discarder": "^0.1.0"
   },
   "devDependencies": {
-    "@remix-run/dev": "^1.19.3",
+    "@remix-run/dev": "^2.0.0",
     "@remix-pwa/worker-runtime": "^2.0.2",
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
