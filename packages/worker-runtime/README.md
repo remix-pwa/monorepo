@@ -9,3 +9,9 @@ Not intended for direct use in your Remix app.
 ```bash
 npm install @remix-pwa/worker-runtime
 ```
+
+## API
+
+Check out the [repository][repository] for more information on when the docs would be available.
+
+[repository]: https://github.com/remix-pwa/monorepo
