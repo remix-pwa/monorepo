@@ -193,8 +193,6 @@ export class RemixCache implements CustomCache {
         },
       });
 
-      await this.put(request, res.clone(), undefined);
-
       return res;
     }
 
