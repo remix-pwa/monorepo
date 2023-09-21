@@ -1,3 +1,10 @@
+## @remix-pwa/strategy 2.1.2 (2023-09-21)
+
+
+### Bug Fixes
+
+* **strategy:** added a more streamlined `staleWhileRevalidate` strat d23dca3
+
 ## @remix-pwa/strategy 2.1.1 (2023-09-19)
 
 

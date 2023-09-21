@@ -1,3 +1,10 @@
+## @remix-pwa/client 2.0.2 (2023-09-21)
+
+
+### Bug Fixes
+
+* **release:** force a new release 93dcbe7
+
 # @remix-pwa/client 2.0.0 (2023-09-14)
 
 
