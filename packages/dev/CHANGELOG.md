@@ -1,3 +1,18 @@
+## @remix-pwa/dev 2.0.17 (2023-09-21)
+
+
+### Bug Fixes
+
+* **release:** force a new release 93dcbe7
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/worker-runtime:** upgraded to 2.0.4
+
 ## @remix-pwa/dev 2.0.1 (2023-09-15)
 
 
