@@ -3578,6 +3578,19 @@ var k = Symbol();
 var w = Symbol();
 var f = Symbol();
 
+// ../packages/cache/dist/src/utils.js
+function mergeHeaders(...headers) {
+  const merged = new Headers();
+  for (const header of headers) {
+    if (!header)
+      continue;
+    for (const [key, value] of new Headers(header).entries()) {
+      merged.set(key, value);
+    }
+  }
+  return merged;
+}
+
 // ../packages/cache/dist/src/cache.js
 var Strategy;
 (function(Strategy2) {
@@ -3642,7 +3655,7 @@ var RemixCache = class {
   }
   async _getResponseValue(request, response) {
     const { metadata, value } = await response.clone().json();
-    const deleted = await this._getOrDeleteIfExpired(request.clone(), metadata);
+    const deleted = await this._getOrDeleteIfExpired(request, metadata);
     const headers = new Headers(response.clone().headers);
     if (!this.set) {
       this.set = true;
@@ -3650,16 +3663,21 @@ var RemixCache = class {
       this._maxItems = metadata.cacheMaxItems;
       this._strategy = metadata.cacheStrategy;
     }
+    const newHeader = new Headers();
+    newHeader.set("X-Remix-PWA-TTL", metadata.expiresAt.toString());
+    newHeader.set("X-Remix-PWA-AccessTime", Date.now().toString());
+    newHeader.set("Content-Type", headers.get("X-Remix-PWA-Original-Content-Type") || "application/json");
+    let data;
+    if (typeof value === "object" && value !== null) {
+      data = JSON.stringify(value);
+    } else {
+      data = value;
+    }
     if (!deleted) {
-      const res = new Response(value, {
+      const res = new Response(data, {
         status: response.status,
         statusText: response.statusText,
-        headers: {
-          ...Object.fromEntries(headers.entries()),
-          "Content-Type": headers.get("X-Remix-PWA-Original-Content-Type") || "application/json",
-          // 'X-Remix-PWA-TTL': metadata.expiresAt.toString(),
-          "X-Remix-PWA-AccessTime": metadata.accessedAt.toString()
-        }
+        headers: mergeHeaders(headers, newHeader)
       });
       await this.put(request, res.clone(), void 0);
       return res;
@@ -3771,9 +3789,14 @@ var RemixCache = class {
         this._strategy = Strategy.NetworkFirst;
       }
     }
-    const expiresAt = Date.now() + (ttl ?? this._ttl);
-    const accessedAt = Date.now();
-    const resHeaders = response.clone().headers;
+    const resHeaders = response.headers;
+    const expiresAt = resHeaders.get("X-Remix-PWA-TTL") || Date.now() + (ttl ?? this._ttl);
+    const accessedAt = resHeaders.get("X-Remix-PWA-AccessTime") || Date.now().toString();
+    const newHeaders = new Headers();
+    newHeaders.set("Content-Type", "application/json");
+    newHeaders.set("X-Remix-PWA-AccessTime", accessedAt);
+    newHeaders.set("X-Remix-PWA-Original-Content-Type", contentType || "text/plain");
+    newHeaders.set("X-Remix-PWA-TTL", expiresAt.toString());
     response = new Response(JSON.stringify({
       metadata: {
         accessedAt,
@@ -3787,13 +3810,7 @@ var RemixCache = class {
     }), {
       status: response.status,
       statusText: response.statusText,
-      headers: {
-        ...Object.fromEntries(resHeaders.entries()),
-        "Content-Type": "application/json",
-        "X-Remix-PWA-Original-Content-Type": contentType || "text/plain",
-        // 'X-Remix-PWA-TTL': expiresAt.toString(),
-        "X-Remix-PWA-AccessTime": resHeaders.get("X-Remix-PWA-AccessTime") || accessedAt.toString()
-      }
+      headers: mergeHeaders(resHeaders, newHeaders)
     });
     try {
       await this._lruCleanup();
@@ -4083,7 +4100,7 @@ var networkFirst = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDi
 };
 
 // ../packages/strategy/dist/src/staleWhileRevalidate.js
-var staleWhileRevalidate = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0, swr: swr2 }) => {
+var staleWhileRevalidate = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0, strict = false, swr: swr2 }) => {
   return async (request) => {
     if (!isHttpRequest(request)) {
       return new Response("Not a HTTP request", { status: 403 });
@@ -4094,17 +4111,17 @@ var staleWhileRevalidate = ({ cache: cacheName, cacheOptions, cacheQueryOptions,
     } else {
       remixCache = cacheName;
     }
-    swr2 = swr2 ?? remixCache.ttl;
+    swr2 = swr2 ?? remixCache.ttl ?? 0;
     return remixCache.match(request, cacheQueryOptions).then(async (response) => {
       const res = response ? response.clone() : void 0;
-      if (res) {
-        const ttl = Number(res.headers.get("X-Remix-PWA-AccessTime")) ?? 0;
-        if (ttl > Date.now()) {
+      if (res && !strict) {
+        const accessed = Number(res.headers.get("X-Remix-PWA-AccessTime")) ?? 0;
+        if (swr2 + accessed >= Date.now()) {
           return res;
         }
       }
       const fetchPromise = fetch(request).then(async (networkResponse) => {
-        await remixCache.put(request, networkResponse.clone());
+        await remixCache.put(request, networkResponse.clone(), strict ? swr2 : void 0);
         return networkResponse;
       }).catch(async (_err) => {
         if (fetchDidFail) {
@@ -9953,6 +9970,7 @@ var defaultFetchHandler = ({ context, request }) => {
   return context.fetchFromServer();
 };
 self.addEventListener("install", (event) => {
+  logger.log("installing service worker");
   event.waitUntil(self.skipWaiting());
 });
 self.addEventListener("activate", (event) => {
@@ -10551,7 +10569,7 @@ var hasWorkerAction8 = false;
 var hasWorkerLoader8 = true;
 
 // assets-module:@remix-sas/dev?assets
-var assets = ["/build/root-UO4P6TW2.js", "/build/manifest-CD084529.js", "/build/entry.client-DDLUZKIV.js", "/build/__remix_entry_dev-GGUNVKXG.js", "/build/routes/sync-away-2OHIS6QM.js", "/build/routes/strategies-XCDSCNU6.js", "/build/routes/selection-ZCR5OI2Z.js", "/build/routes/basic-loader-JWH437LF.js", "/build/routes/basic-caching-2KRNRPWS.js", "/build/routes/basic-action-QXFUX6IJ.js", "/build/routes/_index-6XBFZTMV.js", "/build/routes/_app.flights-ISAA4IYL.js", "/build/routes/_app-34YYPPMD.js", "/build/_shared/runtime-JC7ERE5X.js", "/build/_shared/remix_hmr-KOXB6O7Z.js", "/build/_shared/react-dom-SNQ2UIZM.js", "/build/_shared/react-XL6EHOTX.js", "/build/_shared/jsx-runtime-7KJOCM5J.js", "/build/_shared/jsx-dev-runtime-D5NCTVC4.js", "/build/_shared/esm-QACGES7W.js", "/build/_shared/client-LQHWDDYA.js", "/build/_shared/chunk-TWSZTAQ6.js", "/build/_shared/chunk-TLBAXOHZ.js", "/build/_shared/chunk-STMUDJCL.js", "/build/_shared/chunk-S4YNHKOY.js", "/build/_shared/chunk-PNG5AS42.js", "/build/_shared/chunk-NXSRMYPB.js", "/build/_shared/chunk-LOYKRDJM.js", "/build/_shared/chunk-GF52RS3E.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-FXD4XYGV.js", "/build/_shared/chunk-A733LYHU.js", "/build/_assets/tailwind-JOKRYXHU.css"];
+var assets = ["/build/root-UO4P6TW2.js", "/build/manifest-801DDE60.js", "/build/entry.client-DDLUZKIV.js", "/build/__remix_entry_dev-GGUNVKXG.js", "/build/routes/sync-away-2OHIS6QM.js", "/build/routes/strategies-YW77BOHQ.js", "/build/routes/selection-ZCR5OI2Z.js", "/build/routes/basic-loader-CUXO3QB2.js", "/build/routes/basic-caching-HMQZ42O7.js", "/build/routes/basic-action-QXFUX6IJ.js", "/build/routes/_index-WMOZUY5A.js", "/build/routes/_app.flights-ISAA4IYL.js", "/build/routes/_app-34YYPPMD.js", "/build/_shared/runtime-JC7ERE5X.js", "/build/_shared/remix_hmr-KOXB6O7Z.js", "/build/_shared/react-dom-SNQ2UIZM.js", "/build/_shared/react-XL6EHOTX.js", "/build/_shared/jsx-runtime-7KJOCM5J.js", "/build/_shared/jsx-dev-runtime-D5NCTVC4.js", "/build/_shared/esm-QACGES7W.js", "/build/_shared/client-LQHWDDYA.js", "/build/_shared/chunk-TWSZTAQ6.js", "/build/_shared/chunk-TLBAXOHZ.js", "/build/_shared/chunk-STMUDJCL.js", "/build/_shared/chunk-PNG5AS42.js", "/build/_shared/chunk-NXSRMYPB.js", "/build/_shared/chunk-LOYKRDJM.js", "/build/_shared/chunk-GF52RS3E.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-FXD4XYGV.js", "/build/_shared/chunk-A733LYHU.js", "/build/_shared/chunk-6KD5CF4I.js", "/build/_assets/tailwind-JOKRYXHU.css"];
 
 // entry-module:@remix-pwa/build/magic
 var routes = {
