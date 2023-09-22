@@ -1,3 +1,10 @@
+## @remix-pwa/worker-runtime 2.0.5 (2023-09-22)
+
+
+### Bug Fixes
+
+* **dev:** updated file urls 4db7acf
+
 ## @remix-pwa/worker-runtime 2.0.4 (2023-09-21)
 
 
