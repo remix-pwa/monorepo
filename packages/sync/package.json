@@ -1,10 +1,10 @@
 {
   "name": "@remix-pwa/sync",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "A Background Sync addon for Remix PWA",
   "repository": {
     "type": "git",
-    "url": "git@github.com:remix-pwa/monorepo",
+    "url": "git+ssh://git@github.com/remix-pwa/monorepo.git",
     "directory": "packages/sync"
   },
   "license": "MIT",

@@ -39,11 +39,14 @@
     "prettier": "^3.0.3",
     "prettier-plugin-organize-imports": "^3.2.3",
     "semver": "^7.5.4",
-    "turbo": "^1.10.13",
+    "turbo": "^1.10.14",
     "typescript": "^5.2.2",
     "vitest": "^0.34.4"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@remix-pwa/dev": "^2.0.12"
   }
 }

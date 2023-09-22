@@ -1,10 +1,10 @@
 {
   "name": "@remix-pwa/cache",
-  "version": "2.0.2",
+  "version": "2.0.7",
   "description": "A thin-layered wrapper around the browser's Cache Storage API that supercharges your Remix PWA's caching capabilities.",
   "repository": {
     "type": "git",
-    "url": "git@github.com:remix-pwa/monorepo",
+    "url": "git+ssh://git@github.com/remix-pwa/monorepo.git",
     "directory": "packages/cache"
   },
   "homepage": "https://remix-pwa.run",

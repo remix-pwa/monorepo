@@ -1,4 +1,4 @@
-import type { RouteMatch } from '@remix-run/react';
+import type { UIMatch } from '@remix-run/react';
 import { useLocation, useMatches } from '@remix-run/react';
 import { useEffect, useRef } from 'react';
 
@@ -35,6 +35,7 @@ export function useSWEffect(): void {
           type: 'REMIX_NAVIGATION',
           isMount: mounted,
           location,
+          // @ts-expect-error
           matches: matches.filter(filteredMatches).map(sanitizeHandleObject),
           manifest: window.__remixManifest,
         });
@@ -45,6 +46,7 @@ export function useSWEffect(): void {
             type: 'REMIX_NAVIGATION',
             isMount: mounted,
             location,
+            // @ts-expect-error
             matches: matches.filter(filteredMatches).map(sanitizeHandleObject),
             manifest: window.__remixManifest,
           });
@@ -56,7 +58,7 @@ export function useSWEffect(): void {
       }
     }
 
-    function filteredMatches(route: RouteMatch) {
+    function filteredMatches(route: UIMatch) {
       if (route.data) {
         return (
           Object.values(route.data).filter(elem => {
@@ -67,18 +69,16 @@ export function useSWEffect(): void {
       return true;
     }
 
-    function sanitizeHandleObject(route: RouteMatch) {
+    function sanitizeHandleObject(route: UIMatch) {
       let handle = route.handle;
 
       if (handle) {
         const filterInvalidTypes = ([, value]: any) => !isPromise(value) && !isFunction(value);
-
-        // @ts-ignore Seems like typescript had too much fun last night :(
         handle = Object.fromEntries(Object.entries(route.handle!).filter(filterInvalidTypes));
       }
       return { ...route, handle };
     }
 
-    return () => {};
+    return () => { };
   }, [location, matches]);
 }

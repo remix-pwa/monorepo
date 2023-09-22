@@ -5,7 +5,7 @@ on:
     branches: [main, dev]
 
 env:
-  SEMANTIC_RELEASE_VERSION: 21.0.1
+  SEMANTIC_RELEASE_VERSION: 22.0.0
 
 jobs:
   release:
@@ -22,7 +22,7 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
       - name: Install dependencies
         run: npm clean-install
       - name: Build packages
@@ -38,4 +38,4 @@ jobs:
           NODE_ENV: production
           HUSKY: 0
         run: |
-          npx --package @semantic-release/exec --package @semantic-release/git --package @semantic-release/changelog --package semantic-release@${{ env.SEMANTIC_RELEASE_VERSION }} --package @qiwi/multi-semantic-release multi-semantic-release  --deps.bump ignore
+          npx --package @semantic-release/exec --package @semantic-release/git --package @semantic-release/changelog --package semantic-release@${{ env.SEMANTIC_RELEASE_VERSION }} --package @qiwi/multi-semantic-release multi-semantic-release

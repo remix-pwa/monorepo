@@ -1,3 +1,17 @@
+## @remix-pwa/cache 2.0.7 (2023-09-21)
+
+
+### Bug Fixes
+
+* **cache:** updated `RemixCache` behaviour daf1940
+
+## @remix-pwa/cache 2.0.6 (2023-09-21)
+
+
+### Bug Fixes
+
+* **release:** force a new release 93dcbe7
+
 ## @remix-pwa/cache 2.0.2 (2023-09-17)
 
 

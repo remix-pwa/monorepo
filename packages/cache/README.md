@@ -1,7 +1,6 @@
 # `@remix-pwa/cache`
 
-`@remix-pwa/cache` is a thin wrapper around the browser's Cache Storage & Cache API that supercharges your normal browser cache with
-LRU (least recently used) capabilities as well as expiration and versioning.
+`@remix-pwa/cache` is a thin wrapper around the browser's Cache Storage & Cache API that supercharges your normal browser cache with LRU (least recently used) capabilities as well as expiration and versioning.
 
 https://remix-pwa.run/docs/remix-cache
 

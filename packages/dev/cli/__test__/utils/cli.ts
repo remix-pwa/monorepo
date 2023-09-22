@@ -1,3 +1,4 @@
+import { execSync } from 'child_process';
 import { pathExists } from 'fs-extra';
 import { resolve } from 'path';
 
@@ -25,3 +26,10 @@ export function validate(input: string, answers: any, projectDir: string): [bool
 
   return [true, answers];
 }
+
+export const getPkgVersion = (pkgName: string) => {
+  const pkg = execSync(`npm search ${pkgName} --json`).toString();
+  const pkgJson = JSON.parse(pkg);
+
+  return pkgJson[0].version;
+};

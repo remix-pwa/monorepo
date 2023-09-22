@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/worker-runtime",
-  "version": "2.0.1",
+  "version": "2.0.4",
   "description": "A vanilla JavaScript worker runtime for Remix service workers",
   "license": "MIT",
   "sideEffects": false,
@@ -20,14 +20,22 @@
     "build": "rimraf ./dist && tsc",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "TIMING=1 eslint --fix src/",
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build && npm run lint && npm run test",
     "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
   },
+  "peerDependencies": {
+    "@remix-run/server-runtime": "^1.19.2 || ^2.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@remix-run/server-runtime": {
+      "optional": true
+    }
+  },
   "dependencies": {
-    "@remix-run/router": "^1.9.0",
-    "@remix-run/server-runtime": "^1.19.3"
+    "@remix-run/router": "^1.9.0"
   },
   "devDependencies": {
+    "@remix-run/server-runtime": "^2.0.0",
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
     "cross-env": "^7.0.3",

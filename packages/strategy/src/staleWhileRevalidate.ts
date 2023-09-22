@@ -13,6 +13,19 @@ export interface StaleWhileRevalidateStrategyOptions extends StrategyOptions {
    * Defaults to `undefined`
    */
   fetchDidFail?: (() => void | (() => Promise<void>))[] | undefined;
+  /**
+   * The amount of time a cache can still be valid before it is considered stale (in milliseconds).
+   *
+   * Defaults to the vale of `ttl`
+   */
+  swr?: number;
+  /**
+   * Wether to use strict mode or not. If set to `true`, the strategy would never return stale
+   * data and would always revalidate. If `false`, it could return stale data once before revalidating.
+   *
+   * Defaults to `false`
+   */
+  strict?: boolean;
 }
 
 export const staleWhileRevalidate = ({
@@ -20,6 +33,8 @@ export const staleWhileRevalidate = ({
   cacheOptions,
   cacheQueryOptions,
   fetchDidFail = undefined,
+  strict = false,
+  swr,
 }: StaleWhileRevalidateStrategyOptions): StrategyResponse => {
   return async (request: Request | URL) => {
     if (!isHttpRequest(request)) {
@@ -34,20 +49,22 @@ export const staleWhileRevalidate = ({
       remixCache = cacheName;
     }
 
+    swr = swr ?? remixCache.ttl ?? 0;
+
     return remixCache.match(request, cacheQueryOptions).then(async response => {
       const res = response ? response.clone() : undefined;
 
-      if (res) {
-        const ttl = Number(res.headers.get('X-Remix-PWA-TTL')) ?? 0;
+      if (res && !strict) {
+        const accessed = Number(res.headers.get('X-Remix-PWA-AccessTime')) ?? 0;
 
-        if (ttl > Date.now()) {
+        if (swr! + accessed >= Date.now()) {
           return res;
         }
       }
 
       const fetchPromise = fetch(request)
         .then(async networkResponse => {
-          await remixCache.put(request, networkResponse.clone());
+          await remixCache.put(request, networkResponse.clone(), strict ? swr : undefined);
 
           return networkResponse;
         })

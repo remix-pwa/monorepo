@@ -1,10 +1,10 @@
 {
   "name": "@remix-pwa/strategy",
-  "version": "2.1.1",
+  "version": "2.1.4",
   "description": "A collection of service worker strategies for Remix PWA",
   "repository": {
     "type": "git",
-    "url": "git@github.com:remix-pwa/monorepo",
+    "url": "git+ssh://git@github.com/remix-pwa/monorepo.git",
     "directory": "packages/strategy"
   },
   "main": "dist/index.js",
@@ -20,21 +20,21 @@
     "build": "rimraf ./dist && tsc",
     "format": "prettier --write \"**/*.ts\"",
     "lint": "TIMING=1 eslint --fix \"**/*.ts\"",
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build && npm run lint && npm run test",
     "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
   },
   "engines": {
     "node": ">=14.0.0"
   },
   "peerDependencies": {
-    "@remix-pwa/cache": "^2.0.2"
+    "@remix-pwa/cache": "^2.0.7"
   },
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0"
   },
   "dependencies": {
-    "@remix-pwa/cache": "^2.0.2"
+    "@remix-pwa/cache": "^2.0.7"
   },
   "homepage": "https://remix-pwa.run",
   "keywords": [

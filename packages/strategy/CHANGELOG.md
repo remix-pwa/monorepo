@@ -1,3 +1,25 @@
+## @remix-pwa/strategy 2.1.4 (2023-09-21)
+
+
+### Bug Fixes
+
+* **release:** force a new release 93dcbe7
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/cache:** upgraded to 2.0.7
+
+## @remix-pwa/strategy 2.1.2 (2023-09-21)
+
+
+### Bug Fixes
+
+* **strategy:** added a more streamlined `staleWhileRevalidate` strat d23dca3
+
 ## @remix-pwa/strategy 2.1.1 (2023-09-19)
 
 
