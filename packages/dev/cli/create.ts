@@ -5,13 +5,10 @@ import { cpSync } from 'fs';
 import pkg from 'fs-extra';
 import ora from 'ora';
 import { dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 
 import { getPkgVersion } from './getPkgVersion.js';
 import type { PWAFeatures } from './run.js';
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-let isV2 = false;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -37,7 +34,7 @@ async function integrateServiceWorker(
 
   if (precache) {
     // if (workbox) { return; }
-    const workerDir = resolve(projectDir, dir, `entry.worker.${lang}`);
+    const workerDir = pathToFileURL(resolve(projectDir, dir, `entry.worker.${lang}`)).href;
 
     if (pkg.pathExistsSync(workerDir)) {
       console.log(red('Service worker already exists'));
@@ -49,7 +46,7 @@ async function integrateServiceWorker(
   } else {
     // if (workbox) { return; }
 
-    const workerDir = resolve(projectDir, dir, `entry.worker.${lang}`);
+    const workerDir = pathToFileURL(resolve(projectDir, dir, `entry.worker.${lang}`)).href;
 
     if (pkg.pathExistsSync(workerDir)) {
       console.log(red('Service worker already exists'));
@@ -63,7 +60,7 @@ async function integrateServiceWorker(
 
 async function integrateManifest(projectDir: string, lang: 'ts' | 'js' = 'ts', dir: string = 'app') {
   const templateDir = resolve(__dirname, 'templates');
-  const manifestDir = resolve(projectDir, dir, `routes/manifest[.]webmanifest.${lang}`);
+  const manifestDir = pathToFileURL(resolve(projectDir, dir, `routes/manifest[.]webmanifest.${lang}`)).href;
 
   if (pkg.pathExistsSync(manifestDir)) {
     return;
@@ -76,7 +73,11 @@ async function integrateManifest(projectDir: string, lang: 'ts' | 'js' = 'ts', d
 async function integrateIcons(projectDir: string) {
   const iconDir = resolve(__dirname, 'templates', 'icons');
 
-  cpSync(iconDir, resolve(projectDir, 'public/icons'), { recursive: true, errorOnExist: false, force: false });
+  cpSync(iconDir, pathToFileURL(resolve(projectDir, 'public/icons')).href, {
+    recursive: true,
+    errorOnExist: false,
+    force: false,
+  });
 }
 
 // temporary
@@ -105,25 +106,26 @@ export async function createPWA(
     workbox = false;
   }
 
-  try {
-    const remixConfig = await import(resolve(projectDir, 'remix.config.js')).then(m => m.default);
+  // v2 is out already!!! And I am not using `isV2`, so no worries.
+  // try {
+  //   const remixConfig = await import(pathToFileURL(resolve(projectDir, 'remix.config.js')).href).then(m => m.default);
 
-    if (!remixConfig.future) {
-      remixConfig.future = {};
-    }
+  //   if (!remixConfig.future) {
+  //     remixConfig.future = {};
+  //   }
 
-    if (remixConfig.future && remixConfig.future.v2_routeConvention === true) {
-      isV2 = true;
-    }
-  } catch (_err) {
-    console.log(
-      red(
-        'No `remix.config.js` file found in your project. Please make sure to run in a remix project or create one and try again or alternatively, run `remix-pwa --help` for more info.'
-      )
-    );
+  //   if (remixConfig.future && remixConfig.future.v2_routeConvention === true) {
+  //     isV2 = true;
+  //   }
+  // } catch (_err) {
+  //   console.log(
+  //     red(
+  //       'No `remix.config.js` file found in your project. Please make sure to run in a remix project or create one and try again or alternatively, run `remix-pwa --help` for more info.'
+  //     )
+  //   );
 
-    return;
-  }
+  //   return;
+  // }
 
   const templateDir = resolve(__dirname, 'templates');
 
@@ -202,11 +204,11 @@ export async function createPWA(
     json.scripts = {};
   }
 
-  json.dependencies['@remix-pwa/worker-runtime'] = `^${
-    _isTest ? '' : await getPkgVersion('@remix-pwa/worker-runtime')
-  }`;
   json.dependencies.dotenv = '^16.0.3';
 
+  json.devDependencies['@remix-pwa/worker-runtime'] = `^${
+    _isTest ? '' : await getPkgVersion('@remix-pwa/worker-runtime')
+  }`;
   json.devDependencies['@remix-pwa/dev'] = `${_isTest ? '' : await getPkgVersion('@remix-pwa/dev')}`;
   json.devDependencies['remix-pwa'] = `^${_isTest ? '' : await getPkgVersion('remix-pwa')}`;
   json.devDependencies['npm-run-all'] = '^4.1.5';
