@@ -1,3 +1,10 @@
+## @remix-pwa/sw 2.1.6 (2023-09-22)
+
+
+### Bug Fixes
+
+* **dev:** updated file urls 4db7acf
+
 ## @remix-pwa/sw 2.1.5 (2023-09-21)
 
 

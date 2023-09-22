@@ -1,3 +1,19 @@
+## @remix-pwa/dev 2.0.18 (2023-09-22)
+
+
+### Bug Fixes
+
+* **dev:** fixed path error on Windows e9f2959
+* **dev:** updated file urls 4db7acf
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/worker-runtime:** upgraded to 2.0.5
+
 ## @remix-pwa/dev 2.0.17 (2023-09-21)
 
 
