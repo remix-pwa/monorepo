@@ -79,6 +79,6 @@ export function useSWEffect(): void {
       return { ...route, handle };
     }
 
-    return () => { };
+    return () => {};
   }, [location, matches]);
 }

@@ -32,12 +32,12 @@
     "CHANGELOG.md"
   ],
   "peerDependencies": {
-    "@remix-run/dev": "^1.19.0 || ^2.0.0",
+    "@remix-run/dev": "^1.15.0 || ^2.0.0",
     "@remix-pwa/worker-runtime": "^2.0.4"
   },
   "peerDependenciesMeta": {
     "@remix-run/dev": {
-      "optional": false
+      "optional": true
     },
     "@remix-pwa/worker-runtime": {
       "optional": true

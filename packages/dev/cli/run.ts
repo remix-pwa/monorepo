@@ -133,8 +133,9 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
     packageManager = args['--package-manager'];
   }
 
+  // If the user uses the old method + flags: `npx remix-pwa --ts`
   if (input[0] && input[0].startsWith('-')) {
-    input.unshift('create');
+    input.unshift('init');
   }
 
   const cmd = input[0];
@@ -155,7 +156,7 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
     case 'init':
     case 'new':
     case 'create':
-    default: // Todo: Add a better error message - Deprecating this. For now tho, it would be the same as create
+    default:
       if (cmd !== 'create' && cmd !== 'init' && cmd !== 'new') {
         console.warn(
           bold(red('This command is getting deprecated soon. Please use `npx remix-pwa@latest init` instead.'))
