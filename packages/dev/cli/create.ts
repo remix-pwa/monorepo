@@ -34,7 +34,7 @@ async function integrateServiceWorker(
 
   if (precache) {
     // if (workbox) { return; }
-    const workerDir = pathToFileURL(resolve(projectDir, dir, `entry.worker.${lang}`)).href;
+    const workerDir = pathToFileURL(resolve(projectDir, dir, `entry.worker.${lang}`)).pathname;
 
     if (pkg.pathExistsSync(workerDir)) {
       console.log(red('Service worker already exists'));
@@ -46,7 +46,7 @@ async function integrateServiceWorker(
   } else {
     // if (workbox) { return; }
 
-    const workerDir = pathToFileURL(resolve(projectDir, dir, `entry.worker.${lang}`)).href;
+    const workerDir = pathToFileURL(resolve(projectDir, dir, `entry.worker.${lang}`)).pathname;
 
     if (pkg.pathExistsSync(workerDir)) {
       console.log(red('Service worker already exists'));
@@ -60,7 +60,7 @@ async function integrateServiceWorker(
 
 async function integrateManifest(projectDir: string, lang: 'ts' | 'js' = 'ts', dir: string = 'app') {
   const templateDir = resolve(__dirname, 'templates');
-  const manifestDir = pathToFileURL(resolve(projectDir, dir, `routes/manifest[.]webmanifest.${lang}`)).href;
+  const manifestDir = pathToFileURL(resolve(projectDir, dir, `routes/manifest[.]webmanifest.${lang}`)).pathname;
 
   if (pkg.pathExistsSync(manifestDir)) {
     return;
@@ -73,7 +73,7 @@ async function integrateManifest(projectDir: string, lang: 'ts' | 'js' = 'ts', d
 async function integrateIcons(projectDir: string) {
   const iconDir = resolve(__dirname, 'templates', 'icons');
 
-  cpSync(iconDir, pathToFileURL(resolve(projectDir, 'public/icons')).href, {
+  cpSync(iconDir, pathToFileURL(resolve(projectDir, 'public/icons')).pathname, {
     recursive: true,
     errorOnExist: false,
     force: false,
@@ -108,7 +108,7 @@ export async function createPWA(
 
   // v2 is out already!!! And I am not using `isV2`, so no worries.
   // try {
-  //   const remixConfig = await import(pathToFileURL(resolve(projectDir, 'remix.config.js')).href).then(m => m.default);
+  //   const remixConfig = await import(pathToFileURL(resolve(projectDir, 'remix.config.js')).pathname).then(m => m.default);
 
   //   if (!remixConfig.future) {
   //     remixConfig.future = {};
