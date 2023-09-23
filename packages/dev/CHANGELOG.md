@@ -1,3 +1,11 @@
+## @remix-pwa/dev 2.0.20 (2023-09-23)
+
+
+### Bug Fixes
+
+* **dev:** fixed build bug in development 652c9fc
+* **dev:** fixed file resolution 499857b
+
 ## @remix-pwa/dev 2.0.19 (2023-09-23)
 
 
