@@ -5,7 +5,7 @@ import { cpSync } from 'fs';
 import pkg from 'fs-extra';
 import ora from 'ora';
 import { dirname, resolve } from 'path';
-import { fileURLToPath, pathToFileURL } from 'url';
+import { fileURLToPath } from 'url';
 
 import { getPkgVersion } from './getPkgVersion.js';
 import type { PWAFeatures } from './run.js';
@@ -34,7 +34,7 @@ async function integrateServiceWorker(
 
   if (precache) {
     // if (workbox) { return; }
-    const workerDir = pathToFileURL(resolve(projectDir, dir, `entry.worker.${lang}`)).pathname;
+    const workerDir = resolve(projectDir, dir, `entry.worker.${lang}`);
 
     if (pkg.pathExistsSync(workerDir)) {
       console.log(red('Service worker already exists'));
@@ -46,7 +46,7 @@ async function integrateServiceWorker(
   } else {
     // if (workbox) { return; }
 
-    const workerDir = pathToFileURL(resolve(projectDir, dir, `entry.worker.${lang}`)).pathname;
+    const workerDir = resolve(projectDir, dir, `entry.worker.${lang}`);
 
     if (pkg.pathExistsSync(workerDir)) {
       console.log(red('Service worker already exists'));
@@ -60,7 +60,7 @@ async function integrateServiceWorker(
 
 async function integrateManifest(projectDir: string, lang: 'ts' | 'js' = 'ts', dir: string = 'app') {
   const templateDir = resolve(__dirname, 'templates');
-  const manifestDir = pathToFileURL(resolve(projectDir, dir, `routes/manifest[.]webmanifest.${lang}`)).pathname;
+  const manifestDir = resolve(projectDir, dir, `routes/manifest[.]webmanifest.${lang}`);
 
   if (pkg.pathExistsSync(manifestDir)) {
     return;
@@ -73,7 +73,7 @@ async function integrateManifest(projectDir: string, lang: 'ts' | 'js' = 'ts', d
 async function integrateIcons(projectDir: string) {
   const iconDir = resolve(__dirname, 'templates', 'icons');
 
-  cpSync(iconDir, pathToFileURL(resolve(projectDir, 'public/icons')).pathname, {
+  cpSync(iconDir, resolve(projectDir, 'public/icons'), {
     recursive: true,
     errorOnExist: false,
     force: false,
@@ -108,7 +108,7 @@ export async function createPWA(
 
   // v2 is out already!!! And I am not using `isV2`, so no worries.
   // try {
-  //   const remixConfig = await import(pathToFileURL(resolve(projectDir, 'remix.config.js')).pathname).then(m => m.default);
+  //   const remixConfig = await import(resolve(projectDir, 'remix.config.js')).pathname).then(m => m.defau;
 
   //   if (!remixConfig.future) {
   //     remixConfig.future = {};
@@ -204,7 +204,7 @@ export async function createPWA(
     json.scripts = {};
   }
 
-  json.dependencies.dotenv = '^16.0.3';
+  json.dependencies.dotenv = '^16.3.1';
 
   json.devDependencies['@remix-pwa/worker-runtime'] = `^${
     _isTest ? '' : await getPkgVersion('@remix-pwa/worker-runtime')
@@ -241,6 +241,9 @@ export async function createPWA(
   json.scripts['dev:worker'] = 'remix-pwa dev';
 
   pkg.writeFileSync(pkgJsonPath, JSON.stringify(json, null, 2));
+
+  // slow down a bit before moving on
+  await new Promise(resolve => setTimeout(resolve, 1_000));
 
   if (install) {
     const spinner = ora({
