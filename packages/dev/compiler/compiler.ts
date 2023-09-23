@@ -12,9 +12,7 @@ import sideEffectsPlugin from './plugins/side-effects.js';
 import type { ResolvedWorkerConfig } from './utils/config.js';
 import readConfig from './utils/config.js';
 
-const { NODE_ENV } = process.env;
 const TIME_LABEL = '💿 Built in';
-const MODE = NODE_ENV === 'production' ? ServerMode.Production : ServerMode.Development;
 
 /**
  * Creates the esbuild config object.
@@ -65,6 +63,8 @@ function createEsbuildConfig(config: ResolvedWorkerConfig): BuildOptions {
 }
 
 export async function runCompiler(mode: 'dev' | 'build', projectDir: string = process.cwd()) {
+  const MODE = mode === 'dev' ? ServerMode.Development : ServerMode.Production;
+
   readConfig(path.resolve(projectDir), MODE).then(remixConfig => {
     console.time(TIME_LABEL);
 
