@@ -2,15 +2,12 @@
 import arg from 'arg';
 import { bold, gray, green, magenta, red, underline, whiteBright } from 'colorette';
 import enquirer from 'enquirer';
-import pkg from 'fs-extra';
-import { resolve } from 'path';
 
 import * as commands from './commands.js';
 import type { FlagOptionType } from './create.js';
 import { detectPackageManager } from './detectPkgManager.js';
 
 const { prompt } = enquirer;
-const { pathExists } = pkg;
 
 // Todo(ShafSpecs): Update this later
 const helpText = `
@@ -45,7 +42,6 @@ ${underline(whiteBright('Create/Init Flags:'))}
 --no-install                    Skip the installation process
 --package-manager, --pm         Preferred package manager if your project is not using any
 --precache                      Wether you would like to utilise the precache feature
---dir                           The location of your Remix \`app\` directory
 --help, -h                      Print this help message and exit
 --version, -v                   Print the CLI version and exit
 --docs                          Print the link to the remix-pwa docs and exit`;
@@ -68,7 +64,6 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
       '--docs': Boolean,
       '--precache': Boolean,
       // '--features': String,
-      '--dir': String,
       '--package-manager': String,
       // Aliases for aboves
       '-h': '--help',
@@ -257,29 +252,6 @@ export async function run(argv: string[] = process.argv.slice(2), projectDir: st
             },
           ],
           initial: ['sw', 'manifest'],
-        },
-        {
-          type: 'input',
-          name: 'dir',
-          message: 'Where is your Remix `app` directory located?',
-          initial: 'app',
-          skip: flags.dir !== undefined,
-          validate(input: string) {
-            if (input === '') {
-              return 'Please enter a valid directory';
-            }
-
-            pathExists(resolve(projectDir, input)).then(exists => {
-              if (!exists) {
-                return 'Please enter a valid directory';
-              }
-            });
-
-            return true;
-          },
-          format(value) {
-            return value.replace(/^\/|\/$/g, '');
-          },
         },
         {
           name: 'packageManager',
