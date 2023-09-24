@@ -1,3 +1,10 @@
+## @remix-pwa/dev 2.0.21 (2023-09-24)
+
+
+### Bug Fixes
+
+* **dev:** path resolution fix 7c8c76c
+
 ## @remix-pwa/dev 2.0.20 (2023-09-23)
 
 
