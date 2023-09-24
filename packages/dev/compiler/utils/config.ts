@@ -65,7 +65,6 @@ function findEntry(dirname: string, basename: string): string | undefined {
 }
 
 const isWindows = platform() === 'win32';
-
 const resolveUrl = (string: string) => {
   return isWindows ? pathToFileURL(string).href : string;
 };
