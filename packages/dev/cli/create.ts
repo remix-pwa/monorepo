@@ -1,20 +1,22 @@
 /* eslint-disable no-prototype-builtins */
+import { readConfig as _readConfig } from '@remix-run/dev/dist/config.js';
+import { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';
 import { execSync } from 'child_process';
 import { blueBright, green, red, white } from 'colorette';
 import { cpSync } from 'fs';
 import pkg from 'fs-extra';
 import ora from 'ora';
 import { dirname, resolve } from 'path';
-import { fileURLToPath, pathToFileURL } from 'url';
+import { fileURLToPath } from 'url';
 
 import { getPkgVersion } from './getPkgVersion.js';
+import { resolveUrl } from './resolveUrl.js';
 import type { PWAFeatures } from './run.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export type FlagOptionType = {
-  dir: string;
   precache: boolean;
   install: boolean;
   workbox: boolean;
@@ -24,17 +26,15 @@ export type FlagOptionType = {
 };
 
 async function integrateServiceWorker(
-  projectDir: string,
   precache: boolean,
   _workbox: boolean,
+  templateDir: string,
   lang: 'ts' | 'js' = 'ts',
   dir: string = 'app'
 ) {
-  const templateDir = resolve(__dirname, 'templates');
-
   if (precache) {
     // if (workbox) { return; }
-    const workerDir = pathToFileURL(resolve(projectDir, dir, `entry.worker.${lang}`)).pathname;
+    const workerDir = resolveUrl(dir, `entry.worker.${lang}`);
 
     if (pkg.pathExistsSync(workerDir)) {
       console.log(red('Service worker already exists'));
@@ -46,7 +46,7 @@ async function integrateServiceWorker(
   } else {
     // if (workbox) { return; }
 
-    const workerDir = pathToFileURL(resolve(projectDir, dir, `entry.worker.${lang}`)).pathname;
+    const workerDir = resolveUrl(dir, `entry.worker.${lang}`);
 
     if (pkg.pathExistsSync(workerDir)) {
       console.log(red('Service worker already exists'));
@@ -58,9 +58,11 @@ async function integrateServiceWorker(
   }
 }
 
-async function integrateManifest(projectDir: string, lang: 'ts' | 'js' = 'ts', dir: string = 'app') {
-  const templateDir = resolve(__dirname, 'templates');
-  const manifestDir = pathToFileURL(resolve(projectDir, dir, `routes/manifest[.]webmanifest.${lang}`)).pathname;
+async function integrateManifest(templateDir: string, lang: 'ts' | 'js' = 'ts', dir: string = 'app') {
+  if (!pkg.existsSync(`${dir}/routes`)) {
+    pkg.mkdirSync(`${dir}/routes`, { recursive: true });
+  }
+  const manifestDir = resolveUrl(dir, `routes/manifest[.]webmanifest.${lang}`);
 
   if (pkg.pathExistsSync(manifestDir)) {
     return;
@@ -73,7 +75,7 @@ async function integrateManifest(projectDir: string, lang: 'ts' | 'js' = 'ts', d
 async function integrateIcons(projectDir: string) {
   const iconDir = resolve(__dirname, 'templates', 'icons');
 
-  cpSync(iconDir, pathToFileURL(resolve(projectDir, 'public/icons')).pathname, {
+  cpSync(iconDir, resolveUrl(projectDir, 'public/icons'), {
     recursive: true,
     errorOnExist: false,
     force: false,
@@ -90,7 +92,6 @@ async function integratePush(projectDir: string, lang: 'ts' | 'js' = 'ts', dir: 
 export async function createPWA(
   projectDir: string = process.cwd(),
   options: FlagOptionType = {
-    dir: 'app',
     precache: false,
     install: true,
     workbox: false,
@@ -100,32 +101,14 @@ export async function createPWA(
   },
   _isTest: boolean = false
 ) {
-  let { dir, features, install, lang, packageManager, precache, workbox } = options;
+  let { features, install, lang, packageManager, precache, workbox } = options;
 
   if (workbox) {
     workbox = false;
   }
 
-  // v2 is out already!!! And I am not using `isV2`, so no worries.
-  // try {
-  //   const remixConfig = await import(pathToFileURL(resolve(projectDir, 'remix.config.js')).pathname).then(m => m.default);
-
-  //   if (!remixConfig.future) {
-  //     remixConfig.future = {};
-  //   }
-
-  //   if (remixConfig.future && remixConfig.future.v2_routeConvention === true) {
-  //     isV2 = true;
-  //   }
-  // } catch (_err) {
-  //   console.log(
-  //     red(
-  //       'No `remix.config.js` file found in your project. Please make sure to run in a remix project or create one and try again or alternatively, run `remix-pwa --help` for more info.'
-  //     )
-  //   );
-
-  //   return;
-  // }
+  const remixConfig = await _readConfig(projectDir, ServerMode.Development);
+  const appDir = remixConfig.appDirectory ?? resolveUrl(process.cwd(), 'app');
 
   const templateDir = resolve(__dirname, 'templates');
 
@@ -146,7 +129,7 @@ export async function createPWA(
             spinner: 'dots',
           }).start();
 
-          await integrateServiceWorker(projectDir, precache, workbox, lang, dir);
+          await integrateServiceWorker(precache, workbox, templateDir, lang, appDir);
 
           spinnerWorker.succeed(`Successfully integrated Service Worker!`);
           spinnerWorker.clear();
@@ -161,7 +144,7 @@ export async function createPWA(
             spinner: 'dots',
           }).start();
 
-          await integrateManifest(projectDir, lang, dir);
+          await integrateManifest(templateDir, lang, appDir);
 
           spinnerManifest.succeed(`Successfully integrated Web Manifest!`);
           spinnerManifest.clear();
@@ -174,7 +157,7 @@ export async function createPWA(
         break;
       case 'push':
         push = true;
-        await integratePush(projectDir, lang, dir);
+        await integratePush(projectDir, lang, appDir);
         break;
       case 'utils':
         utils = true;
@@ -204,7 +187,7 @@ export async function createPWA(
     json.scripts = {};
   }
 
-  json.dependencies.dotenv = '^16.0.3';
+  json.dependencies.dotenv = '^16.3.1';
 
   json.devDependencies['@remix-pwa/worker-runtime'] = `^${
     _isTest ? '' : await getPkgVersion('@remix-pwa/worker-runtime')
@@ -241,6 +224,9 @@ export async function createPWA(
   json.scripts['dev:worker'] = 'remix-pwa dev';
 
   pkg.writeFileSync(pkgJsonPath, JSON.stringify(json, null, 2));
+
+  // slow down a bit before moving on
+  await new Promise(resolve => setTimeout(resolve, 1_000));
 
   if (install) {
     const spinner = ora({

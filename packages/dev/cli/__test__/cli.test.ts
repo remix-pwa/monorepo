@@ -57,7 +57,6 @@ A complete PWA framework solution for integrating PWA into your Remix applicatio
       await createPWA(
         '__mock-app',
         {
-          dir: 'app',
           precache: false,
           install: false,
           workbox: false,
@@ -78,7 +77,6 @@ A complete PWA framework solution for integrating PWA into your Remix applicatio
         await createPWA(
           '__mock-app',
           {
-            dir: 'app',
             precache: false,
             install: false,
             workbox: false,
@@ -104,7 +102,6 @@ A complete PWA framework solution for integrating PWA into your Remix applicatio
         await createPWA(
           '__mock-app',
           {
-            dir: 'app',
             precache: false,
             install: false,
             workbox: false,
@@ -126,7 +123,6 @@ A complete PWA framework solution for integrating PWA into your Remix applicatio
         await createPWA(
           '__mock-app',
           {
-            dir: 'app',
             precache: true,
             install: false,
             workbox: false,
@@ -151,7 +147,6 @@ A complete PWA framework solution for integrating PWA into your Remix applicatio
         await createPWA(
           '__mock-app',
           {
-            dir: 'app',
             precache: false,
             install: false,
             workbox: false,
