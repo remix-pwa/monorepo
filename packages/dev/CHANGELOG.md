@@ -1,3 +1,12 @@
+## @remix-pwa/dev 2.0.19 (2023-09-25)
+
+
+### Bug Fixes
+
+* **dev:** fixed build bug in development 652c9fc
+* **dev:** fixed file resolution 499857b
+* **dev:** fixed path resolution on Windows 194bbfb
+
 ## @remix-pwa/dev 2.0.18 (2023-09-22)
 
 
