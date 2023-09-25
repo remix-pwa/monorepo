@@ -1,4 +1,5 @@
 import type { OnLoadResult, OnResolveArgs, Plugin, PluginBuild } from 'esbuild';
+import { normalize } from 'node:path';
 
 const FILTER_REGEX = /\?user$/;
 
@@ -8,7 +9,7 @@ const FILTER_REGEX = /\?user$/;
 export default function sideEffectsPlugin(): Plugin {
   async function setup(build: PluginBuild) {
     const onResolve = ({ path }: OnResolveArgs) => ({
-      path: path.replace(FILTER_REGEX, ''),
+      path: normalize(path).replace(FILTER_REGEX, ''),
       sideEffects: true,
     });
 

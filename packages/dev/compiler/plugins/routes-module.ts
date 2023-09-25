@@ -1,5 +1,6 @@
 import { getRouteModuleExports } from '@remix-run/dev/dist/compiler/utils/routeExports.js';
 import type { OnLoadArgs, OnLoadResult, OnResolveArgs, Plugin, PluginBuild } from 'esbuild';
+import { normalize } from 'node:path';
 
 import type { ResolvedWorkerConfig } from '../utils/config.js';
 const FILTER_REGEX = /\?worker$/;
@@ -13,9 +14,9 @@ export default function routesModulesPlugin(config: ResolvedWorkerConfig): Plugi
   }, new Map());
 
   async function setup(build: PluginBuild) {
-    const onResolve = ({ path }: OnResolveArgs) => ({ path, namespace: NAMESPACE });
+    const onResolve = ({ path }: OnResolveArgs) => ({ path: normalize(path), namespace: NAMESPACE });
     const onLoad = async ({ path }: OnLoadArgs) => {
-      const file = path.replace(/\?worker$/, '');
+      const file = normalize(path).replace(/\?worker$/, '');
       const route = routesByFile.get(file);
       const sourceExports = await getRouteModuleExports(config, route.id);
       const theExports = sourceExports.filter(
