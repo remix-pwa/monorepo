@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/dev",
-  "version": "2.0.17",
+  "version": "2.0.22",
   "description": "An esbuild compiler for Service Workers in Remix.run",
   "repository": {
     "type": "git",
@@ -33,7 +33,7 @@
   ],
   "peerDependencies": {
     "@remix-run/dev": "^1.15.0 || ^2.0.0",
-    "@remix-pwa/worker-runtime": "^2.0.4"
+    "@remix-pwa/worker-runtime": "^2.0.5"
   },
   "peerDependenciesMeta": {
     "@remix-run/dev": {
@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "@remix-run/dev": "^2.0.0",
-    "@remix-pwa/worker-runtime": "^2.0.4",
+    "@remix-pwa/worker-runtime": "^2.0.5",
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
     "@types/fs-extra": "^11.0.2",

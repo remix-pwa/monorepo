@@ -1,4 +1,6 @@
-import { mergeHeaders } from './utils.js';
+import * as B from 'buffer/';
+
+import { mergeHeaders, omit } from './utils.js';
 
 export enum Strategy {
   /**
@@ -184,25 +186,39 @@ export class RemixCache implements CustomCache {
       this._strategy = metadata.cacheStrategy;
     }
 
-    const newHeader = new Headers();
+    const newHeader = new Headers(headers);
     newHeader.set('X-Remix-PWA-TTL', metadata.expiresAt.toString());
     newHeader.set('X-Remix-PWA-AccessTime', Date.now().toString());
     newHeader.set('Content-Type', headers.get('X-Remix-PWA-Original-Content-Type') || 'application/json');
 
-    let data;
+    const contentType = headers.get('X-Remix-PWA-Original-Content-Type') ?? '';
 
-    if (typeof value === 'object' && value !== null) {
-      data = JSON.stringify(value);
+    newHeader.delete('X-Remix-PWA-Original-Content-Type');
+
+    const responseOptions = {
+      status: response.status,
+      statusText: response.statusText,
+      headers: newHeader,
+      body: 'null' as any,
+    };
+
+    if (contentType.includes('application/json')) {
+      // JSON response
+      responseOptions.body = JSON.stringify(value as string);
+    } else if (contentType.includes('text')) {
+      // Text response
+      responseOptions.body = value as string;
     } else {
-      data = value as string;
+      // Binary or other response types
+      const buffer = B.Buffer.from(value as string, 'base64');
+      responseOptions.body = new Uint8Array(buffer);
     }
 
     if (!deleted) {
-      const res = new Response(data, {
-        status: response.status,
-        statusText: response.statusText,
-        headers: mergeHeaders(headers, newHeader),
-      });
+      const res = new Response(
+        responseOptions.body as unknown as BodyInit,
+        omit('body', responseOptions) as ResponseInit
+      );
 
       await this.put(request, res.clone(), undefined);
 
@@ -304,15 +320,26 @@ export class RemixCache implements CustomCache {
     // If ttl is negative, don't cache
     if (this._ttl <= 0 || (ttl && ttl <= 0)) return;
 
+    if (response === null || response.clone().body === null) {
+      // If the response/response body is null, delete the entry (if found)
+      // and don't cache.
+      await this.delete(request);
+      return;
+    }
+
     const contentType = response.headers.get('Content-Type');
 
     let data;
+
     if (contentType && contentType.includes('application/json')) {
       // If the response is JSON, parse it
       data = await response.clone().json();
-    } else {
+    } else if (contentType && contentType.includes('text')) {
       // If the response is not JSON, treat it as text
       data = await response.clone().text();
+    } else {
+      const buffer = await response.clone().arrayBuffer();
+      data = B.Buffer.from(buffer).toString('base64');
     }
 
     // Temporary. Actually slows this process down by an average of 2ms. Not good enough.

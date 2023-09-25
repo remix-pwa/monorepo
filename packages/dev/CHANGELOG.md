@@ -1,3 +1,48 @@
+## @remix-pwa/dev 2.0.22 (2023-09-25)
+
+
+### Bug Fixes
+
+* **dev:** fixes to window url errors 17e363d
+
+## @remix-pwa/dev 2.0.21 (2023-09-24)
+
+
+### Bug Fixes
+
+* **dev:** path resolution fix 7c8c76c
+
+## @remix-pwa/dev 2.0.20 (2023-09-23)
+
+
+### Bug Fixes
+
+* **dev:** fixed build bug in development 652c9fc
+* **dev:** fixed file resolution 499857b
+
+## @remix-pwa/dev 2.0.19 (2023-09-23)
+
+
+### Bug Fixes
+
+* **dev:** fixed path resolution on Windows 194bbfb
+
+## @remix-pwa/dev 2.0.18 (2023-09-22)
+
+
+### Bug Fixes
+
+* **dev:** fixed path error on Windows e9f2959
+* **dev:** updated file urls 4db7acf
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/worker-runtime:** upgraded to 2.0.5
+
 ## @remix-pwa/dev 2.0.17 (2023-09-21)
 
 
