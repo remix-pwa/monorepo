@@ -1,6 +1,7 @@
 import type { ResolvedWorkerConfig } from 'compiler/utils/config.js';
 import type { OnLoadResult, OnResolveArgs, OnResolveResult, Plugin, PluginBuild } from 'esbuild';
 import * as pkg from 'glob';
+import { normalize } from 'node:path';
 
 const { glob } = pkg;
 
@@ -10,7 +11,7 @@ const NAMESPACE = 'assets-module';
 export default function assetsPlugin(config: ResolvedWorkerConfig): Plugin {
   async function setup(build: PluginBuild) {
     const onResolve = ({ path }: OnResolveArgs): OnResolveResult => ({
-      path,
+      path: normalize(path),
       namespace: NAMESPACE,
       watchDirs: [config.assetsBuildDirectory],
     });
