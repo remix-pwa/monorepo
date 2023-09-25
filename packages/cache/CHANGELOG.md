@@ -1,3 +1,10 @@
+## @remix-pwa/cache 2.0.8 (2023-09-25)
+
+
+### Bug Fixes
+
+* **cache:** fixed caching of non-text formats in `RemixCache` b5b9efa
+
 ## @remix-pwa/cache 2.0.7 (2023-09-21)
 
 

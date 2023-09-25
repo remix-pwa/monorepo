@@ -1,7 +1,9 @@
+import { Storage } from "@remix-pwa/cache";
 import { cacheFirst, toJSON } from "@remix-pwa/strategy";
+import { logger } from "@remix-pwa/sw";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { Fragment } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import Page from "~/components/Page";
 
 export const loader = async () => {
@@ -16,6 +18,9 @@ export const loader = async () => {
 export const workerLoader = async ({ context }: any) => {
   const customStrategy = cacheFirst({
     cache: 'basic-caching',
+    cacheQueryOptions: {
+      ignoreSearch: true
+    },
     cacheOptions: {
       maxItems: 5,
       ttl: 30 * 1_000 // 30 seconds time-to-live (maxAge)
@@ -26,6 +31,12 @@ export const workerLoader = async ({ context }: any) => {
   });
 
   let response = await customStrategy(context.event.request);
+
+  // Testing out caching binary data - images, fonts, etc.
+  // Btw, look above, caching strategy has a ttl of 30 secs.
+  // Either be fast, or increase the time to test this out.
+  await customStrategy(new Request('https://images.unsplash.com/photo-1695570804246-a9470af7e197?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2903&q=80'))
+
   let data = await toJSON(response);
 
   const date = new Date();
@@ -47,6 +58,28 @@ export const workerLoader = async ({ context }: any) => {
 
 export default function BasicCaching() {
   const loaderData = useLoaderData();
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [imageSrc, setImageSrc] = useState('https://images.unsplash.com/photo-1695606393084-9c4490ccf667?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80' as string);
+
+  useEffect(() => {
+    if (typeof window === undefined) return;
+
+    (async () => {
+      const cache = await Storage.get('basic-caching')!;
+
+      cache!.match('https://images.unsplash.com/photo-1695570804246-a9470af7e197?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2903&q=80').then((response) => {
+        if (response) {
+          response.blob().then((blob) => {
+            setImageSrc(URL.createObjectURL(blob));
+            imgRef.current!.src = URL.createObjectURL(blob);
+            logger.log('Image loaded from cache!');
+          })
+        } else {
+          logger.error('No response found!', response);
+        }
+      })
+    })();
+  }, [loaderData])
 
   return (
     <Page
@@ -58,6 +91,7 @@ export default function BasicCaching() {
           <blockquote className="p-3 my-3 border-l-4 border-gray-300 bg-gray-50 dark:border-gray-500 dark:bg-gray-800">
             <p className="text-lg font-medium leading-relaxed text-gray-900 dark:text-white">Constant Data: "{loaderData.data}"</p>
             <p className="text-lg font-medium leading-relaxed text-gray-900 dark:text-white">Vary Message: "{loaderData.message}"</p>
+            <img src={imageSrc} ref={imgRef} alt="cached-img" />
           </blockquote>
         </Fragment>
       }

@@ -1,10 +1,44 @@
-## @remix-pwa/dev 2.0.19 (2023-09-25)
+## @remix-pwa/dev 2.0.24 (2023-09-25)
+
+
+### Bug Fixes
+
+* **dev:** fixed erroneous importation of node into the browser 0bf8fe7
+
+## @remix-pwa/dev 2.0.23 (2023-09-25)
+
+
+### Bug Fixes
+
+* **dev:** another day testing in the field 222f948
+
+## @remix-pwa/dev 2.0.22 (2023-09-25)
+
+
+### Bug Fixes
+
+* **dev:** fixes to window url errors 17e363d
+
+## @remix-pwa/dev 2.0.21 (2023-09-24)
+
+
+### Bug Fixes
+
+* **dev:** path resolution fix 7c8c76c
+
+## @remix-pwa/dev 2.0.20 (2023-09-23)
 
 
 ### Bug Fixes
 
 * **dev:** fixed build bug in development 652c9fc
 * **dev:** fixed file resolution 499857b
+
+## @remix-pwa/dev 2.0.19 (2023-09-23)
+
+
+### Bug Fixes
+
 * **dev:** fixed path resolution on Windows 194bbfb
 
 ## @remix-pwa/dev 2.0.18 (2023-09-22)

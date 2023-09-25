@@ -94,6 +94,25 @@ export class RemixCacheStorage {
     return this._instances.has(name);
   }
 
+  private static async _get(name: string): Promise<RemixCache | undefined> {
+    const cache = this._instances.get(name);
+
+    if (!cache && (await caches.has(`rp-${name}`))) {
+      this._instances.set(name, new RemixCache({ name }));
+
+      await this._instances
+        .get(name)
+        ?.keys()
+        .then(keys => {
+          if (keys.length > 0) {
+            caches.match(keys[0]);
+          }
+        });
+    }
+
+    return this._instances.get(name);
+  }
+
   /**
    * Get a cache by name. Returns `undefined` if no cache with the given name exists.
    * Use `has` to check if a cache exists. Or `open` to create one automatically if non exists.
@@ -108,8 +127,8 @@ export class RemixCacheStorage {
    * const cache = Storage.get('my-cache');
    * ```
    */
-  static get(name: string): RemixCache | undefined {
-    return this._instances.get(name);
+  static async get(name: string): Promise<RemixCache | undefined> {
+    return await this._get(name);
   }
 
   /**
