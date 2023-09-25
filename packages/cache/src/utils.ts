@@ -25,3 +25,12 @@ export function combineHeaders(...headers: Array<ResponseInit['headers'] | null 
   }
   return combined;
 }
+
+/**
+ * Omit a key from an object
+ */
+export function omit(key: string, obj: Record<string, any>) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { [key]: omitted, ...rest } = obj;
+  return rest;
+}

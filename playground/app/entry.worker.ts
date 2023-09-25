@@ -67,12 +67,14 @@ export const defaultFetchHandler: DefaultFetchHandler = ({ context, request }) =
   return context.fetchFromServer();
 };
 
-self.addEventListener('install', event => {
+self.addEventListener('install', (event: ExtendableEvent) => {
   logger.log('installing service worker');
+  logger.warn('This is a playground service worker 📦. It is not intended for production use.');
   event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener('activate', event => {
+  logger.log(self.clients)
   event.waitUntil(self.clients.claim());
 });
 

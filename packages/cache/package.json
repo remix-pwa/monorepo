@@ -32,6 +32,7 @@
     "@remix-pwa/lint-staged-config": "^0.0.0"
   },
   "dependencies": {
+    "buffer": "^6.0.3",
     "cachified": "^3.5.4"
   },
   "keywords": [
