@@ -1,7 +1,8 @@
-import type { ResolvedWorkerConfig } from 'compiler/utils/config.js';
 import type { OnLoadResult, OnResolveArgs, OnResolveResult, Plugin, PluginBuild } from 'esbuild';
 import * as pkg from 'glob';
 import { normalize } from 'node:path';
+
+import type { ResolvedWorkerConfig } from '../utils/config.js';
 
 const { glob } = pkg;
 

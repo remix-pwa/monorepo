@@ -1,5 +1,6 @@
 import type { ConfigRoute, RouteManifest } from '@remix-run/dev/dist/config/routes.js';
 import type { OnLoadResult, OnResolveArgs, Plugin, PluginBuild } from 'esbuild';
+import { normalize } from 'node:path';
 
 import type { ResolvedWorkerConfig } from '../utils/config.js';
 
@@ -45,7 +46,7 @@ export default function entryModulePlugin(config: ResolvedWorkerConfig): Plugin 
    * @param {import('esbuild').PluginBuild} build The esbuild plugin build object.
    */
   function setup(build: PluginBuild) {
-    const onResolve = ({ path }: OnResolveArgs) => ({ path, namespace: NAMESPACE });
+    const onResolve = ({ path }: OnResolveArgs) => ({ path: normalize(path), namespace: NAMESPACE });
     const onLoad = () => {
       const routes = Object.values(config.routes);
       const contents = `
