@@ -1,3 +1,10 @@
+## @remix-pwa/dev 2.0.22 (2023-09-25)
+
+
+### Bug Fixes
+
+* **dev:** fixes to window url errors 17e363d
+
 ## @remix-pwa/dev 2.0.21 (2023-09-24)
 
 
