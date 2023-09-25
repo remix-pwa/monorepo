@@ -1,3 +1,13 @@
+## @remix-pwa/sw 2.1.7 (2023-09-25)
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/cache:** upgraded to 2.0.8
+
 ## @remix-pwa/sw 2.1.6 (2023-09-22)
 
 
