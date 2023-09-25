@@ -5589,7 +5589,6 @@ var RemixCache = class {
       body: "null"
     };
     if (contentType.includes("application/json")) {
-      console.log("JSON response", value);
       responseOptions.body = JSON.stringify(value);
     } else if (contentType.includes("text")) {
       responseOptions.body = value;
@@ -12231,7 +12230,7 @@ var hasWorkerAction8 = false;
 var hasWorkerLoader8 = true;
 
 // assets-module:@remix-sas/dev?assets
-var assets = ["/build/root-ZSHAXU5N.js", "/build/manifest-6F409826.js", "/build/entry.client-EWQSIISJ.js", "/build/__remix_entry_dev-CBVCFEV6.js", "/build/routes/sync-away-YH75GZJK.js", "/build/routes/strategies-NK427X4Q.js", "/build/routes/selection-5VOLF2CZ.js", "/build/routes/basic-loader-5WJF6TX3.js", "/build/routes/basic-caching-73BNRLXE.js", "/build/routes/basic-action-NOBVO42R.js", "/build/routes/_index-DZKU762B.js", "/build/routes/_app.flights-RZAXJSIW.js", "/build/routes/_app-23TDTGFM.js", "/build/_shared/runtime-JC7ERE5X.js", "/build/_shared/remix_hmr-KOXB6O7Z.js", "/build/_shared/react-dom-SNQ2UIZM.js", "/build/_shared/react-XL6EHOTX.js", "/build/_shared/jsx-runtime-7KJOCM5J.js", "/build/_shared/jsx-dev-runtime-D5NCTVC4.js", "/build/_shared/esm-IBLMKEZI.js", "/build/_shared/client-LQHWDDYA.js", "/build/_shared/chunk-TWSZTAQ6.js", "/build/_shared/chunk-TLBAXOHZ.js", "/build/_shared/chunk-STMUDJCL.js", "/build/_shared/chunk-PNG5AS42.js", "/build/_shared/chunk-PHXEQUWH.js", "/build/_shared/chunk-NXSRMYPB.js", "/build/_shared/chunk-MWWJAGF7.js", "/build/_shared/chunk-LOYKRDJM.js", "/build/_shared/chunk-IWDL3EBP.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-FXD4XYGV.js", "/build/_assets/tailwind-JOKRYXHU.css"];
+var assets = ["/build/root-ZSHAXU5N.js", "/build/manifest-8D1E1F23.js", "/build/entry.client-EWQSIISJ.js", "/build/__remix_entry_dev-CBVCFEV6.js", "/build/routes/sync-away-YH75GZJK.js", "/build/routes/strategies-BCJYERTK.js", "/build/routes/selection-5VOLF2CZ.js", "/build/routes/basic-loader-5WJF6TX3.js", "/build/routes/basic-caching-WR4HFJEI.js", "/build/routes/basic-action-NOBVO42R.js", "/build/routes/_index-DZKU762B.js", "/build/routes/_app.flights-RZAXJSIW.js", "/build/routes/_app-23TDTGFM.js", "/build/_shared/runtime-JC7ERE5X.js", "/build/_shared/remix_hmr-KOXB6O7Z.js", "/build/_shared/react-dom-SNQ2UIZM.js", "/build/_shared/react-XL6EHOTX.js", "/build/_shared/jsx-runtime-7KJOCM5J.js", "/build/_shared/jsx-dev-runtime-D5NCTVC4.js", "/build/_shared/esm-IBLMKEZI.js", "/build/_shared/client-LQHWDDYA.js", "/build/_shared/chunk-TWSZTAQ6.js", "/build/_shared/chunk-TLBAXOHZ.js", "/build/_shared/chunk-STMUDJCL.js", "/build/_shared/chunk-PNG5AS42.js", "/build/_shared/chunk-NXSRMYPB.js", "/build/_shared/chunk-MWWJAGF7.js", "/build/_shared/chunk-LOYKRDJM.js", "/build/_shared/chunk-IWDL3EBP.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-FXD4XYGV.js", "/build/_shared/chunk-2USBH23P.js", "/build/_assets/tailwind-JOKRYXHU.css"];
 
 // entry-module:@remix-pwa/build/magic
 var routes = {
