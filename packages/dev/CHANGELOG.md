@@ -1,3 +1,10 @@
+## @remix-pwa/dev 2.0.23 (2023-09-25)
+
+
+### Bug Fixes
+
+* **dev:** another day testing in the field 222f948
+
 ## @remix-pwa/dev 2.0.22 (2023-09-25)
 
 
