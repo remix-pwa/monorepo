@@ -24,7 +24,12 @@ export type LoadServiceWorkerOptions = {
  *
  * @param  serviceWorkerUrl='/entry.worker.js' - URL of the service worker.
  * @param  serviceWorkerRegistrationCallback - Callback function when the service worker gets registered. Takes in the `ServiceWorkerRegistration` object.
- * @param  registrationOptions - Options for the service worker registration.
+ * @param  scope - The service worker's registration scope.
+ * @param  type - The service worker's type.
+ * @param  updateViaCache - The service worker's `updateViaCache` option - controls how the browser handles updates to the service worker's script URL, and is one of the following strings:
+ * - `imports` - The browser bypasses the cache and attempts to update the service worker immediately.
+ * - `all` - The browser uses the cache to update the service worker.
+ * - `none` - The browser doesn't use the cache to update the service worker.
  *
  * ### Example
  *
