@@ -1,3 +1,11 @@
+## @remix-pwa/dev 2.0.25 (2023-09-26)
+
+
+### Bug Fixes
+
+* **compiler:** remove normalize path everywhere 2b9308a
+* **worker-config:** use file url to import remix config 97330cd
+
 ## @remix-pwa/dev 2.0.24 (2023-09-25)
 
 
