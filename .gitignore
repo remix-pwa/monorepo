@@ -97,3 +97,4 @@ Icon
 
 # Sandbox
 ./playground/**/*
+**/__mock-app/
