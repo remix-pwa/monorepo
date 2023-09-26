@@ -8,6 +8,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "@remix-run/react";
 
 import stylesheet from './tailwind.css';
@@ -20,12 +21,15 @@ export const links: LinksFunction = () => [
 
 export default function App() {
   useSWEffect();
+  const location = useLocation();
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       // ...
+      console.log('window update!');
+      window.$ServiceWorkerHMRHandler$();
     }
-  })
+  }, [location])
 
   return (
     <html lang="en">

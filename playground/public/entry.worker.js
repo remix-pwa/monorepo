@@ -5555,15 +5555,30 @@ var RemixCache = class {
     return await Promise.all(keys2.map((key) => cache.match(key)));
   }
   async _lruCleanup() {
-    if (await this.length() >= this._maxItems) {
-      this._values().then(async (values) => {
-        const val = values.sort((a, b2) => {
-          const aMeta = a.clone().json().metadata;
-          const bMeta = b2.clone().json().metadata;
-          return aMeta.accessedAt - bMeta.accessedAt;
-        })[0];
-        this.delete(val.url);
+    const isOverflowing = await this.length() >= this._maxItems;
+    if (isOverflowing) {
+      if (true)
+        console.log(`Cache '${this.name}' is overflowing. Running LRU cleanup.`);
+      const keys2 = await this.keys();
+      const values = await this._values();
+      const keyVal = keys2.map((key, i) => ({ key, val: values[i] }));
+      const comparableArrayPromise = keyVal.map(async (val) => {
+        const { metadata } = await val.val.clone().json();
+        return {
+          metadata,
+          url: val.key.url
+        };
       });
+      const comparableArray = await Promise.all(comparableArrayPromise);
+      const sortedArr = comparableArray.sort((a, b2) => {
+        return a.metadata.accessedAt - b2.metadata.accessedAt;
+      });
+      const toBeDeletdItems = sortedArr.slice(0, sortedArr.length - this._maxItems + 1);
+      if (true)
+        console.log(`Deleting ${toBeDeletdItems.length} items from ${this.name} cache.`);
+      for (const deleted of toBeDeletdItems) {
+        await this.delete(deleted.url);
+      }
     }
   }
   async _getResponseValue(request, response) {
@@ -5723,7 +5738,7 @@ var RemixCache = class {
     newHeaders.set("X-Remix-PWA-AccessTime", accessedAt);
     newHeaders.set("X-Remix-PWA-Original-Content-Type", contentType || "text/plain");
     newHeaders.set("X-Remix-PWA-TTL", expiresAt.toString());
-    response = new Response(JSON.stringify({
+    const toBeCachedRes = new Response(JSON.stringify({
       metadata: {
         accessedAt,
         // JSON can't store `Infinity`, so we store it as a string
@@ -5738,11 +5753,16 @@ var RemixCache = class {
       statusText: response.statusText,
       headers: mergeHeaders(resHeaders, newHeaders)
     });
+    Object.defineProperty(toBeCachedRes, "url", { value: response.url });
+    Object.defineProperty(toBeCachedRes, "type", { value: response.type });
+    Object.defineProperty(toBeCachedRes, "ok", { value: response.ok });
+    Object.defineProperty(toBeCachedRes, "redirected", { value: response.redirected });
     try {
       await this._lruCleanup();
-      return await cache.put(request, response.clone());
+      return await cache.put(request, toBeCachedRes.clone());
     } catch (error) {
-      console.error("Failed to put to cache:", error);
+      if (true)
+        console.error("Failed to put to cache:", error);
     }
   }
   async add(request) {
@@ -11874,8 +11894,12 @@ var dataCache = Storage.open(DATA, {
   ttl: 60 * 60 * 24 * 7 * 1e3
   // 7 days
 });
-var documentCache = Storage.open(PAGES);
-var assetCache = Storage.open(ASSETS);
+var documentCache = Storage.open(PAGES, {
+  maxItems: 3
+});
+var assetCache = Storage.open(ASSETS, {
+  maxItems: 5
+});
 var handler = new RemixNavigationHandler({
   dataCache,
   documentCache
@@ -12230,7 +12254,7 @@ var hasWorkerAction8 = false;
 var hasWorkerLoader8 = true;
 
 // assets-module:@remix-sas/dev?assets
-var assets = ["/build/root-ZSHAXU5N.js", "/build/manifest-8D1E1F23.js", "/build/entry.client-EWQSIISJ.js", "/build/__remix_entry_dev-CBVCFEV6.js", "/build/routes/sync-away-YH75GZJK.js", "/build/routes/strategies-BCJYERTK.js", "/build/routes/selection-5VOLF2CZ.js", "/build/routes/basic-loader-5WJF6TX3.js", "/build/routes/basic-caching-WR4HFJEI.js", "/build/routes/basic-action-NOBVO42R.js", "/build/routes/_index-DZKU762B.js", "/build/routes/_app.flights-RZAXJSIW.js", "/build/routes/_app-23TDTGFM.js", "/build/_shared/runtime-JC7ERE5X.js", "/build/_shared/remix_hmr-KOXB6O7Z.js", "/build/_shared/react-dom-SNQ2UIZM.js", "/build/_shared/react-XL6EHOTX.js", "/build/_shared/jsx-runtime-7KJOCM5J.js", "/build/_shared/jsx-dev-runtime-D5NCTVC4.js", "/build/_shared/esm-IBLMKEZI.js", "/build/_shared/client-LQHWDDYA.js", "/build/_shared/chunk-TWSZTAQ6.js", "/build/_shared/chunk-TLBAXOHZ.js", "/build/_shared/chunk-STMUDJCL.js", "/build/_shared/chunk-PNG5AS42.js", "/build/_shared/chunk-NXSRMYPB.js", "/build/_shared/chunk-MWWJAGF7.js", "/build/_shared/chunk-LOYKRDJM.js", "/build/_shared/chunk-IWDL3EBP.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-FXD4XYGV.js", "/build/_shared/chunk-2USBH23P.js", "/build/_assets/tailwind-JOKRYXHU.css"];
+var assets = ["/build/root-ZQE24NBO.js", "/build/manifest-ABA2C8DB.js", "/build/entry.client-CTJI2EFE.js", "/build/__remix_entry_dev-CBVCFEV6.js", "/build/_assets/tailwind-JOKRYXHU.css", "/build/_shared/runtime-JC7ERE5X.js", "/build/_shared/remix_hmr-KOXB6O7Z.js", "/build/_shared/react-dom-SNQ2UIZM.js", "/build/_shared/react-XL6EHOTX.js", "/build/_shared/jsx-runtime-7KJOCM5J.js", "/build/_shared/jsx-dev-runtime-D5NCTVC4.js", "/build/_shared/esm-IBLMKEZI.js", "/build/_shared/client-LQHWDDYA.js", "/build/_shared/chunk-TWSZTAQ6.js", "/build/_shared/chunk-TLBAXOHZ.js", "/build/_shared/chunk-STMUDJCL.js", "/build/_shared/chunk-PNG5AS42.js", "/build/_shared/chunk-NXSRMYPB.js", "/build/_shared/chunk-MWWJAGF7.js", "/build/_shared/chunk-LOYKRDJM.js", "/build/_shared/chunk-IWDL3EBP.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-FXD4XYGV.js", "/build/_shared/chunk-6B5RGPN7.js", "/build/routes/sync-away-YH75GZJK.js", "/build/routes/strategies-L5GHXZSP.js", "/build/routes/selection-5VOLF2CZ.js", "/build/routes/basic-loader-5WJF6TX3.js", "/build/routes/basic-caching-JQKA2I53.js", "/build/routes/basic-action-NOBVO42R.js", "/build/routes/_index-DZKU762B.js", "/build/routes/_app.flights-RZAXJSIW.js", "/build/routes/_app-23TDTGFM.js"];
 
 // entry-module:@remix-pwa/build/magic
 var routes = {

@@ -1,4 +1,4 @@
-## @remix-pwa/dev 2.0.25 (2023-09-26)
+## @remix-pwa/dev 2.0.25-dev.1 (2023-09-26)
 
 
 ### Bug Fixes

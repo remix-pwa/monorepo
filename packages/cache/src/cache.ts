@@ -153,21 +153,44 @@ export class RemixCache implements CustomCache {
   }
 
   private async _lruCleanup() {
-    if ((await this.length()) >= this._maxItems) {
-      this._values().then(async values => {
-        const val = values.sort((a, b) => {
-          // @ts-ignore
-          const aMeta = a.clone().json().metadata;
-          //  @ts-ignore
-          const bMeta = b.clone().json().metadata;
+    const isOverflowing = (await this.length()) >= this._maxItems;
 
-          return aMeta.accessedAt - bMeta.accessedAt;
-        })[0];
+    if (isOverflowing) {
+      if (process.env.NODE_ENV === 'development')
+        console.log(`Cache '${this.name}' is overflowing. Running LRU cleanup.`);
+
+      const cache = await this._openCache();
+      const keys = await cache.keys();
+      const values = (await Promise.all(keys.map(key => cache.match(key)))) as Response[];
+
+      const keyVal = keys.map((key, i) => ({ key, val: values[i] }));
+
+      const comparableArrayPromise = keyVal.map(async val => {
+        const { metadata }: ResponseBody = await val.val.clone().json();
+
+        return {
+          metadata,
+          url: val.key.url,
+        };
+      });
+
+      const comparableArray = await Promise.all(comparableArrayPromise);
+
+      const sortedArr = comparableArray.sort((a, b) => {
+        return a.metadata.accessedAt - b.metadata.accessedAt;
+      });
+
+      const toBeDeletdItems = sortedArr.slice(0, sortedArr.length - this._maxItems + 1);
+
+      if (process.env.NODE_ENV === 'development')
+        console.log(`Deleting ${toBeDeletdItems.length} items from ${this.name} cache.`);
+
+      for (const deleted of toBeDeletdItems) {
         // This runs everytime a new entry is added so that means the array maximum size can never
         // exceed `maxItems + 1` (the new entry + the maxItems), so we can safely slice the array
         // to the maxItems length starting from the first index.
-        this.delete(val.url);
-      });
+        await this.delete(deleted.url);
+      }
     }
   }
 
@@ -371,7 +394,7 @@ export class RemixCache implements CustomCache {
     newHeaders.set('X-Remix-PWA-Original-Content-Type', contentType || 'text/plain');
     newHeaders.set('X-Remix-PWA-TTL', expiresAt.toString());
 
-    response = new Response(
+    const toBeCachedRes = new Response(
       JSON.stringify({
         metadata: {
           accessedAt,
@@ -390,12 +413,17 @@ export class RemixCache implements CustomCache {
       }
     );
 
+    Object.defineProperty(toBeCachedRes, 'url', { value: response.url });
+    Object.defineProperty(toBeCachedRes, 'type', { value: response.type });
+    Object.defineProperty(toBeCachedRes, 'ok', { value: response.ok });
+    Object.defineProperty(toBeCachedRes, 'redirected', { value: response.redirected });
+
     // Cache the updated response and maintain the cache
     try {
       await this._lruCleanup();
-      return await cache.put(request, response.clone());
+      return await cache.put(request, toBeCachedRes.clone());
     } catch (error) {
-      console.error('Failed to put to cache:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Failed to put to cache:', error);
     }
   }
 
