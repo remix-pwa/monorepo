@@ -9,9 +9,12 @@ declare global {
   }
 }
 
-export type LoadServiceWorkerOptions = RegistrationOptions & {
-  serviceWorkerUrl?: string;
-  serviceWorkerRegistrationCallback?: (registration: ServiceWorkerRegistration) => Promise<void> | void;
+export type LoadServiceWorkerOptions = {
+  serviceWorkerUrl: string;
+  serviceWorkerRegistrationCallback: (registration: ServiceWorkerRegistration) => Promise<void> | void;
+  scope: RegistrationOptions['scope'];
+  type: RegistrationOptions['type'];
+  updateViaCache?: RegistrationOptions['updateViaCache'];
 };
 
 /**
@@ -19,27 +22,41 @@ export type LoadServiceWorkerOptions = RegistrationOptions & {
  *
  * All parameters are optional.
  *
- * @param  options - Options for loading the service worker.
- * @param  options.serviceWorkerUrl='/entry.worker.js' - URL of the service worker.
- * @param  options.serviceWorkerRegistrationCallback - Callback function when the service worker gets registered. Takes in the `ServiceWorkerRegistration` object.
- * @param  options.registrationOptions - Options for the service worker registration.
+ * @param  serviceWorkerUrl='/entry.worker.js' - URL of the service worker.
+ * @param  serviceWorkerRegistrationCallback - Callback function when the service worker gets registered. Takes in the `ServiceWorkerRegistration` object.
+ * @param  scope - The service worker's registration scope.
+ * @param  type - The service worker's type.
+ * @param  updateViaCache - The service worker's `updateViaCache` option - controls how the browser handles updates to the service worker's script URL, and is one of the following strings:
+ * - `imports` - The browser bypasses the cache and attempts to update the service worker immediately.
+ * - `all` - The browser uses the cache to update the service worker.
+ * - `none` - The browser doesn't use the cache to update the service worker.
  *
  * ### Example
  *
  * ```ts
  * loadServiceWorker({
+ *  serviceWorkerUrl: "/entry.worker.js",
  *  scope: "/",
- *  serviceWorkerUrl: "/entry.worker.js"
+ *  type: "classic",
  * })
  * ```
  */
 export function loadServiceWorker(
-  { serviceWorkerRegistrationCallback, serviceWorkerUrl, ...options }: LoadServiceWorkerOptions = {
+  {
+    scope = '/',
+    serviceWorkerRegistrationCallback = (reg: ServiceWorkerRegistration) => {
+      reg.update();
+    },
+    serviceWorkerUrl = '/entry.worker.js',
+    type = 'classic',
+    updateViaCache,
+  }: LoadServiceWorkerOptions = {
     scope: '/',
-    serviceWorkerUrl: '/entry.worker.js',
+    type: 'classic',
     serviceWorkerRegistrationCallback: (reg: ServiceWorkerRegistration) => {
       reg.update();
     },
+    serviceWorkerUrl: '/entry.worker.js',
   }
 ) {
   if ('serviceWorker' in navigator) {
@@ -53,7 +70,11 @@ export function loadServiceWorker(
       };
 
       try {
-        const registration = await navigator.serviceWorker.register(serviceWorkerUrl!, options);
+        const registration = await navigator.serviceWorker.register(serviceWorkerUrl, {
+          scope,
+          type,
+          updateViaCache: updateViaCache || 'none',
+        });
 
         // await serviceWorkerRegistrationCallback?.(registration); ❌
 
