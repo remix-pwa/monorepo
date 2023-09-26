@@ -12,7 +12,9 @@ declare global {
 export type LoadServiceWorkerOptions = {
   serviceWorkerUrl: string;
   serviceWorkerRegistrationCallback: (registration: ServiceWorkerRegistration) => Promise<void> | void;
-  registrationOptions: RegistrationOptions;
+  scope: RegistrationOptions['scope'];
+  type: RegistrationOptions['type'];
+  updateViaCache?: RegistrationOptions['updateViaCache'];
 };
 
 /**
@@ -29,24 +31,27 @@ export type LoadServiceWorkerOptions = {
  * ```ts
  * loadServiceWorker({
  *  serviceWorkerUrl: "/entry.worker.js",
- *  registrationOptions: {
- *    scope: "/",
- *    type: "classic",
- *    updateViaCache: "none",
- *  },
+ *  scope: "/",
+ *  type: "classic",
  * })
  * ```
  */
 export function loadServiceWorker(
-  { registrationOptions, serviceWorkerRegistrationCallback, serviceWorkerUrl }: LoadServiceWorkerOptions = {
-    serviceWorkerUrl: '/entry.worker.js',
+  {
+    scope = '/',
+    serviceWorkerRegistrationCallback = (reg: ServiceWorkerRegistration) => {
+      reg.update();
+    },
+    serviceWorkerUrl = '/entry.worker.js',
+    type = 'classic',
+    updateViaCache,
+  }: LoadServiceWorkerOptions = {
+    scope: '/',
+    type: 'classic',
     serviceWorkerRegistrationCallback: (reg: ServiceWorkerRegistration) => {
       reg.update();
     },
-    registrationOptions: {
-      scope: '/',
-      type: 'classic',
-    },
+    serviceWorkerUrl: '/entry.worker.js',
   }
 ) {
   if ('serviceWorker' in navigator) {
@@ -60,7 +65,11 @@ export function loadServiceWorker(
       };
 
       try {
-        const registration = await navigator.serviceWorker.register(serviceWorkerUrl, registrationOptions);
+        const registration = await navigator.serviceWorker.register(serviceWorkerUrl, {
+          scope,
+          type,
+          updateViaCache: updateViaCache || 'none',
+        });
 
         // await serviceWorkerRegistrationCallback?.(registration); ❌
 
