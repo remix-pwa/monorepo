@@ -9,9 +9,10 @@ declare global {
   }
 }
 
-export type LoadServiceWorkerOptions = RegistrationOptions & {
-  serviceWorkerUrl?: string;
-  serviceWorkerRegistrationCallback?: (registration: ServiceWorkerRegistration) => Promise<void> | void;
+export type LoadServiceWorkerOptions = {
+  serviceWorkerUrl: string;
+  serviceWorkerRegistrationCallback: (registration: ServiceWorkerRegistration) => Promise<void> | void;
+  registrationOptions: RegistrationOptions;
 };
 
 /**
@@ -19,26 +20,32 @@ export type LoadServiceWorkerOptions = RegistrationOptions & {
  *
  * All parameters are optional.
  *
- * @param  options - Options for loading the service worker.
- * @param  options.serviceWorkerUrl='/entry.worker.js' - URL of the service worker.
- * @param  options.serviceWorkerRegistrationCallback - Callback function when the service worker gets registered. Takes in the `ServiceWorkerRegistration` object.
- * @param  options.registrationOptions - Options for the service worker registration.
+ * @param  serviceWorkerUrl='/entry.worker.js' - URL of the service worker.
+ * @param  serviceWorkerRegistrationCallback - Callback function when the service worker gets registered. Takes in the `ServiceWorkerRegistration` object.
+ * @param  registrationOptions - Options for the service worker registration.
  *
  * ### Example
  *
  * ```ts
  * loadServiceWorker({
- *  scope: "/",
- *  serviceWorkerUrl: "/entry.worker.js"
+ *  serviceWorkerUrl: "/entry.worker.js",
+ *  registrationOptions: {
+ *    scope: "/",
+ *    type: "classic",
+ *    updateViaCache: "none",
+ *  },
  * })
  * ```
  */
 export function loadServiceWorker(
-  { serviceWorkerRegistrationCallback, serviceWorkerUrl, ...options }: LoadServiceWorkerOptions = {
-    scope: '/',
+  { registrationOptions, serviceWorkerRegistrationCallback, serviceWorkerUrl }: LoadServiceWorkerOptions = {
     serviceWorkerUrl: '/entry.worker.js',
     serviceWorkerRegistrationCallback: (reg: ServiceWorkerRegistration) => {
       reg.update();
+    },
+    registrationOptions: {
+      scope: '/',
+      type: 'classic',
     },
   }
 ) {
@@ -53,7 +60,7 @@ export function loadServiceWorker(
       };
 
       try {
-        const registration = await navigator.serviceWorker.register(serviceWorkerUrl!, options);
+        const registration = await navigator.serviceWorker.register(serviceWorkerUrl, registrationOptions);
 
         // await serviceWorkerRegistrationCallback?.(registration); ❌
 
