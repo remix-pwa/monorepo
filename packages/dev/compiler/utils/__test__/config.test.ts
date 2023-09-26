@@ -7,10 +7,15 @@ const mockResolve = vi.hoisted(() => vi.fn());
 const mockExists = vi.hoisted(() => vi.fn());
 
 vi.doMock('node:path', () => ({
+  normalize: (path: string) => path,
   resolve: mockResolve,
 }));
 vi.doMock('node:fs', () => ({
   existsSync: mockExists,
+  statSync: () => ({ mtimeMs: 123456789 }),
+}));
+vi.mock('node:url', () => ({
+  pathToFileURL: () => ({ href: './__test__/remix.config.ts' }),
 }));
 vi.doMock('@remix-run/dev/dist/config.js', () => {
   return {
@@ -38,6 +43,7 @@ describe('readConfig', () => {
     vi.doUnmock('./remix.config.ts');
     vi.doUnmock('node:fs');
     vi.doUnmock('node:path');
+    vi.doUnmock('node:url');
   });
 
   test('should return the resolved config object with default worker options', async () => {
