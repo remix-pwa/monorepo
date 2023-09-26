@@ -3,7 +3,6 @@ import { readConfig as _readConfig, findConfig } from '@remix-run/dev/dist/confi
 import type { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';
 import { existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { platform } from 'node:os';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -64,19 +63,21 @@ function findEntry(dirname: string, basename: string): string | undefined {
   }
 }
 
-const isWindows = platform() === 'win32';
-const resolveUrl = (string: string) => {
-  return isWindows ? pathToFileURL(string).href : string;
-};
+// const isWindows = platform() === 'win32';
+// const resolveUrl = (string: string) => {
+//   return isWindows ? pathToFileURL(string).href : string;
+// };
 
 /**
  * Reads the remix.config.js file and returns the config object.
  */
 export default async function readConfig(remixRoot: string, mode: ServerMode): Promise<ResolvedWorkerConfig> {
   const remixConfig = await _readConfig(remixRoot, mode);
-  const workerConfig = (await import(resolveUrl(findConfig(remixRoot, 'remix.config', EXTENSIONS) as string)).then(
-    m => m.default ?? m
-  )) as WorkerConfig;
+  console.log(remixConfig, 'REMIX CONFIG');
+  console.log(findConfig(remixRoot, 'remix.config', EXTENSIONS), 'FIND CONFIG');
+  const workerConfig = (await import(
+    pathToFileURL(findConfig(remixRoot, 'remix.config', EXTENSIONS) as string).href
+  ).then(m => m.default ?? m)) as WorkerConfig;
 
   return {
     ...remixConfig,
