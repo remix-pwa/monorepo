@@ -16,8 +16,12 @@ const ASSETS = 'assets-cache';
 const dataCache = Storage.open(DATA, {
   ttl: 60 * 60 * 24 * 7 * 1_000, // 7 days
 });
-const documentCache = Storage.open(PAGES);
-const assetCache = Storage.open(ASSETS);
+const documentCache = Storage.open(PAGES, {
+  maxItems: 3
+});
+const assetCache = Storage.open(ASSETS, {
+  maxItems: 5
+});
 
 let handler = new RemixNavigationHandler({
   dataCache: dataCache,
