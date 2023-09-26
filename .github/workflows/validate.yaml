@@ -32,7 +32,7 @@ jobs:
       - name: Install dependencies
         run: npm clean-install
       - name: Run Commitlint
-        run:  npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
+        run: npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
   lint:
     name: 💅 Lint
     runs-on: ubuntu-latest
@@ -59,7 +59,10 @@ jobs:
         run: npm run lint
   unit_test:
     name: 🧪 Unit test
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
