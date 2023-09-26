@@ -159,8 +159,9 @@ export class RemixCache implements CustomCache {
       if (process.env.NODE_ENV === 'development')
         console.log(`Cache '${this.name}' is overflowing. Running LRU cleanup.`);
 
-      const keys = await this.keys();
-      const values = await this._values();
+      const cache = await this._openCache();
+      const keys = await cache.keys();
+      const values = (await Promise.all(keys.map(key => cache.match(key)))) as Response[];
 
       const keyVal = keys.map((key, i) => ({ key, val: values[i] }));
 
