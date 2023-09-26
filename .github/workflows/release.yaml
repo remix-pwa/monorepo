@@ -4,9 +4,6 @@ on:
   push:
     branches: [main, dev]
 
-env:
-  SEMANTIC_RELEASE_VERSION: 22.0.0
-
 jobs:
   release:
     name: Semantic release
@@ -38,4 +35,4 @@ jobs:
           NODE_ENV: production
           HUSKY: 0
         run: |
-          npx --package @semantic-release/exec --package @semantic-release/release-notes-generator@11.0.7 --package @semantic-release/git --package @semantic-release/changelog --package semantic-release@${{ env.SEMANTIC_RELEASE_VERSION }} --package @qiwi/multi-semantic-release multi-semantic-release
+          npx --package @semantic-release/release-notes-generator --package @semantic-release/git --package @semantic-release/changelog --package @qiwi/multi-semantic-release multi-semantic-release
