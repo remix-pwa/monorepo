@@ -1,3 +1,20 @@
+## @remix-pwa/sw 2.1.8 (2023-09-26)
+
+
+### Bug Fixes
+
+* **sw:** updated `loadServiceWorker` defaults format faf7158
+* **sw:** updated `loadServiceWorker` defaults format cdf73e0
+* **sw:** updated and sorted out sw loader params 32e92ec
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/cache:** upgraded to 2.0.9
+
 ## @remix-pwa/sw 2.1.8-dev.1 (2023-09-26)
 
 
