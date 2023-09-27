@@ -1,3 +1,10 @@
+## @remix-pwa/dev 2.0.26 (2023-09-27)
+
+
+### Bug Fixes
+
+* **compiler:** handle imports on different OS 76a9d65
+
 ## @remix-pwa/dev 2.0.26-dev.1 (2023-09-27)
 
 
