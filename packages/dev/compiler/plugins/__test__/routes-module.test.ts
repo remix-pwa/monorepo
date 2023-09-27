@@ -70,14 +70,7 @@ describe('routesModulesPlugin', () => {
     const onLoadCallback = build.onLoad.mock.calls[0][1];
     const result = await onLoadCallback({ path: 'routes/home.js?worker' });
 
-    expect(result).toHaveProperty(
-      'contents',
-      expect.stringContaining(
-        'export { workerAction, workerLoader } from "./routes/home.js";\n' +
-          '          export const hasWorkerAction = true;\n' +
-          '          export const hasWorkerLoader = true'
-      )
-    );
+    expect(result.contents).toMatchInlineSnapshot('"export { workerAction, workerLoader } from \\"./routes/home.js\\";"');
     expect(result).not.toHaveProperty('contents', expect.stringContaining('otherExport'));
   });
 

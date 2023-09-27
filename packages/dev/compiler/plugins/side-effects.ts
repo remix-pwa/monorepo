@@ -1,14 +1,15 @@
-import type { OnLoadResult, OnResolveArgs, Plugin, PluginBuild } from 'esbuild';
+import type { OnLoadResult, Plugin, PluginBuild } from 'esbuild';
 
+import type { ResolvedWorkerConfig } from '../utils/config.js';
 const FILTER_REGEX = /\?user$/;
 
 /**
  * The `sw-side-effects` plugin marks the user entry.worker as sideEffect to prevent esbuild from tree shaking it.
  */
-export default function sideEffectsPlugin(): Plugin {
+export default function sideEffectsPlugin(config: ResolvedWorkerConfig): Plugin {
   async function setup(build: PluginBuild) {
-    const onResolve = ({ path }: OnResolveArgs) => ({
-      path: path.replace(FILTER_REGEX, ''),
+    const onResolve = () => ({
+      path: config.entryWorkerFile,
       sideEffects: true,
     });
 

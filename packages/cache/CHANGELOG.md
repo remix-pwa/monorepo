@@ -1,14 +1,16 @@
-## @remix-pwa/cache 2.0.9 (2023-09-26)
+## @remix-pwa/cache 2.0.9-dev.3 (2023-09-27)
 
 
 ### Bug Fixes
 
-* **cache:** fixed LRU cleanup workflow in cache 2dc0449
+* **cache:** improved cache catch 4fec009
+
+## @remix-pwa/cache 2.0.9-dev.2 (2023-09-27)
 
 
-### Performance Improvements
+### Bug Fixes
 
-* **cache:** slightly improved lru algo bec7ca3
+* **cache:** fixed cache issue during redirects 50007f2
 
 ## @remix-pwa/cache 2.0.9-dev.1 (2023-09-26)
 

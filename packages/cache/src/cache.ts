@@ -146,18 +146,12 @@ export class RemixCache implements CustomCache {
     return false;
   }
 
-  private async _values() {
-    const cache = await this._openCache();
-    const keys = await cache.keys();
-    return (await Promise.all(keys.map(key => cache.match(key)))) as Response[];
-  }
-
   private async _lruCleanup() {
     const isOverflowing = (await this.length()) >= this._maxItems;
 
     if (isOverflowing) {
-      if (process.env.NODE_ENV === 'development')
-        console.log(`Cache '${this.name}' is overflowing. Running LRU cleanup.`);
+      // if (process.env.NODE_ENV === 'development')
+      //   console.log(`Cache '${this.name}' is overflowing. Running LRU cleanup.`);
 
       const cache = await this._openCache();
       const keys = await cache.keys();
@@ -166,6 +160,11 @@ export class RemixCache implements CustomCache {
       const keyVal = keys.map((key, i) => ({ key, val: values[i] }));
 
       const comparableArrayPromise = keyVal.map(async val => {
+        if (this.name !== 'assets-cache') {
+          console.log('inner', val);
+          console.log('inner-2', (await val.val.clone().text()).slice(0, 20));
+        }
+
         const { metadata }: ResponseBody = await val.val.clone().json();
 
         return {
@@ -177,13 +176,13 @@ export class RemixCache implements CustomCache {
       const comparableArray = await Promise.all(comparableArrayPromise);
 
       const sortedArr = comparableArray.sort((a, b) => {
-        return a.metadata.accessedAt - b.metadata.accessedAt;
+        return Number(a.metadata.accessedAt) - Number(b.metadata.accessedAt);
       });
 
       const toBeDeletdItems = sortedArr.slice(0, sortedArr.length - this._maxItems + 1);
 
-      if (process.env.NODE_ENV === 'development')
-        console.log(`Deleting ${toBeDeletdItems.length} items from ${this.name} cache.`);
+      // if (process.env.NODE_ENV === 'development')
+      //   console.log(`Deleting ${toBeDeletdItems.length} items from ${this.name} cache.`);
 
       for (const deleted of toBeDeletdItems) {
         // This runs everytime a new entry is added so that means the array maximum size can never
@@ -343,7 +342,7 @@ export class RemixCache implements CustomCache {
     // If ttl is negative, don't cache
     if (this._ttl <= 0 || (ttl && ttl <= 0)) return;
 
-    if (response === null || response.clone().body === null) {
+    if (response === null || response.status === 204 || response.statusText.toLowerCase() === 'no content') {
       // If the response/response body is null, delete the entry (if found)
       // and don't cache.
       await this.delete(request);
