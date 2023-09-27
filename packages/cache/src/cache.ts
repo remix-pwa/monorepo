@@ -342,7 +342,7 @@ export class RemixCache implements CustomCache {
     // If ttl is negative, don't cache
     if (this._ttl <= 0 || (ttl && ttl <= 0)) return;
 
-    if (response === null || response.clone().body === null || response.statusText.toLowerCase() === 'no content') {
+    if (response === null || response.status === 204 || response.statusText.toLowerCase() === 'no content') {
       // If the response/response body is null, delete the entry (if found)
       // and don't cache.
       await this.delete(request);
