@@ -26,8 +26,8 @@ export default function App() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       // ...
-      console.log('window update!');
-      window.$ServiceWorkerHMRHandler$();
+      // console.log('window update!');
+      // window.$ServiceWorkerHMRHandler$();
     }
   }, [location])
 

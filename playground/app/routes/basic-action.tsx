@@ -4,6 +4,10 @@ import type { ActionFunction } from "@remix-run/node";
 import { Form, useActionData, useFetcher } from "@remix-run/react";
 import { useEffect } from "react";
 
+export const loader = () => {
+  return redirect('/error-would-happen');
+}
+
 export const action: ActionFunction = () => {
   const actionData = {
     message: 'This is from a simple action. Nothing more to see here.'
