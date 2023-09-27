@@ -10,7 +10,9 @@ const NAMESPACE = 'entry-module';
  * Creates a string representation of the routes to be imported
  */
 function createRouteImports(routes: ConfigRoute[]): string {
-  return routes.map((route, index) => `import * as route${index} from '${route.file}?worker';`).join('\n');
+  return routes
+    .map((route, index) => `import * as route${index} from ${JSON.stringify(`${route.file}?worker`)};`)
+    .join('\n');
 }
 
 /**
@@ -26,9 +28,7 @@ function createRouteManifest(routes: RouteManifest): string {
           path: ${JSON.stringify(route.path)},
           index: ${JSON.stringify(route.index)},
           caseSensitive: ${JSON.stringify(route.caseSensitive)},
-          module: route${index},
-          hasWorkerAction: Boolean(route${index}.hasWorkerAction),
-          hasWorkerLoader: Boolean(route${index}.hasWorkerLoader),
+          module: route${index}
         }`
     )
     .join(',\n');
@@ -49,7 +49,7 @@ export default function entryModulePlugin(config: ResolvedWorkerConfig): Plugin 
     const onLoad = () => {
       const routes = Object.values(config.routes);
       const contents = `
-      import * as entryWorker from  '${config.entryWorkerFile}?user';
+      import * as entryWorker from ${JSON.stringify(config.entryWorkerFile)};
 
     ${createRouteImports(routes)}
 
@@ -57,7 +57,7 @@ export default function entryModulePlugin(config: ResolvedWorkerConfig): Plugin 
       ${createRouteManifest(config.routes)}
     };
 
-    export { assets } from '@remix-sas/dev?assets';
+    export { assets } from '@remix-pwa/dev?assets';
     export const entry = { module: entryWorker };
     `;
 

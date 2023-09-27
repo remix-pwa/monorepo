@@ -1,3 +1,4 @@
+import type { ResolvedWorkerConfig } from '@remix-pwa/dev/dist/compiler/utils/config';
 import type { OnLoadArgs, PluginBuild } from 'esbuild';
 import type { MockedObject } from 'vitest';
 import { afterAll, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -10,7 +11,7 @@ describe('assets-module plugin', () => {
     rootDirectory: '/root/',
     assetsBuildDirectory: '/path/to/assets',
     publicPath: 'public/build',
-  };
+  } as ResolvedWorkerConfig;
 
   beforeEach(() => {
     mockGlob.mockClear();
@@ -35,9 +36,9 @@ describe('assets-module plugin', () => {
       onLoad: vi.fn(),
     } as unknown as PluginBuild;
     await plugin.setup(build);
-    expect(build.onResolve).toHaveBeenCalledWith({ filter: /@remix-sas\/dev\?assets/ }, expect.any(Function));
+    expect(build.onResolve).toHaveBeenCalledWith({ filter: /@remix-pwa\/dev\?assets/ }, expect.any(Function));
     expect(build.onLoad).toHaveBeenCalledWith(
-      { filter: /@remix-sas\/dev\?assets/, namespace: 'assets-module' },
+      { filter: /@remix-pwa\/dev\?assets/, namespace: 'assets-module' },
       expect.any(Function)
     );
   });

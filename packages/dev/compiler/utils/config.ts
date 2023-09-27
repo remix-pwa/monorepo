@@ -75,11 +75,14 @@ async function importWorkerConfig(root: string): Promise<WorkerConfig> {
 export default async function readConfig(remixRoot: string, mode: ServerMode): Promise<ResolvedWorkerConfig> {
   const remixConfig = await _readConfig(remixRoot, mode);
   const workerConfig = await importWorkerConfig(remixRoot);
+  const entryWorkerFile = findEntry(remixConfig.appDirectory, 'entry.worker');
 
   return {
     ...remixConfig,
     entryWorkerFile:
-      workerConfig.entryWorkerFile ?? findEntry(remixConfig.appDirectory, 'entry.worker') ?? DEFAULT_ENTRY_WORKER_FILE,
+      workerConfig.entryWorkerFile ?? entryWorkerFile
+        ? resolve(remixConfig.appDirectory, entryWorkerFile as string)
+        : DEFAULT_ENTRY_WORKER_FILE,
     worker: workerConfig.worker ?? _require.resolve('@remix-pwa/worker-runtime'),
     workerBuildDirectory: workerConfig.workerBuildDirectory ?? resolve('./public'),
     workerName: workerConfig.workerName ?? 'entry.worker',

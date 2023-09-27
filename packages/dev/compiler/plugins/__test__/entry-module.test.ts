@@ -59,10 +59,10 @@ describe('entry-module plugin', () => {
     expect(result).toHaveProperty('contents');
     expect(result.contents).toMatchInlineSnapshot(`
       "
-            import * as entryWorker from  'entry-worker.js?user';
+            import * as entryWorker from \\"entry-worker.js\\";
 
-          import * as route0 from 'routes/home.js?worker';
-      import * as route1 from 'routes/about.js?worker';
+          import * as route0 from \\"routes/home.js?worker\\";
+      import * as route1 from \\"routes/about.js?worker\\";
 
           export const routes = {
             \\"/\\": {
@@ -71,9 +71,7 @@ describe('entry-module plugin', () => {
                 path: \\"/\\",
                 index: undefined,
                 caseSensitive: undefined,
-                module: route0,
-                hasWorkerAction: Boolean(route0.hasWorkerAction),
-                hasWorkerLoader: Boolean(route0.hasWorkerLoader),
+                module: route0
               },
       \\"/about\\": {
                 id: \\"/about\\",
@@ -81,13 +79,11 @@ describe('entry-module plugin', () => {
                 path: \\"/about\\",
                 index: undefined,
                 caseSensitive: undefined,
-                module: route1,
-                hasWorkerAction: Boolean(route1.hasWorkerAction),
-                hasWorkerLoader: Boolean(route1.hasWorkerLoader),
+                module: route1
               }
           };
 
-          export { assets } from '@remix-sas/dev?assets';
+          export { assets } from '@remix-pwa/dev?assets';
           export const entry = { module: entryWorker };
           "
     `);
