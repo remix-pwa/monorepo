@@ -217,9 +217,9 @@ var require_ieee754 = __commonJS({
   }
 });
 
-// ../packages/cache/node_modules/buffer/index.js
+// node_modules/buffer/index.js
 var require_buffer = __commonJS({
-  "../packages/cache/node_modules/buffer/index.js"(exports) {
+  "node_modules/buffer/index.js"(exports) {
     "use strict";
     var base64 = require_base64_js();
     var ieee754 = require_ieee754();
@@ -5484,10 +5484,10 @@ var k = Symbol();
 var w = Symbol();
 var f = Symbol();
 
-// ../packages/cache/dist/src/cache.js
+// node_modules/@remix-pwa/cache/dist/src/cache.js
 var B = __toESM(require_buffer(), 1);
 
-// ../packages/cache/dist/src/utils.js
+// node_modules/@remix-pwa/cache/dist/src/utils.js
 function mergeHeaders(...headers) {
   const merged = new Headers();
   for (const header of headers) {
@@ -5504,7 +5504,7 @@ function omit(key, obj) {
   return rest;
 }
 
-// ../packages/cache/dist/src/cache.js
+// node_modules/@remix-pwa/cache/dist/src/cache.js
 var Strategy;
 (function(Strategy2) {
   Strategy2["CacheFirst"] = "cache-first";
@@ -5559,8 +5559,9 @@ var RemixCache = class {
     if (isOverflowing) {
       if (true)
         console.log(`Cache '${this.name}' is overflowing. Running LRU cleanup.`);
-      const keys2 = await this.keys();
-      const values = await this._values();
+      const cache = await this._openCache();
+      const keys2 = await cache.keys();
+      const values = await Promise.all(keys2.map((key) => cache.match(key)));
       const keyVal = keys2.map((key, i) => ({ key, val: values[i] }));
       const comparableArrayPromise = keyVal.map(async (val) => {
         const { metadata } = await val.val.clone().json();
@@ -5784,7 +5785,7 @@ var RemixCache = class {
   }
 };
 
-// ../packages/cache/dist/src/storage.js
+// node_modules/@remix-pwa/cache/dist/src/storage.js
 var RemixCacheStorage = class {
   // eslint-disable-next-line no-useless-constructor
   constructor() {
@@ -5945,7 +5946,7 @@ var RemixCacheStorage = class {
 RemixCacheStorage._instances = /* @__PURE__ */ new Map();
 var Storage = RemixCacheStorage;
 
-// ../packages/strategy/dist/src/utils.js
+// node_modules/@remix-pwa/strategy/dist/src/utils.js
 var isHttpRequest = (request) => {
   if (request instanceof Request) {
     return request.url.startsWith("http");
@@ -5959,7 +5960,7 @@ var toJSON = async (response) => {
   return response;
 };
 
-// ../packages/strategy/dist/src/cacheFirst.js
+// node_modules/@remix-pwa/strategy/dist/src/cacheFirst.js
 var cacheFirst = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0 }) => {
   return async (request) => {
     if (!isHttpRequest(request)) {
@@ -5988,7 +5989,7 @@ var cacheFirst = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidF
   };
 };
 
-// ../packages/strategy/dist/src/cacheOnly.js
+// node_modules/@remix-pwa/strategy/dist/src/cacheOnly.js
 var cacheOnly = ({ cache: cacheName, cacheOptions, cacheQueryOptions }) => {
   return async (request) => {
     if (!isHttpRequest(request)) {
@@ -6015,7 +6016,7 @@ var cacheOnly = ({ cache: cacheName, cacheOptions, cacheQueryOptions }) => {
   };
 };
 
-// ../packages/strategy/dist/src/networkFirst.js
+// node_modules/@remix-pwa/strategy/dist/src/networkFirst.js
 var networkFirst = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0, fetchDidSucceed = void 0, networkTimeoutSeconds = 10 }) => {
   return async (request) => {
     if (!isHttpRequest(request)) {
@@ -6057,7 +6058,7 @@ var networkFirst = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDi
   };
 };
 
-// ../packages/strategy/dist/src/staleWhileRevalidate.js
+// node_modules/@remix-pwa/strategy/dist/src/staleWhileRevalidate.js
 var staleWhileRevalidate = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0, strict = false, swr: swr2 }) => {
   return async (request) => {
     if (!isHttpRequest(request)) {
@@ -11950,8 +11951,6 @@ var route0 = __toESM(require_root());
 // routes-module:routes/basic-caching.tsx?worker
 var basic_caching_exports = {};
 __export(basic_caching_exports, {
-  hasWorkerAction: () => hasWorkerAction,
-  hasWorkerLoader: () => hasWorkerLoader,
   workerLoader: () => workerLoader
 });
 
@@ -11991,15 +11990,9 @@ var workerLoader = async ({ context }) => {
   });
 };
 
-// routes-module:routes/basic-caching.tsx?worker
-var hasWorkerAction = false;
-var hasWorkerLoader = true;
-
 // routes-module:routes/_app.flights.tsx?worker
 var app_flights_exports = {};
 __export(app_flights_exports, {
-  hasWorkerAction: () => hasWorkerAction2,
-  hasWorkerLoader: () => hasWorkerLoader2,
   workerAction: () => workerAction,
   workerLoader: () => workerLoader2
 });
@@ -12045,15 +12038,9 @@ var workerLoader2 = async ({ context }) => {
   }
 };
 
-// routes-module:routes/_app.flights.tsx?worker
-var hasWorkerAction2 = true;
-var hasWorkerLoader2 = true;
-
 // routes-module:routes/basic-action.tsx?worker
 var basic_action_exports = {};
 __export(basic_action_exports, {
-  hasWorkerAction: () => hasWorkerAction3,
-  hasWorkerLoader: () => hasWorkerLoader3,
   workerAction: () => workerAction2
 });
 
@@ -12079,15 +12066,9 @@ var workerAction2 = async ({ context }) => {
   });
 };
 
-// routes-module:routes/basic-action.tsx?worker
-var hasWorkerAction3 = true;
-var hasWorkerLoader3 = false;
-
 // routes-module:routes/basic-loader.tsx?worker
 var basic_loader_exports = {};
 __export(basic_loader_exports, {
-  hasWorkerAction: () => hasWorkerAction4,
-  hasWorkerLoader: () => hasWorkerLoader4,
   workerLoader: () => workerLoader3
 });
 
@@ -12114,15 +12095,9 @@ var workerLoader3 = async ({ context }) => {
   );
 };
 
-// routes-module:routes/basic-loader.tsx?worker
-var hasWorkerAction4 = false;
-var hasWorkerLoader4 = true;
-
 // routes-module:routes/strategies.tsx?worker
 var strategies_exports = {};
 __export(strategies_exports, {
-  hasWorkerAction: () => hasWorkerAction5,
-  hasWorkerLoader: () => hasWorkerLoader5,
   workerAction: () => workerAction3
 });
 
@@ -12161,15 +12136,9 @@ var workerAction3 = async ({ context }) => {
   return null;
 };
 
-// routes-module:routes/strategies.tsx?worker
-var hasWorkerAction5 = true;
-var hasWorkerLoader5 = false;
-
 // routes-module:routes/selection.tsx?worker
 var selection_exports = {};
 __export(selection_exports, {
-  hasWorkerAction: () => hasWorkerAction6,
-  hasWorkerLoader: () => hasWorkerLoader6,
   workerLoader: () => workerLoader4
 });
 
@@ -12183,15 +12152,9 @@ async function workerLoader4({ context }) {
   return json2({ selections });
 }
 
-// routes-module:routes/selection.tsx?worker
-var hasWorkerAction6 = false;
-var hasWorkerLoader6 = true;
-
 // routes-module:routes/sync-away.tsx?worker
 var sync_away_exports = {};
 __export(sync_away_exports, {
-  hasWorkerAction: () => hasWorkerAction7,
-  hasWorkerLoader: () => hasWorkerLoader7,
   workerAction: () => workerAction4
 });
 
@@ -12219,18 +12182,12 @@ var workerAction4 = async ({ context }) => {
   });
 };
 
-// routes-module:routes/sync-away.tsx?worker
-var hasWorkerAction7 = true;
-var hasWorkerLoader7 = false;
-
 // entry-module:@remix-pwa/build/magic
 var route8 = __toESM(require_index());
 
 // routes-module:routes/_app.tsx?worker
 var app_exports = {};
 __export(app_exports, {
-  hasWorkerAction: () => hasWorkerAction8,
-  hasWorkerLoader: () => hasWorkerLoader8,
   workerLoader: () => workerLoader5
 });
 
@@ -12249,12 +12206,8 @@ async function workerLoader5({ context }) {
   });
 }
 
-// routes-module:routes/_app.tsx?worker
-var hasWorkerAction8 = false;
-var hasWorkerLoader8 = true;
-
-// assets-module:@remix-sas/dev?assets
-var assets = ["/build/root-ZQE24NBO.js", "/build/manifest-ABA2C8DB.js", "/build/entry.client-CTJI2EFE.js", "/build/__remix_entry_dev-CBVCFEV6.js", "/build/_assets/tailwind-JOKRYXHU.css", "/build/_shared/runtime-JC7ERE5X.js", "/build/_shared/remix_hmr-KOXB6O7Z.js", "/build/_shared/react-dom-SNQ2UIZM.js", "/build/_shared/react-XL6EHOTX.js", "/build/_shared/jsx-runtime-7KJOCM5J.js", "/build/_shared/jsx-dev-runtime-D5NCTVC4.js", "/build/_shared/esm-IBLMKEZI.js", "/build/_shared/client-LQHWDDYA.js", "/build/_shared/chunk-TWSZTAQ6.js", "/build/_shared/chunk-TLBAXOHZ.js", "/build/_shared/chunk-STMUDJCL.js", "/build/_shared/chunk-PNG5AS42.js", "/build/_shared/chunk-NXSRMYPB.js", "/build/_shared/chunk-MWWJAGF7.js", "/build/_shared/chunk-LOYKRDJM.js", "/build/_shared/chunk-IWDL3EBP.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-FXD4XYGV.js", "/build/_shared/chunk-6B5RGPN7.js", "/build/routes/sync-away-YH75GZJK.js", "/build/routes/strategies-L5GHXZSP.js", "/build/routes/selection-5VOLF2CZ.js", "/build/routes/basic-loader-5WJF6TX3.js", "/build/routes/basic-caching-JQKA2I53.js", "/build/routes/basic-action-NOBVO42R.js", "/build/routes/_index-DZKU762B.js", "/build/routes/_app.flights-RZAXJSIW.js", "/build/routes/_app-23TDTGFM.js"];
+// assets-module:@remix-pwa/dev?assets
+var assets = ["/build/root-HMNKMKG4.js", "/build/manifest-18ED901A.js", "/build/entry.client-74DAN2U5.js", "/build/__remix_entry_dev-CJQFBY5A.js", "/build/routes/selection-TLS4KRUS.js", "/build/routes/_index-TQFKRCTL.js", "/build/routes/_app.flights-TRLLAC6W.js", "/build/routes/_app-CQWNMIRV.js", "/build/_shared/runtime-JC7ERE5X.js", "/build/_shared/remix_hmr-TOGZDDTX.js", "/build/_shared/react-dom-SNQ2UIZM.js", "/build/_shared/react-XL6EHOTX.js", "/build/_shared/jsx-runtime-7KJOCM5J.js", "/build/_shared/jsx-dev-runtime-D5NCTVC4.js", "/build/_shared/esm-DNBJIPSZ.js", "/build/_shared/client-LQHWDDYA.js", "/build/_shared/chunk-TWSZTAQ6.js", "/build/_shared/chunk-TLBAXOHZ.js", "/build/_shared/chunk-STMUDJCL.js", "/build/_shared/chunk-PZZB3GR5.js", "/build/_shared/chunk-PNG5AS42.js", "/build/_shared/chunk-LOYKRDJM.js", "/build/_shared/chunk-KYGJKDKQ.js", "/build/_shared/chunk-FXD4XYGV.js", "/build/_shared/chunk-6MFJZ36U.js"];
 
 // entry-module:@remix-pwa/build/magic
 var routes = {
@@ -12264,9 +12217,7 @@ var routes = {
     path: "",
     index: void 0,
     caseSensitive: void 0,
-    module: route0,
-    hasWorkerAction: Boolean(route0.hasWorkerAction),
-    hasWorkerLoader: Boolean(route0.hasWorkerLoader)
+    module: route0
   },
   "routes/basic-caching": {
     id: "routes/basic-caching",
@@ -12274,9 +12225,7 @@ var routes = {
     path: "basic-caching",
     index: void 0,
     caseSensitive: void 0,
-    module: basic_caching_exports,
-    hasWorkerAction: Boolean(hasWorkerAction),
-    hasWorkerLoader: Boolean(hasWorkerLoader)
+    module: basic_caching_exports
   },
   "routes/_app.flights": {
     id: "routes/_app.flights",
@@ -12284,9 +12233,7 @@ var routes = {
     path: "flights",
     index: void 0,
     caseSensitive: void 0,
-    module: app_flights_exports,
-    hasWorkerAction: Boolean(hasWorkerAction2),
-    hasWorkerLoader: Boolean(hasWorkerLoader2)
+    module: app_flights_exports
   },
   "routes/basic-action": {
     id: "routes/basic-action",
@@ -12294,9 +12241,7 @@ var routes = {
     path: "basic-action",
     index: void 0,
     caseSensitive: void 0,
-    module: basic_action_exports,
-    hasWorkerAction: Boolean(hasWorkerAction3),
-    hasWorkerLoader: Boolean(hasWorkerLoader3)
+    module: basic_action_exports
   },
   "routes/basic-loader": {
     id: "routes/basic-loader",
@@ -12304,9 +12249,7 @@ var routes = {
     path: "basic-loader",
     index: void 0,
     caseSensitive: void 0,
-    module: basic_loader_exports,
-    hasWorkerAction: Boolean(hasWorkerAction4),
-    hasWorkerLoader: Boolean(hasWorkerLoader4)
+    module: basic_loader_exports
   },
   "routes/strategies": {
     id: "routes/strategies",
@@ -12314,9 +12257,7 @@ var routes = {
     path: "strategies",
     index: void 0,
     caseSensitive: void 0,
-    module: strategies_exports,
-    hasWorkerAction: Boolean(hasWorkerAction5),
-    hasWorkerLoader: Boolean(hasWorkerLoader5)
+    module: strategies_exports
   },
   "routes/selection": {
     id: "routes/selection",
@@ -12324,9 +12265,7 @@ var routes = {
     path: "selection",
     index: void 0,
     caseSensitive: void 0,
-    module: selection_exports,
-    hasWorkerAction: Boolean(hasWorkerAction6),
-    hasWorkerLoader: Boolean(hasWorkerLoader6)
+    module: selection_exports
   },
   "routes/sync-away": {
     id: "routes/sync-away",
@@ -12334,9 +12273,7 @@ var routes = {
     path: "sync-away",
     index: void 0,
     caseSensitive: void 0,
-    module: sync_away_exports,
-    hasWorkerAction: Boolean(hasWorkerAction7),
-    hasWorkerLoader: Boolean(hasWorkerLoader7)
+    module: sync_away_exports
   },
   "routes/_index": {
     id: "routes/_index",
@@ -12344,9 +12281,7 @@ var routes = {
     path: void 0,
     index: true,
     caseSensitive: void 0,
-    module: route8,
-    hasWorkerAction: Boolean(route8.hasWorkerAction),
-    hasWorkerLoader: Boolean(route8.hasWorkerLoader)
+    module: route8
   },
   "routes/_app": {
     id: "routes/_app",
@@ -12354,9 +12289,7 @@ var routes = {
     path: void 0,
     index: void 0,
     caseSensitive: void 0,
-    module: app_exports,
-    hasWorkerAction: Boolean(hasWorkerAction8),
-    hasWorkerLoader: Boolean(hasWorkerLoader8)
+    module: app_exports
   }
 };
 var entry = { module: entry_worker_exports };
@@ -12601,7 +12534,7 @@ buffer/index.js:
 
 @remix-run/server-runtime/dist/mode.js:
   (**
-   * @remix-run/server-runtime v2.0.0
+   * @remix-run/server-runtime v2.0.1
    *
    * Copyright (c) Remix Software Inc.
    *
@@ -12613,7 +12546,7 @@ buffer/index.js:
 
 @remix-run/server-runtime/dist/errors.js:
   (**
-   * @remix-run/server-runtime v2.0.0
+   * @remix-run/server-runtime v2.0.1
    *
    * Copyright (c) Remix Software Inc.
    *
@@ -12625,7 +12558,7 @@ buffer/index.js:
 
 @remix-run/server-runtime/dist/responses.js:
   (**
-   * @remix-run/server-runtime v2.0.0
+   * @remix-run/server-runtime v2.0.1
    *
    * Copyright (c) Remix Software Inc.
    *
