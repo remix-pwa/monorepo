@@ -55,6 +55,7 @@ _self.addEventListener(
    * The main fetch event listener callback.
    */
   event => {
+    /* Main request handler */
     const response = handleRequest({
       event,
       routes: build.routes,
