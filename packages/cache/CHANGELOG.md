@@ -1,3 +1,10 @@
+## @remix-pwa/cache 2.0.9-dev.2 (2023-09-27)
+
+
+### Bug Fixes
+
+* **cache:** fixed cache issue during redirects 50007f2
+
 ## @remix-pwa/cache 2.0.9-dev.1 (2023-09-26)
 
 
