@@ -53,12 +53,12 @@
     "stdin-discarder": "^0.1.0"
   },
   "devDependencies": {
-    "@remix-run/dev": "^2.0.0",
+    "@remix-run/dev": "^2.0.1",
     "@remix-pwa/worker-runtime": "^2.0.5",
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
     "@types/fs-extra": "^11.0.2",
     "cross-env": "^7.0.3",
-    "rimraf": "^5.0.1"
+    "rimraf": "^5.0.5"
   }
 }

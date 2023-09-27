@@ -5,7 +5,7 @@ import type { ResolvedWorkerConfig } from '../utils/config.js';
 
 const { glob } = pkg;
 
-const FILTER_REGEX = /@remix-sas\/dev\?assets/;
+const FILTER_REGEX = /@remix-pwa\/dev\?assets/;
 const NAMESPACE = 'assets-module';
 
 export default function assetsPlugin(config: ResolvedWorkerConfig): Plugin {

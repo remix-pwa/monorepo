@@ -36,7 +36,7 @@ vi.doMock('node:module', async () => ({
 
 describe('readConfig', () => {
   afterEach(() => {
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
   afterAll(() => {
     vi.doUnmock('@remix-run/dev/dist/config');
@@ -47,8 +47,8 @@ describe('readConfig', () => {
   });
 
   test('should return the resolved config object with default worker options', async () => {
+    mockResolve.mockReturnValue('public').mockReturnValueOnce('entry.worker.ts').mockReturnValueOnce('entry.worker.ts');
     mockExists.mockReturnValue(false);
-    mockResolve.mockReturnValue('/public');
 
     vi.doMock('./remix.config.ts', () => {
       return { default: {} };
@@ -87,6 +87,7 @@ describe('readConfig', () => {
   });
 
   test('should return the resolved config object with custom worker options', async () => {
+    mockResolve.mockReturnValue(undefined);
     mockExists.mockReturnValue(false);
 
     vi.doMock('./remix.config.ts', () => {
