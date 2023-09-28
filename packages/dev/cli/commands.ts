@@ -30,9 +30,8 @@ export const eject = async () => {
 
 export const packages = async (dir: string) => {
   const pkgManager = await detectPackageManager(dir);
-
-  // TODO: Add `ora` as an extra flair
-  console.log(blue('Installing base packages for remix-pwa...\n\n'));
+  
+  console.log(blue('Installing base packages for remix-pwa...\n'));
   console.log(
     yellow('installing:\n- @remix-pwa/sw\n- @remix-pwa/dev\n- @remix-pwa/worker-runtime\n- @remix-pwa/cache\n')
   );
