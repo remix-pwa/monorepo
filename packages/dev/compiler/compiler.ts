@@ -74,13 +74,20 @@ export async function runCompiler(mode: 'dev' | 'build', projectDir: string = pr
         ...createEsbuildConfig(remixConfig),
         metafile: true,
         write: true,
+        color: true,
       })
       .then(async context => {
         console.log(`Building Service Worker in ${MODE} mode`);
         try {
           if (mode === 'build') {
-            return context.dispose();
+            context.watch().then(() => {
+              return context.dispose();
+            });
+            console.timeEnd(TIME_LABEL);
+            console.log('Service Worker built successfully!');
+            return;
           }
+
           await context.watch();
           console.timeEnd(TIME_LABEL);
           console.log('Watching for changes in the service worker file...');

@@ -11,6 +11,7 @@
   "sideEffects": false,
   "private": true,
   "scripts": {
+    "build:worker": "remix-pwa build",
     "dev": "run-p dev:*",
     "start": "remix-serve build",
     "typecheck": "tsc",

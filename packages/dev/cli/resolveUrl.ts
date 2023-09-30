@@ -5,5 +5,10 @@ import { pathToFileURL } from 'url';
 const isWindows = platform() === 'win32';
 
 export const resolveUrl = (...args: string[]) => {
-  return !isWindows ? resolve(...args) : pathToFileURL(resolve(...args)).href;
+  const url = resolve(...args)
+  return !isWindows ? url : (isAbsolute(url) ? pathToFileURL(url).href : url);
 };
+
+export const isAbsolute = (path: string) => {
+  return !isWindows ? resolve(path) === path : pathToFileURL(resolve(path)).href === path;
+}
