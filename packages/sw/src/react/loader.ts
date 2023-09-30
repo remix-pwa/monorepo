@@ -10,10 +10,10 @@ declare global {
 }
 
 export type LoadServiceWorkerOptions = {
-  serviceWorkerUrl: string;
-  serviceWorkerRegistrationCallback: (registration: ServiceWorkerRegistration) => Promise<void> | void;
-  scope: RegistrationOptions['scope'];
-  type: RegistrationOptions['type'];
+  serviceWorkerUrl?: string;
+  serviceWorkerRegistrationCallback?: (registration: ServiceWorkerRegistration) => Promise<void> | void;
+  scope?: RegistrationOptions['scope'];
+  type?: RegistrationOptions['type'];
   updateViaCache?: RegistrationOptions['updateViaCache'];
 };
 
