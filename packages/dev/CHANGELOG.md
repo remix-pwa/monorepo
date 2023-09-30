@@ -1,3 +1,10 @@
+## @remix-pwa/dev 2.0.28 (2023-09-30)
+
+
+### Bug Fixes
+
+* **dev:** fixed invalid build sequence 945d9b4
+
 ## @remix-pwa/dev 2.0.27 (2023-09-27)
 
 
