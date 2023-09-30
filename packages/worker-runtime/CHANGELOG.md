@@ -1,4 +1,4 @@
-## @remix-pwa/worker-runtime 2.0.6-dev.1 (2023-09-30)
+## @remix-pwa/worker-runtime 2.0.6 (2023-09-27)
 
 
 ### Bug Fixes
