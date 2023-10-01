@@ -1,5 +1,11 @@
 {
   "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"],
+  "ts-node": {
+    "compilerOptions": {
+      "target": "ES2022",
+      "module": "NodeNext"
+    }
+  },
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2019"],
     "isolatedModules": true,

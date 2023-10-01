@@ -15,7 +15,7 @@
     "dev": "run-p dev:*",
     "start": "remix-serve build",
     "typecheck": "tsc",
-    "dev:worker": "remix-pwa dev",
+    "dev:worker": "ts-node ./sw.ts dev",
     "dev:remix": "remix dev"
   },
   "dependencies": {
@@ -28,6 +28,7 @@
     "@remix-run/node": "^2.0.1",
     "@remix-run/react": "^2.0.1",
     "@remix-run/serve": "^2.0.1",
+    "chokidar": "^3.5.3",
     "dexie": "^3.2.4",
     "dotenv": "^16.3.1",
     "isbot": "^3.7.0",
@@ -45,6 +46,7 @@
     "npm-run-all": "^4.1.5",
     "remix-pwa": "^3.0.15",
     "tailwindcss": "^3.3.3",
+    "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },
   "engines": {
