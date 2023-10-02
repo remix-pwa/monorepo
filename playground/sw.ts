@@ -1,15 +1,14 @@
 #!/usr/bin/env ts-node
+//@ts-nocheck
 
-import { run } from '@remix-pwa/dev';
-import { readConfig as _readConfig } from '@remix-run/dev/dist/config.js';
-import { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';
-import { watch } from 'chokidar';
+const { readConfig: _readConfig } = require('@remix-run/dev/dist/config.js');
+const { ServerMode } = require('@remix-run/dev/dist/config/serverModes.js');
 
 /* ---------- */
 
-import { platform } from 'os';
-import { resolve } from 'path';
-import { pathToFileURL } from 'url';
+const { platform } = require('os');
+const { resolve } = require('path');
+const { pathToFileURL } = require('url');
 
 const isWindows = platform() === 'win32';
 
@@ -24,52 +23,74 @@ const isAbsolute = (path: string) => {
 
 /* ---------- */
 
-async function main() {
-  const projectDir = process.cwd();
+// async function main() {
+(async () => {
+  const run = (await import('@remix-pwa/dev')).run;
+  // const watch = (await import('chokidar')).watch;
 
-  const remixConfig = await _readConfig(projectDir, ServerMode.Development);
-  const appDir = remixConfig.appDirectory ?? resolveUrl(process.cwd(), 'app');
+  // const projectDir = process.cwd();
 
-  const watcher = watch(appDir, {
-    ignored(testString) {
-      return testString.startsWith('.') || testString.match(/(\.(tsx|jsx|ts|js)$)/) === null;
-    },
-    followSymlinks: false,
-    disableGlobbing: false,
-  });
+  // const remixConfig = await _readConfig(projectDir, ServerMode.Development);
+  // const appDir = remixConfig.appDirectory ?? resolveUrl(process.cwd(), 'app');
 
-  process.on('SIGINT', async () => {
-    console.log('SIGINT signal received.');
+  // const watcher = watch(appDir, {
+  //   ignored(testString: string) {
+  //     return testString.startsWith('.');
+  //   },
+  //   followSymlinks: false,
+  //   disableGlobbing: false,
+  // });
 
-    await watcher.close();
+  // process.on('SIGINT', async () => {
+  //   console.log('SIGINT signal received.');
 
-    process.exit(0);
-  });
+  //   await watcher.close();
 
-  /* Custom Watcher for dev script */
-  if (process.argv[2] === 'dev') {
-    watcher.on('ready', () => {
-      console.log('Running in dev mode');
-      console.log('Watching for changes in the app directory...');
-    })
+  //   process.exit(0);
+  // });
 
-    new Promise(res => setTimeout(res, 10000)).then(() => {
-      console.log('Watching for changes in the service worker file...');
-    });
+  // process.on('SIGTERM', async () => {
+  //   console.log('SIGTERM signal received.');
 
-    // watcher.on('change', async (path) => {
-    //   console.log(`File changed: ${path}`);
-    // });
+  //   await watcher.close();
 
-    // watcher.on('add', async (path) => {
-    //   console.log(`File added: ${path}`);
-    // });
-  }
+  //   process.exit(0);
+  // });
 
-  // await run();
-}
+  // process.on('SIGUSR2', async () => {
+  //   console.log('SIGUSR2 signal received.');
 
-main().catch(error => {
-  console.error(error);
-  process.exit(1);
-});
+  //   await watcher.close();
+
+  //   process.exit(0);
+  // });
+
+  // /* Custom Watcher for dev script */
+  // if (process.argv[2] === 'dev') {
+  //   watcher.on('ready', () => {
+  //     console.log('Running in dev mode');
+  //     console.log('Watching for changes in the app directory...');
+  //   });
+
+  //   watcher.on('add', (path) => {
+  //     console.log(`File ${path} has been added`);
+  //   });
+
+  //   watcher.on('change', (path) => {
+  //     console.log(`File ${path} has been changed`);
+  //   });
+
+  //   watcher.on('unlink', path => {
+  //     console.log(`File ${path} has been removed`);
+  //   });
+
+  //   watcher.on('error', () => {
+  //     // use colorette for this!
+  //     console.error('Watcher error occured!');
+  //   });
+  // }
+
+  await run();
+  // }
+})();
+
