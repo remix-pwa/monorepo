@@ -1,9 +1,9 @@
 {
-  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx", "sw.ts"],
   "ts-node": {
     "compilerOptions": {
       "target": "ES2022",
-      "module": "NodeNext"
+      "module": "ES2020"
     }
   },
   "compilerOptions": {
@@ -13,7 +13,7 @@
     "jsx": "react-jsx",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "target": "ES2019",
+    "target": "ES2022",
     "strict": true,
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
