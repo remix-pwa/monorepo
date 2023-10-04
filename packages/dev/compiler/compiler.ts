@@ -80,9 +80,7 @@ export async function runCompiler(mode: 'dev' | 'build', projectDir: string = pr
         console.log(`Building Service Worker in ${MODE} mode`);
         try {
           if (mode === 'build') {
-            context.watch().then(() => {
-              return context.dispose();
-            });
+            context.rebuild();
             console.timeEnd(TIME_LABEL);
             console.log('Service Worker built successfully!');
             return;
