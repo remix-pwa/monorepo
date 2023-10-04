@@ -1,4 +1,7 @@
 {
   "extends": ["@remix-pwa/eslint-config"],
-  "root": true
+  "root": true,
+  "rules": {
+    "@typescript-eslint/no-empty-function": "off"
+  }
 }
