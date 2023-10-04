@@ -150,9 +150,6 @@ export class RemixCache implements CustomCache {
     const isOverflowing = (await this.length()) >= this._maxItems;
 
     if (isOverflowing) {
-      // if (process.env.NODE_ENV === 'development')
-      //   console.log(`Cache '${this.name}' is overflowing. Running LRU cleanup.`);
-
       const cache = await this._openCache();
       const keys = await cache.keys();
       const values = (await Promise.all(keys.map(key => cache.match(key)))) as Response[];
@@ -160,11 +157,6 @@ export class RemixCache implements CustomCache {
       const keyVal = keys.map((key, i) => ({ key, val: values[i] }));
 
       const comparableArrayPromise = keyVal.map(async val => {
-        if (this.name !== 'assets-cache') {
-          console.log('inner', val);
-          console.log('inner-2', (await val.val.clone().text()).slice(0, 20));
-        }
-
         const { metadata }: ResponseBody = await val.val.clone().json();
 
         return {
@@ -180,9 +172,6 @@ export class RemixCache implements CustomCache {
       });
 
       const toBeDeletdItems = sortedArr.slice(0, sortedArr.length - this._maxItems + 1);
-
-      // if (process.env.NODE_ENV === 'development')
-      //   console.log(`Deleting ${toBeDeletdItems.length} items from ${this.name} cache.`);
 
       for (const deleted of toBeDeletdItems) {
         // This runs everytime a new entry is added so that means the array maximum size can never
