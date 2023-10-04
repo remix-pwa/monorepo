@@ -1,3 +1,18 @@
+## @remix-pwa/sw 2.1.10-dev.1 (2023-10-04)
+
+
+### Bug Fixes
+
+* **sw:** make all LoadServiceWorkerOptions fields optional 1cead35
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/cache:** upgraded to 2.0.11-dev.1
+
 ## @remix-pwa/sw 2.1.9 (2023-09-27)
 
 
