@@ -14103,6 +14103,8 @@ var route0 = __toESM(require_root());
 // routes-module:routes/basic-caching.tsx?worker
 var basic_caching_exports = {};
 __export(basic_caching_exports, {
+  hasWorkerAction: () => hasWorkerAction,
+  hasWorkerLoader: () => hasWorkerLoader,
   workerLoader: () => workerLoader
 });
 
@@ -14142,9 +14144,15 @@ var workerLoader = async ({ context }) => {
   });
 };
 
+// routes-module:routes/basic-caching.tsx?worker
+var hasWorkerAction = false;
+var hasWorkerLoader = true;
+
 // routes-module:routes/_app.flights.tsx?worker
 var app_flights_exports = {};
 __export(app_flights_exports, {
+  hasWorkerAction: () => hasWorkerAction2,
+  hasWorkerLoader: () => hasWorkerLoader2,
   workerAction: () => workerAction,
   workerLoader: () => workerLoader2
 });
@@ -14190,9 +14198,15 @@ var workerLoader2 = async ({ context }) => {
   }
 };
 
+// routes-module:routes/_app.flights.tsx?worker
+var hasWorkerAction2 = true;
+var hasWorkerLoader2 = true;
+
 // routes-module:routes/basic-action.tsx?worker
 var basic_action_exports = {};
 __export(basic_action_exports, {
+  hasWorkerAction: () => hasWorkerAction3,
+  hasWorkerLoader: () => hasWorkerLoader3,
   workerAction: () => workerAction2
 });
 
@@ -14218,9 +14232,15 @@ var workerAction2 = async ({ context }) => {
   });
 };
 
+// routes-module:routes/basic-action.tsx?worker
+var hasWorkerAction3 = true;
+var hasWorkerLoader3 = false;
+
 // routes-module:routes/basic-loader.tsx?worker
 var basic_loader_exports = {};
 __export(basic_loader_exports, {
+  hasWorkerAction: () => hasWorkerAction4,
+  hasWorkerLoader: () => hasWorkerLoader4,
   workerLoader: () => workerLoader3
 });
 
@@ -14247,9 +14267,15 @@ var workerLoader3 = async ({ context }) => {
   );
 };
 
+// routes-module:routes/basic-loader.tsx?worker
+var hasWorkerAction4 = false;
+var hasWorkerLoader4 = true;
+
 // routes-module:routes/strategies.tsx?worker
 var strategies_exports = {};
 __export(strategies_exports, {
+  hasWorkerAction: () => hasWorkerAction5,
+  hasWorkerLoader: () => hasWorkerLoader5,
   workerAction: () => workerAction3
 });
 
@@ -14288,9 +14314,15 @@ var workerAction3 = async ({ context }) => {
   return null;
 };
 
+// routes-module:routes/strategies.tsx?worker
+var hasWorkerAction5 = true;
+var hasWorkerLoader5 = false;
+
 // routes-module:routes/selection.tsx?worker
 var selection_exports = {};
 __export(selection_exports, {
+  hasWorkerAction: () => hasWorkerAction6,
+  hasWorkerLoader: () => hasWorkerLoader6,
   workerLoader: () => workerLoader4
 });
 
@@ -14304,9 +14336,15 @@ async function workerLoader4({ context }) {
   return json2({ selections });
 }
 
+// routes-module:routes/selection.tsx?worker
+var hasWorkerAction6 = false;
+var hasWorkerLoader6 = true;
+
 // routes-module:routes/sync-away.tsx?worker
 var sync_away_exports = {};
 __export(sync_away_exports, {
+  hasWorkerAction: () => hasWorkerAction7,
+  hasWorkerLoader: () => hasWorkerLoader7,
   workerAction: () => workerAction4
 });
 
@@ -14334,12 +14372,18 @@ var workerAction4 = async ({ context }) => {
   });
 };
 
+// routes-module:routes/sync-away.tsx?worker
+var hasWorkerAction7 = true;
+var hasWorkerLoader7 = false;
+
 // entry-module:@remix-pwa/build/magic
 var route8 = __toESM(require_index());
 
 // routes-module:routes/_app.tsx?worker
 var app_exports = {};
 __export(app_exports, {
+  hasWorkerAction: () => hasWorkerAction8,
+  hasWorkerLoader: () => hasWorkerLoader8,
   workerLoader: () => workerLoader5
 });
 
@@ -14358,8 +14402,12 @@ async function workerLoader5({ context }) {
   });
 }
 
-// assets-module:@remix-pwa/dev?assets
-var assets = ["/build/root-PZGNXARZ.js", "/build/manifest-E9685489.js", "/build/entry.client-3JUGN7J7.js", "/build/__remix_entry_dev-HERBK3YF.js", "/build/_shared/runtime-JC7ERE5X.js", "/build/_shared/remix_hmr-KOXB6O7Z.js", "/build/_shared/react-dom-SNQ2UIZM.js", "/build/_shared/react-XL6EHOTX.js", "/build/_shared/jsx-runtime-7KJOCM5J.js", "/build/_shared/jsx-dev-runtime-D5NCTVC4.js", "/build/_shared/esm-VCXQEZXN.js", "/build/_shared/client-LQHWDDYA.js", "/build/_shared/chunk-WBXWSE7J.js", "/build/_shared/chunk-TWSZTAQ6.js", "/build/_shared/chunk-TLBAXOHZ.js", "/build/_shared/chunk-STMUDJCL.js", "/build/_shared/chunk-PNG5AS42.js", "/build/_shared/chunk-NXSRMYPB.js", "/build/_shared/chunk-LOYKRDJM.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-FXD4XYGV.js", "/build/_shared/chunk-BFGKEHN4.js", "/build/_shared/chunk-5HPIDTNV.js", "/build/routes/sync-away-FIS3FI5E.js", "/build/routes/strategies-5663L43X.js", "/build/routes/selection-H5V7RQJ2.js", "/build/routes/basic-loader-AU6DX53L.js", "/build/routes/basic-caching-VHU2A4EZ.js", "/build/routes/basic-action-7OWIMKOO.js", "/build/routes/_index-RXPHYOQ6.js", "/build/routes/_app.flights-W7S6DTGH.js", "/build/routes/_app-O66ZRZQJ.js", "/build/_assets/tailwind-JOKRYXHU.css"];
+// routes-module:routes/_app.tsx?worker
+var hasWorkerAction8 = false;
+var hasWorkerLoader8 = true;
+
+// assets-module:@remix-sas/dev?assets
+var assets = ["/build/root-PZGNXARZ.js", "/build/manifest-E9685489.js", "/build/entry.client-3JUGN7J7.js", "/build/__remix_entry_dev-HERBK3YF.js", "/build/_assets/tailwind-JOKRYXHU.css", "/build/routes/sync-away-FIS3FI5E.js", "/build/routes/strategies-5663L43X.js", "/build/routes/selection-H5V7RQJ2.js", "/build/routes/basic-loader-AU6DX53L.js", "/build/routes/basic-caching-VHU2A4EZ.js", "/build/routes/basic-action-7OWIMKOO.js", "/build/routes/_index-RXPHYOQ6.js", "/build/routes/_app.flights-W7S6DTGH.js", "/build/routes/_app-O66ZRZQJ.js", "/build/_shared/runtime-JC7ERE5X.js", "/build/_shared/remix_hmr-KOXB6O7Z.js", "/build/_shared/react-dom-SNQ2UIZM.js", "/build/_shared/react-XL6EHOTX.js", "/build/_shared/jsx-runtime-7KJOCM5J.js", "/build/_shared/jsx-dev-runtime-D5NCTVC4.js", "/build/_shared/esm-VCXQEZXN.js", "/build/_shared/client-LQHWDDYA.js", "/build/_shared/chunk-WBXWSE7J.js", "/build/_shared/chunk-TWSZTAQ6.js", "/build/_shared/chunk-TLBAXOHZ.js", "/build/_shared/chunk-STMUDJCL.js", "/build/_shared/chunk-PNG5AS42.js", "/build/_shared/chunk-NXSRMYPB.js", "/build/_shared/chunk-LOYKRDJM.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-FXD4XYGV.js", "/build/_shared/chunk-BFGKEHN4.js", "/build/_shared/chunk-5HPIDTNV.js"];
 
 // entry-module:@remix-pwa/build/magic
 var routes = {
@@ -14369,7 +14417,9 @@ var routes = {
     path: "",
     index: void 0,
     caseSensitive: void 0,
-    module: route0
+    module: route0,
+    hasWorkerAction: Boolean(route0.hasWorkerAction),
+    hasWorkerLoader: Boolean(route0.hasWorkerLoader)
   },
   "routes/basic-caching": {
     id: "routes/basic-caching",
@@ -14377,7 +14427,9 @@ var routes = {
     path: "basic-caching",
     index: void 0,
     caseSensitive: void 0,
-    module: basic_caching_exports
+    module: basic_caching_exports,
+    hasWorkerAction: Boolean(hasWorkerAction),
+    hasWorkerLoader: Boolean(hasWorkerLoader)
   },
   "routes/_app.flights": {
     id: "routes/_app.flights",
@@ -14385,7 +14437,9 @@ var routes = {
     path: "flights",
     index: void 0,
     caseSensitive: void 0,
-    module: app_flights_exports
+    module: app_flights_exports,
+    hasWorkerAction: Boolean(hasWorkerAction2),
+    hasWorkerLoader: Boolean(hasWorkerLoader2)
   },
   "routes/basic-action": {
     id: "routes/basic-action",
@@ -14393,7 +14447,9 @@ var routes = {
     path: "basic-action",
     index: void 0,
     caseSensitive: void 0,
-    module: basic_action_exports
+    module: basic_action_exports,
+    hasWorkerAction: Boolean(hasWorkerAction3),
+    hasWorkerLoader: Boolean(hasWorkerLoader3)
   },
   "routes/basic-loader": {
     id: "routes/basic-loader",
@@ -14401,7 +14457,9 @@ var routes = {
     path: "basic-loader",
     index: void 0,
     caseSensitive: void 0,
-    module: basic_loader_exports
+    module: basic_loader_exports,
+    hasWorkerAction: Boolean(hasWorkerAction4),
+    hasWorkerLoader: Boolean(hasWorkerLoader4)
   },
   "routes/strategies": {
     id: "routes/strategies",
@@ -14409,7 +14467,9 @@ var routes = {
     path: "strategies",
     index: void 0,
     caseSensitive: void 0,
-    module: strategies_exports
+    module: strategies_exports,
+    hasWorkerAction: Boolean(hasWorkerAction5),
+    hasWorkerLoader: Boolean(hasWorkerLoader5)
   },
   "routes/selection": {
     id: "routes/selection",
@@ -14417,7 +14477,9 @@ var routes = {
     path: "selection",
     index: void 0,
     caseSensitive: void 0,
-    module: selection_exports
+    module: selection_exports,
+    hasWorkerAction: Boolean(hasWorkerAction6),
+    hasWorkerLoader: Boolean(hasWorkerLoader6)
   },
   "routes/sync-away": {
     id: "routes/sync-away",
@@ -14425,7 +14487,9 @@ var routes = {
     path: "sync-away",
     index: void 0,
     caseSensitive: void 0,
-    module: sync_away_exports
+    module: sync_away_exports,
+    hasWorkerAction: Boolean(hasWorkerAction7),
+    hasWorkerLoader: Boolean(hasWorkerLoader7)
   },
   "routes/_index": {
     id: "routes/_index",
@@ -14433,7 +14497,9 @@ var routes = {
     path: void 0,
     index: true,
     caseSensitive: void 0,
-    module: route8
+    module: route8,
+    hasWorkerAction: Boolean(route8.hasWorkerAction),
+    hasWorkerLoader: Boolean(route8.hasWorkerLoader)
   },
   "routes/_app": {
     id: "routes/_app",
@@ -14441,7 +14507,9 @@ var routes = {
     path: void 0,
     index: void 0,
     caseSensitive: void 0,
-    module: app_exports
+    module: app_exports,
+    hasWorkerAction: Boolean(hasWorkerAction8),
+    hasWorkerLoader: Boolean(hasWorkerLoader8)
   }
 };
 var entry = { module: entry_worker_exports };

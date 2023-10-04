@@ -1,3 +1,4 @@
+import { WorkerLoaderArgs } from "@remix-pwa/sw";
 import { json } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 
@@ -10,7 +11,7 @@ export function loader() {
   });
 }
 
-export async function workerLoader({ context }) {
+export async function workerLoader({ context }: WorkerLoaderArgs) {
   const { fetchFromServer } = context;
 
   const data = await fetchFromServer().then((response: Response) => response.json());

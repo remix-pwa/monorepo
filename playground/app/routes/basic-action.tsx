@@ -23,6 +23,8 @@ export const action: ActionFunction = () => {
 export const workerAction = async ({ context }: WorkerActionArgs) => {
   const { fetchFromServer } = context;
 
+  console.log('Worker action called');
+
   try {
     // We are now calling the actual Remix action here, but like you can see 
     // we are doing nothing with it, so no redirect happens 😏
