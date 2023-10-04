@@ -1,3 +1,10 @@
+## @remix-pwa/dev 2.0.28-dev.2 (2023-10-04)
+
+
+### Bug Fixes
+
+* **dev:** updated `watch` script to `rebuild` within `esbuild` construct 738b276
+
 ## @remix-pwa/dev 2.0.28-dev.1 (2023-09-30)
 
 
