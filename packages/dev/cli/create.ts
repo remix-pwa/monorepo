@@ -30,7 +30,7 @@ async function integrateServiceWorker(
   _workbox: boolean,
   templateDir: string,
   lang: 'ts' | 'js' = 'ts',
-  dir: string = 'app'
+  dir = 'app'
 ) {
   if (precache) {
     // if (workbox) { return; }
@@ -58,7 +58,7 @@ async function integrateServiceWorker(
   }
 }
 
-async function integrateManifest(templateDir: string, lang: 'ts' | 'js' = 'ts', dir: string = 'app') {
+async function integrateManifest(templateDir: string, lang: 'ts' | 'js' = 'ts', dir = 'app') {
   if (!pkg.existsSync(`${dir}/routes`)) {
     pkg.mkdirSync(`${dir}/routes`, { recursive: true });
   }
@@ -84,7 +84,7 @@ async function integrateIcons(projectDir: string) {
 
 // temporary
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function integratePush(projectDir: string, lang: 'ts' | 'js' = 'ts', dir: string = 'app') {
+async function integratePush(projectDir: string, lang: 'ts' | 'js' = 'ts', dir = 'app') {
   console.log('Push API is still coming to v3.0 later...');
   return null;
 }
@@ -99,7 +99,7 @@ export async function createPWA(
     features: ['sw', 'manifest'],
     packageManager: 'npm',
   },
-  _isTest: boolean = false
+  _isTest = false
 ) {
   let { features, install, lang, packageManager, precache, workbox } = options;
 
