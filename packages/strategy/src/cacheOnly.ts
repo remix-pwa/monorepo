@@ -4,7 +4,7 @@ import { Storage } from '@remix-pwa/cache';
 import type { StrategyOptions, StrategyResponse } from './types.js';
 import { isHttpRequest } from './utils.js';
 
-export interface CacheOnlyStrategyOptions extends StrategyOptions {}
+export type CacheOnlyStrategyOptions = StrategyOptions;
 
 export const cacheOnly = ({
   cache: cacheName,

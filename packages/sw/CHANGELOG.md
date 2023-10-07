@@ -1,10 +1,11 @@
+## @remix-pwa/sw 2.1.10-dev.2 (2023-10-07)
+
 ## @remix-pwa/sw 2.1.10 (2023-10-04)
 
 
 ### Bug Fixes
 
 * **sw:** make all LoadServiceWorkerOptions fields optional 1cead35
-
 
 
 

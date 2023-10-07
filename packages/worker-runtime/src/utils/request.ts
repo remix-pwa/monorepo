@@ -15,7 +15,7 @@ export function clone<T extends Record<string | number | symbol, unknown> | Requ
 /**
  * Gets the URL search parameters from a request.
  */
-export function getURLParameters(request: Request, path: string = ''): Record<string, string | undefined> {
+export function getURLParameters(request: Request, path = ''): Record<string, string | undefined> {
   const url = new URL(request.url);
   const match = matchPath(path, url.pathname);
 

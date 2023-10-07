@@ -1,6 +1,7 @@
 import type { Context } from '@remix-run/dev/dist/compiler/context.js';
 import { emptyModulesPlugin } from '@remix-run/dev/dist/compiler/plugins/emptyModules.js';
 import { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';
+import { whiteBright } from 'colorette';
 import type { BuildOptions, Plugin } from 'esbuild';
 import esbuild from 'esbuild';
 import path from 'node:path';
@@ -11,8 +12,9 @@ import routesModulesPlugin from './plugins/routes-module.js';
 import sideEffectsPlugin from './plugins/side-effects.js';
 import type { ResolvedWorkerConfig } from './utils/config.js';
 import readConfig from './utils/config.js';
+import { watcher } from './utils/watcher.js';
 
-const TIME_LABEL = '💿 Built in';
+const TIME_LABEL = '💿 Built Service Worker in';
 
 /**
  * Creates the esbuild config object.
@@ -77,18 +79,20 @@ export async function runCompiler(mode: 'dev' | 'build', projectDir: string = pr
         color: true,
       })
       .then(async context => {
-        console.log(`Building Service Worker in ${MODE} mode`);
+        console.log(whiteBright(`🏗️ Building Service Worker in ${MODE} mode...\n`));
+
         try {
           if (mode === 'build') {
-            context.rebuild();
+            await context.rebuild();
             console.timeEnd(TIME_LABEL);
-            console.log('Service Worker built successfully!');
-            return;
+            console.log('🎉 Service Worker built successfully!');
+            return await context.dispose();
           }
 
-          await context.watch();
+          await watcher(context, projectDir);
+          // await context.watch();
           console.timeEnd(TIME_LABEL);
-          console.log('Watching for changes in the service worker file...');
+          console.log('👀 Watching for changes in the service worker file...');
         } catch (error) {
           console.error(error);
         }

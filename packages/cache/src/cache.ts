@@ -94,14 +94,14 @@ export class RemixCache implements CustomCache {
    * @readonly
    * @default Infinity
    */
-  private _ttl: number = Infinity;
+  private _ttl = Infinity;
   /**
    * The caching strategy to use. Intended to provide strategies with cachified.
    * @readonly
    * @default Strategy.NetworkFirst
    */
   private _strategy: Strategy = Strategy.NetworkFirst;
-  private _maxItems: number = 100;
+  private _maxItems = 100;
 
   private set = false;
 
