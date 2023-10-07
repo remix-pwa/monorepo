@@ -1,6 +1,7 @@
 import { readConfig as _readConfig } from '@remix-run/dev/dist/config.js';
 import { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';
 import { watch } from 'chokidar';
+import { red } from 'colorette';
 import type esbuild from 'esbuild';
 import { platform } from 'os';
 import { resolve } from 'path';
@@ -30,7 +31,8 @@ export const watcher = async (context: esbuild.BuildContext, projectDir: string)
   });
 
   process.on('SIGINT', async () => {
-    console.log('SIGINT signal received.');
+    // console.log('SIGINT signal received.');
+    console.log('👋 Bye!');
 
     await watcher.close();
 
@@ -38,7 +40,8 @@ export const watcher = async (context: esbuild.BuildContext, projectDir: string)
   });
 
   process.on('SIGTERM', async () => {
-    console.log('SIGTERM signal received.');
+    // console.log('SIGTERM signal received.');
+    console.log('👋 Bye!');
 
     await watcher.close();
 
@@ -46,20 +49,16 @@ export const watcher = async (context: esbuild.BuildContext, projectDir: string)
   });
 
   process.on('SIGUSR2', async () => {
-    console.log('SIGUSR2 signal received.');
+    // console.log('SIGUSR2 signal received.');
+    console.log('👋 Bye!');
 
     await watcher.close();
 
     process.exit(0);
   });
 
-  // watcher.on('ready', () => {
-  //   console.log('Running in dev mode');
-  //   console.log('Watching for changes in the app directory...');
-  // });
-
   watcher.on('add', path => {
-    console.log(`File ${path} has been added`);
+    // console.log(`File ${path} has been added`);
 
     if (path.includes('routes') || path.includes('.worker.')) {
       // Rebuild only added routes as well as workers
@@ -67,20 +66,23 @@ export const watcher = async (context: esbuild.BuildContext, projectDir: string)
     }
   });
 
-  watcher.on('change', path => {
-    console.log(`File ${path} has been changed`);
+  watcher.on('change', () => {
+    // console.log(`File ${path} has been changed`);
     context.rebuild();
   });
 
-  watcher.on('unlink', path => {
-    console.log(`File ${path} has been removed`);
+  watcher.on('unlink', () => {
+    // console.log(`File ${path} has been removed`);
     context.rebuild();
   });
 
-  watcher.on('error', () => {
-    // use colorette for this!
-    console.error('Watcher error occured!');
-    context.cancel();
+  watcher.on('error', async () => {
+    console.error(red('🚨 Error occurred whilst watching files!'));
+
+    await context.cancel();
+    await context.dispose();
+    await watcher.close();
+
     process.exit(1);
   });
 };
