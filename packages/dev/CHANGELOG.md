@@ -1,3 +1,18 @@
+## @remix-pwa/dev 2.0.30 (2023-10-07)
+
+
+### Bug Fixes
+
+* **dev:** implemented brand-new watcher for worker files/routes c067e70
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/worker-runtime:** upgraded to 2.0.7
+
 ## @remix-pwa/dev 2.0.29-dev.2 (2023-10-07)
 
 
