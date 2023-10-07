@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/sw",
-  "version": "2.1.10-dev.2",
+  "version": "2.1.11",
   "description": "Service Worker APIs and utilities for Remix PWA",
   "repository": {
     "type": "git",
@@ -28,8 +28,7 @@
     "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
   },
   "peerDependencies": {
-    "@remix-pwa/cache": "^2.0.11-dev.3",
-    "@remix-pwa/cache": "^2.0.11",
+    "@remix-pwa/cache": "^2.0.12",
     "@remix-run/dev": "^1.15.0 || ^2.0.0",
     "@remix-run/react": "^1.15.0 || ^2.0.0",
     "react": "^18.2.0",
@@ -37,7 +36,7 @@
   },
   "homepage": "https://remix-pwa.run",
   "devDependencies": {
-    "@remix-pwa/cache": "^2.0.11",
+    "@remix-pwa/cache": "^2.0.12",
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
     "@remix-run/react": "^2.0.1",
