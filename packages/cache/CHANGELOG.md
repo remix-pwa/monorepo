@@ -1,5 +1,12 @@
 ## @remix-pwa/cache 2.0.11-dev.2 (2023-10-07)
 
+## @remix-pwa/cache 2.0.11 (2023-10-04)
+
+
+### Bug Fixes
+
+* **cache:** removed useless logs 03ead10
+
 ## @remix-pwa/cache 2.0.11-dev.1 (2023-10-04)
 
 

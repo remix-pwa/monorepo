@@ -27,14 +27,14 @@
     "node": ">=14.0.0"
   },
   "peerDependencies": {
-    "@remix-pwa/cache": "^2.0.11-dev.3"
+    "@remix-pwa/cache": "^2.0.11"
   },
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0"
   },
   "dependencies": {
-    "@remix-pwa/cache": "^2.0.11-dev.3"
+    "@remix-pwa/cache": "^2.0.11"
   },
   "homepage": "https://remix-pwa.run",
   "keywords": [

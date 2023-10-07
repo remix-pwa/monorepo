@@ -1,12 +1,6 @@
-## @remix-pwa/strategy 2.1.8-dev.2 (2023-10-07)
-
-
-
-
-
-### Dependencies
-
 * **@remix-pwa/cache:** upgraded to 2.0.11-dev.2
+
+* **@remix-pwa/cache:** upgraded to 2.0.11
 
 ## @remix-pwa/strategy 2.1.8-dev.1 (2023-10-04)
 
