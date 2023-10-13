@@ -5,7 +5,9 @@ import type { ServerRoute } from '@remix-run/server-runtime/dist/routes.js';
 
 throw new Error(
   '@remix-pwa/dev/worker-build is not meant to be used directly from node_modules.' +
+    // eslint-disable-next-line prettier/prettier
   ' It exists to provide type definitions for a virtual module provided' +
+    // eslint-disable-next-line prettier/prettier
   ' by the Remix PWA compiler at build time.'
 );
 
