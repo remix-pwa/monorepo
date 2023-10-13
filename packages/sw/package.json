@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/sw",
-  "version": "2.1.11-dev.2",
+  "version": "2.1.11-dev.3",
   "description": "Service Worker APIs and utilities for Remix PWA",
   "repository": {
     "type": "git",

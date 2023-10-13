@@ -1,3 +1,11 @@
+## @remix-pwa/sw 2.1.11-dev.3 (2023-10-13)
+
+
+### Bug Fixes
+
+* **sw:** fixed `logger` behaviour in production 73b9f1a
+* **sw:** fixed logger in production bug 54ecc9c
+
 ## @remix-pwa/sw 2.1.11-dev.2 (2023-10-13)
 
 
