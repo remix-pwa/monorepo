@@ -1,5 +1,5 @@
 import type { UIMatch } from '@remix-run/react';
-import { useLocation, useMatches } from '@remix-run/react';
+import { useLocation, useMatches, useRevalidator } from '@remix-run/react';
 import { useEffect, useRef } from 'react';
 
 /**
@@ -9,6 +9,7 @@ import { useEffect, useRef } from 'react';
 export function useSWEffect(): void {
   const location = useLocation();
   const matches = useMatches();
+  const revalidator = useRevalidator();
   const isMount = useRef(true);
 
   function isPromise(p: any): boolean {
@@ -24,6 +25,10 @@ export function useSWEffect(): void {
     }
     return false;
   }
+
+  useEffect(() => {
+    revalidator.revalidate();
+  }, []);
 
   useEffect(() => {
     const mounted = isMount;

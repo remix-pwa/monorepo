@@ -1,3 +1,36 @@
+## @remix-pwa/sw 2.1.11-dev.2 (2023-10-13)
+
+
+### Bug Fixes
+
+* **dev:** added SSR revalidator to `useSWEffect` 078847a
+
+## @remix-pwa/sw 2.1.11-dev.1 (2023-10-07)
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/cache:** upgraded to 2.0.12-dev.1
+
+## @remix-pwa/sw 2.1.10-dev.2 (2023-10-07)
+
+## @remix-pwa/sw 2.1.10 (2023-10-04)
+
+
+### Bug Fixes
+
+* **sw:** make all LoadServiceWorkerOptions fields optional 1cead35
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/cache:** upgraded to 2.0.11
+
 ## @remix-pwa/sw 2.1.10-dev.1 (2023-10-04)
 
 

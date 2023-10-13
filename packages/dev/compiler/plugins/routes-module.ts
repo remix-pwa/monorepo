@@ -23,7 +23,7 @@ export default function routesModulesPlugin(config: ResolvedWorkerConfig): Plugi
       );
 
       let contents = 'module.exports = {};';
-      if (theExports.length > 0) {
+      if (hasWorkerExports(theExports)) {
         const spec = `{ ${theExports.join(', ')} }`;
         contents = `export ${spec} from ${JSON.stringify(`./${file}`)};`;
       }
@@ -42,4 +42,7 @@ export default function routesModulesPlugin(config: ResolvedWorkerConfig): Plugi
     name: 'sw-routes-modules',
     setup,
   };
+}
+function hasWorkerExports(theExports: string[]) {
+  return theExports.filter(exp => exp.includes('worker')).length > 0;
 }
