@@ -1,3 +1,10 @@
+## @remix-pwa/sw 2.1.11-dev.2 (2023-10-13)
+
+
+### Bug Fixes
+
+* **dev:** added SSR revalidator to `useSWEffect` 078847a
+
 ## @remix-pwa/sw 2.1.11-dev.1 (2023-10-07)
 
 
