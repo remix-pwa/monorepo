@@ -1,3 +1,10 @@
+## @remix-pwa/dev 2.0.30-dev.2 (2023-10-13)
+
+
+### Bug Fixes
+
+* **bundle:** only budle routes with at least one worker export 0262b25
+
 ## @remix-pwa/dev 2.0.30-dev.1 (2023-10-07)
 
 
