@@ -219,8 +219,15 @@ export async function createPWA(
   json.scripts['build:remix'] = 'remix build';
   json.scripts['build:worker'] = 'remix-pwa build';
 
+  let devScript: string | undefined;
+
+  if (json.scripts.dev) {
+    devScript = json.scripts.dev;
+    delete json.scripts.dev;
+  }
+
   json.scripts.dev = 'run-p dev:*';
-  json.scripts['dev:remix'] = 'remix dev';
+  json.scripts['dev:remix'] = devScript ?? 'remix dev';
   json.scripts['dev:worker'] = 'remix-pwa dev';
 
   pkg.writeFileSync(pkgJsonPath, JSON.stringify(json, null, 2));
