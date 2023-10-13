@@ -82,7 +82,18 @@ const methodToColorMap: { [methodName: string]: string | null } = {
 
 export const logger = (
   process.env.NODE_ENV === 'production'
-    ? null
+    ? (() => {
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        const api: { [methodName: string]: Function } = {};
+        const loggerMethods = Object.keys(methodToColorMap);
+
+        for (const key of loggerMethods) {
+          const method = key as LoggerMethods;
+          api[method] = () => {};
+        }
+
+        return api as unknown;
+      })()
     : (() => {
         // Todo: Add a way to disable logs by default, ig.
         // This throws an error: `self is not defined`
