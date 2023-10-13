@@ -11,17 +11,19 @@
   "sideEffects": false,
   "private": true,
   "scripts": {
-    "build:worker": "remix-pwa build",
+    "build:worker": "node ./sw.ts build",
+    "buildt": "run-p build:*",
     "dev": "run-p dev:*",
-    "start": "remix-serve build",
+    "start": "remix-serve ./build/index.js",
     "typecheck": "tsc",
     "dev:worker": "ts-node ./sw.ts dev",
-    "dev:remix": "remix dev"
+    "dev:remix": "remix dev",
+    "build:remix": "remix build"
   },
   "dependencies": {
     "@remix-pwa/cache": "^2.0.10",
-    "@remix-pwa/strategy": "^2.1.7",
-    "@remix-pwa/sw": "2.1.9",
+    "@remix-pwa/strategy": "^2.1.9-dev.1",
+    "@remix-pwa/sw": "2.1.11-dev.2",
     "@remix-pwa/sync": "^2.0.1",
     "@remix-pwa/worker-runtime": "^2.0.6",
     "@remix-run/css-bundle": "^2.0.1",
@@ -36,7 +38,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@remix-pwa/dev": "^2.0.29",
+    "@remix-pwa/dev": "^2.0.30-dev.2",
     "@remix-run/eslint-config": "^2.0.1",
     "@types/react": "^18.2.22",
     "@types/react-dom": "^18.2.7",

@@ -102,7 +102,7 @@ export class PrecacheHandler extends MessageHandler {
 
     for (const route of routes) {
       if (route.id.includes('$')) {
-        logger.info('Skipping parametrized route:', route.id);
+        if (process.env.NODE_ENV === 'development') logger.info('Skipping parametrized route:', route.id);
         continue;
       }
 
@@ -162,7 +162,7 @@ export class PrecacheHandler extends MessageHandler {
 
           if (map.includes(true)) continue;
         } else {
-          logger.error('Invalid ignoredRoutes type:', this._ignoredFiles);
+          if (process.env.NODE_ENV === 'development') logger.error('Invalid ignoredRoutes type:', this._ignoredFiles);
         }
       } else if (typeof this._ignoredFiles === 'function') {
         if (this._ignoredFiles(route)) {
@@ -268,14 +268,16 @@ export class PrecacheHandler extends MessageHandler {
 
       if (route.imports) {
         for (const assetUrl of route.imports) {
-          logger.groupCollapsed('Caching asset: ', assetUrl);
+          if (process.env.NODE_ENV === 'development') {
+            logger.groupCollapsed('Caching asset: ', assetUrl);
 
-          logger.log('Is index:', route.index || false);
-          logger.log('Parent ID:', route.parentId);
-          logger.log('Imports:', route.imports);
-          logger.log('Module:', route.module);
+            logger.log('Is index:', route.index || false);
+            logger.log('Parent ID:', route.parentId);
+            logger.log('Imports:', route.imports);
+            logger.log('Module:', route.module);
 
-          logger.groupEnd();
+            logger.groupEnd();
+          }
 
           if (cachePromises.has(assetUrl)) {
             continue;
@@ -285,7 +287,7 @@ export class PrecacheHandler extends MessageHandler {
         }
       }
 
-      logger.info('Caching document:', pathname);
+      if (process.env.NODE_ENV === 'development') logger.info('Caching document:', pathname);
 
       const response = await fetch(pathname);
 
@@ -294,11 +296,13 @@ export class PrecacheHandler extends MessageHandler {
         // @ts-expect-error
         documentCache.put(pathname, response).catch((error: unknown) => {
           if (error instanceof TypeError) {
-            logger.error(`TypeError when caching document ${pathname}:`, error.message);
+            if (process.env.NODE_ENV === 'development')
+              logger.error(`TypeError when caching document ${pathname}:`, error.message);
           } else if (error instanceof DOMException) {
-            logger.error(`DOMException when caching document ${pathname}:`, error.message);
+            if (process.env.NODE_ENV === 'development')
+              logger.error(`DOMException when caching document ${pathname}:`, error.message);
           } else {
-            logger.error(`Failed to cache document ${pathname}:`, error);
+            if (process.env.NODE_ENV === 'development') logger.error(`Failed to cache document ${pathname}:`, error);
           }
         })
       );
@@ -318,11 +322,13 @@ export class PrecacheHandler extends MessageHandler {
           // @ts-expect-error
           dataCache.put(url, data).catch(error => {
             if (error instanceof TypeError) {
-              logger.error(`TypeError when caching data ${pathname}:`, error.message);
+              if (process.env.NODE_ENV === 'development')
+                logger.error(`TypeError when caching data ${pathname}:`, error.message);
             } else if (error instanceof DOMException) {
-              logger.error(`DOMException when caching data ${pathname}:`, error.message);
+              if (process.env.NODE_ENV === 'development')
+                logger.error(`DOMException when caching data ${pathname}:`, error.message);
             } else {
-              logger.error(`Failed to cache data ${pathname}:`, error);
+              if (process.env.NODE_ENV === 'development') logger.error(`Failed to cache data ${pathname}:`, error);
             }
           })
         );
@@ -344,11 +350,13 @@ export class PrecacheHandler extends MessageHandler {
       // logger.debug('Caching asset:', assetUrl);
       return assetCache.put(assetUrl, response).catch(error => {
         if (error instanceof TypeError) {
-          logger.error(`TypeError when caching asset ${assetUrl}:`, error.message);
+          if (process.env.NODE_ENV === 'development')
+            logger.error(`TypeError when caching asset ${assetUrl}:`, error.message);
         } else if (error instanceof DOMException) {
-          logger.error(`DOMException when caching asset ${assetUrl}:`, error.message);
+          if (process.env.NODE_ENV === 'development')
+            logger.error(`DOMException when caching asset ${assetUrl}:`, error.message);
         } else {
-          logger.error(`Failed to cache asset ${assetUrl}:`, error);
+          if (process.env.NODE_ENV === 'development') logger.error(`Failed to cache asset ${assetUrl}:`, error);
         }
       });
     }

@@ -6,5 +6,5 @@ import { logger } from '../private/logger.js';
 export async function unregisterServiceWorker() {
   const registration = await navigator.serviceWorker.getRegistration();
   await registration?.unregister();
-  logger.log('Service worker unregistered successfully.');
+  if (process.env.NODE_ENV === 'development') logger.log('Service worker unregistered successfully.');
 }

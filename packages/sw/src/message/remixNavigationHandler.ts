@@ -55,7 +55,8 @@ export class RemixNavigationHandler extends MessageHandler {
         cachePromises.set(
           documentUrl,
           documentCache.put(documentUrl, response).catch(error => {
-            logger.error(`Failed to cache document for ${documentUrl}:`, error);
+            if (process.env.NODE_ENV === 'development')
+              logger.error(`Failed to cache document for ${documentUrl}:`, error);
           })
         );
       }
@@ -72,14 +73,14 @@ export class RemixNavigationHandler extends MessageHandler {
             const url = location.pathname + search + location.hash;
 
             if (!cachePromises.has(url)) {
-              logger.debug('Caching data for:', url);
+              if (process.env.NODE_ENV === 'development') logger.debug('Caching data for:', url);
 
               const response = await fetch(url);
 
               cachePromises.set(
                 url,
                 dataCache.put(url, response).catch(error => {
-                  logger.error(`Failed to cache data for ${url}:`, error);
+                  if (process.env.NODE_ENV === 'development') logger.error(`Failed to cache data for ${url}:`, error);
                 })
               );
             }

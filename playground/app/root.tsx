@@ -1,4 +1,4 @@
-import { useSWEffect, LiveReload } from "@remix-pwa/sw";
+import { useSWEffect, LiveReload, logger } from "@remix-pwa/sw";
 import { cssBundleHref } from "@remix-run/css-bundle";
 import type { LinksFunction } from "@remix-run/node";
 import {
@@ -19,6 +19,8 @@ export const links: LinksFunction = () => [
 
 export default function App() {
   useSWEffect();
+
+  logger.log("App rendered");
 
   return (
     <html lang="en">
