@@ -242,10 +242,15 @@ export async function createPWA(
     }).start();
 
     if (!_isTest) {
-      execSync(`${packageManager} install ${packageManager === 'yarn' ? null : '--loglevel silent'}`, {
-        cwd: process.cwd(),
-        stdio: 'inherit',
-      });
+      execSync(
+        `${packageManager} ${packageManager !== 'yarn' && 'install'} ${
+          packageManager === 'yarn' ? null : '--loglevel silent'
+        }`,
+        {
+          cwd: process.cwd(),
+          stdio: 'inherit',
+        }
+      );
 
       spinner.succeed(`Successfully ran ${packageManager} install!\n`);
       spinner.clear();
