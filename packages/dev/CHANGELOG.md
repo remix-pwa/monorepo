@@ -1,5 +1,10 @@
-## @remix-pwa/dev 2.0.30 (2023-10-07)
+## @remix-pwa/dev 2.0.30-dev.3 (2023-10-13)
 
+* **dev:** fixed `NODE_ENV` inconsistencies during build a704228
+* **dev:** fixed `yarn` installation dba5d3c
+* **dev:** fixed CLI script assignment 7239580
+
+## @remix-pwa/dev 2.0.30 (2023-10-07)
 
 ### Bug Fixes
 
@@ -11,6 +16,21 @@
 
 ### Dependencies
 
+* **@remix-pwa/worker-runtime:** upgraded to 2.0.7-dev.2
+
+## @remix-pwa/dev 2.0.30-dev.2 (2023-10-13)
+
+
+### Bug Fixes
+
+* **bundle:** only budle routes with at least one worker export 0262b25
+
+## @remix-pwa/dev 2.0.30-dev.1 (2023-10-07)
+
+
+### Bug Fixes
+
+* **dev:** implemented brand-new watcher for worker files/routes c067e70
 * **@remix-pwa/worker-runtime:** upgraded to 2.0.7
 
 ## @remix-pwa/dev 2.0.29-dev.2 (2023-10-07)

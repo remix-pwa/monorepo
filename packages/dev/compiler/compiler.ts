@@ -1,7 +1,7 @@
 import type { Context } from '@remix-run/dev/dist/compiler/context.js';
 import { emptyModulesPlugin } from '@remix-run/dev/dist/compiler/plugins/emptyModules.js';
 import { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';
-import { whiteBright } from 'colorette';
+import { redBright, whiteBright } from 'colorette';
 import type { BuildOptions, Plugin } from 'esbuild';
 import esbuild from 'esbuild';
 import path from 'node:path';
@@ -30,6 +30,9 @@ function createEsbuildConfig(config: ResolvedWorkerConfig): BuildOptions {
     platform: 'browser',
     format: 'esm',
     bundle: true,
+    define: {
+      'process.env.NODE_ENV': process.env.NODE_ENV === 'production' ? '"production"' : '"development"',
+    },
     logLevel: 'error',
     splitting: true,
     sourcemap: config.workerSourcemap,
@@ -71,6 +74,16 @@ export async function runCompiler(mode: 'dev' | 'build', projectDir: string = pr
   readConfig(path.resolve(projectDir), MODE).then(remixConfig => {
     console.time(TIME_LABEL);
 
+    if (mode === 'build') {
+      if (process.env.NODE_ENV === 'production') {
+        console.log(
+          redBright('⚠️ Oops! You are running Remix in development mode.'),
+          whiteBright('Overriding environment mode to production.')
+        );
+      }
+      process.env.NODE_ENV = 'production';
+    }
+
     esbuild
       .context({
         ...createEsbuildConfig(remixConfig),
@@ -88,6 +101,15 @@ export async function runCompiler(mode: 'dev' | 'build', projectDir: string = pr
             console.log('🎉 Service Worker built successfully!');
             return await context.dispose();
           }
+
+          if (process.env.NODE_ENV === 'production') {
+            console.log(
+              redBright(
+                '⚠️  You are running Remix in production mode. This would be a good time to build your service worker.'
+              )
+            );
+          }
+          process.env.NODE_ENV = 'development';
 
           await watcher(context, projectDir);
           // await context.watch();

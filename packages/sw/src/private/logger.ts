@@ -80,8 +80,6 @@ const methodToColorMap: { [methodName: string]: string | null } = {
   groupEnd: null, // No colored prefix on groupEnd
 };
 
-const noop = () => {};
-
 export const logger = (
   process.env.NODE_ENV === 'production'
     ? (() => {
@@ -91,7 +89,7 @@ export const logger = (
 
         for (const key of loggerMethods) {
           const method = key as LoggerMethods;
-          api[method] = noop;
+          api[method] = () => {};
         }
 
         return api as unknown;
