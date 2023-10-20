@@ -1,3 +1,12 @@
+## @remix-pwa/sw 2.1.12 (2023-10-20)
+
+
+### Bug Fixes
+
+* **dev:** added SSR revalidator to `useSWEffect` 078847a
+* **sw:** fixed `logger` behaviour in production 73b9f1a
+* **sw:** fixed logger in production bug 54ecc9c
+
 ## @remix-pwa/sw 2.1.11-dev.3 (2023-10-13)
 
 
