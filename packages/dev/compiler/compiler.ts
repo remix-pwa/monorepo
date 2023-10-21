@@ -75,7 +75,7 @@ export async function runCompiler(mode: 'dev' | 'build', projectDir: string = pr
     console.time(TIME_LABEL);
 
     if (mode === 'build') {
-      if (process.env.NODE_ENV === 'production') {
+      if (process.env.NODE_ENV !== 'production') {
         console.log(
           redBright('⚠️ Oops! You are running Remix in development mode.'),
           whiteBright('Overriding environment mode to production.')
