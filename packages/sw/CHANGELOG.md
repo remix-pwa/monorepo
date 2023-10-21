@@ -1,5 +1,7 @@
 ## @remix-pwa/sw 2.1.12 (2023-10-20)
 
+## @remix-pwa/sw 2.1.12-dev.1 (2023-10-20)
+
 
 ### Bug Fixes
 
