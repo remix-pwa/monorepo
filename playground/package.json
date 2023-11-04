@@ -12,12 +12,12 @@
   "sideEffects": false,
   "private": true,
   "scripts": {
-    "build:worker": "node ./sw.ts build",
+    "build:worker": "tsx ../packages/dev/index.ts build",
     "buildt": "run-p build:*",
     "dev": "run-p dev:*",
     "start": "remix-serve ./build/index.js",
     "typecheck": "tsc",
-    "dev:worker": "ts-node ./sw.ts dev",
+    "dev:worker": "tsx ../packages/dev/index.ts dev",
     "dev:remix": "remix dev",
     "build:remix": "remix build"
   },
@@ -47,7 +47,7 @@
     "npm-run-all": "^4.1.5",
     "remix-pwa": "^3.0.17",
     "tailwindcss": "^3.3.3",
-    "ts-node": "^10.9.1",
+    "tsx": "^3.14.0",
     "typescript": "^5.2.2"
   },
   "engines": {
