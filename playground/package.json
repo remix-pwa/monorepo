@@ -1,5 +1,6 @@
 {
   "name": "@remix-pwa/playground",
+  "type": "module",
   "version": "0.0.0",
   "description": "A Playground for Remix PWA 3.0",
   "repository": {
