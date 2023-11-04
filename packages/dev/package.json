@@ -20,7 +20,7 @@
     "build": "rimraf ./dist && tsc && npm run copy",
     "prepublishOnly": "npm run build",
     "compile": "tsc && node ./build.cjs",
-    "copy": "cp -r cli/templates dist/cli/templates",
+    "copy": "cpy cli/templates dist",
     "format": "prettier --write \"cli/**/*.ts\" \"compiler/**/*.ts\"",
     "lint": "TIMING=1 eslint --fix cli/ compiler/",
     "prepublish": "npm run build",
@@ -59,6 +59,7 @@
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
     "@types/fs-extra": "^11.0.2",
+    "cpy-cli": "^5.0.0",
     "cross-env": "^7.0.3",
     "rimraf": "^5.0.5"
   }
