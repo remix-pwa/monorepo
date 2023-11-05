@@ -1,35 +1,35 @@
 /* eslint-disable no-var */
 // these only become globals with var
 declare global {
-    /**
-     * Disable all logs from displaying in the console.
-     *
-     * @default false
-     */
+  /**
+   * Disable all logs from displaying in the console.
+   *
+   * @default false
+   */
   var __DISABLE_PWA_DEV_LOGS: boolean;
-    /**
-     * Disable debug logs from displaying in the console.
-     *
-     * @default false
-     */
+  /**
+   * Disable debug logs from displaying in the console.
+   *
+   * @default false
+   */
   var __DISABLE_PWA_DEBUG_LOGS: boolean;
-    /**
-     * Disable info logs from displaying in the console.
-     *
-     * @default false
-     */
+  /**
+   * Disable info logs from displaying in the console.
+   *
+   * @default false
+   */
   var __DISABLE_PWA_INFO_LOGS: boolean;
-    /**
-     * Disable warning logs from displaying in the console.
-     *
-     * @default false
-     */
+  /**
+   * Disable warning logs from displaying in the console.
+   *
+   * @default false
+   */
   var __DISABLE_PWA_WARN_LOGS: boolean;
-    /**
-     * Disable error logs from displaying in the console.
-     *
-     * @default false
-     */
+  /**
+   * Disable error logs from displaying in the console.
+   *
+   * @default false
+   */
   var __DISABLE_PWA_ERROR_LOGS: boolean;
 }
 /* eslint-enable no-var */
@@ -86,6 +86,8 @@ export const logger = (
         let inGroup = false;
 
         const print = function (method: LoggerMethods, args: any[]) {
+          const self = typeof globalThis.self !== 'undefined' ? globalThis.self : globalThis;
+
           // Conditionals to handle various log levels.
           if (self.__DISABLE_PWA_DEV_LOGS) {
             return;
