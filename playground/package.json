@@ -24,7 +24,6 @@
   "dependencies": {
     "@remix-pwa/cache": "^2.0.10",
     "@remix-pwa/strategy": "^2.1.9-dev.1",
-    "@remix-pwa/sw": "2.1.11-dev.2",
     "@remix-pwa/sync": "^2.0.1",
     "@remix-pwa/worker-runtime": "^2.0.6",
     "@remix-run/css-bundle": "^2.0.1",
