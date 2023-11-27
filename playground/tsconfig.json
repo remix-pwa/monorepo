@@ -1,5 +1,5 @@
 {
-  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx", "sw.ts"],
+  "include": ["env.d.ts/*.ts", "**/*.tsx", "sw.ts"],
   "ts-node": {
     "compilerOptions": {
       "target": "ES2022",
