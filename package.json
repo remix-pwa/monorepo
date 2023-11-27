@@ -46,6 +46,7 @@
     "semver": "^7.5.4",
     "turbo": "^1.10.14",
     "typescript": "^5.2.2",
+    "vite": "^5.0.2",
     "vitest": "^0.34.5"
   },
   "engines": {
