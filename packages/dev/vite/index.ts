@@ -13,7 +13,7 @@ export type PWAOptions = {
  * })
  */
 
-export function RemixPWA(pwaOptions: Partial<PWAOptions>): Plugin {
+export function RemixPWA(pwaOptions: Partial<PWAOptions> = {}): Plugin {
   return {
     name: 'remix-pwa-vite-plugin',
     enforce: 'pre',
