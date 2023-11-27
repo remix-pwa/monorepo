@@ -1,5 +1,6 @@
 {
   "name": "@remix-pwa/playground",
+  "type": "module",
   "version": "0.0.0",
   "description": "A Playground for Remix PWA 3.0",
   "repository": {
@@ -11,19 +12,18 @@
   "sideEffects": false,
   "private": true,
   "scripts": {
-    "build:worker": "node ./sw.ts build",
+    "build:worker": "tsx ../packages/dev/index.ts build",
     "buildt": "run-p build:*",
     "dev": "run-p dev:*",
     "start": "remix-serve ./build/index.js",
     "typecheck": "tsc",
-    "dev:worker": "ts-node ./sw.ts dev",
+    "dev:worker": "tsx ../packages/dev/index.ts dev",
     "dev:remix": "remix dev",
     "build:remix": "remix build"
   },
   "dependencies": {
     "@remix-pwa/cache": "^2.0.10",
     "@remix-pwa/strategy": "^2.1.9-dev.1",
-    "@remix-pwa/sw": "2.1.11-dev.2",
     "@remix-pwa/sync": "^2.0.1",
     "@remix-pwa/worker-runtime": "^2.0.6",
     "@remix-run/css-bundle": "^2.0.1",
@@ -46,7 +46,7 @@
     "npm-run-all": "^4.1.5",
     "remix-pwa": "^3.0.17",
     "tailwindcss": "^3.3.3",
-    "ts-node": "^10.9.1",
+    "tsx": "^3.14.0",
     "typescript": "^5.2.2"
   },
   "engines": {

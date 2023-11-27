@@ -1,4 +1,4 @@
-import * as B from 'buffer/';
+import { base64ToUint8Array, uint8ArrayToString } from 'uint8array-extras';
 
 import { mergeHeaders, omit } from './utils.js';
 
@@ -221,8 +221,7 @@ export class RemixCache implements CustomCache {
       responseOptions.body = value as string;
     } else {
       // Binary or other response types
-      const buffer = B.Buffer.from(value as string, 'base64');
-      responseOptions.body = new Uint8Array(buffer);
+      responseOptions.body = base64ToUint8Array(value as string);
     }
 
     if (!deleted) {
@@ -350,7 +349,7 @@ export class RemixCache implements CustomCache {
       data = await response.clone().text();
     } else {
       const buffer = await response.clone().arrayBuffer();
-      data = B.Buffer.from(buffer).toString('base64');
+      data = uint8ArrayToString(new Uint8Array(buffer));
     }
 
     // Temporary. Actually slows this process down by an average of 2ms. Not good enough.
