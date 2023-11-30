@@ -9,12 +9,12 @@ export interface PWAPluginContext {
   isDev: boolean;
 }
 
-export function createContext(options: Partial<PWAOptions>): PWAPluginContext {
+export function createContext(pwaOptions: Partial<PWAOptions>): PWAPluginContext {
   return {
     isDev: false,
-    options,
+    pwaOptions,
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    pwaOptions: undefined!,
+    options: undefined!,
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     viteConfig: undefined!,
   };
