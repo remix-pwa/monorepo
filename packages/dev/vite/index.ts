@@ -1,10 +1,9 @@
 import type { Plugin } from 'vite';
 
-import { LoaderPlugin } from './loader.js';
-
-export type PWAOptions = {
-  registerSW: 'script' | 'none' | 'auto';
-};
+import { createContext } from './context.js';
+import { LoaderPlugin } from './plugins/loader.js';
+import { EntryPlugin } from './plugins/main.js';
+import type { PWAOptions } from './types.js';
 
 /**
  * The way this would work is:
@@ -15,5 +14,7 @@ export type PWAOptions = {
  */
 
 export function RemixPWA(pwaOptions: Partial<PWAOptions> = {}): Plugin[] {
-  return <Plugin[]>[LoaderPlugin(pwaOptions)];
+  const ctx = createContext(pwaOptions);
+
+  return <Plugin[]>[EntryPlugin(ctx), LoaderPlugin(ctx)];
 }
