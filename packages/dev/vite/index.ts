@@ -9,7 +9,7 @@ import type { PWAOptions } from './types.js';
  * The way this would work is:
  *
  * RemixPwa({
- *  registerSW: 'script' | 'none' | 'auto',
+ *  registerSW: 'script' | null,
  * })
  */
 
