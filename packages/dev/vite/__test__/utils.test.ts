@@ -80,6 +80,29 @@ describe('Plugin resolver test suite', () => {
     });
   });
 
+  test('should trim weird file paths provided by user', async () => {
+    const { resolveOptions } = await import('../resolver.js');
+
+    const options = await resolveOptions(
+      {
+        serviceWorkerSrc: '/entry.worker.ts',
+        publicDir: '/out/dist/',
+      },
+      mockViteConfig as ResolvedConfig
+    );
+
+    assert(options);
+    expect(options).toEqual({
+      minify: false,
+      publicDir: 'out/dist',
+      registerSW: 'script',
+      scope: '/',
+      serviceWorkerSrc: 'entry.worker.ts',
+      includeAssets: [/\.(js|css|html|svg|png|jpg|jpeg|webp)$/],
+      excludeAssets: [/\.map$/, /^manifest.*\.json$/, /^sw\.js$/],
+    });
+  });
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
