@@ -24,7 +24,8 @@
     "format": "prettier --write \"cli/**/*.ts\" \"compiler/**/*.ts\"",
     "lint": "TIMING=1 eslint --fix cli/ compiler/",
     "prepublish": "npm run build",
-    "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
+    "test": "run-s test:*",
+    "test:vitest": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
   },
   "files": [
     "dist/",
