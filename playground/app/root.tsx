@@ -1,7 +1,7 @@
-import { 
+import {
   useSWEffect,
   // LiveReload,
-  logger 
+  logger
 } from "@remix-pwa/sw";
 import {
   Links,
