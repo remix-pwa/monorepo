@@ -55,7 +55,6 @@
     "stdin-discarder": "^0.1.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.40.1",
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
     "@remix-pwa/worker-runtime": "^2.0.8",
