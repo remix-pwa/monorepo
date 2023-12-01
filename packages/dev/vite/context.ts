@@ -1,5 +1,3 @@
-import type { ResolvedConfig } from 'vite';
-
 import type { PWAOptions, PWAPluginContext } from './types.js';
 
 export function createContext(pwaOptions: Partial<PWAOptions>): PWAPluginContext {
