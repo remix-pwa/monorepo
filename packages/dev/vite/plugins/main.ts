@@ -1,5 +1,5 @@
 import type { Plugin } from 'vite';
-import type { PWAPluginContext } from 'vite/context.js';
+import type { PWAPluginContext } from 'vite/types.js';
 
 export function EntryPlugin(ctx: PWAPluginContext): Plugin {
   return <Plugin>{

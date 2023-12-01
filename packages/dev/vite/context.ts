@@ -1,13 +1,6 @@
 import type { ResolvedConfig } from 'vite';
 
-import type { PWAOptions } from './types.js';
-
-export interface PWAPluginContext {
-  viteConfig: ResolvedConfig;
-  pwaOptions: Partial<PWAOptions>;
-  options: Partial<PWAOptions>;
-  isDev: boolean;
-}
+import type { PWAOptions, PWAPluginContext } from './types.js';
 
 export function createContext(pwaOptions: Partial<PWAOptions>): PWAPluginContext {
   return {
