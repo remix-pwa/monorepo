@@ -1,5 +1,6 @@
 import type { Plugin } from 'vite';
-import type { PWAPluginContext } from 'vite/types.js';
+
+import type { PWAPluginContext } from '../types.js';
 
 export function LoaderPlugin(ctx: PWAPluginContext): Plugin {
   return <Plugin>{
