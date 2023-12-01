@@ -1,5 +1,5 @@
 import type { Plugin } from 'vite';
-import type { PWAPluginContext } from 'vite/context.js';
+import type { PWAPluginContext } from 'vite/types.js';
 
 export function LoaderPlugin(ctx: PWAPluginContext): Plugin {
   return <Plugin>{
@@ -9,11 +9,35 @@ export function LoaderPlugin(ctx: PWAPluginContext): Plugin {
       if (Array.isArray(id.match(/root\.(tsx|jsx)$/))) {
         console.log('Transforming!', ctx);
 
-        console.log('Within root file!', id, code);
-        return code.replace(
+        const modifiedCode = code.replace(
           '</head>',
-          ["<script id='vite-plugin-remix-pwa:loader::inject-sw'>", '</script>', '</head>'].join('\n')
+          [
+            "<script type='module' id='vite-plugin-remix-pwa:loader::inject-sw' dangerouslySetInnerHTML={{",
+            ' __html: `',
+            '  function register() {',
+            "   navigator.serviceWorker.register('/entry.worker.js', {",
+            "    scope: '/',",
+            "    type: 'classic',",
+            "    updateViaCache: 'none',",
+            '   })',
+            '  }',
+            '',
+            "  if ('serviceWorker' in navigator) {",
+            "   if (document.readyState === 'complete' || document.readyState === 'interactive') {",
+            '    register();',
+            '   } else {',
+            "    window.addEventListener('load', register);",
+            '      }',
+            '  }',
+            ' `}}',
+            '/>',
+            '</head>',
+          ].join('\n')
         );
+
+        console.log('Within root file!', id, modifiedCode);
+
+        return modifiedCode;
       }
     },
   };
