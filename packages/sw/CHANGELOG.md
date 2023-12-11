@@ -1,3 +1,10 @@
+## @remix-pwa/sw 2.1.13-dev.1 (2023-12-11)
+
+
+### Bug Fixes
+
+* **sw:** init assetCache correctly c90cc49
+
 ## @remix-pwa/sw 2.1.12 (2023-10-20)
 
 ## @remix-pwa/sw 2.1.12-dev.1 (2023-10-20)
