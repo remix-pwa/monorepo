@@ -1,4 +1,4 @@
-import * as B from 'buffer/';
+import * as B from 'buffer/index.js';
 
 import { mergeHeaders, omit } from './utils.js';
 
