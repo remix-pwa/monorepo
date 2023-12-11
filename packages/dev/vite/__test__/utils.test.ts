@@ -46,10 +46,10 @@ describe('Plugin resolver test suite', () => {
     assert(options);
     expect(options).toEqual({
       minify: false,
-      publicDir: 'public',
+      publicDir: '/Users/ryan/Projects/remix-pwa/public',
       registerSW: 'script',
       scope: '/',
-      serviceWorkerSrc: 'entry.worker.ts',
+      serviceWorkerSrc: '/Users/ryan/Projects/remix-pwa/app/entry.worker.ts',
       includeAssets: [/\.(js|css|html|svg|png|jpg|jpeg|webp)$/],
       excludeAssets: [/\.map$/, /^manifest.*\.json$/, /^sw\.js$/],
     });
@@ -71,10 +71,10 @@ describe('Plugin resolver test suite', () => {
     assert(options);
     expect(options).toEqual({
       minify: true,
-      publicDir: 'public',
+      publicDir: '/Users/ryan/Projects/remix-pwa/public',
       registerSW: null,
       scope: '/pwa',
-      serviceWorkerSrc: 'entry.worker.ts',
+      serviceWorkerSrc: '/Users/ryan/Projects/remix-pwa/app/entry.worker.ts',
       includeAssets: [/\.(js|css|html|svg|png|jpg|jpeg|webp)$/],
       excludeAssets: [/\.map$/, /^manifest.*\.json$/, /^sw\.js$/],
     });
@@ -94,10 +94,10 @@ describe('Plugin resolver test suite', () => {
     assert(options);
     expect(options).toEqual({
       minify: false,
-      publicDir: 'out/dist',
+      publicDir: '/Users/ryan/Projects/remix-pwa/out/dist',
       registerSW: 'script',
       scope: '/',
-      serviceWorkerSrc: 'entry.worker.ts',
+      serviceWorkerSrc: '/Users/ryan/Projects/remix-pwa/app/entry.worker.ts',
       includeAssets: [/\.(js|css|html|svg|png|jpg|jpeg|webp)$/],
       excludeAssets: [/\.map$/, /^manifest.*\.json$/, /^sw\.js$/],
     });
