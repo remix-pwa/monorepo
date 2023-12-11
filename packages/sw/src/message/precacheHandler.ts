@@ -71,10 +71,11 @@ export class PrecacheHandler extends MessageHandler {
 
   override async _handleMessage(event: ExtendableMessageEvent): Promise<void> {
     const { data } = event;
-    let dataCache: RemixCache | string, documentCache: RemixCache | string, assetCache: RemixCache;
+    let dataCache: RemixCache | string, documentCache: RemixCache | string, assetCache: RemixCache | string;
 
     dataCache = this.dataCacheName;
     documentCache = this.documentCacheName;
+    assetCache = this.assetCacheName;
 
     if (data.type !== 'REMIX_NAVIGATION' || !data.isMount) return;
 
@@ -92,8 +93,7 @@ export class PrecacheHandler extends MessageHandler {
       documentCache = Storage.open(documentCache);
     }
 
-    if (typeof this.assetCacheName === 'string') {
-      // @ts-expect-error
+    if (typeof assetCache === 'string') {
       assetCache = Storage.open(assetCache);
     }
 
@@ -348,6 +348,7 @@ export class PrecacheHandler extends MessageHandler {
       const response = await fetch(assetUrl);
 
       // logger.debug('Caching asset:', assetUrl);
+      // @ts-expect-error
       return assetCache.put(assetUrl, response).catch(error => {
         if (error instanceof TypeError) {
           if (process.env.NODE_ENV === 'development')
