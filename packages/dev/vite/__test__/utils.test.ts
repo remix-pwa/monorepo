@@ -49,9 +49,12 @@ describe('Plugin resolver test suite', () => {
       publicDir: '/Users/ryan/Projects/remix-pwa/public',
       registerSW: 'script',
       scope: '/',
+      rootDir: '/Users/ryan/Projects/remix-pwa',
       serviceWorkerSrc: '/Users/ryan/Projects/remix-pwa/app/entry.worker.ts',
       includeAssets: [/\.(js|css|html|svg|png|jpg|jpeg|webp)$/],
       excludeAssets: [/\.map$/, /^manifest.*\.json$/, /^sw\.js$/],
+      appDir: '/Users/ryan/Projects/remix-pwa/app',
+      ignoredRouteFiles: [],
     });
   });
 
@@ -73,10 +76,13 @@ describe('Plugin resolver test suite', () => {
       minify: true,
       publicDir: '/Users/ryan/Projects/remix-pwa/public',
       registerSW: null,
+      rootDir: '/Users/ryan/Projects/remix-pwa',
       scope: '/pwa',
       serviceWorkerSrc: '/Users/ryan/Projects/remix-pwa/app/entry.worker.ts',
       includeAssets: [/\.(js|css|html|svg|png|jpg|jpeg|webp)$/],
       excludeAssets: [/\.map$/, /^manifest.*\.json$/, /^sw\.js$/],
+      appDir: '/Users/ryan/Projects/remix-pwa/app',
+      ignoredRouteFiles: [],
     });
   });
 
@@ -96,10 +102,13 @@ describe('Plugin resolver test suite', () => {
       minify: false,
       publicDir: '/Users/ryan/Projects/remix-pwa/out/dist',
       registerSW: 'script',
+      rootDir: '/Users/ryan/Projects/remix-pwa',
       scope: '/',
       serviceWorkerSrc: '/Users/ryan/Projects/remix-pwa/app/entry.worker.ts',
       includeAssets: [/\.(js|css|html|svg|png|jpg|jpeg|webp)$/],
       excludeAssets: [/\.map$/, /^manifest.*\.json$/, /^sw\.js$/],
+      appDir: '/Users/ryan/Projects/remix-pwa/app',
+      ignoredRouteFiles: [],
     });
   });
 
