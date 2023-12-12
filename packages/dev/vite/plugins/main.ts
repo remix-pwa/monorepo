@@ -8,7 +8,7 @@ export function EntryPlugin(ctx: PWAPluginContext): Plugin {
     name: 'vite-plugin-remix-pwa:entry',
     enforce: 'pre',
     async configResolved(config) {
-      console.log(config);
+      // if (process.env.PWA_SANDBOX) console.log(config);
 
       ctx.isDev = config.mode === 'development';
       ctx.viteConfig = config;
