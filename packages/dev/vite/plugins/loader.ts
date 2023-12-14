@@ -8,9 +8,7 @@ export function LoaderPlugin(ctx: PWAPluginContext): Plugin {
     enforce: 'pre',
     transform(code, id) {
       if (Array.isArray(id.match(/root\.(tsx|jsx)$/))) {
-        console.log('Transforming!', ctx);
-
-        const modifiedCode = code.replace(
+        return code.replace(
           '</head>',
           [
             "<script type='module' id='vite-plugin-remix-pwa:loader::inject-sw' dangerouslySetInnerHTML={{",
@@ -35,10 +33,6 @@ export function LoaderPlugin(ctx: PWAPluginContext): Plugin {
             '</head>',
           ].join('\n')
         );
-
-        console.log('Within root file!', id, modifiedCode);
-
-        return modifiedCode;
       }
     },
   };
