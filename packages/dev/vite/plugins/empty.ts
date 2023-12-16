@@ -1,4 +1,3 @@
-import { parse } from 'es-module-lexer';
 import type { Plugin } from 'vite';
 import type { PWAPluginContext } from 'vite/types.js';
 
@@ -20,20 +19,30 @@ export function EmptyModulesPlugin(ctx: PWAPluginContext): Plugin[] {
       },
     },
     {
-      name: 'vite-plugin-remix-pwa:empty-client-modules',
+      name: 'vite-plugin-remix-pwa:empty-react-modules',
       enforce: 'post',
-      async transform(code, id, options) {
+      async transform(_code, id, options) {
         if (!options?.ssr) return;
-        const clientFileRE = /\.client(\.[cm]?[jt]sx?)?$/;
-        const clientDirRE = /\/\.client\//;
+        const reactModules = /^react(-dom)?(\/.*)?$/;
 
-        if (clientFileRE.test(id) || clientDirRE.test(id)) {
-          const exports = parse(code)[1];
-
+        if (reactModules.test(id)) {
           return {
-            code: exports
-              .map(({ n: name }: any) => (name === 'default' ? 'export default {};' : `export const ${name} = {};`))
-              .join('\n'),
+            code: 'export {}',
+            map: null,
+          };
+        }
+      },
+    },
+    {
+      name: 'vite-plugin-remix-pwa:empty-remix-modules',
+      enforce: 'post',
+      async transform(_code, id, options) {
+        if (!options?.ssr) return;
+        const remixModules = /^@remix-run\/(deno|cloudflare|node|react)(\/.*)?$/;
+
+        if (remixModules.test(id)) {
+          return {
+            code: 'export {}',
             map: null,
           };
         }
