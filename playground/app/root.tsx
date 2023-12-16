@@ -11,14 +11,14 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-// import { routes } from 'virtual:pwa-routes-module';
+import { routes } from 'virtual:pwa-entry-module';
 
 import './tailwind.css';
 
 export default function App() {
   useSWEffect();
 
-  // logger.log("App rendered", routes);
+  logger.log("App rendered", routes);
 
   return (
     <html lang="en">
