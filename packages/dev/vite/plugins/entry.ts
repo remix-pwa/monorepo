@@ -46,10 +46,9 @@ export function EntryVModPlugin(ctx: PWAPluginContext): Plugin {
         return VirtualModule.resolve(pwaEntryModuleId);
       }
     },
-    async load(id, options) {
+    async load(id) {
       if (id === VirtualModule.resolve(pwaEntryModuleId)) {
         const routes = Object.values(ctx.options.routes);
-        console.log(createRouteImports(routes, ctx.options.appDirectory));
 
         return `
 // import * as entryWorker from ${JSON.stringify(normalizePath(ctx.options.serviceWorkerPath))};
