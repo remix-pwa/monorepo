@@ -1,7 +1,7 @@
 import type { Plugin } from 'vite';
 
 import { createContext } from './context.js';
-import { EmptyModulesPlugin } from './plugins/empty.js';
+import { CompilerPlugin } from './plugins/compiler.js';
 import { EntryVModPlugin } from './plugins/entry.js';
 import { LoaderPlugin } from './plugins/loader.js';
 import { EntryPlugin } from './plugins/main.js';
@@ -21,8 +21,8 @@ export function RemixPWA(pwaOptions: Partial<PWAOptions> = {}): Plugin[] {
 
   return <Plugin[]>[
     EntryPlugin(ctx),
+    CompilerPlugin(ctx),
     LoaderPlugin(ctx),
-    EmptyModulesPlugin(ctx),
     EntryVModPlugin(ctx),
     RoutesVModPlugin(ctx),
   ];
