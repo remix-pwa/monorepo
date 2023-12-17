@@ -37,12 +37,13 @@ function createRouteManifest(routes: RouteManifest): string {
 
 export function EntryVModPlugin(ctx: PWAPluginContext): Plugin {
   const pwaEntryModuleId = VirtualModule.id('pwa-entry-module');
+  const FILTER_REGEX = /@remix-pwa\/build\/magic$/;
 
   return <Plugin>{
     name: 'vite-plugin-remix-pwa:magic-entry',
-    enforce: 'pre',
+    // enforce: 'pre',
     resolveId(id) {
-      if (id === pwaEntryModuleId) {
+      if (FILTER_REGEX.test(id)) {
         return VirtualModule.resolve(pwaEntryModuleId);
       }
     },

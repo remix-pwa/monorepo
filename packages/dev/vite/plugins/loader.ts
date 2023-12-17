@@ -14,7 +14,7 @@ export function LoaderPlugin(ctx: PWAPluginContext): Plugin {
             "<script type='module' id='vite-plugin-remix-pwa:loader::inject-sw' dangerouslySetInnerHTML={{",
             ' __html: `',
             '  function register() {',
-            "   navigator.serviceWorker.register('/entry.worker.js', {",
+            "   navigator.serviceWorker.register('/worker.js', {",
             "    scope: '/',",
             "    type: 'classic',",
             "    updateViaCache: 'none',",
