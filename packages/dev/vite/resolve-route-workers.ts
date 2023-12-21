@@ -26,7 +26,7 @@ export const resolveRouteWorkerApis = ({ ast, source }: { ast: ParseResult; sour
         });
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        targetFunctionCode.append(`export ${source.substring(path.node.start!, path.node.end!)}`);
+        targetFunctionCode.append(`export ${source.substring(path.node.start!, path.node.end!)}\n`);
       }
     },
     ArrowFunctionExpression(path) {
@@ -45,15 +45,17 @@ export const resolveRouteWorkerApis = ({ ast, source }: { ast: ParseResult; sour
             },
           });
 
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          targetFunctionCode.append(`export const ${source.substring(path.node.start!, path.node.end!)}`);
+          targetFunctionCode.append(
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            `export const ${functionName.trim()} = ${source.substring(path.node.start!, path.node.end!)}\n`
+          );
         }
       }
     },
   });
 
   // If there are no target function identifiers, then there's no need to continue
-  if (targetFunctionCode.length() === 0) {
+  if (targetFunctionCode.toString().length === 0) {
     return 'module.exports = {};';
   }
 
@@ -77,7 +79,7 @@ export const resolveRouteWorkerApis = ({ ast, source }: { ast: ParseResult; sour
   targetFunctionCode.prepend(
     `${Object.keys(targetFunctionImports)
       .map(key => `import { ${key} } from '${targetFunctionImports[key]}';`)
-      .join('\n')}`
+      .join('\n')}\n`
   );
 
   return targetFunctionCode.toString();

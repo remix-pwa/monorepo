@@ -11,7 +11,7 @@ export const loader: LoaderFunction = async () => {
   });
 }
 
-export const workerLoader = async ({ context }: any) => {
+export async function workerLoader ({ context }: any) {
   // `fetchFromServer` is a utility function provided to 
   // allow you to make requests to the server directly from the worker.
   const { fetchFromServer } = context;
