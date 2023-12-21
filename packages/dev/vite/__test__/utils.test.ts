@@ -12,6 +12,9 @@ vi.doMock('@remix-run/dev/dist/config.js', () => {
       Promise.resolve({
         appDirectory: '/Users/ryan/Projects/remix-pwa/app',
         routes: {},
+        assetsBuildDirectory: '/Users/ryan/Projects/remix-pwa/public/build',
+        ignoredRouteFiles: ['**/.*'],
+        publicPath: '/build/',
       } as unknown as ResolvedRemixConfig),
     findConfig: () => './__test__/vite-config.ts',
   };
@@ -59,13 +62,17 @@ describe('Plugin resolver test suite', () => {
     expect(options).toEqual(<ResolvedPWAOptions>{
       workerBuildDirectory: '/Users/ryan/Projects/remix-pwa/public',
       registerSW: 'script',
+      workerSourceMap: false,
+      publicPath: '/build/',
+      assetsBuildDirectory: '/Users/ryan/Projects/remix-pwa/public/build',
+      entryWorkerFile: 'entry.worker.ts',
+      workerEntryPoint: '@remix-pwa/worker-runtime',
       scope: '/',
       rootDirectory: '/Users/ryan/Projects/remix-pwa',
       includeAssets: [/\.(js|css|html|svg|png|jpg|jpeg|webp)$/],
       excludeAssets: [/\.map$/, /^manifest.*\.json$/, /^sw\.js$/],
       appDirectory: '/Users/ryan/Projects/remix-pwa/app',
       ignoredSWRouteFiles: [],
-      serviceWorkerFile: 'entry.worker.ts',
       workerMinify: false,
       workerName: 'entry.worker',
       serviceWorkerPath: '/Users/ryan/Projects/remix-pwa/app/entry.worker.ts',
@@ -87,7 +94,7 @@ describe('Plugin resolver test suite', () => {
     );
 
     assert(options);
-    expect(options).toEqual({
+    expect(options).toEqual(<ResolvedPWAOptions>{
       workerBuildDirectory: '/Users/ryan/Projects/remix-pwa/public',
       registerSW: null,
       scope: '/pwa',
@@ -96,7 +103,11 @@ describe('Plugin resolver test suite', () => {
       excludeAssets: [/\.map$/, /^manifest.*\.json$/, /^sw\.js$/],
       appDirectory: '/Users/ryan/Projects/remix-pwa/app',
       ignoredSWRouteFiles: [],
-      serviceWorkerFile: 'entry.worker.ts',
+      entryWorkerFile: 'entry.worker.ts',
+      assetsBuildDirectory: '/Users/ryan/Projects/remix-pwa/public/build',
+      publicPath: '/build/',
+      workerEntryPoint: '@remix-pwa/worker-runtime',
+      workerSourceMap: false,
       workerMinify: true,
       workerName: 'entry.worker',
       serviceWorkerPath: '/Users/ryan/Projects/remix-pwa/app/entry.worker.ts',
@@ -109,23 +120,27 @@ describe('Plugin resolver test suite', () => {
 
     const options = await resolveOptions(
       {
-        serviceWorkerFile: '/entry.worker.ts',
+        entryWorkerFile: '/entry.worker.ts',
         workerBuildDirectory: '/out/dist/',
       },
       mockViteConfig as ResolvedConfig
     );
 
     assert(options);
-    expect(options).toEqual({
+    expect(options).toEqual(<ResolvedPWAOptions>{
       workerBuildDirectory: '/Users/ryan/Projects/remix-pwa/out/dist',
       registerSW: 'script',
+      workerSourceMap: false,
+      publicPath: '/build/',
+      assetsBuildDirectory: '/Users/ryan/Projects/remix-pwa/public/build',
+      entryWorkerFile: 'entry.worker.ts',
+      workerEntryPoint: '@remix-pwa/worker-runtime',
       scope: '/',
       rootDirectory: '/Users/ryan/Projects/remix-pwa',
       includeAssets: [/\.(js|css|html|svg|png|jpg|jpeg|webp)$/],
       excludeAssets: [/\.map$/, /^manifest.*\.json$/, /^sw\.js$/],
       appDirectory: '/Users/ryan/Projects/remix-pwa/app',
       ignoredSWRouteFiles: [],
-      serviceWorkerFile: 'entry.worker.ts',
       workerMinify: false,
       workerName: 'entry.worker',
       serviceWorkerPath: '/Users/ryan/Projects/remix-pwa/app/entry.worker.ts',
