@@ -10,3 +10,4 @@ export type { WorkerConfig as AppConfig, WorkerConfig } from './compiler/utils/c
 // Vite ✨
 // eslint-disable-next-line camelcase
 export { RemixPWA as unstable_RemixPWA } from './vite/index.js';
+export type { PWAOptions as PWAViteOptions } from './vite/types.js';
