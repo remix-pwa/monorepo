@@ -51,7 +51,9 @@ export async function resolveOptions(
 
   const rootDirectory = viteConfig.root ?? process.env.REMIX_ROOT ?? process.cwd();
 
-  const { appDirectory, assetsBuildDirectory, routes } = await resolveConfig(remixConfig, { rootDirectory });
+  const { appDirectory, assetsBuildDirectory, publicPath, routes } = await resolveConfig(remixConfig, {
+    rootDirectory,
+  });
 
   const includeAssets = [/\.(js|css|html|svg|png|jpg|jpeg|webp)$/];
   const excludeAssets = [/\.map$/, /^manifest.*\.json$/, /^sw\.js$/];
@@ -59,6 +61,7 @@ export async function resolveOptions(
   return {
     workerMinify,
     workerEntryPoint,
+    publicPath,
     workerSourceMap,
     workerBuildDirectory: `${viteConfig.root}/${removeTrailingSlashes(workerBuildDirectory)}`,
     registerSW,

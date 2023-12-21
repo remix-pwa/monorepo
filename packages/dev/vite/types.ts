@@ -33,6 +33,7 @@ export interface ResolvedPWAOptions
   excludeAssets: RegExp[];
   rootDirectory: string;
   appDirectory: string;
+  publicPath: string;
   serviceWorkerPath: string;
   routes: RouteManifest;
   assetsBuildDirectory: string;
@@ -48,6 +49,9 @@ export interface PWAPluginContext {
 export interface ResolvedEsbuildConfig {
   routes: RouteManifest;
   entryWorkerFile: string;
+  serviceWorkerPath: string;
+  publicPath: string;
+  rootDirectory: string;
   appDirectory: string;
   assetsBuildDirectory: string;
 }
