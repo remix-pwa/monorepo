@@ -20,31 +20,31 @@ export const action: ActionFunction = () => {
   });
 }
 
-export const workerAction = async ({ context }: WorkerActionArgs) => {
-  const { fetchFromServer } = context;
+// export const workerAction = async ({ context }: WorkerActionArgs) => {
+//   const { fetchFromServer } = context;
 
-  console.log('Worker action called');
+//   console.log('Worker action called');
 
-  try {
-    // We are now calling the actual Remix action here, but like you can see 
-    // we are doing nothing with it, so no redirect happens 😏
-    //
-    // But open up the 'Cookies' section in your devtools for a little surprise.
-    const response = await fetchFromServer() as unknown as Response;
+//   try {
+//     // We are now calling the actual Remix action here, but like you can see 
+//     // we are doing nothing with it, so no redirect happens 😏
+//     //
+//     // But open up the 'Cookies' section in your devtools for a little surprise.
+//     const response = await fetchFromServer() as unknown as Response;
 
-    console.log(Object.fromEntries(response.headers.entries()));
-  } catch (error) {
-    console.error(error);
-  }
+//     console.log(Object.fromEntries(response.headers.entries()));
+//   } catch (error) {
+//     console.error(error);
+//   }
 
-  return new Response(JSON.stringify({
-    message: 'Modified action response, Remix Actions are quite out of the picture here'
-  }), {
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    }
-  });
-}
+//   return new Response(JSON.stringify({
+//     message: 'Modified action response, Remix Actions are quite out of the picture here'
+//   }), {
+//     headers: {
+//       'Content-Type': 'application/json; charset=utf-8'
+//     }
+//   });
+// }
 
 export default function BasicAction() {
   const fetcher = useFetcher();
