@@ -1,6 +1,10 @@
-import { getRouteModuleExports } from '@remix-run/dev/dist/compiler/utils/routeExports.js';
 import type { OnLoadArgs, OnLoadResult, OnResolveArgs, Plugin, PluginBuild } from 'esbuild';
+import { readFile } from 'fs/promises';
+import { resolve,dirname } from 'node:path';
 import type { ResolvedEsbuildConfig } from 'vite/types.js';
+
+import { parse } from '../babel.js';
+import { resolveRouteWorkerApis } from '../resolve-route-workers.js';
 const FILTER_REGEX = /\?worker$/;
 const NAMESPACE = 'routes-module';
 
@@ -16,19 +20,18 @@ export default function routesModulesPlugin(config: ResolvedEsbuildConfig): Plug
     const onLoad = async ({ path }: OnLoadArgs) => {
       const file = path.replace(FILTER_REGEX, '');
       const route = routesByFile.get(file);
-      // const sourceExports = await getRouteModuleExports(config, route.id);
-      // const theExports = sourceExports.filter(
-      //   exp => exp === 'workerAction' || exp === 'workerLoader' || exp === 'handle'
-      // );
+      const source = await readFile(route, { encoding: 'utf-8' });
 
-      // let contents = 'module.exports = {};';
-      // if (hasWorkerExports(theExports)) {
-      //   const spec = `{ ${theExports.join(', ')} }`;
-      //   contents = `export ${spec} from ${JSON.stringify(`./${file}`)};`;
-      // }
+      const sourceAst = parse(source, {
+        sourceType: 'module',
+        plugins: ['jsx', 'typescript'],
+      });
+
+      const virtualRouteSource = resolveRouteWorkerApis({ ast: sourceAst, source });
+
       return {
         contents: '',
-        resolveDir: config.appDirectory,
+        resolveDir: resolve(config.appDirectory, dirname(route)), // huh?
         loader: 'js',
       } as OnLoadResult;
     };
