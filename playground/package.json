@@ -13,7 +13,7 @@
   "private": true,
   "scripts": {
     "build:worker": "tsx ../packages/dev/index.ts build",
-    "buildt": "run-p build:*",
+    "buildt": "vite build",
     "devo": "run-p dev:*",
     "dev": "vite dev",
     "start": "remix-serve ./build/index.js",
