@@ -48,7 +48,7 @@ export default function entryModulePlugin(config: ResolvedEsbuildConfig): Plugin
     const onLoad = () => {
       const routes = Object.values(config.routes);
       const contents = `
-      import * as entryWorker from ${JSON.stringify(config.entryWorkerFile)};
+      import * as entryWorker from ${JSON.stringify(config.serviceWorkerPath)};
 
     ${createRouteImports(routes)}
 
