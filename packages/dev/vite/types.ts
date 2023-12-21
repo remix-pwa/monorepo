@@ -1,4 +1,3 @@
-import type { RemixConfig } from '@remix-run/dev/dist/config.js';
 import type { RouteManifest } from '@remix-run/dev/dist/config/routes.js';
 import type { RemixVitePluginOptions } from '@remix-run/dev/dist/vite/plugin.js';
 import type { ResolvedConfig } from 'vite';
