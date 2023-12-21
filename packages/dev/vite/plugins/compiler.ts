@@ -1,10 +1,11 @@
 import type { Context } from '@remix-run/dev/dist/compiler/context.js';
-import { emptyModulesPlugin } from '@remix-run/dev/dist/compiler/plugins/emptyModules.js';
 import type { BuildOptions, Plugin as EsbuildPlugin } from 'esbuild';
 import { context } from 'esbuild';
 import type { FSWatcher, Plugin } from 'vite';
-import entryModulePlugin from 'vite/esbuild/entry-plugin.js';
 import type { PWAPluginContext } from 'vite/types.js';
+
+import { emptyModulesPlugin } from '../esbuild/empty-plugin.js';
+import entryModulePlugin from '../esbuild/entry-plugin.js';
 
 export function CompilerPlugin(ctx: PWAPluginContext): Plugin {
   let watcher: FSWatcher | null = null;
@@ -58,16 +59,15 @@ export function CompilerPlugin(ctx: PWAPluginContext): Plugin {
           emptyModulesPlugin(esbuildPluginContext, /^@remix-run\/(deno|cloudflare|node|react)(\/.*)?$/, {
             includeNodeModules: true,
           }) as EsbuildPlugin,
-          // entryModulePlugin(ctx.options),
+          entryModulePlugin(ctx.options),
         ],
       }).then(async context => {
         // implement later
       });
 
-      viteWatcher.on('add', path => {});
+      // viteWatcher.on('add', path => {});
     },
     closeBundle() {
-      console.log('Done');
       if (watcher) {
         watcher.close();
       }
