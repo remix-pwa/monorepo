@@ -48,6 +48,12 @@ module.exports = {
     'sort-destructure-keys/sort-destructure-keys': 'error',
     'import/no-unresolved': [2, { caseSensitive: false }],
     '@typescript-eslint/no-explicit-any': 'off',
+    'prettier/prettier': [
+      'error',
+      {
+        endOfLine: 'auto',
+      },
+    ],
   },
   overrides: [
     {

@@ -26,6 +26,7 @@ describe('CLI engine test suite', () => {
 
   describe('Version flag test suite', () => {
     test("should print the help text when the '--help' flag is passed", async () => {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       const log = vi.spyOn(console, 'log').mockImplementation(() => {});
       await run(['--help']);
 
@@ -42,6 +43,7 @@ A complete PWA framework solution for integrating PWA into your Remix applicatio
 
   describe('Documentation flag test suite', () => {
     test("should print the help text when the '--docs' flag is passed", async () => {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       const log = vi.spyOn(console, 'log').mockImplementation(() => {});
       await run(['--docs']);
 
@@ -52,6 +54,7 @@ A complete PWA framework solution for integrating PWA into your Remix applicatio
 
   describe('Project creation test suite', () => {
     test('should point to the correct template directory', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       await createPWA(
@@ -95,6 +98,7 @@ A complete PWA framework solution for integrating PWA into your Remix applicatio
       });
 
       test('should throw an error when the service worker already exists', async () => {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
         writeFileSync('__mock-app/app/entry.worker.ts', 'console.log("hello world")', { flag: 'w' });

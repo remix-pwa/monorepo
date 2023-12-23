@@ -1,26 +1,24 @@
-import { useSWEffect, LiveReload, logger } from "@remix-pwa/sw";
-import { cssBundleHref } from "@remix-run/css-bundle";
-import type { LinksFunction } from "@remix-run/node";
+import {
+  useSWEffect,
+  // LiveReload,
+  logger
+} from "@remix-pwa/sw";
 import {
   Links,
-  // LiveReload,
+  LiveReload,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+// import { routes } from 'virtual:pwa-entry-module';
 
-import stylesheet from './tailwind.css';
-
-export const links: LinksFunction = () => [
-  ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
-  { rel: "stylesheet", href: stylesheet },
-];
+import './tailwind.css';
 
 export default function App() {
   useSWEffect();
 
-  logger.log("App rendered");
+  // logger.log("App rendered", routes);
 
   return (
     <html lang="en">

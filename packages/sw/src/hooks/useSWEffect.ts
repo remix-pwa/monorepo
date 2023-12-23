@@ -40,7 +40,6 @@ export function useSWEffect(): void {
           type: 'REMIX_NAVIGATION',
           isMount: mounted,
           location,
-          // @ts-expect-error
           matches: matches.filter(filteredMatches).map(sanitizeHandleObject),
           manifest: window.__remixManifest,
         });
@@ -51,7 +50,6 @@ export function useSWEffect(): void {
             type: 'REMIX_NAVIGATION',
             isMount: mounted,
             location,
-            // @ts-expect-error
             matches: matches.filter(filteredMatches).map(sanitizeHandleObject),
             manifest: window.__remixManifest,
           });
