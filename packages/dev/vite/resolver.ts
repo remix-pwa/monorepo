@@ -2,6 +2,7 @@ import type { AppConfig } from '@remix-run/dev/dist/config.js';
 import { resolveConfig } from '@remix-run/dev/dist/config.js';
 import type { RemixVitePluginOptions } from '@remix-run/dev/dist/vite/plugin.js';
 import pick from 'lodash/pick.js';
+import { resolve } from 'path';
 import type { ResolvedConfig } from 'vite';
 import { normalizePath } from 'vite';
 
@@ -63,13 +64,13 @@ export async function resolveOptions(
     workerEntryPoint,
     publicPath,
     workerSourceMap,
-    workerBuildDirectory: `${viteConfig.root}/${removeTrailingSlashes(workerBuildDirectory)}`,
+    workerBuildDirectory: resolve(viteConfig.root, removeTrailingSlashes(workerBuildDirectory)),
     registerSW,
     assetsBuildDirectory,
     scope,
     routes,
     entryWorkerFile: removeTrailingSlashes(serviceWorkerFile),
-    serviceWorkerPath: `${appDirectory}/${removeTrailingSlashes(serviceWorkerFile)}`,
+    serviceWorkerPath: resolve(appDirectory, removeTrailingSlashes(serviceWorkerFile)),
     includeAssets,
     excludeAssets,
     appDirectory,
