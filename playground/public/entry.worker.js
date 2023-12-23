@@ -10507,7 +10507,7 @@ async function workerLoader5({ context }) {
 var assets = [];
 
 // entry-module:@remix-pwa/build/magic
-console.log("C:/Users/Ukeje Chukwuemeriwo/Documents/shafspecs/monorepo/playground/app/entry.worker.ts");
+console.log("C:\\Users\\Ukeje Chukwuemeriwo\\Documents\\shafspecs\\monorepo\\playground\\app\\entry.worker.ts");
 var routes = {
   "root": {
     id: "root",

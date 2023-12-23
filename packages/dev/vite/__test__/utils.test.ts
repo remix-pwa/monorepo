@@ -1,7 +1,6 @@
 import type { ResolvedRemixConfig } from '@remix-run/dev';
-import { afterEach, beforeEach } from 'node:test';
 import type { ResolvedConfig } from 'vite';
-import { afterAll, assert, beforeAll, describe, expect, test, vi } from 'vitest';
+import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import type { PWAOptions, ResolvedPWAOptions } from '../types.js';
 import { mockViteConfig } from './vite-config.js';
@@ -17,6 +16,12 @@ vi.doMock('@remix-run/dev/dist/config.js', () => {
         publicPath: '/build/',
       } as unknown as ResolvedRemixConfig),
     findConfig: () => './__test__/vite-config.ts',
+  };
+});
+vi.doMock('path', () => {
+  return {
+    resolve: (...args: string[]) => args.join('/'),
+    normalize: (path: string) => path,
   };
 });
 
@@ -44,14 +49,14 @@ describe('Plugin context test suite', () => {
 });
 
 describe('Plugin resolver test suite', () => {
-  beforeEach(() => {
-    vi.doMock('../resolver.js', () => {
-      return {
-        resolveOptions: (opts: Partial<PWAOptions>, config: ResolvedConfig) =>
-          Promise.resolve({ ...opts, config } as unknown as ResolvedPWAOptions),
-      };
-    });
-  });
+  // beforeEach(() => {
+  //   vi.doMock('../resolver.js', () => {
+  //     return {
+  //       resolveOptions: (opts: Partial<PWAOptions>, config: ResolvedConfig) =>
+  //         Promise.resolve({ ...opts, config } as unknown as ResolvedPWAOptions),
+  //     };
+  //   });
+  // });
 
   test('should resolve options', async () => {
     const { resolveOptions } = await import('../resolver.js');
@@ -155,6 +160,7 @@ describe('Plugin resolver test suite', () => {
   afterAll(() => {
     vi.doUnmock('../resolver.js');
     vi.doUnmock('@remix-run/dev/dist/config');
+    vi.doUnmock('path');
   });
 });
 
