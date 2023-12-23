@@ -2,7 +2,7 @@ import type { Context } from '@remix-run/dev/dist/compiler/context.js';
 import { red, whiteBright } from 'colorette';
 import type { BuildOptions, Plugin as EsbuildPlugin } from 'esbuild';
 import { context } from 'esbuild';
-import type { FSWatcher, Plugin } from 'vite';
+import type { Plugin } from 'vite';
 import type { PWAPluginContext } from 'vite/types.js';
 
 import assetsPlugin from '../esbuild/assets-plugin.js';
@@ -10,14 +10,17 @@ import { emptyModulesPlugin } from '../esbuild/empty-plugin.js';
 import entryModulePlugin from '../esbuild/entry-plugin.js';
 import routesModulesPlugin from '../esbuild/routes-plugin.js';
 import sideEffectsPlugin from '../esbuild/side-effects.js';
-import { getWorkerHash } from '../hash.js';
+import { compareHash, getWorkerHash } from '../hash.js';
 
 export function CompilerPlugin(ctx: PWAPluginContext): Plugin {
-  let watcher: FSWatcher | null = null;
-
   return <Plugin>{
     name: 'vite-plugin-remix-pwa:compiler',
-    async configureServer({ watcher: viteWatcher, ws }) {
+    async configureServer({ config, watcher: viteWatcher, ws }) {
+      // Disable Remix PWA during Remix Dev Server run
+      if (config.appType === 'custom') {
+        return;
+      }
+
       const esbuildOptions: BuildOptions = {
         absWorkingDir: ctx.options.rootDirectory,
         entryPoints: {
@@ -44,8 +47,6 @@ export function CompilerPlugin(ctx: PWAPluginContext): Plugin {
           'import-meta': true,
         },
       };
-
-      watcher = viteWatcher;
 
       const MODE = process.env.NODE_ENV === 'production' ? 'production' : 'development';
       const TIME_LABEL = '💿 Built Service Worker in';
@@ -98,10 +99,15 @@ export function CompilerPlugin(ctx: PWAPluginContext): Plugin {
 
             // Rebuild only added routes as well as workers
             await context.rebuild();
+            const oldHash = hash;
             hash = getWorkerHash(ctx.options);
 
             console.timeEnd(DEV_TIME_LABEL);
-            console.log('Service worker hash (MD5):', hash);
+            // console.log('Service worker hash (MD5):', hash);
+            // oldHash === hash
+            //   ? console.log('Service worker hash is unchanged.')
+            //   : console.log('Service worker hash has changed.');
+            compareHash(ws, oldHash, hash);
           }
         });
 
@@ -111,10 +117,12 @@ export function CompilerPlugin(ctx: PWAPluginContext): Plugin {
 
             // Rebuild only changed routes as well as workers
             await context.rebuild();
+            const oldHash = hash;
             hash = getWorkerHash(ctx.options);
 
             console.timeEnd(DEV_TIME_LABEL);
-            console.log('Service worker hash (MD5):', hash);
+
+            compareHash(ws, oldHash, hash);
           }
         });
 
@@ -124,10 +132,12 @@ export function CompilerPlugin(ctx: PWAPluginContext): Plugin {
 
             // Rebuild only removed routes as well as workers
             await context.rebuild();
+            const oldHash = hash;
             hash = getWorkerHash(ctx.options);
 
             console.timeEnd(DEV_TIME_LABEL);
-            console.log('Service worker hash (MD5):', hash);
+
+            compareHash(ws, oldHash, hash);
           }
         });
 
