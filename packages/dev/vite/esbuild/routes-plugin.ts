@@ -1,5 +1,6 @@
 import type { OnLoadArgs, OnLoadResult, OnResolveArgs, Plugin, PluginBuild } from 'esbuild';
 import { readFile } from 'fs/promises';
+import { resolve } from 'path';
 import type { ResolvedEsbuildConfig } from 'vite/types.js';
 
 import { parse } from '../babel.js';
@@ -13,8 +14,7 @@ export default function routesModulesPlugin(config: ResolvedEsbuildConfig): Plug
     const onResolve = ({ path }: OnResolveArgs) => ({ path, namespace: NAMESPACE });
     const onLoad = async ({ path }: OnLoadArgs) => {
       const file = path.replace(FILTER_REGEX, '');
-      // Todo: Fix! (Improve!)
-      const source = await readFile(`app/${file}`, {
+      const source = await readFile(resolve(config.appDirectory, file), {
         encoding: 'utf-8',
       });
 
