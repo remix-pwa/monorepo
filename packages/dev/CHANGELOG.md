@@ -1,3 +1,10 @@
+# @remix-pwa/dev 2.1.0-dev.2 (2023-12-23)
+
+
+### Bug Fixes
+
+* **dev:** fixed route resolution on windows 5b4f6fd
+
 # @remix-pwa/dev 2.1.0-dev.1 (2023-12-23)
 
 
