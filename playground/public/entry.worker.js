@@ -39,13 +39,6 @@ var require_root = __commonJS({
   }
 });
 
-// routes-module:routes/basic-action.tsx?worker
-var require_basic_action = __commonJS({
-  "routes-module:routes/basic-action.tsx?worker"(exports, module) {
-    module.exports = {};
-  }
-});
-
 // ../node_modules/@remix-run/router/dist/router.js
 var router_exports = {};
 __export(router_exports, {
@@ -10103,8 +10096,28 @@ var workerLoader = async ({ context }) => {
   });
 };
 
-// entry-module:@remix-pwa/build/magic
-var route2 = __toESM(require_basic_action());
+// routes-module:routes/basic-action.tsx?worker
+var basic_action_exports = {};
+__export(basic_action_exports, {
+  workerAction: () => workerAction
+});
+var workerAction = async ({ context }) => {
+  const { fetchFromServer } = context;
+  console.log("Worker action called");
+  try {
+    const response = await fetchFromServer();
+    console.log(Object.fromEntries(response.headers.entries()));
+  } catch (error) {
+    console.error(error);
+  }
+  return new Response(JSON.stringify({
+    message: "Modified action response, Remix Actions are quite out of the picture here"
+  }), {
+    headers: {
+      "Content-Type": "application/json; charset=utf-8"
+    }
+  });
+};
 
 // routes-module:routes/basic-loader.tsx?worker
 var basic_loader_exports = {};
@@ -10132,13 +10145,13 @@ async function workerLoader2({ context }) {
 // routes-module:routes/_app.flights.tsx?worker
 var app_flights_exports = {};
 __export(app_flights_exports, {
-  workerAction: () => workerAction,
+  workerAction: () => workerAction2,
   workerLoader: () => workerLoader3
 });
 init_router();
 init_router();
 init_router();
-var workerAction = async ({ request, context }) => {
+var workerAction2 = async ({ request, context }) => {
   const formData = await request.formData();
   const { database, fetchFromServer } = context;
   try {
@@ -10177,9 +10190,9 @@ var workerLoader3 = async ({ context }) => {
 // routes-module:routes/strategies.tsx?worker
 var strategies_exports = {};
 __export(strategies_exports, {
-  workerAction: () => workerAction2
+  workerAction: () => workerAction3
 });
-var workerAction2 = async ({ context }) => {
+var workerAction3 = async ({ context }) => {
   const { event } = context;
   const formData = await event.request.clone().formData();
   const strategy = formData.get("strategy");
@@ -10226,9 +10239,9 @@ async function workerLoader4({ context }) {
 // routes-module:routes/sync-away.tsx?worker
 var sync_away_exports = {};
 __export(sync_away_exports, {
-  workerAction: () => workerAction3
+  workerAction: () => workerAction4
 });
-var workerAction3 = async ({ context }) => {
+var workerAction4 = async ({ context }) => {
   const { fetchFromServer, event } = context;
   try {
     await fetchFromServer();
@@ -10294,7 +10307,7 @@ var routes = {
     path: "basic-action",
     index: void 0,
     caseSensitive: void 0,
-    module: route2
+    module: basic_action_exports
   },
   "routes/basic-loader": {
     id: "routes/basic-loader",
