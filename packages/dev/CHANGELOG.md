@@ -1,3 +1,9 @@
+# @remix-pwa/dev 2.1.0-dev.1 (2023-12-23)
+
+
+### Features
+
+* **dev:** Vite + Remix PWA 🔥🚀 0e99c63
 
 ## @remix-pwa/dev 2.0.31 (2023-10-20)
 
