@@ -15,7 +15,7 @@ export function LoaderPlugin(ctx: PWAPluginContext): Plugin {
             ' __html: `',
             '  function register() {',
             `   navigator.serviceWorker.register('/${ctx.options.workerName}.js', {`,
-            `    scope: ${ctx.options.scope},`,
+            `    scope: ${JSON.stringify(ctx.options.scope)},`,
             "    type: 'classic',",
             "    updateViaCache: 'none',",
             '   })',
