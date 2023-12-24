@@ -1,5 +1,5 @@
 import type { Context } from '@remix-run/dev/dist/compiler/context.js';
-import { red, whiteBright } from 'colorette';
+import { red } from 'colorette';
 import type { BuildOptions, Plugin as EsbuildPlugin } from 'esbuild';
 import { context } from 'esbuild';
 import type { Plugin } from 'vite';
