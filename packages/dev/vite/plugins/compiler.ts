@@ -13,8 +13,13 @@ import sideEffectsPlugin from '../esbuild/side-effects.js';
 import { compareHash, getWorkerHash } from '../hash.js';
 
 export function CompilerPlugin(ctx: PWAPluginContext): Plugin {
+  let MODE = 'production';
+
   return <Plugin>{
     name: 'vite-plugin-remix-pwa:compiler',
+    configResolved(config) {
+      MODE = config.mode;
+    },
     async configureServer({ config, watcher: viteWatcher, ws }) {
       // Disable Remix PWA during Remix Dev Server run
       if (config.appType === 'custom') {
@@ -41,21 +46,20 @@ export function CompilerPlugin(ctx: PWAPluginContext): Plugin {
         mainFields: ['browser', 'module', 'main'],
         chunkNames: '_shared/sw/[name]-[hash]',
         define: {
-          'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+          'process.env.NODE_ENV': MODE === 'production' ? '"production"' : '"development"',
         },
         supported: {
           'import-meta': true,
         },
       };
 
-      const MODE = process.env.NODE_ENV === 'production' ? 'production' : 'development';
-      const TIME_LABEL = '💿 Built Service Worker in';
+      // const TIME_LABEL = '💿 Built Service Worker in';
       const DEV_TIME_LABEL = '💿 Re-built Service Worker in';
       const esbuildPluginContext = { config: ctx.options } as unknown as Context;
 
       let hash = '';
 
-      console.time(TIME_LABEL);
+      // console.time(TIME_LABEL);
 
       context({
         ...esbuildOptions,
@@ -74,24 +78,26 @@ export function CompilerPlugin(ctx: PWAPluginContext): Plugin {
         ],
       }).then(async context => {
         if (MODE === 'production') {
-          console.log(whiteBright(`🏗️ Building Service Worker in ${MODE} mode...\n`));
+          process.env.NODE_ENV = 'production';
+
+          // console.log(whiteBright(`🏗️ Building Service Worker in ${MODE} mode...\n`));
 
           await context.rebuild();
 
-          console.log('\n🎉 Service Worker built successfully!');
-          console.timeEnd(TIME_LABEL);
+          // console.log('\n🎉 Service Worker built successfully!');
+          // console.timeEnd(TIME_LABEL);
 
           return await context.dispose();
         }
 
-        console.log(whiteBright(`🏗️ Building Service Worker in ${MODE} mode...\n`));
+        // console.log(whiteBright(`🏗️ Building Service Worker in ${MODE} mode...\n`));
 
         viteWatcher.add(ctx.options.serviceWorkerPath);
         await context.rebuild();
         hash = getWorkerHash(ctx.options);
 
         console.log('\n');
-        console.timeEnd(TIME_LABEL);
+        // console.timeEnd(TIME_LABEL);
 
         viteWatcher.on('add', async path => {
           if (path.includes('routes') || path.includes(ctx.options.entryWorkerFile)) {
