@@ -1,3 +1,11 @@
+# @remix-pwa/dev 2.1.0-dev.3 (2023-12-24)
+
+
+### Bug Fixes
+
+* **dev:** fixed `scope` property error in script injector plugin fa3ac74
+* **dev:** temporary fix - removed build logs e4689ca
+
 # @remix-pwa/dev 2.1.0-dev.2 (2023-12-23)
 
 
