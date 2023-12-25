@@ -9,6 +9,8 @@ const NAMESPACE = 'entry-module';
  * Creates a string representation of the routes to be imported
  */
 function createRouteImports(routes: ConfigRoute[], ignoredRoutes: string[]): string {
+  if (ignoredRoutes === undefined) ignoredRoutes = [];
+
   return routes
     .map((route, index) => {
       // Todo: Match against `^\/?` for better matching
@@ -22,6 +24,8 @@ function createRouteImports(routes: ConfigRoute[], ignoredRoutes: string[]): str
  * Creates a string representation of each route item.
  */
 function createRouteManifest(routes: RouteManifest, ignoredRoutes: string[]): string {
+  if (ignoredRoutes === undefined) ignoredRoutes = [];
+
   return Object.entries(routes)
     .map(([key, route], index) => {
       // Todo: Match against `^\/?.*` (???) for better matching
