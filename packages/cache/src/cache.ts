@@ -1,6 +1,6 @@
-import { base64ToUint8Array, uint8ArrayToString } from 'uint8array-extras';
+import { uint8ArrayToString } from 'uint8array-extras';
 
-import { mergeHeaders, omit } from './utils.js';
+import { base64ToUint8Array, mergeHeaders, omit } from './utils.js';
 
 export enum Strategy {
   /**

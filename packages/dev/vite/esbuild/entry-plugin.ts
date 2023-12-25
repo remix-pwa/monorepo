@@ -8,28 +8,38 @@ const NAMESPACE = 'entry-module';
 /**
  * Creates a string representation of the routes to be imported
  */
-function createRouteImports(routes: ConfigRoute[]): string {
+function createRouteImports(routes: ConfigRoute[], ignoredRoutes: string[]): string {
+  if (ignoredRoutes === undefined) ignoredRoutes = [];
+
   return routes
-    .map((route, index) => `import * as route${index} from ${JSON.stringify(`${route.file}?worker`)};`)
+    .map((route, index) => {
+      // Todo: Match against `^\/?` for better matching
+      if (ignoredRoutes.includes(`/${route.path}` ?? '')) return '';
+      return `import * as route${index} from ${JSON.stringify(`${route.file}?worker`)};`;
+    })
     .join('\n');
 }
 
 /**
  * Creates a string representation of each route item.
  */
-function createRouteManifest(routes: RouteManifest): string {
+function createRouteManifest(routes: RouteManifest, ignoredRoutes: string[]): string {
+  if (ignoredRoutes === undefined) ignoredRoutes = [];
+
   return Object.entries(routes)
-    .map(
-      ([key, route], index) =>
-        `${JSON.stringify(key)}: {
+    .map(([key, route], index) => {
+      // Todo: Match against `^\/?.*` (???) for better matching
+      if (ignoredRoutes.includes(`/${route.path}` ?? '')) return '';
+
+      return `${JSON.stringify(key)}: {
           id: "${route.id}",
           parentId: ${JSON.stringify(route.parentId)},
           path: ${JSON.stringify(route.path)},
           index: ${JSON.stringify(route.index)},
           caseSensitive: ${JSON.stringify(route.caseSensitive)},
           module: route${index}
-        }`
-    )
+        }`;
+    })
     .join(',\n');
 }
 
@@ -50,10 +60,10 @@ export default function entryModulePlugin(config: ResolvedEsbuildConfig): Plugin
       const contents = `
       import * as entryWorker from ${JSON.stringify(config.serviceWorkerPath)};
 
-    ${createRouteImports(routes)}
+    ${createRouteImports(routes, config.ignoredSWRouteFiles)}
 
     export const routes = {
-      ${createRouteManifest(config.routes)}
+      ${createRouteManifest(config.routes, config.ignoredSWRouteFiles)}
     };
 
     export { assets } from '@remix-pwa/dev?assets';
