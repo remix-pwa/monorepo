@@ -1,3 +1,10 @@
+# @remix-pwa/dev 2.1.0-dev.4 (2023-12-25)
+
+
+### Bug Fixes
+
+* **dev:** added support for route worker APIs 686494d
+
 # @remix-pwa/dev 2.1.0-dev.3 (2023-12-24)
 
 
