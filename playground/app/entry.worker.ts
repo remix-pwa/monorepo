@@ -20,7 +20,7 @@ const documentCache = Storage.open(PAGES, {
   maxItems: 3
 });
 const assetCache = Storage.open(ASSETS, {
-  maxItems: 5
+  maxItems: 4
 });
 
 let handler = new RemixNavigationHandler({

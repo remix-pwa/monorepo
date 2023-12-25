@@ -32,37 +32,9 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// empty-module:@remix-run/react
-var require_react = __commonJS({
-  "empty-module:@remix-run/react"(exports, module) {
-    module.exports = {};
-  }
-});
-
-// empty-module:react
-var require_react2 = __commonJS({
-  "empty-module:react"(exports, module) {
-    module.exports = {};
-  }
-});
-
 // routes-module:root.tsx?worker
 var require_root = __commonJS({
   "routes-module:root.tsx?worker"(exports, module) {
-    module.exports = {};
-  }
-});
-
-// empty-module:@remix-run/node
-var require_node = __commonJS({
-  "empty-module:@remix-run/node"(exports, module) {
-    module.exports = {};
-  }
-});
-
-// empty-module:react/jsx-runtime
-var require_jsx_runtime = __commonJS({
-  "empty-module:react/jsx-runtime"(exports, module) {
     module.exports = {};
   }
 });
@@ -89,19 +61,19 @@ __export(router_exports, {
   createPath: () => createPath,
   createRouter: () => createRouter,
   createStaticHandler: () => createStaticHandler,
-  defer: () => defer2,
+  defer: () => defer,
   generatePath: () => generatePath,
   getStaticContextFromError: () => getStaticContextFromError,
   getToPathname: () => getToPathname,
   isDeferredData: () => isDeferredData,
   isRouteErrorResponse: () => isRouteErrorResponse,
   joinPaths: () => joinPaths,
-  json: () => json2,
+  json: () => json,
   matchPath: () => matchPath,
   matchRoutes: () => matchRoutes,
   normalizePathname: () => normalizePathname,
   parsePath: () => parsePath,
-  redirect: () => redirect2,
+  redirect: () => redirect,
   redirectDocument: () => redirectDocument,
   resolvePath: () => resolvePath,
   resolveTo: () => resolveTo,
@@ -1506,13 +1478,13 @@ function createRouter(init) {
       pendingNavigationController.signal.removeEventListener("abort", abortPendingFetchRevalidations);
     }
     revalidatingFetchers.forEach((rf) => fetchControllers.delete(rf.key));
-    let redirect6 = findRedirect(results);
-    if (redirect6) {
-      if (redirect6.idx >= matchesToLoad.length) {
-        let fetcherKey = revalidatingFetchers[redirect6.idx - matchesToLoad.length].key;
+    let redirect4 = findRedirect(results);
+    if (redirect4) {
+      if (redirect4.idx >= matchesToLoad.length) {
+        let fetcherKey = revalidatingFetchers[redirect4.idx - matchesToLoad.length].key;
         fetchRedirectIds.add(fetcherKey);
       }
-      await startRedirectNavigation(state, redirect6.result, {
+      await startRedirectNavigation(state, redirect4.result, {
         replace
       });
       return {
@@ -1698,13 +1670,13 @@ function createRouter(init) {
     fetchReloadIds.delete(key);
     fetchControllers.delete(key);
     revalidatingFetchers.forEach((r) => fetchControllers.delete(r.key));
-    let redirect6 = findRedirect(results);
-    if (redirect6) {
-      if (redirect6.idx >= matchesToLoad.length) {
-        let fetcherKey = revalidatingFetchers[redirect6.idx - matchesToLoad.length].key;
+    let redirect4 = findRedirect(results);
+    if (redirect4) {
+      if (redirect4.idx >= matchesToLoad.length) {
+        let fetcherKey = revalidatingFetchers[redirect4.idx - matchesToLoad.length].key;
         fetchRedirectIds.add(fetcherKey);
       }
-      return startRedirectNavigation(state, redirect6.result);
+      return startRedirectNavigation(state, redirect4.result);
     }
     let {
       loaderData,
@@ -1773,34 +1745,34 @@ function createRouter(init) {
     invariant(!isDeferredResult(result), "Unhandled fetcher deferred data");
     updateFetcherState(key, getDoneFetcher(result.data));
   }
-  async function startRedirectNavigation(state2, redirect6, _temp2) {
+  async function startRedirectNavigation(state2, redirect4, _temp2) {
     let {
       submission,
       fetcherSubmission,
       replace
     } = _temp2 === void 0 ? {} : _temp2;
-    if (redirect6.revalidate) {
+    if (redirect4.revalidate) {
       isRevalidationRequired = true;
     }
-    let redirectLocation = createLocation(state2.location, redirect6.location, {
+    let redirectLocation = createLocation(state2.location, redirect4.location, {
       _isRedirect: true
     });
     invariant(redirectLocation, "Expected a location on the redirect navigation");
     if (isBrowser) {
       let isDocumentReload = false;
-      if (redirect6.reloadDocument) {
+      if (redirect4.reloadDocument) {
         isDocumentReload = true;
-      } else if (ABSOLUTE_URL_REGEX.test(redirect6.location)) {
-        const url = init.history.createURL(redirect6.location);
+      } else if (ABSOLUTE_URL_REGEX.test(redirect4.location)) {
+        const url = init.history.createURL(redirect4.location);
         isDocumentReload = // Hard reload if it's an absolute URL to a new origin
         url.origin !== routerWindow.location.origin || // Hard reload if it's an absolute URL that does not match our basename
         stripBasename(url.pathname, basename) == null;
       }
       if (isDocumentReload) {
         if (replace) {
-          routerWindow.location.replace(redirect6.location);
+          routerWindow.location.replace(redirect4.location);
         } else {
-          routerWindow.location.assign(redirect6.location);
+          routerWindow.location.assign(redirect4.location);
         }
         return;
       }
@@ -1816,10 +1788,10 @@ function createRouter(init) {
       submission = getSubmissionFromNavigation(state2.navigation);
     }
     let activeSubmission = submission || fetcherSubmission;
-    if (redirectPreserveMethodStatusCodes.has(redirect6.status) && activeSubmission && isMutationMethod(activeSubmission.formMethod)) {
+    if (redirectPreserveMethodStatusCodes.has(redirect4.status) && activeSubmission && isMutationMethod(activeSubmission.formMethod)) {
       await startNavigation(redirectHistoryAction, redirectLocation, {
         submission: _extends({}, activeSubmission, {
-          formAction: redirect6.location
+          formAction: redirect4.location
         }),
         // Preserve this flag across redirects
         preventScrollReset: pendingPreventScrollReset
@@ -2511,7 +2483,7 @@ function normalizeNavigateOptions(normalizeFormMethod, isFetcher, path, opts) {
         return getInvalidBodyError();
       }
       try {
-        let json7 = typeof opts.body === "string" ? JSON.parse(opts.body) : opts.body;
+        let json5 = typeof opts.body === "string" ? JSON.parse(opts.body) : opts.body;
         return {
           path,
           submission: {
@@ -2519,7 +2491,7 @@ function normalizeNavigateOptions(normalizeFormMethod, isFetcher, path, opts) {
             formAction,
             formEncType: opts.formEncType,
             formData: void 0,
-            json: json7,
+            json: json5,
             text: void 0
           }
         };
@@ -3214,7 +3186,7 @@ function getSubmissionFromNavigation(navigation) {
     formEncType,
     text,
     formData,
-    json: json7
+    json: json5
   } = navigation;
   if (!formMethod || !formAction || !formEncType) {
     return;
@@ -3237,13 +3209,13 @@ function getSubmissionFromNavigation(navigation) {
       json: void 0,
       text: void 0
     };
-  } else if (json7 !== void 0) {
+  } else if (json5 !== void 0) {
     return {
       formMethod,
       formAction,
       formEncType,
       formData: void 0,
-      json: json7,
+      json: json5,
       text: void 0
     };
   }
@@ -3345,8 +3317,8 @@ function restoreAppliedTransitions(_window, transitions) {
   try {
     let sessionPositions = _window.sessionStorage.getItem(TRANSITIONS_STORAGE_KEY);
     if (sessionPositions) {
-      let json7 = JSON.parse(sessionPositions);
-      for (let [k2, v] of Object.entries(json7 || {})) {
+      let json5 = JSON.parse(sessionPositions);
+      for (let [k2, v] of Object.entries(json5 || {})) {
         if (v && Array.isArray(v)) {
           transitions.set(k2, new Set(v || []));
         }
@@ -3357,18 +3329,18 @@ function restoreAppliedTransitions(_window, transitions) {
 }
 function persistAppliedTransitions(_window, transitions) {
   if (transitions.size > 0) {
-    let json7 = {};
+    let json5 = {};
     for (let [k2, v] of transitions) {
-      json7[k2] = [...v];
+      json5[k2] = [...v];
     }
     try {
-      _window.sessionStorage.setItem(TRANSITIONS_STORAGE_KEY, JSON.stringify(json7));
+      _window.sessionStorage.setItem(TRANSITIONS_STORAGE_KEY, JSON.stringify(json5));
     } catch (error) {
       warning(false, "Failed to save applied view transitions in sessionStorage (" + error + ").");
     }
   }
 }
-var Action, PopStateEventType, ResultType, immutableRouteKeys, paramRe, dynamicSegmentValue, indexRouteValue, emptySegmentValue, staticSegmentValue, splatPenalty, isSplat, joinPaths, normalizePathname, normalizeSearch, normalizeHash, json2, AbortedDeferredError, DeferredData, defer2, redirect2, redirectDocument, ErrorResponseImpl, validMutationMethodsArr, validMutationMethods, validRequestMethodsArr, validRequestMethods, redirectStatusCodes, redirectPreserveMethodStatusCodes, IDLE_NAVIGATION, IDLE_FETCHER, IDLE_BLOCKER, ABSOLUTE_URL_REGEX, defaultMapRouteProperties, TRANSITIONS_STORAGE_KEY, UNSAFE_DEFERRED_SYMBOL;
+var Action, PopStateEventType, ResultType, immutableRouteKeys, paramRe, dynamicSegmentValue, indexRouteValue, emptySegmentValue, staticSegmentValue, splatPenalty, isSplat, joinPaths, normalizePathname, normalizeSearch, normalizeHash, json, AbortedDeferredError, DeferredData, defer, redirect, redirectDocument, ErrorResponseImpl, validMutationMethodsArr, validMutationMethods, validRequestMethodsArr, validRequestMethods, redirectStatusCodes, redirectPreserveMethodStatusCodes, IDLE_NAVIGATION, IDLE_FETCHER, IDLE_BLOCKER, ABSOLUTE_URL_REGEX, defaultMapRouteProperties, TRANSITIONS_STORAGE_KEY, UNSAFE_DEFERRED_SYMBOL;
 var init_router = __esm({
   "../node_modules/@remix-run/router/dist/router.js"() {
     (function(Action2) {
@@ -3395,7 +3367,7 @@ var init_router = __esm({
     normalizePathname = (pathname) => pathname.replace(/\/+$/, "").replace(/^\/*/, "/");
     normalizeSearch = (search) => !search || search === "?" ? "" : search.startsWith("?") ? search : "?" + search;
     normalizeHash = (hash) => !hash || hash === "#" ? "" : hash.startsWith("#") ? hash : "#" + hash;
-    json2 = function json3(data, init) {
+    json = function json2(data, init) {
       if (init === void 0) {
         init = {};
       }
@@ -3526,7 +3498,7 @@ var init_router = __esm({
         return Array.from(this.pendingKeysSet);
       }
     };
-    defer2 = function defer3(data, init) {
+    defer = function defer2(data, init) {
       if (init === void 0) {
         init = {};
       }
@@ -3535,7 +3507,7 @@ var init_router = __esm({
       } : init;
       return new DeferredData(data, responseInit);
     };
-    redirect2 = function redirect3(url, init) {
+    redirect = function redirect2(url, init) {
       if (init === void 0) {
         init = 302;
       }
@@ -3554,7 +3526,7 @@ var init_router = __esm({
       }));
     };
     redirectDocument = (url, init) => {
-      let response = redirect2(url, init);
+      let response = redirect(url, init);
       response.headers.set("X-Remix-Reload-Document", "true");
       return response;
     };
@@ -3715,13 +3687,13 @@ var require_responses = __commonJS({
     Object.defineProperty(exports, "__esModule", { value: true });
     var router = (init_router(), __toCommonJS(router_exports));
     var errors = require_errors();
-    var json7 = (data, init = {}) => {
+    var json5 = (data, init = {}) => {
       return router.json(data, init);
     };
-    var defer4 = (data, init = {}) => {
+    var defer3 = (data, init = {}) => {
       return router.defer(data, init);
     };
-    var redirect6 = (url, init = 302) => {
+    var redirect4 = (url, init = 302) => {
       return router.redirect(url, init);
     };
     var redirectDocument2 = (url, init = 302) => {
@@ -3789,13 +3761,13 @@ var require_responses = __commonJS({
       }
     }
     exports.createDeferredReadableStream = createDeferredReadableStream2;
-    exports.defer = defer4;
+    exports.defer = defer3;
     exports.isDeferredData = isDeferredData3;
     exports.isRedirectResponse = isRedirectResponse3;
     exports.isRedirectStatusCode = isRedirectStatusCode2;
     exports.isResponse = isResponse3;
-    exports.json = json7;
-    exports.redirect = redirect6;
+    exports.json = json5;
+    exports.redirect = redirect4;
     exports.redirectDocument = redirectDocument2;
   }
 });
@@ -3834,20 +3806,38 @@ function uint8ArrayToString(array) {
   assertUint8Array(array);
   return cachedDecoder.decode(array);
 }
-function assertString(value) {
-  if (typeof value !== "string") {
-    throw new TypeError(`Expected \`string\`, got \`${typeof value}\``);
-  }
-}
 var cachedEncoder = new globalThis.TextEncoder();
-function base64UrlToBase64(base64url) {
-  return base64url.replaceAll("-", "+").replaceAll("_", "/");
-}
-function base64ToUint8Array(base64String) {
-  assertString(base64String);
-  return Uint8Array.from(globalThis.atob(base64UrlToBase64(base64String)), (x) => x.codePointAt(0));
-}
 var byteToHexLookupTable = Array.from({ length: 256 }, (_, index) => index.toString(16).padStart(2, "0"));
+
+// ../node_modules/js-base64/base64.mjs
+var _hasatob = typeof atob === "function";
+var _hasBuffer = typeof Buffer === "function";
+var _TD = typeof TextDecoder === "function" ? new TextDecoder() : void 0;
+var _TE = typeof TextEncoder === "function" ? new TextEncoder() : void 0;
+var b64ch = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+var b64chs = Array.prototype.slice.call(b64ch);
+var b64tab = ((a) => {
+  let tab = {};
+  a.forEach((c, i) => tab[c] = i);
+  return tab;
+})(b64chs);
+var b64re = /^(?:[A-Za-z\d+\/]{4})*?(?:[A-Za-z\d+\/]{2}(?:==)?|[A-Za-z\d+\/]{3}=?)?$/;
+var _fromCC = String.fromCharCode.bind(String);
+var _U8Afrom = typeof Uint8Array.from === "function" ? Uint8Array.from.bind(Uint8Array) : (it) => new Uint8Array(Array.prototype.slice.call(it, 0));
+var _tidyB64 = (s) => s.replace(/[^A-Za-z0-9\+\/]/g, "");
+var atobPolyfill = (asc) => {
+  asc = asc.replace(/\s+/g, "");
+  if (!b64re.test(asc))
+    throw new TypeError("malformed base64.");
+  asc += "==".slice(2 - (asc.length & 3));
+  let u24, bin = "", r1, r2;
+  for (let i = 0; i < asc.length; ) {
+    u24 = b64tab[asc.charAt(i++)] << 18 | b64tab[asc.charAt(i++)] << 12 | (r1 = b64tab[asc.charAt(i++)]) << 6 | (r2 = b64tab[asc.charAt(i++)]);
+    bin += r1 === 64 ? _fromCC(u24 >> 16 & 255) : r2 === 64 ? _fromCC(u24 >> 16 & 255, u24 >> 8 & 255) : _fromCC(u24 >> 16 & 255, u24 >> 8 & 255, u24 & 255);
+  }
+  return bin;
+};
+var _atob = _hasatob ? (asc) => atob(_tidyB64(asc)) : _hasBuffer ? (asc) => Buffer.from(asc, "base64").toString("binary") : atobPolyfill;
 
 // ../packages/cache/dist/src/utils.js
 function mergeHeaders(...headers) {
@@ -3864,6 +3854,18 @@ function mergeHeaders(...headers) {
 function omit(key, obj) {
   const { [key]: omitted, ...rest } = obj;
   return rest;
+}
+function assertString(value) {
+  if (typeof value !== "string") {
+    throw new TypeError(`Expected \`string\`, got \`${typeof value}\``);
+  }
+}
+function base64UrlToBase64(base64url) {
+  return base64url.replaceAll("-", "+").replaceAll("_", "/");
+}
+function base64ToUint8Array(base64String) {
+  assertString(base64String);
+  return Uint8Array.from(_atob(base64UrlToBase64(base64String)), (x) => x.codePointAt(0));
 }
 
 // ../packages/cache/dist/src/cache.js
@@ -3962,6 +3964,7 @@ var RemixCache = class {
     } else if (contentType.includes("text")) {
       responseOptions.body = value;
     } else {
+      console.log(typeof value, value.toString(), "ahahah");
       responseOptions.body = base64ToUint8Array(value);
     }
     if (!deleted) {
@@ -10262,7 +10265,7 @@ var documentCache = Storage.open(PAGES, {
   maxItems: 3
 });
 var assetCache = Storage.open(ASSETS, {
-  maxItems: 5
+  maxItems: 4
 });
 var handler = new RemixNavigationHandler({
   dataCache,
@@ -10316,12 +10319,6 @@ var basic_caching_exports = {};
 __export(basic_caching_exports, {
   workerLoader: () => workerLoader
 });
-
-// app/routes/basic-caching.tsx
-var import_node = __toESM(require_node(), 1);
-var import_react = __toESM(require_react(), 1);
-var import_react2 = __toESM(require_react2(), 1);
-var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
 var workerLoader = async ({ context }) => {
   const customStrategy = cacheFirst({
     cache: "basic-caching",
@@ -10358,12 +10355,6 @@ var basic_action_exports = {};
 __export(basic_action_exports, {
   workerAction: () => workerAction
 });
-
-// app/routes/basic-action.tsx
-var import_node2 = __toESM(require_node(), 1);
-var import_react3 = __toESM(require_react(), 1);
-var import_react4 = __toESM(require_react2(), 1);
-var import_jsx_runtime2 = __toESM(require_jsx_runtime(), 1);
 var workerAction = async ({ context }) => {
   const { fetchFromServer } = context;
   console.log("Worker action called");
@@ -10387,12 +10378,6 @@ var basic_loader_exports = {};
 __export(basic_loader_exports, {
   workerLoader: () => workerLoader2
 });
-
-// app/routes/basic-loader.tsx
-var import_node3 = __toESM(require_node(), 1);
-var import_react5 = __toESM(require_react(), 1);
-var import_react6 = __toESM(require_react2(), 1);
-var import_jsx_runtime3 = __toESM(require_jsx_runtime(), 1);
 async function workerLoader2({ context }) {
   const { fetchFromServer } = context;
   const message = await Promise.race([
@@ -10417,21 +10402,18 @@ __export(app_flights_exports, {
   workerAction: () => workerAction2,
   workerLoader: () => workerLoader3
 });
-
-// app/routes/_app.flights.tsx
 init_router();
-var import_react7 = __toESM(require_react(), 1);
-var import_react8 = __toESM(require_react2(), 1);
-var import_jsx_runtime4 = __toESM(require_jsx_runtime(), 1);
+init_router();
+init_router();
 var workerAction2 = async ({ request, context }) => {
   const formData = await request.formData();
   const { database, fetchFromServer } = context;
   try {
     fetchFromServer();
     await database.selections.add(Object.fromEntries(formData.entries()));
-    return redirect2("/selection");
+    return redirect("/selection");
   } catch (error) {
-    throw json2({ message: "Something went wrong", error }, 500);
+    throw json({ message: "Something went wrong", error }, 500);
   }
 };
 var workerLoader3 = async ({ context }) => {
@@ -10452,10 +10434,10 @@ var workerLoader3 = async ({ context }) => {
         }))
       );
     }
-    return defer2({ flights });
+    return defer({ flights });
   } catch (error) {
     console.error(error);
-    throw json2({ message: "Something went wrong", error }, 500);
+    throw json({ message: "Something went wrong", error }, 500);
   }
 };
 
@@ -10464,10 +10446,6 @@ var strategies_exports = {};
 __export(strategies_exports, {
   workerAction: () => workerAction3
 });
-
-// app/routes/strategies.tsx
-var import_react9 = __toESM(require_react(), 1);
-var import_jsx_runtime5 = __toESM(require_jsx_runtime(), 1);
 var workerAction3 = async ({ context }) => {
   const { event } = context;
   const formData = await event.request.clone().formData();
@@ -10505,15 +10483,11 @@ var selection_exports = {};
 __export(selection_exports, {
   workerLoader: () => workerLoader4
 });
-
-// app/routes/selection.tsx
 init_router();
-var import_react10 = __toESM(require_react(), 1);
-var import_jsx_runtime6 = __toESM(require_jsx_runtime(), 1);
 async function workerLoader4({ context }) {
   const { database } = context;
   const selections = await database.selections.toArray();
-  return json2({ selections });
+  return json({ selections });
 }
 
 // routes-module:routes/sync-away.tsx?worker
@@ -10521,11 +10495,6 @@ var sync_away_exports = {};
 __export(sync_away_exports, {
   workerAction: () => workerAction4
 });
-
-// app/routes/sync-away.tsx
-var import_node4 = __toESM(require_node(), 1);
-var import_react11 = __toESM(require_react(), 1);
-var import_jsx_runtime7 = __toESM(require_jsx_runtime(), 1);
 var workerAction4 = async ({ context }) => {
   const { fetchFromServer, event } = context;
   try {
@@ -10554,11 +10523,6 @@ var app_exports = {};
 __export(app_exports, {
   workerLoader: () => workerLoader5
 });
-
-// app/routes/_app.tsx
-var import_node5 = __toESM(require_node(), 1);
-var import_react12 = __toESM(require_react(), 1);
-var import_jsx_runtime8 = __toESM(require_jsx_runtime(), 1);
 async function workerLoader5({ context }) {
   const { fetchFromServer } = context;
   const data = await fetchFromServer().then((response) => response.json());
@@ -10571,7 +10535,7 @@ async function workerLoader5({ context }) {
 }
 
 // assets-module:@remix-pwa/dev?assets
-var assets = ["/build/__remix_entry_dev-OLOBAAUB.js", "/build/root-R46CAOBF.js", "/build/manifest-A1FF4787.js", "/build/entry.client-JQXNBSFG.js", "/build/_shared\\runtime-JC7ERE5X.js", "/build/_shared\\remix_hmr-HPERLTMY.js", "/build/_shared\\react-XL6EHOTX.js", "/build/_shared\\react-dom-SNQ2UIZM.js", "/build/_shared\\jsx-runtime-7KJOCM5J.js", "/build/_shared\\jsx-dev-runtime-D5NCTVC4.js", "/build/_shared\\esm-SIJ4CP64.js", "/build/_shared\\client-LQHWDDYA.js", "/build/_shared\\chunk-TWSZTAQ6.js", "/build/_shared\\chunk-TLBAXOHZ.js", "/build/_shared\\chunk-STMUDJCL.js", "/build/_shared\\chunk-PNG5AS42.js", "/build/_shared\\chunk-LOYKRDJM.js", "/build/_shared\\chunk-KHAYY5DH.js", "/build/_shared\\chunk-J5HFMGWI.js", "/build/_shared\\chunk-G7CHZRZX.js", "/build/_shared\\chunk-FXD4XYGV.js", "/build/_shared\\chunk-FNJ46CHN.js", "/build/_shared\\chunk-D2DQGHEF.js", "/build/_assets\\tailwind-EFVIZSI5.css", "/build/routes\\_index-HRSS62EF.js", "/build/routes\\_app.flights-7V4625TZ.js", "/build/routes\\_app-BCATAE3O.js", "/build/routes\\sync-away-QQWREOVJ.js", "/build/routes\\strategies-3XA4WI32.js", "/build/routes\\selection-UKXLO4IN.js", "/build/routes\\basic-loader-DOIAUWPN.js", "/build/routes\\basic-caching-GP53JE2R.js", "/build/routes\\basic-action-U5DEFDZM.js"];
+var assets = [];
 
 // entry-module:@remix-pwa/build/magic
 var routes = {
@@ -10656,7 +10620,6 @@ var routes = {
     module: app_exports
   }
 };
-console.log("entry", assets, entry_worker_exports);
 var entry = { module: entry_worker_exports };
 
 // ../packages/worker-runtime/dist/src/utils/handle-request.js
@@ -10748,7 +10711,11 @@ async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, ev
     context: loadContext
   };
   try {
+    if (event.request.url.includes("basic-action")) {
+      console.log("");
+    }
     if (isLoaderRequest2(event.request) && route?.module.workerLoader) {
+      console.log("Handling request(loader):", event.request.url);
       return await handleLoader({
         event,
         loader: route.module.workerLoader,
@@ -10758,6 +10725,7 @@ async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, ev
       }).then(responseHandler);
     }
     if (isActionRequest(event.request) && route?.module?.workerAction) {
+      console.log("Handling request(action):", event.request.url);
       return await handleAction({
         event,
         action: route.module.workerAction,
