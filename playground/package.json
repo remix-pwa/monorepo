@@ -26,6 +26,7 @@
     "@remix-pwa/cache": "^2.0.10",
     "@remix-pwa/strategy": "^2.1.9",
     "@remix-pwa/sync": "^2.0.1",
+    "@remix-pwa/sw": "2.1.13-dev.1",
     "@remix-pwa/worker-runtime": "^2.0.8",
     "@remix-run/node": "^2.3.1",
     "@remix-run/react": "^2.0.1",
@@ -38,7 +39,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@remix-pwa/dev": "2.1.0-dev.3",
+    "@remix-pwa/dev": "2.1.0-dev.4",
     "@remix-run/dev": "^2.4.1",
     "@remix-run/eslint-config": "^2.0.1",
     "@types/react": "^18.2.22",
