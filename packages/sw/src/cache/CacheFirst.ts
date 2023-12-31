@@ -15,7 +15,7 @@ export class CacheFirst extends BaseStrategy {
   /**
    * Handles fetch requests by trying to fetch from the cache first.
    * Falls back to network if the cache doesn't contain a response.
-   * @param {Request} request - The request to handle.
+   * @param {Request} req - The request to handle.
    * @returns {Promise<Response>} The cached or network response.
    */
   async handleRequest(req: Request | string): Promise<Response> {
