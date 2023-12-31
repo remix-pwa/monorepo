@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/dev",
-  "version": "2.1.0-dev.3",
+  "version": "2.1.0-dev.4",
   "description": "An esbuild compiler for Service Workers in Remix.run",
   "repository": {
     "type": "git",
