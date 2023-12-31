@@ -7,6 +7,16 @@
     "url": "git+ssh://git@github.com/remix-pwa/monorepo.git",
     "directory": "packages/sw"
   },
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./types/index.d.ts"
+    },
+    "./cache": {
+      "default": "./dist/src/cache/index.js",
+      "types": "./dist/src/cache/index.d.ts"
+    }
+  },
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
