@@ -18,7 +18,9 @@ export class CacheFirst extends BaseStrategy {
    * @param {Request} request - The request to handle.
    * @returns {Promise<Response>} The cached or network response.
    */
-  async handleRequest(request: Request): Promise<Response> {
+  async handleRequest(req: Request | string): Promise<Response> {
+    const request = this.ensureRequest(req);
+
     const cache = await this.openCache();
     let response = await cache.match(request);
 
@@ -41,7 +43,7 @@ export class CacheFirst extends BaseStrategy {
   private async putInCache(request: Request, response: Response) {
     const cache = await this.openCache();
     const timestampedResponse = this.addTimestampHeader(response);
-    cache.put(request, timestampedResponse);
+    cache.put(request, timestampedResponse.clone());
   }
 
   /**
@@ -84,6 +86,5 @@ export class CacheFirst extends BaseStrategy {
    */
   async validateCache() {
     super.cleanupCache();
-    // Implement validation logic, e.g., based on max items or TTL.
   }
 }

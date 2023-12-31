@@ -30,6 +30,12 @@ export interface NetworkFriendlyOptions extends CacheOptions {
   cacheableResponse?: CacheableResponseOptions | false;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface SWROptions extends CacheOptions {
+  // ttl?: number;
+  // notifyUpdates?: boolean;
+}
+
 /**
  * Defines the structure of a cache strategy.
  */
@@ -45,7 +51,9 @@ export type StrategySelection<T> = T extends 'NetworkFirst'
   ? NetworkFriendlyOptions
   : T extends 'NetworkOnly'
     ? Omit<NetworkFriendlyOptions, 'cacheableResponse' | 'maxAgeSeconds' | 'maxEntries'>
-    : CacheFriendlyOptions;
+    : T extends 'StaleWhileRevalidate'
+      ? SWROptions
+      : CacheFriendlyOptions;
 
 // Define discriminated unions for each strategy
 type StrategyWithOptions<T extends StrategyName> = {

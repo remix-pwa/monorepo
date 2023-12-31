@@ -20,7 +20,9 @@ export class NetworkFirst extends BaseStrategy {
    * @param {Request} request - The request to handle.
    * @returns {Promise<Response>} The network or cached response.
    */
-  async handleRequest(request: Request): Promise<Response> {
+  async handleRequest(req: Request | string): Promise<Response> {
+    const request = this.ensureRequest(req);
+
     try {
       const res = await this.fetchWithTimeout(request);
       // If the code reaches this line, that means an error wasn't thrown
@@ -44,7 +46,7 @@ export class NetworkFirst extends BaseStrategy {
   private async putInCache(request: Request, response: Response) {
     const cache = await this.openCache();
     const timestampedResponse = this.addTimestampHeader(response);
-    cache.put(request, timestampedResponse);
+    cache.put(request, timestampedResponse.clone());
   }
 
   /**

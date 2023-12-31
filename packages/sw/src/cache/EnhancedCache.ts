@@ -32,7 +32,7 @@ export class EnhancedCache {
     }
   }
 
-  async handleRequest(request: Request): Promise<Response> {
+  async handleRequest(request: Request | string): Promise<Response> {
     return await this.strategy.handleRequest(request);
   }
 

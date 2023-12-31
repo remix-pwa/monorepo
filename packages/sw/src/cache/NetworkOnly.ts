@@ -21,7 +21,9 @@ export class NetworkOnly extends BaseStrategy {
    * @param {Request} request - The request to handle.
    * @returns {Promise<Response>} The network or cached response.
    */
-  async handleRequest(request: Request): Promise<Response> {
+  async handleRequest(req: Request | string): Promise<Response> {
+    const request = this.ensureRequest(req);
+
     try {
       // @ts-ignore My calculations seem right...
       return await this.fetchWithTimeout(request);

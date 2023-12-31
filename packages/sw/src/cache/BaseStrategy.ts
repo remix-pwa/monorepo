@@ -27,13 +27,21 @@ export abstract class BaseStrategy implements CacheStrategy {
     return await caches.open(this.cacheName);
   }
 
+  protected ensureRequest(request: Request | string): Request {
+    if (typeof request === 'string') {
+      return new Request(request);
+    }
+
+    return request;
+  }
+
   /**
    * Abstract method to handle requests.
    * Must be implemented by subclasses.
    * @param {Request} request - The request to handle.
    * @returns {Promise<Response>} The response from the cache or network.
    */
-  abstract handleRequest(request: Request): Promise<Response>;
+  abstract handleRequest(request: Request | string): Promise<Response>;
 
   /**
    * Optional method to clean up the cache based on the defined options.
