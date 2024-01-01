@@ -6,7 +6,9 @@ import type { CacheOptions, SWROptions } from './types.js';
  */
 export class StaleWhileRevalidate extends BaseStrategy {
   // private ttl: number;
-  // private notifyUpdates: boolean;s
+  // private notifyUpdates: boolean;
+
+  // TODO(ShafSpecs): Add cacheableResponse capabilities to SWR!
 
   constructor(cacheName: string, options: SWROptions = {}) {
     super(cacheName, options as CacheOptions);
