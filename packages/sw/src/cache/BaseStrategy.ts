@@ -56,7 +56,11 @@ export abstract class BaseStrategy implements CacheStrategy {
       const response = await cache.match(request);
       const timestamp = response?.headers.get(CACHE_TIMESTAMP_HEADER);
 
-      if (timestamp && now - parseInt(timestamp, 10) > (this.options.maxAgeSeconds ?? 0) * 1000) {
+      if (
+        timestamp &&
+        now - parseInt(timestamp, 10) >
+          (this.options.maxAgeSeconds ?? 2_592_000) * 1_000 /* Assets are cached for one month, by default */
+      ) {
         await cache.delete(request);
       }
     });
