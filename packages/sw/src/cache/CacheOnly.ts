@@ -1,4 +1,4 @@
-import { BaseStrategy } from './BaseStrategy.js';
+import { BaseStrategy, CACHE_TIMESTAMP_HEADER } from './BaseStrategy.js';
 import type { CacheFriendlyOptions, CacheOptions, CacheableResponseOptions } from './types.js';
 
 /**
@@ -31,6 +31,37 @@ export class CacheOnly extends BaseStrategy {
     await this.validateCache();
 
     return response;
+  }
+
+  /**
+   * Manually adds a response to the cache.
+   * Useful for caching responses from external sources.
+   *
+   * @param {Request} request - The request to cache.
+   * @param {Response} response - The response to cache.
+   */
+  async addToCache(request: Request, response: Response) {
+    const cache = await caches.open(this.cacheName);
+    const timedRes = this.addTimestampHeader(response);
+    await cache.put(request, timedRes);
+  }
+
+  /**
+   * Adds a timestamp header to the response.
+   * @param {Response} response - The original response.
+   * @returns {Response} The new response with the timestamp header.
+   */
+  private addTimestampHeader(response: Response): Response {
+    const headers = new Headers(response.headers);
+    headers.append(CACHE_TIMESTAMP_HEADER, Date.now().toString());
+
+    const timestampedResponse = new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+
+    return timestampedResponse;
   }
 
   /**
