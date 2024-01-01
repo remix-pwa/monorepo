@@ -3,6 +3,7 @@ import { CacheFirst } from './CacheFirst.js';
 import { CacheOnly } from './CacheOnly.js';
 import { NetworkFirst } from './NetworkFirst.js';
 import { NetworkOnly } from './NetworkOnly.js';
+import { StaleWhileRevalidate } from './StaleWhileRevalidate.js';
 import type { CacheStats, EnhancedCacheOptions, StrategyName } from './types.js';
 
 export class EnhancedCache {
@@ -25,8 +26,8 @@ export class EnhancedCache {
         return new NetworkFirst(this.cacheName, options);
       case 'NetworkOnly':
         return new NetworkOnly(this.cacheName, options);
-      // case 'StaleWhileRevalidate':
-      //   return new StaleWhileRevalidateStrategy(this.cacheName, options);
+      case 'StaleWhileRevalidate':
+        return new StaleWhileRevalidate(this.cacheName, options);
       default:
         return new NetworkFirst(this.cacheName, options);
     }
