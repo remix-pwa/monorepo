@@ -39,6 +39,10 @@ export class EnhancedCache {
 
   /**
    * Manually adds a response to the cache.
+   * Useful for caching responses from external sources.
+   *
+   * @param {Request} request - The request to cache.
+   * @param {Response} response - The response to cache.
    */
   async addToCache(request: Request, response: Response) {
     const cache = await caches.open(this.cacheName);
@@ -47,8 +51,12 @@ export class EnhancedCache {
 
   /**
    * Manually removes a response from the cache.
+   * Useful for removing responses from external sources.
+   *
+   * @param {Request} request - The request to remove from the cache.
+   * @returns {Promise<void>}
    */
-  async removeFromCache(request: Request) {
+  async removeFromCache(request: Request): Promise<void> {
     const cache = await caches.open(this.cacheName);
     await cache.delete(request);
   }
@@ -64,8 +72,11 @@ export class EnhancedCache {
 
   /**
    * Retrieves all cached requests and their corresponding responses.
+   * Useful for debugging or cache inspection.
+   *
+   * @returns {Promise<Array<{request: Request, response: Response | undefined}>>}
    */
-  async getCacheEntries() {
+  async getCacheEntries(): Promise<Array<{ request: Request; response: Response | undefined }>> {
     const cache = await caches.open(this.cacheName);
     const requests = await cache.keys();
     const entries = await Promise.all(
@@ -80,6 +91,8 @@ export class EnhancedCache {
 
   /**
    * Provides cache statistics like number of items and total size.
+   * Useful for debugging or cache inspection.
+   * @returns {Promise<CacheStats>}
    */
   async getCacheStats(): Promise<CacheStats> {
     const entries = await this.getCacheEntries();
@@ -103,9 +116,13 @@ export class EnhancedCache {
   /**
    * Updates cached assets with a newer version if available.
    * Requires server to indicate asset version in response headers.
+   *
+   * @param {string[]} urlList - List of URLs to check for newer versions.
+   * @param {string} header - Header name to check for asset version.
+   * @returns {Promise<void>}
    */
   // Middlewares should expand this beyond just actions/loaders
-  async updateAssetsIfNewer(urlList: string[], header = 'X-Asset-Version') {
+  async updateAssetsIfNewer(urlList: string[], header = 'X-Asset-Version'): Promise<void> {
     const cache = await caches.open(this.cacheName);
 
     urlList.forEach(async url => {
@@ -125,8 +142,12 @@ export class EnhancedCache {
 
   /**
    * Caches assets from a list of URLs.
+   * Useful for pre-caching critical assets or assets that are not part of the service worker scope.
+   *
+   * @param {string[]} urlList - List of URLs to cache.
+   * @returns {Promise<void>}
    */
-  async preCacheUrls(urlList: string[]) {
+  async preCacheUrls(urlList: string[]): Promise<void> {
     const cache = await caches.open(this.cacheName);
     urlList.forEach(url => {
       fetch(url).then(response => {

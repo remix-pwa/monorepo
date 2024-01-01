@@ -37,7 +37,7 @@ export class CacheOnly extends BaseStrategy {
    * Validates the cache based on custom logic (e.g., max items, TTL).
    * Override this method to implement custom cache validation.
    */
-  async validateCache() {
+  private async validateCache() {
     super.cleanupCache();
     // Implement validation logic, e.g., based on max items or TTL.
   }
