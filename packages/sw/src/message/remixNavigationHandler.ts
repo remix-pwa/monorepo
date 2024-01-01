@@ -36,7 +36,7 @@ export class RemixNavigationHandler extends MessageHandler {
     const cachePromises: Map<string, Promise<void>> = new Map();
 
     if (data.type === 'REMIX_NAVIGATION') {
-      const { isMount, location } = data;
+      const { location } = data;
       const documentUrl = location.pathname + location.search + location.hash;
 
       if (typeof dataCache === 'string') {
@@ -49,7 +49,7 @@ export class RemixNavigationHandler extends MessageHandler {
 
       const existingDocument = await Storage._match(documentUrl);
 
-      if (!existingDocument || !isMount) {
+      if (!existingDocument) {
         const response = await fetch(documentUrl);
 
         cachePromises.set(
