@@ -10,13 +10,14 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "@remix-run/react";
 // import { routes } from 'virtual:pwa-entry-module';
 
 import './tailwind.css';
+import { useEffect } from "react";
 
 export default function App() {
-  useSWEffect();
 
   // logger.log("App rendered", routes);
 

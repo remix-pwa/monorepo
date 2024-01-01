@@ -36,7 +36,7 @@ export class RemixNavigationHandler extends MessageHandler {
     const cachePromises: Map<string, Promise<void>> = new Map();
 
     if (data.type === 'REMIX_NAVIGATION') {
-      const { isMount, location, manifest, matches } = data;
+      const { isMount, location } = data;
       const documentUrl = location.pathname + location.search + location.hash;
 
       if (typeof dataCache === 'string') {
@@ -59,33 +59,6 @@ export class RemixNavigationHandler extends MessageHandler {
               logger.error(`Failed to cache document for ${documentUrl}:`, error);
           })
         );
-      }
-
-      if (isMount) {
-        for (const match of matches) {
-          if (manifest.routes[match.id].hasLoader) {
-            const params = new URLSearchParams(location.search);
-            params.set('_data', match.id);
-
-            let search = params.toString();
-            search = search ? `?${search}` : '';
-
-            const url = location.pathname + search + location.hash;
-
-            if (!cachePromises.has(url)) {
-              if (process.env.NODE_ENV === 'development') logger.debug('Caching data for:', url);
-
-              const response = await fetch(url);
-
-              cachePromises.set(
-                url,
-                dataCache.put(url, response).catch(error => {
-                  if (process.env.NODE_ENV === 'development') logger.error(`Failed to cache data for ${url}:`, error);
-                })
-              );
-            }
-          }
-        }
       }
     }
 

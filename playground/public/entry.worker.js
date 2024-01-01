@@ -2710,27 +2710,27 @@ async function callLoaderOrAction(type2, request, match, matches, manifest, mapR
   let resultType;
   let result;
   let onReject;
-  let runHandler = (handler2) => {
+  let runHandler = (handler) => {
     let reject;
     let abortPromise = new Promise((_, r) => reject = r);
     onReject = () => reject();
     request.signal.addEventListener("abort", onReject);
-    return Promise.race([handler2({
+    return Promise.race([handler({
       request,
       params: match.params,
       context: opts.requestContext
     }), abortPromise]);
   };
   try {
-    let handler2 = match.route[type2];
+    let handler = match.route[type2];
     if (match.route.lazy) {
-      if (handler2) {
+      if (handler) {
         let handlerError;
         let values = await Promise.all([
           // If the handler throws, don't let it immediately bubble out,
           // since we need to let the lazy() execution finish so we know if this
           // route has a boundary that can handle the error
-          runHandler(handler2).catch((e) => {
+          runHandler(handler).catch((e) => {
             handlerError = e;
           }),
           loadLazyRouteModule(match.route, mapRouteProperties, manifest)
@@ -2741,9 +2741,9 @@ async function callLoaderOrAction(type2, request, match, matches, manifest, mapR
         result = values[0];
       } else {
         await loadLazyRouteModule(match.route, mapRouteProperties, manifest);
-        handler2 = match.route[type2];
-        if (handler2) {
-          result = await runHandler(handler2);
+        handler = match.route[type2];
+        if (handler) {
+          result = await runHandler(handler);
         } else if (type2 === "action") {
           let url = new URL(request.url);
           let pathname = url.pathname + url.search;
@@ -2759,14 +2759,14 @@ async function callLoaderOrAction(type2, request, match, matches, manifest, mapR
           };
         }
       }
-    } else if (!handler2) {
+    } else if (!handler) {
       let url = new URL(request.url);
       let pathname = url.pathname + url.search;
       throw getInternalRouterError(404, {
         pathname
       });
     } else {
-      result = await runHandler(handler2);
+      result = await runHandler(handler);
     }
     invariant(result !== void 0, "You defined " + (type2 === "action" ? "an action" : "a loader") + " for route " + ('"' + match.route.id + "\" but didn't return anything from your `" + type2 + "` ") + "function. Please return a value or `null`.");
   } catch (e) {
@@ -3779,6 +3779,56 @@ __export(entry_worker_exports, {
   getLoadContext: () => getLoadContext
 });
 
+// ../packages/sw/dist/src/private/logger.js
+var methodToColorMap = { debug: "#7f8c8d", log: "#2ecc71", info: "#3498db", warn: "#f39c12", error: "#c0392b", groupCollapsed: "#3498db", groupEnd: null };
+var logger = false ? (() => {
+  const o = {}, r = Object.keys(methodToColorMap);
+  for (const e of r) {
+    o[e] = () => {
+    };
+  }
+  return o;
+})() : (() => {
+  let o = false;
+  const r = function(r2, e2) {
+    const n2 = void 0 !== globalThis.self ? globalThis.self : globalThis;
+    if (n2.__DISABLE_PWA_DEV_LOGS)
+      return;
+    if ("debug" === r2 && n2.__DISABLE_PWA_DEBUG_LOGS)
+      return;
+    if ("info" === r2 && n2.__DISABLE_PWA_INFO_LOGS)
+      return;
+    if ("warn" === r2 && n2.__DISABLE_PWA_WARN_LOGS)
+      return;
+    if ("error" === r2 && n2.__DISABLE_PWA_ERROR_LOGS)
+      return;
+    if ("groupCollapsed" === r2 && /^((?!chrome|android).)*safari/i.test(navigator.userAgent))
+      return void console[r2](...e2);
+    const t = o ? [] : ["%cremix-pwa", [`background: ${methodToColorMap[r2]}`, "border-radius: 0.5em", "color: white", "font-weight: bold", "padding: 2px 0.5em"].join(";")];
+    console[r2](...t, ...e2), "groupCollapsed" === r2 && (o = true), "groupEnd" === r2 && (o = false);
+  }, e = {}, n = Object.keys(methodToColorMap);
+  for (const o2 of n) {
+    const n2 = o2;
+    e[n2] = (...o3) => {
+      r(n2, o3);
+    };
+  }
+  return e;
+})();
+
+// ../packages/sw/dist/src/utils/worker.js
+function isMethod(e, t) {
+  return t.includes(e.method.toLowerCase());
+}
+function isAssetRequest(e, t = ["/build/", "/icons"]) {
+  return isMethod(e, ["get"]) && t.some((t2) => e.url.includes(t2));
+}
+function isLoaderRequest(e) {
+  const t = new URL(e.url);
+  return isMethod(e, ["get"]) && t.searchParams.get("_data");
+}
+var matchRequest = (e, t = ["/build/", "/icons"]) => isAssetRequest(e, t) ? "asset" : isLoaderRequest(e) ? "loader" : null;
+
 // ../node_modules/cachified/dist/index.mjs
 var k = Symbol();
 var w = Symbol();
@@ -4300,352 +4350,6 @@ var RemixCacheStorage = class {
 };
 RemixCacheStorage._instances = /* @__PURE__ */ new Map();
 var Storage = RemixCacheStorage;
-
-// ../packages/strategy/dist/src/utils.js
-var isHttpRequest = (request) => {
-  if (request instanceof Request) {
-    return request.url.startsWith("http");
-  }
-  return request.toString().startsWith("http");
-};
-var toJSON = async (response) => {
-  if (response instanceof Response) {
-    return await response.clone().json();
-  }
-  return response;
-};
-
-// ../packages/strategy/dist/src/cacheFirst.js
-var cacheFirst = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0 }) => {
-  return async (request) => {
-    if (!isHttpRequest(request)) {
-      return new Response("Not a HTTP request", { status: 403 });
-    }
-    let remixCache;
-    if (typeof cacheName === "string") {
-      remixCache = Storage.open(cacheName, cacheOptions);
-    } else {
-      remixCache = cacheName;
-    }
-    const response = await remixCache.match(request, cacheQueryOptions);
-    if (!response) {
-      try {
-        const networkResponse = await fetch(request);
-        remixCache.put(request, networkResponse.clone());
-        return networkResponse;
-      } catch (err) {
-        if (fetchDidFail) {
-          await Promise.all(fetchDidFail.map((cb) => cb()));
-        }
-        throw err;
-      }
-    }
-    return response;
-  };
-};
-
-// ../packages/strategy/dist/src/cacheOnly.js
-var cacheOnly = ({ cache: cacheName, cacheOptions, cacheQueryOptions }) => {
-  return async (request) => {
-    if (!isHttpRequest(request)) {
-      return new Response("Not a HTTP request", { status: 403 });
-    }
-    let remixCache;
-    if (typeof cacheName === "string") {
-      remixCache = Storage.open(cacheName, cacheOptions);
-    } else {
-      remixCache = cacheName;
-    }
-    const response = await remixCache.match(request, cacheQueryOptions);
-    if (!response) {
-      const req = request instanceof Request ? request : new Request(request.toString());
-      const isGet = req.method.toLowerCase() === "get";
-      return new Response(JSON.stringify({
-        message: isGet ? "Not Found" : "No idea what you are trying to accomplish but this ain't it!"
-      }), {
-        status: isGet ? 404 : 400,
-        statusText: isGet ? "Not Found" : "Bad Request"
-      });
-    }
-    return response.clone();
-  };
-};
-
-// ../packages/strategy/dist/src/networkFirst.js
-var networkFirst = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0, fetchDidSucceed = void 0, networkTimeoutSeconds = 10 }) => {
-  return async (request) => {
-    if (!isHttpRequest(request)) {
-      return new Response("Not a HTTP request", { status: 403 });
-    }
-    let remixCache;
-    if (typeof cacheName === "string") {
-      remixCache = Storage.open(cacheName, cacheOptions);
-    } else {
-      remixCache = cacheName;
-    }
-    try {
-      const timeoutPromise = networkTimeoutSeconds !== Infinity ? new Promise((_resolve, reject) => {
-        setTimeout(() => {
-          reject(new Error(`Network timed out after ${networkTimeoutSeconds} seconds`));
-        }, networkTimeoutSeconds * 1e3);
-      }) : null;
-      const response = timeoutPromise ? await Promise.race([fetch(request), timeoutPromise]) : await fetch(request);
-      if (response) {
-        if (fetchDidSucceed) {
-          await Promise.all(fetchDidSucceed.map((cb) => cb()));
-        }
-        await remixCache.put(request, response.clone());
-        return response.clone();
-      }
-    } catch (error) {
-      if (fetchDidFail) {
-        await Promise.all(fetchDidFail.map((cb) => cb()));
-      }
-      const cachedResponse = await remixCache.match(request, cacheQueryOptions);
-      if (cachedResponse) {
-        return cachedResponse.clone();
-      }
-      return new Response(JSON.stringify({ message: "Network Error" }), {
-        status: 500
-      });
-    }
-    throw new Error("Failed to fetch. Network timed out.");
-  };
-};
-
-// ../packages/strategy/dist/src/staleWhileRevalidate.js
-var staleWhileRevalidate = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0, strict = false, swr: swr2 }) => {
-  return async (request) => {
-    if (!isHttpRequest(request)) {
-      return new Response("Not a HTTP request", { status: 403 });
-    }
-    let remixCache;
-    if (typeof cacheName === "string") {
-      remixCache = Storage.open(cacheName, cacheOptions);
-    } else {
-      remixCache = cacheName;
-    }
-    swr2 = swr2 ?? remixCache.ttl ?? 0;
-    return remixCache.match(request, cacheQueryOptions).then(async (response) => {
-      const res = response ? response.clone() : void 0;
-      if (res && !strict) {
-        const accessed = Number(res.headers.get("X-Remix-PWA-AccessTime")) ?? 0;
-        if (swr2 + accessed >= Date.now()) {
-          return res;
-        }
-      }
-      const fetchPromise = fetch(request).then(async (networkResponse) => {
-        await remixCache.put(request, networkResponse.clone(), strict ? swr2 : void 0);
-        return networkResponse;
-      }).catch(async (_err) => {
-        if (fetchDidFail) {
-          await Promise.all(fetchDidFail.map((cb) => cb()));
-        }
-        return new Response(JSON.stringify({ error: "Network request failed" }), {
-          status: 500,
-          statusText: "Network request failed"
-        });
-      });
-      return response ? response.clone() : fetchPromise;
-    });
-  };
-};
-
-// ../packages/sw/dist/src/private/logger.js
-var methodToColorMap = {
-  debug: `#7f8c8d`,
-  // Gray
-  log: `#2ecc71`,
-  // Green
-  info: `#3498db`,
-  // Blue
-  warn: `#f39c12`,
-  // Yellow
-  error: `#c0392b`,
-  // Red
-  groupCollapsed: `#3498db`,
-  // Blue
-  groupEnd: null
-  // No colored prefix on groupEnd
-};
-var logger = false ? (() => {
-  const api = {};
-  const loggerMethods = Object.keys(methodToColorMap);
-  for (const key of loggerMethods) {
-    const method = key;
-    api[method] = () => {
-    };
-  }
-  return api;
-})() : (() => {
-  let inGroup = false;
-  const print = function(method, args) {
-    const self2 = typeof globalThis.self !== "undefined" ? globalThis.self : globalThis;
-    if (self2.__DISABLE_PWA_DEV_LOGS) {
-      return;
-    }
-    if (method === "debug" && self2.__DISABLE_PWA_DEBUG_LOGS) {
-      return;
-    }
-    if (method === "info" && self2.__DISABLE_PWA_INFO_LOGS) {
-      return;
-    }
-    if (method === "warn" && self2.__DISABLE_PWA_WARN_LOGS) {
-      return;
-    }
-    if (method === "error" && self2.__DISABLE_PWA_ERROR_LOGS) {
-      return;
-    }
-    if (method === "groupCollapsed") {
-      if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
-        console[method](...args);
-        return;
-      }
-    }
-    const styles = [
-      `background: ${methodToColorMap[method]}`,
-      `border-radius: 0.5em`,
-      `color: white`,
-      `font-weight: bold`,
-      `padding: 2px 0.5em`
-    ];
-    const logPrefix = inGroup ? [] : ["%cremix-pwa", styles.join(";")];
-    console[method](...logPrefix, ...args);
-    if (method === "groupCollapsed") {
-      inGroup = true;
-    }
-    if (method === "groupEnd") {
-      inGroup = false;
-    }
-  };
-  const api = {};
-  const loggerMethods = Object.keys(methodToColorMap);
-  for (const key of loggerMethods) {
-    const method = key;
-    api[method] = (...args) => {
-      print(method, args);
-    };
-  }
-  return api;
-})();
-
-// ../packages/sw/dist/src/utils/worker.js
-function isMethod(request, methods) {
-  return methods.includes(request.method.toLowerCase());
-}
-function isAssetRequest(request, assetUrls = ["/build/", "/icons"]) {
-  return isMethod(request, ["get"]) && assetUrls.some((publicPath) => request.url.includes(publicPath));
-}
-function isLoaderRequest(request) {
-  const url = new URL(request.url);
-  return isMethod(request, ["get"]) && url.searchParams.get("_data");
-}
-var matchRequest = (request, assetUrls = ["/build/", "/icons"]) => {
-  if (isAssetRequest(request, assetUrls)) {
-    return "asset";
-  } else if (isLoaderRequest(request)) {
-    return "loader";
-  } else {
-    return null;
-  }
-};
-
-// ../packages/sw/dist/src/message/message.js
-var MessageHandler = class {
-  /**
-   * The plugins array is used to run plugins before and after the message handler.
-   * They are passed in when the handler is initialised.
-   */
-  plugins;
-  /**
-   * The state object is used to pass data between plugins.
-   */
-  state;
-  constructor({ plugins, state } = {}) {
-    this.plugins = plugins || [];
-    this.state = state || {};
-  }
-  /**
-   * The method that handles the message event.
-   *
-   * Takes in the MessageEvent as a mandatory argument as well as an optional
-   * object that can be used to pass further information/data.
-   */
-  async handle(event, state = {}) {
-    await this._handleMessage(event, state);
-  }
-  /**
-   * Runs the plugins that are passed in when the handler is initialised.
-   */
-  async runPlugins(hook, env) {
-    for (const plugin of this.plugins) {
-      if (plugin[hook]) {
-        plugin[hook](env);
-      }
-    }
-  }
-};
-
-// ../packages/sw/dist/src/message/remixNavigationHandler.js
-var RemixNavigationHandler = class extends MessageHandler {
-  dataCacheName;
-  documentCacheName;
-  constructor({ dataCache: dataCache2, documentCache: documentCache2, plugins, state }) {
-    super({ plugins, state });
-    this.dataCacheName = dataCache2;
-    this.documentCacheName = documentCache2;
-    this._handleMessage = this._handleMessage.bind(this);
-  }
-  async _handleMessage(event) {
-    const { data } = event;
-    let dataCache2, documentCache2;
-    dataCache2 = this.dataCacheName;
-    documentCache2 = this.documentCacheName;
-    this.runPlugins("messageDidReceive", {
-      event
-    });
-    const cachePromises = /* @__PURE__ */ new Map();
-    if (data.type === "REMIX_NAVIGATION") {
-      const { isMount, location: location2, manifest, matches } = data;
-      const documentUrl = location2.pathname + location2.search + location2.hash;
-      if (typeof dataCache2 === "string") {
-        dataCache2 = Storage.open(dataCache2);
-      }
-      if (typeof documentCache2 === "string") {
-        documentCache2 = Storage.open(documentCache2);
-      }
-      const existingDocument = await Storage._match(documentUrl);
-      if (!existingDocument || !isMount) {
-        const response = await fetch(documentUrl);
-        cachePromises.set(documentUrl, documentCache2.put(documentUrl, response).catch((error) => {
-          if (true)
-            logger.error(`Failed to cache document for ${documentUrl}:`, error);
-        }));
-      }
-      if (isMount) {
-        for (const match of matches) {
-          if (manifest.routes[match.id].hasLoader) {
-            const params = new URLSearchParams(location2.search);
-            params.set("_data", match.id);
-            let search = params.toString();
-            search = search ? `?${search}` : "";
-            const url = location2.pathname + search + location2.hash;
-            if (!cachePromises.has(url)) {
-              if (true)
-                logger.debug("Caching data for:", url);
-              const response = await fetch(url);
-              cachePromises.set(url, dataCache2.put(url, response).catch((error) => {
-                if (true)
-                  logger.error(`Failed to cache data for ${url}:`, error);
-              }));
-            }
-          }
-        }
-      }
-    }
-    await Promise.all(cachePromises.values());
-  }
-};
 
 // ../packages/sync/dist/src/request.js
 var serializableProperties = [
@@ -6108,8 +5812,8 @@ props(DexiePromise.prototype, {
   catch: function(onRejected) {
     if (arguments.length === 1)
       return this.then(null, onRejected);
-    var type2 = arguments[0], handler2 = arguments[1];
-    return typeof type2 === "function" ? this.then(null, (err) => err instanceof type2 ? handler2(err) : PromiseReject(err)) : this.then(null, (err) => err && err.name === type2 ? handler2(err) : PromiseReject(err));
+    var type2 = arguments[0], handler = arguments[1];
+    return typeof type2 === "function" ? this.then(null, (err) => err instanceof type2 ? handler(err) : PromiseReject(err)) : this.then(null, (err) => err && err.name === type2 ? handler(err) : PromiseReject(err));
   },
   finally: function(onFinally) {
     return this.then((value) => {
@@ -10254,33 +9958,6 @@ function createStorageRepository() {
 var database_default = createStorageRepository;
 
 // app/entry.worker.ts
-var PAGES = "page-cache";
-var DATA = "data-cache";
-var ASSETS = "assets-cache";
-var dataCache = Storage.open(DATA, {
-  ttl: 60 * 60 * 24 * 7 * 1e3
-  // 7 days
-});
-var documentCache = Storage.open(PAGES, {
-  maxItems: 3
-});
-var assetCache = Storage.open(ASSETS, {
-  maxItems: 4
-});
-var handler = new RemixNavigationHandler({
-  dataCache,
-  documentCache
-});
-var dataHandler = networkFirst({
-  cache: dataCache
-});
-var assetsHandler = cacheFirst({
-  cache: assetCache,
-  cacheQueryOptions: {
-    ignoreSearch: true,
-    ignoreVary: true
-  }
-});
 registerQueue("offline-action");
 var getLoadContext = () => {
   const stores = database_default();
@@ -10290,12 +9967,7 @@ var getLoadContext = () => {
 };
 var defaultFetchHandler = ({ context, request }) => {
   const type2 = matchRequest(request);
-  if (type2 === "asset") {
-    return assetsHandler(context.event.request);
-  }
-  if (type2 === "loader") {
-    return dataHandler(context.event.request);
-  }
+  console.log("Hmm", request.mode);
   return context.fetchFromServer();
 };
 self.addEventListener("install", (event) => {
@@ -10304,11 +9976,8 @@ self.addEventListener("install", (event) => {
   event.waitUntil(self.skipWaiting());
 });
 self.addEventListener("activate", (event) => {
-  logger.log(self.clients);
+  logger.log(self.clients, "manifest:\n", self.__workerManifest);
   event.waitUntil(self.clients.claim());
-});
-self.addEventListener("message", (event) => {
-  event.waitUntil(handler.handle(event));
 });
 
 // entry-module:@remix-pwa/build/magic
@@ -10319,6 +9988,158 @@ var basic_caching_exports = {};
 __export(basic_caching_exports, {
   workerLoader: () => workerLoader
 });
+
+// ../packages/strategy/dist/src/utils.js
+var isHttpRequest = (request) => {
+  if (request instanceof Request) {
+    return request.url.startsWith("http");
+  }
+  return request.toString().startsWith("http");
+};
+var toJSON = async (response) => {
+  if (response instanceof Response) {
+    return await response.clone().json();
+  }
+  return response;
+};
+
+// ../packages/strategy/dist/src/cacheFirst.js
+var cacheFirst = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0 }) => {
+  return async (request) => {
+    if (!isHttpRequest(request)) {
+      return new Response("Not a HTTP request", { status: 403 });
+    }
+    let remixCache;
+    if (typeof cacheName === "string") {
+      remixCache = Storage.open(cacheName, cacheOptions);
+    } else {
+      remixCache = cacheName;
+    }
+    const response = await remixCache.match(request, cacheQueryOptions);
+    if (!response) {
+      try {
+        const networkResponse = await fetch(request);
+        remixCache.put(request, networkResponse.clone());
+        return networkResponse;
+      } catch (err) {
+        if (fetchDidFail) {
+          await Promise.all(fetchDidFail.map((cb) => cb()));
+        }
+        throw err;
+      }
+    }
+    return response;
+  };
+};
+
+// ../packages/strategy/dist/src/cacheOnly.js
+var cacheOnly = ({ cache: cacheName, cacheOptions, cacheQueryOptions }) => {
+  return async (request) => {
+    if (!isHttpRequest(request)) {
+      return new Response("Not a HTTP request", { status: 403 });
+    }
+    let remixCache;
+    if (typeof cacheName === "string") {
+      remixCache = Storage.open(cacheName, cacheOptions);
+    } else {
+      remixCache = cacheName;
+    }
+    const response = await remixCache.match(request, cacheQueryOptions);
+    if (!response) {
+      const req = request instanceof Request ? request : new Request(request.toString());
+      const isGet = req.method.toLowerCase() === "get";
+      return new Response(JSON.stringify({
+        message: isGet ? "Not Found" : "No idea what you are trying to accomplish but this ain't it!"
+      }), {
+        status: isGet ? 404 : 400,
+        statusText: isGet ? "Not Found" : "Bad Request"
+      });
+    }
+    return response.clone();
+  };
+};
+
+// ../packages/strategy/dist/src/networkFirst.js
+var networkFirst = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0, fetchDidSucceed = void 0, networkTimeoutSeconds = 10 }) => {
+  return async (request) => {
+    if (!isHttpRequest(request)) {
+      return new Response("Not a HTTP request", { status: 403 });
+    }
+    let remixCache;
+    if (typeof cacheName === "string") {
+      remixCache = Storage.open(cacheName, cacheOptions);
+    } else {
+      remixCache = cacheName;
+    }
+    try {
+      const timeoutPromise = networkTimeoutSeconds !== Infinity ? new Promise((_resolve, reject) => {
+        setTimeout(() => {
+          reject(new Error(`Network timed out after ${networkTimeoutSeconds} seconds`));
+        }, networkTimeoutSeconds * 1e3);
+      }) : null;
+      const response = timeoutPromise ? await Promise.race([fetch(request), timeoutPromise]) : await fetch(request);
+      if (response) {
+        if (fetchDidSucceed) {
+          await Promise.all(fetchDidSucceed.map((cb) => cb()));
+        }
+        await remixCache.put(request, response.clone());
+        return response.clone();
+      }
+    } catch (error) {
+      if (fetchDidFail) {
+        await Promise.all(fetchDidFail.map((cb) => cb()));
+      }
+      const cachedResponse = await remixCache.match(request, cacheQueryOptions);
+      if (cachedResponse) {
+        return cachedResponse.clone();
+      }
+      return new Response(JSON.stringify({ message: "Network Error" }), {
+        status: 500
+      });
+    }
+    throw new Error("Failed to fetch. Network timed out.");
+  };
+};
+
+// ../packages/strategy/dist/src/staleWhileRevalidate.js
+var staleWhileRevalidate = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0, strict = false, swr: swr2 }) => {
+  return async (request) => {
+    if (!isHttpRequest(request)) {
+      return new Response("Not a HTTP request", { status: 403 });
+    }
+    let remixCache;
+    if (typeof cacheName === "string") {
+      remixCache = Storage.open(cacheName, cacheOptions);
+    } else {
+      remixCache = cacheName;
+    }
+    swr2 = swr2 ?? remixCache.ttl ?? 0;
+    return remixCache.match(request, cacheQueryOptions).then(async (response) => {
+      const res = response ? response.clone() : void 0;
+      if (res && !strict) {
+        const accessed = Number(res.headers.get("X-Remix-PWA-AccessTime")) ?? 0;
+        if (swr2 + accessed >= Date.now()) {
+          return res;
+        }
+      }
+      const fetchPromise = fetch(request).then(async (networkResponse) => {
+        await remixCache.put(request, networkResponse.clone(), strict ? swr2 : void 0);
+        return networkResponse;
+      }).catch(async (_err) => {
+        if (fetchDidFail) {
+          await Promise.all(fetchDidFail.map((cb) => cb()));
+        }
+        return new Response(JSON.stringify({ error: "Network request failed" }), {
+          status: 500,
+          statusText: "Network request failed"
+        });
+      });
+      return response ? response.clone() : fetchPromise;
+    });
+  };
+};
+
+// routes-module:routes/basic-caching.tsx?worker
 var workerLoader = async ({ context }) => {
   const customStrategy = cacheFirst({
     cache: "basic-caching",
@@ -10735,8 +10556,8 @@ async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, ev
       }).then(responseHandler);
     }
   } catch (error) {
-    const handler2 = (error2) => errorHandler(error2, _arguments);
-    return _errorHandler({ error, handler: handler2 });
+    const handler = (error2) => errorHandler(error2, _arguments);
+    return _errorHandler({ error, handler });
   }
   return defaultHandler2(_arguments);
 }

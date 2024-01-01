@@ -1,44 +1,11 @@
 /// <reference lib="WebWorker" />
 
-import { Storage } from '@remix-pwa/cache';
-import { cacheFirst, networkFirst } from '@remix-pwa/strategy';
 import type { DefaultFetchHandler } from '@remix-pwa/sw';
-import { RemixNavigationHandler, logger, matchRequest } from '@remix-pwa/sw';
+import { logger, matchRequest } from '@remix-pwa/sw';
 import { registerQueue } from '@remix-pwa/sync';
 import createStorageRepository from './database';
 
 declare let self: ServiceWorkerGlobalScope;
-
-const PAGES = 'page-cache';
-const DATA = 'data-cache';
-const ASSETS = 'assets-cache';
-
-const dataCache = Storage.open(DATA, {
-  ttl: 60 * 60 * 24 * 7 * 1_000, // 7 days
-});
-const documentCache = Storage.open(PAGES, {
-  maxItems: 3
-});
-const assetCache = Storage.open(ASSETS, {
-  maxItems: 4
-});
-
-let handler = new RemixNavigationHandler({
-  dataCache: dataCache,
-  documentCache: documentCache,
-});
-
-const dataHandler = networkFirst({
-  cache: dataCache,
-});
-
-const assetsHandler = cacheFirst({
-  cache: assetCache,
-  cacheQueryOptions: {
-    ignoreSearch: true,
-    ignoreVary: true,
-  },
-});
 
 registerQueue('offline-action');
 
@@ -60,13 +27,9 @@ export const getLoadContext = () => {
 export const defaultFetchHandler: DefaultFetchHandler = ({ context, request }) => {
   const type = matchRequest(request);
 
-  if (type === 'asset') {
-    return assetsHandler(context.event.request);
-  }
-
-  if (type === 'loader') {
-    return dataHandler(context.event.request);
-  }
+  // logger.log(request.destination, type, request.url, request.method);
+  // const r = fetch('/').then(w => w.text()).then(console.log);
+  console.log('Hmm', request.mode);
 
   return context.fetchFromServer();
 };
@@ -78,11 +41,6 @@ self.addEventListener('install', (event: ExtendableEvent) => {
 });
 
 self.addEventListener('activate', event => {
-  logger.log(self.clients)
+  logger.log(self.clients, 'manifest:\n', self.__workerManifest);
   event.waitUntil(self.clients.claim());
 });
-
-self.addEventListener('message', event => {
-  event.waitUntil(handler.handle(event));
-});
-
