@@ -45,15 +45,13 @@ export interface CacheStrategy {
 
 // --- EnhancedCache ---
 
-export type StrategyName = 'CacheFirst' | 'CacheOnly' | 'NetworkFirst' | 'NetworkOnly' | 'StaleWhileRevalidate';
+export type StrategyName = 'CacheFirst' | 'CacheOnly' | 'NetworkFirst' | 'StaleWhileRevalidate';
 
 export type StrategySelection<T> = T extends 'NetworkFirst'
   ? NetworkFriendlyOptions
-  : T extends 'NetworkOnly'
-    ? Omit<NetworkFriendlyOptions, 'cacheableResponse' | 'maxAgeSeconds' | 'maxEntries'>
-    : T extends 'StaleWhileRevalidate'
-      ? SWROptions
-      : CacheFriendlyOptions;
+  : T extends 'StaleWhileRevalidate'
+    ? SWROptions
+    : CacheFriendlyOptions;
 
 // Define discriminated unions for each strategy
 type StrategyWithOptions<T extends StrategyName> = {
@@ -71,7 +69,6 @@ export type EnhancedCacheOptions = {
   | StrategyWithOptions<'CacheFirst'>
   | StrategyWithOptions<'CacheOnly'>
   | StrategyWithOptions<'NetworkFirst'>
-  | StrategyWithOptions<'NetworkOnly'>
   | StrategyWithOptions<'StaleWhileRevalidate'>
 );
 

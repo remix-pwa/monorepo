@@ -2,7 +2,6 @@ import type { BaseStrategy } from './BaseStrategy.js';
 import { CacheFirst } from './CacheFirst.js';
 import { CacheOnly } from './CacheOnly.js';
 import { NetworkFirst } from './NetworkFirst.js';
-import { NetworkOnly } from './NetworkOnly.js';
 import { StaleWhileRevalidate } from './StaleWhileRevalidate.js';
 import type { CacheStats, EnhancedCacheOptions, StrategyName } from './types.js';
 
@@ -24,8 +23,6 @@ export class EnhancedCache {
         return new CacheOnly(this.cacheName, options);
       case 'NetworkFirst':
         return new NetworkFirst(this.cacheName, options);
-      case 'NetworkOnly':
-        return new NetworkOnly(this.cacheName, options);
       case 'StaleWhileRevalidate':
         return new StaleWhileRevalidate(this.cacheName, options);
       default:
@@ -44,7 +41,9 @@ export class EnhancedCache {
    * @param {Request} request - The request to cache.
    * @param {Response} response - The response to cache.
    */
-  async addToCache(request: Request, response: Response) {
+  async addToCache(request: Request | string, response: Response) {
+    if (typeof request === 'string') request = new Request(request);
+
     const cache = await caches.open(this.cacheName);
     await cache.put(request, response);
   }
@@ -53,10 +52,12 @@ export class EnhancedCache {
    * Manually removes a response from the cache.
    * Useful for removing responses from external sources.
    *
-   * @param {Request} request - The request to remove from the cache.
+   * @param {Request | string} request - The request to remove from the cache.
    * @returns {Promise<void>}
    */
-  async removeFromCache(request: Request): Promise<void> {
+  async removeFromCache(request: Request | string): Promise<void> {
+    if (typeof request === 'string') request = new Request(request);
+
     const cache = await caches.open(this.cacheName);
     await cache.delete(request);
   }
