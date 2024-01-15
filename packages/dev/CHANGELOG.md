@@ -1,3 +1,18 @@
+# @remix-pwa/dev 2.1.0-dev.5 (2024-01-15)
+
+
+### Bug Fixes
+
+* **dev:** fixed up vite plugin for Remix v2.5.x 5124745
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/worker-runtime:** upgraded to 2.1.0-dev.1
+
 # @remix-pwa/dev 2.1.0-dev.4 (2023-12-25)
 
 
