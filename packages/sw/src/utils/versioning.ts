@@ -1,22 +1,20 @@
-export const clearUpOldCaches = (cacheNames: string[]) => {
+export const clearUpOldCaches = (cacheNames: string[], version?: string) => {
+  if (version) {
+    cacheNames = cacheNames.map(cacheName => `${cacheName}-${version}`);
+  }
   return caches.keys().then(allCacheNames => {
-    const deletionPromises: Promise<boolean>[] = [];
-
-    cacheNames.forEach(cacheName => {
-      const { cacheActualName } = getCacheNameAndVersion(cacheName);
-
-      const cachesToDelete = allCacheNames.filter(cache => cache.startsWith(cacheActualName) && cache !== cacheName);
-
-      cachesToDelete.forEach(oldCacheName => {
-        const deletePromise = caches.delete(oldCacheName);
-        deletionPromises.push(deletePromise);
-      });
-    });
-
-    return Promise.all(deletionPromises);
+    return Promise.all([
+      cacheNames.forEach(cacheName => {
+        const { cacheActualName } = getCacheNameAndVersion(cacheName);
+        const cachesToDelete = allCacheNames.filter(cache => cache.startsWith(cacheActualName) && cache !== cacheName);
+        // console.log(cachesToDelete, allCacheNames);
+        cachesToDelete.forEach(oldCacheName => {
+          caches.delete(oldCacheName);
+        });
+      }),
+    ]);
   });
 };
-
 /**
  * Helper function to extract actual cache name and version.
  * Assumes the cache name is of the format 'cacheName-version'.
