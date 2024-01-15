@@ -1,3 +1,10 @@
+# @remix-pwa/worker-runtime 2.1.0-dev.1 (2024-01-15)
+
+
+### Features
+
+* **worker-runtime:** updated `worker-runtime` for just JiT caching ac8549a
+
 ## @remix-pwa/worker-runtime 2.0.8 (2023-10-20)
 
 ## @remix-pwa/worker-runtime 2.0.8-dev.1 (2023-10-20)
