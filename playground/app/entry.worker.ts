@@ -1,11 +1,22 @@
 /// <reference lib="WebWorker" />
 
-import type { DefaultFetchHandler } from '@remix-pwa/sw';
-import { logger, matchRequest } from '@remix-pwa/sw';
+import { EnhancedCache, logger, clearUpOldCaches, NavigationHandler } from '@remix-pwa/sw';
 import { registerQueue } from '@remix-pwa/sync';
 import createStorageRepository from './database';
 
 declare let self: ServiceWorkerGlobalScope;
+
+const CURRENT_CACHE_VERSION = 'v2';
+
+const assetCache = new EnhancedCache('remix-assets', {
+  version: CURRENT_CACHE_VERSION,
+  strategy: 'CacheFirst',
+  strategyOptions: {
+    maxEntries: 2,
+    maxAgeSeconds: 60,
+    cacheableResponse: false,
+  }
+})
 
 registerQueue('offline-action');
 
@@ -22,25 +33,39 @@ export const getLoadContext = () => {
   };
 };
 
-// The default fetch event handler will be invoke if the
-// route is not matched by any of the worker action/loader.
-export const defaultFetchHandler: DefaultFetchHandler = ({ context, request }) => {
-  const type = matchRequest(request);
-
-  // logger.log(request.destination, type, request.url, request.method);
-  // const r = fetch('/').then(w => w.text()).then(console.log);
-  console.log('Hmm', request.mode);
-
-  return context.fetchFromServer();
-};
-
 self.addEventListener('install', (event: ExtendableEvent) => {
   logger.log('installing service worker');
   logger.warn('This is a playground service worker 📦. It is not intended for production use.');
-  event.waitUntil(self.skipWaiting());
+  event.waitUntil(
+    Promise.all([
+      self.skipWaiting(),
+      assetCache.preCacheUrls(['/entry.worker.css'])
+      // assetCache.preCacheUrls(self.__workerManifest.assets) // - Ideal, lol. We wish!
+    ])
+  );
 });
 
 self.addEventListener('activate', event => {
   logger.log(self.clients, 'manifest:\n', self.__workerManifest);
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    Promise.all([
+      clearUpOldCaches(['remix-assets'], CURRENT_CACHE_VERSION),
+    ]).then(() => {
+      self.clients.claim();
+    })
+  );
 });
+
+new NavigationHandler({
+  documentCache: new EnhancedCache('remix-document', {
+    version: CURRENT_CACHE_VERSION,
+    strategy: 'CacheFirst',
+    strategyOptions: {
+      maxEntries: 10,
+      maxAgeSeconds: 60,
+      cacheableResponse: {
+        statuses: [200],
+      },
+    },
+  }),
+})
