@@ -1,3 +1,16 @@
+# @remix-pwa/sw 2.2.0-dev.1 (2024-01-15)
+
+
+### Features
+
+* **sw:** getting rid of former `MessageHandler`s 7329c0f
+* **sw:** new `useSWEffect` hook semantics 73516dc
+* **sw:** new caching approaches + strategies f50307a
+* **sw:** new message handlers 7cdc3a6
+* **sw:** new message sub-module 4db3538
+* **sw:** new versioning utility to handle auto-versioning 6a3543d
+* **sw:** removed `NetworkOnly` strategy - it's just `fetch` 31a7c43
+
 ## @remix-pwa/sw 2.1.13-dev.1 (2023-12-11)
 
 
