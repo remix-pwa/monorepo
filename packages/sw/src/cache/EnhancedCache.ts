@@ -1,4 +1,4 @@
-import type { BaseStrategy } from './BaseStrategy.js';
+import { CACHE_TIMESTAMP_HEADER, type BaseStrategy } from './BaseStrategy.js';
 import { CacheFirst } from './CacheFirst.js';
 import { CacheOnly } from './CacheOnly.js';
 import { NetworkFirst } from './NetworkFirst.js';
@@ -35,6 +35,24 @@ export class EnhancedCache {
   }
 
   /**
+   * Adds a timestamp header to the response.
+   * @param {Response} response - The original response.
+   * @returns {Response} The new response with the timestamp header.
+   */
+  private addTimestampHeader(response: Response): Response {
+    const headers = new Headers(response.headers);
+    headers.append(CACHE_TIMESTAMP_HEADER, Date.now().toString());
+
+    const timestampedResponse = new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+
+    return timestampedResponse;
+  }
+
+  /**
    * Manually adds a response to the cache.
    * Useful for caching responses from external sources.
    *
@@ -45,21 +63,29 @@ export class EnhancedCache {
     if (typeof request === 'string') request = new Request(request);
 
     const cache = await caches.open(this.cacheName);
-    await cache.put(request, response);
+    const timestampedResponse = this.addTimestampHeader(response);
+    cache.put(request, timestampedResponse.clone());
   }
 
   /**
    * Manually removes a response from the cache.
    * Useful for removing responses from external sources.
    *
-   * @param {Request | string} request - The request to remove from the cache.
+   * @param {Request | string | URL} request - The request to remove from the cache.
    * @returns {Promise<void>}
    */
-  async removeFromCache(request: Request | string): Promise<void> {
-    if (typeof request === 'string') request = new Request(request);
+  async removeFromCache(request: Request | string | URL): Promise<void> {
+    if (typeof request === 'string') request = new URL(request);
 
     const cache = await caches.open(this.cacheName);
     await cache.delete(request);
+  }
+
+  async match(request: Request | string): Promise<Response | undefined> {
+    if (typeof request === 'string') request = new Request(request);
+
+    const cache = await caches.open(this.cacheName);
+    return await cache.match(request);
   }
 
   /**
