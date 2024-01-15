@@ -1,7 +1,5 @@
 import {
   useSWEffect,
-  // LiveReload,
-  logger
 } from "@remix-pwa/sw";
 import {
   Links,
@@ -14,11 +12,15 @@ import {
 // import { routes } from 'virtual:pwa-entry-module';
 
 import './tailwind.css';
+import { useEffect } from "react";
 
 export default function App() {
-  useSWEffect();
+  useSWEffect()
 
   // logger.log("App rendered", routes);
+  useEffect(() => {
+    console.log(window.__remixManifest)
+  }, []);
 
   return (
     <html lang="en">

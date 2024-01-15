@@ -679,7 +679,7 @@ function generatePath(originalPath, params) {
       const star = "*";
       return stringify(params[star]);
     }
-    const keyMatch = segment.match(/^:(\w+)(\??)$/);
+    const keyMatch = segment.match(/^:([\w-]+)(\??)$/);
     if (keyMatch) {
       const [, key, optional] = keyMatch;
       let param = params[key];
@@ -738,7 +738,7 @@ function compilePath(path, caseSensitive, end) {
   }
   warning(path === "*" || !path.endsWith("*") || path.endsWith("/*"), 'Route path "' + path + '" will be treated as if it were ' + ('"' + path.replace(/\*$/, "/*") + '" because the `*` character must ') + "always follow a `/` in the pattern. To get rid of this warning, " + ('please change the route path to "' + path.replace(/\*$/, "/*") + '".'));
   let params = [];
-  let regexpSource = "^" + path.replace(/\/*\*?$/, "").replace(/^\/*/, "/").replace(/[\\.*+^${}|()[\]]/g, "\\$&").replace(/\/:(\w+)(\?)?/g, (_, paramName, isOptional) => {
+  let regexpSource = "^" + path.replace(/\/*\*?$/, "").replace(/^\/*/, "/").replace(/[\\.*+^${}|()[\]]/g, "\\$&").replace(/\/:([\w-]+)(\?)?/g, (_, paramName, isOptional) => {
     params.push({
       paramName,
       isOptional: isOptional != null
@@ -2710,27 +2710,27 @@ async function callLoaderOrAction(type2, request, match, matches, manifest, mapR
   let resultType;
   let result;
   let onReject;
-  let runHandler = (handler2) => {
+  let runHandler = (handler) => {
     let reject;
     let abortPromise = new Promise((_, r) => reject = r);
     onReject = () => reject();
     request.signal.addEventListener("abort", onReject);
-    return Promise.race([handler2({
+    return Promise.race([handler({
       request,
       params: match.params,
       context: opts.requestContext
     }), abortPromise]);
   };
   try {
-    let handler2 = match.route[type2];
+    let handler = match.route[type2];
     if (match.route.lazy) {
-      if (handler2) {
+      if (handler) {
         let handlerError;
         let values = await Promise.all([
           // If the handler throws, don't let it immediately bubble out,
           // since we need to let the lazy() execution finish so we know if this
           // route has a boundary that can handle the error
-          runHandler(handler2).catch((e) => {
+          runHandler(handler).catch((e) => {
             handlerError = e;
           }),
           loadLazyRouteModule(match.route, mapRouteProperties, manifest)
@@ -2741,9 +2741,9 @@ async function callLoaderOrAction(type2, request, match, matches, manifest, mapR
         result = values[0];
       } else {
         await loadLazyRouteModule(match.route, mapRouteProperties, manifest);
-        handler2 = match.route[type2];
-        if (handler2) {
-          result = await runHandler(handler2);
+        handler = match.route[type2];
+        if (handler) {
+          result = await runHandler(handler);
         } else if (type2 === "action") {
           let url = new URL(request.url);
           let pathname = url.pathname + url.search;
@@ -2759,14 +2759,14 @@ async function callLoaderOrAction(type2, request, match, matches, manifest, mapR
           };
         }
       }
-    } else if (!handler2) {
+    } else if (!handler) {
       let url = new URL(request.url);
       let pathname = url.pathname + url.search;
       throw getInternalRouterError(404, {
         pathname
       });
     } else {
-      result = await runHandler(handler2);
+      result = await runHandler(handler);
     }
     invariant(result !== void 0, "You defined " + (type2 === "action" ? "an action" : "a loader") + " for route " + ('"' + match.route.id + "\" but didn't return anything from your `" + type2 + "` ") + "function. Please return a value or `null`.");
   } catch (e) {
@@ -2815,7 +2815,11 @@ async function callLoaderOrAction(type2, request, match, matches, manifest, mapR
     try {
       let contentType = result.headers.get("Content-Type");
       if (contentType && /\bapplication\/json\b/.test(contentType)) {
-        data = await result.json();
+        if (result.body == null) {
+          data = null;
+        } else {
+          data = await result.json();
+        }
       } else {
         data = await result.text();
       }
@@ -3356,7 +3360,7 @@ var init_router = __esm({
       ResultType2["error"] = "error";
     })(ResultType || (ResultType = {}));
     immutableRouteKeys = /* @__PURE__ */ new Set(["lazy", "caseSensitive", "path", "id", "index", "children"]);
-    paramRe = /^:\w+$/;
+    paramRe = /^:[\w-]+$/;
     dynamicSegmentValue = 3;
     indexRouteValue = 2;
     emptySegmentValue = 1;
@@ -3775,681 +3779,8 @@ var require_responses = __commonJS({
 // app/entry.worker.ts
 var entry_worker_exports = {};
 __export(entry_worker_exports, {
-  defaultFetchHandler: () => defaultFetchHandler,
   getLoadContext: () => getLoadContext
 });
-
-// ../node_modules/cachified/dist/index.mjs
-var k = Symbol();
-var w = Symbol();
-var f = Symbol();
-
-// ../node_modules/uint8array-extras/index.js
-var objectToString = Object.prototype.toString;
-var uint8ArrayStringified = "[object Uint8Array]";
-function isUint8Array(value) {
-  if (!value) {
-    return false;
-  }
-  if (value.constructor === Uint8Array) {
-    return true;
-  }
-  return objectToString.call(value) === uint8ArrayStringified;
-}
-function assertUint8Array(value) {
-  if (!isUint8Array(value)) {
-    throw new TypeError(`Expected \`Uint8Array\`, got \`${typeof value}\``);
-  }
-}
-var cachedDecoder = new globalThis.TextDecoder();
-function uint8ArrayToString(array) {
-  assertUint8Array(array);
-  return cachedDecoder.decode(array);
-}
-var cachedEncoder = new globalThis.TextEncoder();
-var byteToHexLookupTable = Array.from({ length: 256 }, (_, index) => index.toString(16).padStart(2, "0"));
-
-// ../node_modules/js-base64/base64.mjs
-var _hasatob = typeof atob === "function";
-var _hasBuffer = typeof Buffer === "function";
-var _TD = typeof TextDecoder === "function" ? new TextDecoder() : void 0;
-var _TE = typeof TextEncoder === "function" ? new TextEncoder() : void 0;
-var b64ch = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-var b64chs = Array.prototype.slice.call(b64ch);
-var b64tab = ((a) => {
-  let tab = {};
-  a.forEach((c, i) => tab[c] = i);
-  return tab;
-})(b64chs);
-var b64re = /^(?:[A-Za-z\d+\/]{4})*?(?:[A-Za-z\d+\/]{2}(?:==)?|[A-Za-z\d+\/]{3}=?)?$/;
-var _fromCC = String.fromCharCode.bind(String);
-var _U8Afrom = typeof Uint8Array.from === "function" ? Uint8Array.from.bind(Uint8Array) : (it) => new Uint8Array(Array.prototype.slice.call(it, 0));
-var _tidyB64 = (s) => s.replace(/[^A-Za-z0-9\+\/]/g, "");
-var atobPolyfill = (asc) => {
-  asc = asc.replace(/\s+/g, "");
-  if (!b64re.test(asc))
-    throw new TypeError("malformed base64.");
-  asc += "==".slice(2 - (asc.length & 3));
-  let u24, bin = "", r1, r2;
-  for (let i = 0; i < asc.length; ) {
-    u24 = b64tab[asc.charAt(i++)] << 18 | b64tab[asc.charAt(i++)] << 12 | (r1 = b64tab[asc.charAt(i++)]) << 6 | (r2 = b64tab[asc.charAt(i++)]);
-    bin += r1 === 64 ? _fromCC(u24 >> 16 & 255) : r2 === 64 ? _fromCC(u24 >> 16 & 255, u24 >> 8 & 255) : _fromCC(u24 >> 16 & 255, u24 >> 8 & 255, u24 & 255);
-  }
-  return bin;
-};
-var _atob = _hasatob ? (asc) => atob(_tidyB64(asc)) : _hasBuffer ? (asc) => Buffer.from(asc, "base64").toString("binary") : atobPolyfill;
-
-// ../packages/cache/dist/src/utils.js
-function mergeHeaders(...headers) {
-  const merged = new Headers();
-  for (const header of headers) {
-    if (!header)
-      continue;
-    for (const [key, value] of new Headers(header).entries()) {
-      merged.set(key, value);
-    }
-  }
-  return merged;
-}
-function omit(key, obj) {
-  const { [key]: omitted, ...rest } = obj;
-  return rest;
-}
-function assertString(value) {
-  if (typeof value !== "string") {
-    throw new TypeError(`Expected \`string\`, got \`${typeof value}\``);
-  }
-}
-function base64UrlToBase64(base64url) {
-  return base64url.replaceAll("-", "+").replaceAll("_", "/");
-}
-function base64ToUint8Array(base64String) {
-  assertString(base64String);
-  return Uint8Array.from(_atob(base64UrlToBase64(base64String)), (x) => x.codePointAt(0));
-}
-
-// ../packages/cache/dist/src/cache.js
-var Strategy;
-(function(Strategy2) {
-  Strategy2["CacheFirst"] = "cache-first";
-  Strategy2["NetworkFirst"] = "network-first";
-  Strategy2["CacheOnly"] = "cache-only";
-  Strategy2["NetworkOnly"] = "network-only";
-  Strategy2["StaleWhileRevalidate"] = "stale-while-revalidate";
-})(Strategy || (Strategy = {}));
-var RemixCache = class {
-  /**
-   * Create a new `RemixCache` instance. Don't invoke this directly! Use `RemixCacheStorage.open()` instead.
-   * @constructor
-   * @param {object} options - Options for the RemixCache instance.
-   */
-  constructor(options) {
-    this._ttl = Infinity;
-    this._strategy = Strategy.NetworkFirst;
-    this._maxItems = 100;
-    this.set = false;
-    this.name = options.name;
-    this._maxItems = options.maxItems || 100;
-    this._strategy = options.strategy || Strategy.NetworkFirst;
-    this._ttl = options.ttl || Infinity;
-    if (this._strategy === Strategy.NetworkOnly) {
-      this._ttl = -1;
-    }
-    if (options.maxItems || options.ttl || options.strategy) {
-      this.set = true;
-    } else {
-      this.set = false;
-    }
-  }
-  async _openCache() {
-    return await caches.open(`rp-${this.name}`);
-  }
-  async _getOrDeleteIfExpired(key, metadata) {
-    if (metadata.expiresAt === "Infinity") {
-      return false;
-    }
-    if (Number(metadata.expiresAt) <= Date.now()) {
-      return await this.delete(key);
-    }
-    return false;
-  }
-  async _lruCleanup() {
-    const isOverflowing = await this.length() >= this._maxItems;
-    if (isOverflowing) {
-      const cache = await this._openCache();
-      const keys2 = await cache.keys();
-      const values = await Promise.all(keys2.map((key) => cache.match(key)));
-      const keyVal = keys2.map((key, i) => ({ key, val: values[i] }));
-      const comparableArrayPromise = keyVal.map(async (val) => {
-        const { metadata } = await val.val.clone().json();
-        return {
-          metadata,
-          url: val.key.url
-        };
-      });
-      const comparableArray = await Promise.all(comparableArrayPromise);
-      const sortedArr = comparableArray.sort((a, b2) => {
-        return Number(a.metadata.accessedAt) - Number(b2.metadata.accessedAt);
-      });
-      const toBeDeletdItems = sortedArr.slice(0, sortedArr.length - this._maxItems + 1);
-      for (const deleted of toBeDeletdItems) {
-        await this.delete(deleted.url);
-      }
-    }
-  }
-  async _getResponseValue(request, response) {
-    const { metadata, value } = await response.clone().json();
-    const deleted = await this._getOrDeleteIfExpired(request, metadata);
-    const headers = new Headers(response.clone().headers);
-    if (!this.set) {
-      this.set = true;
-      this._ttl = metadata.cacheTtl;
-      this._maxItems = metadata.cacheMaxItems;
-      this._strategy = metadata.cacheStrategy;
-    }
-    const newHeader = new Headers(headers);
-    newHeader.set("X-Remix-PWA-TTL", metadata.expiresAt.toString());
-    newHeader.set("X-Remix-PWA-AccessTime", Date.now().toString());
-    newHeader.set("Content-Type", headers.get("X-Remix-PWA-Original-Content-Type") || "application/json");
-    const contentType = headers.get("X-Remix-PWA-Original-Content-Type") ?? "";
-    newHeader.delete("X-Remix-PWA-Original-Content-Type");
-    const responseOptions = {
-      status: response.status,
-      statusText: response.statusText,
-      headers: newHeader,
-      body: "null"
-    };
-    if (contentType.includes("application/json")) {
-      responseOptions.body = JSON.stringify(value);
-    } else if (contentType.includes("text")) {
-      responseOptions.body = value;
-    } else {
-      console.log(typeof value, value.toString(), "ahahah");
-      responseOptions.body = base64ToUint8Array(value);
-    }
-    if (!deleted) {
-      const res = new Response(responseOptions.body, omit("body", responseOptions));
-      await this.put(request, res.clone(), void 0);
-      return res;
-    }
-    return void 0;
-  }
-  /**
-   * Delete an entry from the cache.
-   * Takes in the same parameters as `Cache.delete`.
-   * @param {RequestInfo | URL} request - The request to delete.
-   * @param {CacheQueryOptions} [options] - Options for the delete operation.
-   * @returns {Promise<boolean>} Returns `true` if an entry was deleted, otherwise `false`.
-   *
-   * @example
-   * ```js
-   * const cache = await initCache({ name: 'my-cache' });
-   *
-   * await cache.put('/hello-world', new Response('Hello World!'));
-   * await cache.delete('/hello-world');
-   * ```
-   *
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/Cache/delete
-   */
-  async delete(request, options) {
-    return this._openCache().then((cache) => cache.delete(request, options));
-  }
-  /**
-   * Returns a Promise that resolves to the length of the Cache object.
-   *
-   * @returns {Promise<number>} The number of entries in the cache.
-   */
-  async length() {
-    const keys2 = await this.keys();
-    return keys2.length;
-  }
-  /**
-   * Returns a `Promise` that resolves to an array of Cache keys.
-   *
-   * @returns {Promise<readonly Request[]>} An array of Cache keys.
-   */
-  async keys() {
-    const cache = await this._openCache();
-    return await cache.keys();
-  }
-  /**
-   * Return a `Promise` that resolves to an entry in the cache object. Accepts the
-   * same parameters as `Cache.match`.
-   *
-   * @param {RequestInfo | URL} request - The request to match.
-   * @param {CacheQueryOptions} [options] - Options for the match operation.
-   *
-   * @returns {Promise<Response | undefined>} A `Promise` that resolves to the response, or `undefined` if not found.
-   */
-  async match(request, options) {
-    const cache = await this._openCache();
-    if (request instanceof URL || typeof request === "string") {
-      request = new Request(request);
-    }
-    const response = await cache.match(request.clone(), options);
-    if (!response) {
-      return void 0;
-    }
-    return await this._getResponseValue(request, response.clone());
-  }
-  /**
-   * Add an entry to the cache.
-   * Takes in the same parameters as `Cache.put`.
-   *
-   * @param {RequestInfo | URL} request - The request to add.
-   * @param {Response} response - The response to add.
-   * @param {number | undefined} ttl - The time-to-live of the cache entry in ms. Defaults to cache ttl.
-   * @returns {Promise<void>} A `Promise` that resolves when the entry is added to the cache.
-   *
-   * @example
-   * ```js
-   * const cache = await initCache({ name: 'my-cache' });
-   *
-   * await cache.put('/hello-world', new Response('Hello World!'));
-   * ```
-   *
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/Cache/put
-   */
-  async put(request, response, ttl = void 0) {
-    const cache = await this._openCache();
-    if (request instanceof URL || typeof request === "string") {
-      request = new Request(request);
-    }
-    if (this._ttl <= 0 || ttl && ttl <= 0)
-      return;
-    if (response === null || response.status === 204 || response.statusText.toLowerCase() === "no content") {
-      await this.delete(request);
-      return;
-    }
-    const contentType = response.headers.get("Content-Type");
-    let data;
-    if (contentType && contentType.includes("application/json")) {
-      data = await response.clone().json();
-    } else if (contentType && contentType.includes("text")) {
-      data = await response.clone().text();
-    } else {
-      const buffer = await response.clone().arrayBuffer();
-      data = uint8ArrayToString(new Uint8Array(buffer));
-    }
-    if (!this.set) {
-      this.set = true;
-      const keys2 = await cache.keys();
-      const firstVal = await cache.match(keys2[0]);
-      if (firstVal) {
-        const { metadata } = await firstVal.clone().json();
-        this._ttl = metadata.cacheTtl;
-        this._maxItems = metadata.cacheMaxItems;
-        this._strategy = metadata.cacheStrategy;
-      } else {
-        this._ttl = Infinity;
-        this._maxItems = 100;
-        this._strategy = Strategy.NetworkFirst;
-      }
-    }
-    const resHeaders = response.headers;
-    const expiresAt = resHeaders.get("X-Remix-PWA-TTL") || Date.now() + (ttl ?? this._ttl);
-    const accessedAt = resHeaders.get("X-Remix-PWA-AccessTime") || Date.now().toString();
-    const newHeaders = new Headers();
-    newHeaders.set("Content-Type", "application/json");
-    newHeaders.set("X-Remix-PWA-AccessTime", accessedAt);
-    newHeaders.set("X-Remix-PWA-Original-Content-Type", contentType || "text/plain");
-    newHeaders.set("X-Remix-PWA-TTL", expiresAt.toString());
-    const toBeCachedRes = new Response(JSON.stringify({
-      metadata: {
-        accessedAt,
-        // JSON can't store `Infinity`, so we store it as a string
-        expiresAt: expiresAt.toString(),
-        cacheTtl: this._ttl.toString(),
-        cacheMaxItems: this._maxItems,
-        cacheStrategy: this._strategy
-      },
-      value: data
-    }), {
-      status: response.status,
-      statusText: response.statusText,
-      headers: mergeHeaders(resHeaders, newHeaders)
-    });
-    Object.defineProperty(toBeCachedRes, "url", { value: response.url });
-    Object.defineProperty(toBeCachedRes, "type", { value: response.type });
-    Object.defineProperty(toBeCachedRes, "ok", { value: response.ok });
-    Object.defineProperty(toBeCachedRes, "redirected", { value: response.redirected });
-    try {
-      await this._lruCleanup();
-      return await cache.put(request, toBeCachedRes.clone());
-    } catch (error) {
-      if (true)
-        console.error("Failed to put to cache:", error);
-    }
-  }
-  async add(request) {
-    return (
-      /* await - should this be awaited? */
-      fetch(request).then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to fetch");
-        }
-        return this.put(request, res.clone());
-      })
-    );
-  }
-  get ttl() {
-    return this._ttl;
-  }
-  get strategy() {
-    return this._strategy;
-  }
-};
-
-// ../packages/cache/dist/src/storage.js
-var RemixCacheStorage = class {
-  // eslint-disable-next-line no-useless-constructor
-  constructor() {
-  }
-  /**
-   * Initialize the Remix PWA Cache Storage. This will create a special cache for each
-   * existing cache in the browser or create a new map if none exist.
-   *
-   * Use in your service worker installation script. Make sure to call this before
-   * initializing any `RemixCache` instance.
-   *
-   * @example
-   * ```js
-   * import { RemixCacheStorage } from '@remix-run/cache';
-   *
-   * self.addEventListener('install', (event) => {
-   *  event.waitUntil(Promise.all[
-   *   RemixCacheStorage.init(),
-   *   // other stuff
-   *  ]);
-   * });
-   * ```
-   */
-  // static async init() {
-  //   if (typeof caches === 'undefined') {
-  //     throw new Error('Cache API is not available in this environment.');
-  //   }
-  //   if (this._instances.size > 0) {
-  //     return;
-  //   }
-  //   const cachesNames = await caches.keys();
-  //   for (const name of cachesNames) {
-  //     if (name.startsWith('rp-')) {
-  //       this._instances.set(name, new RemixCache({ name }));
-  //     }
-  //   }
-  // }
-  /**
-   * Create a custom cache that you can use across your application.
-   * Use this instead of initialising `RemixCache` directly.
-   */
-  static createCache(opts) {
-    const { name } = opts;
-    if (this._instances.has(name)) {
-      return this._instances.get(name);
-    }
-    const newCache = new RemixCache(opts);
-    this._instances.set(`${name}`, newCache);
-    caches.open(`rp-${name}`);
-    return newCache;
-  }
-  /**
-   * Check wether a cache with the given name exists.
-   *
-   * @param name
-   */
-  static has(name) {
-    return this._instances.has(name);
-  }
-  static async _get(name) {
-    const cache = this._instances.get(name);
-    if (!cache && await caches.has(`rp-${name}`)) {
-      this._instances.set(name, new RemixCache({ name }));
-      await this._instances.get(name)?.keys().then((keys2) => {
-        if (keys2.length > 0) {
-          caches.match(keys2[0]);
-        }
-      });
-    }
-    return this._instances.get(name);
-  }
-  /**
-   * Get a cache by name. Returns `undefined` if no cache with the given name exists.
-   * Use `has` to check if a cache exists. Or `open` to create one automatically if non exists.
-   *
-   * @param name
-   * @returns {RemixCache | undefined}
-   *
-   * @example
-   * ```js
-   * import { Storage } from '@remix-run/cache';
-   *
-   * const cache = Storage.get('my-cache');
-   * ```
-   */
-  static async get(name) {
-    return await this._get(name);
-  }
-  /**
-   * Get a cache by name. If no cache with the given name exists, create one.
-   *
-   * @param name Name of the cache - **must be unique**
-   * @param opts Options to pass to the `RemixCache` constructor if the cache is getting created
-   * @returns {RemixCache}
-   *
-   * @example
-   * ```js
-   * import { Storage } from '@remix-run/cache';
-   *
-   * const cache = Storage.open('my-cache');
-   * ```
-   */
-  static open(name, opts) {
-    const cache = this._instances.get(name);
-    if (!cache) {
-      return this.createCache({ name, ...opts });
-    }
-    return cache;
-  }
-  /**
-   * Delete a cache by name.
-   *
-   * @param name
-   */
-  static delete(name) {
-    const cache = this._instances.get(name);
-    if (cache) {
-      caches.delete(`rp-${name}`);
-      this._instances.delete(name);
-    }
-  }
-  /**
-   * Delete all caches.
-   */
-  static clear() {
-    caches.keys().then((keys2) => keys2.forEach((key) => key.startsWith("rp-") ? caches.delete(key) : null));
-    this._instances = /* @__PURE__ */ new Map();
-  }
-  /**
-   * Get all caches. **Don't use this except you know what you are doing!**
-   *
-   * Which, frankly speaking, you probably don't. So shoo away!
-   */
-  static get instances() {
-    return this._instances;
-  }
-  /**
-   * Get the number of caches.
-   *
-   * Return the length of the `RemixCacheStorage` store.
-   */
-  static get _length() {
-    return this._instances.size;
-  }
-  /**
-   * Check if a request is stored as the key of a response in all caches.
-   *
-   * Experimental. Use at your own risk!
-   *
-   * @param {RequestInfo | URL} request The request to check.
-   * @param {CacheQueryOptions} [options] Options to pass to the `Cache.match` method.
-   * @returns {Promise<Response | undefined>} A promise that resolves to the response if found, otherwise `undefined`.
-   */
-  static _match(request, options) {
-    return caches.match(request, options);
-  }
-};
-RemixCacheStorage._instances = /* @__PURE__ */ new Map();
-var Storage = RemixCacheStorage;
-
-// ../packages/strategy/dist/src/utils.js
-var isHttpRequest = (request) => {
-  if (request instanceof Request) {
-    return request.url.startsWith("http");
-  }
-  return request.toString().startsWith("http");
-};
-var toJSON = async (response) => {
-  if (response instanceof Response) {
-    return await response.clone().json();
-  }
-  return response;
-};
-
-// ../packages/strategy/dist/src/cacheFirst.js
-var cacheFirst = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0 }) => {
-  return async (request) => {
-    if (!isHttpRequest(request)) {
-      return new Response("Not a HTTP request", { status: 403 });
-    }
-    let remixCache;
-    if (typeof cacheName === "string") {
-      remixCache = Storage.open(cacheName, cacheOptions);
-    } else {
-      remixCache = cacheName;
-    }
-    const response = await remixCache.match(request, cacheQueryOptions);
-    if (!response) {
-      try {
-        const networkResponse = await fetch(request);
-        remixCache.put(request, networkResponse.clone());
-        return networkResponse;
-      } catch (err) {
-        if (fetchDidFail) {
-          await Promise.all(fetchDidFail.map((cb) => cb()));
-        }
-        throw err;
-      }
-    }
-    return response;
-  };
-};
-
-// ../packages/strategy/dist/src/cacheOnly.js
-var cacheOnly = ({ cache: cacheName, cacheOptions, cacheQueryOptions }) => {
-  return async (request) => {
-    if (!isHttpRequest(request)) {
-      return new Response("Not a HTTP request", { status: 403 });
-    }
-    let remixCache;
-    if (typeof cacheName === "string") {
-      remixCache = Storage.open(cacheName, cacheOptions);
-    } else {
-      remixCache = cacheName;
-    }
-    const response = await remixCache.match(request, cacheQueryOptions);
-    if (!response) {
-      const req = request instanceof Request ? request : new Request(request.toString());
-      const isGet = req.method.toLowerCase() === "get";
-      return new Response(JSON.stringify({
-        message: isGet ? "Not Found" : "No idea what you are trying to accomplish but this ain't it!"
-      }), {
-        status: isGet ? 404 : 400,
-        statusText: isGet ? "Not Found" : "Bad Request"
-      });
-    }
-    return response.clone();
-  };
-};
-
-// ../packages/strategy/dist/src/networkFirst.js
-var networkFirst = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0, fetchDidSucceed = void 0, networkTimeoutSeconds = 10 }) => {
-  return async (request) => {
-    if (!isHttpRequest(request)) {
-      return new Response("Not a HTTP request", { status: 403 });
-    }
-    let remixCache;
-    if (typeof cacheName === "string") {
-      remixCache = Storage.open(cacheName, cacheOptions);
-    } else {
-      remixCache = cacheName;
-    }
-    try {
-      const timeoutPromise = networkTimeoutSeconds !== Infinity ? new Promise((_resolve, reject) => {
-        setTimeout(() => {
-          reject(new Error(`Network timed out after ${networkTimeoutSeconds} seconds`));
-        }, networkTimeoutSeconds * 1e3);
-      }) : null;
-      const response = timeoutPromise ? await Promise.race([fetch(request), timeoutPromise]) : await fetch(request);
-      if (response) {
-        if (fetchDidSucceed) {
-          await Promise.all(fetchDidSucceed.map((cb) => cb()));
-        }
-        await remixCache.put(request, response.clone());
-        return response.clone();
-      }
-    } catch (error) {
-      if (fetchDidFail) {
-        await Promise.all(fetchDidFail.map((cb) => cb()));
-      }
-      const cachedResponse = await remixCache.match(request, cacheQueryOptions);
-      if (cachedResponse) {
-        return cachedResponse.clone();
-      }
-      return new Response(JSON.stringify({ message: "Network Error" }), {
-        status: 500
-      });
-    }
-    throw new Error("Failed to fetch. Network timed out.");
-  };
-};
-
-// ../packages/strategy/dist/src/staleWhileRevalidate.js
-var staleWhileRevalidate = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0, strict = false, swr: swr2 }) => {
-  return async (request) => {
-    if (!isHttpRequest(request)) {
-      return new Response("Not a HTTP request", { status: 403 });
-    }
-    let remixCache;
-    if (typeof cacheName === "string") {
-      remixCache = Storage.open(cacheName, cacheOptions);
-    } else {
-      remixCache = cacheName;
-    }
-    swr2 = swr2 ?? remixCache.ttl ?? 0;
-    return remixCache.match(request, cacheQueryOptions).then(async (response) => {
-      const res = response ? response.clone() : void 0;
-      if (res && !strict) {
-        const accessed = Number(res.headers.get("X-Remix-PWA-AccessTime")) ?? 0;
-        if (swr2 + accessed >= Date.now()) {
-          return res;
-        }
-      }
-      const fetchPromise = fetch(request).then(async (networkResponse) => {
-        await remixCache.put(request, networkResponse.clone(), strict ? swr2 : void 0);
-        return networkResponse;
-      }).catch(async (_err) => {
-        if (fetchDidFail) {
-          await Promise.all(fetchDidFail.map((cb) => cb()));
-        }
-        return new Response(JSON.stringify({ error: "Network request failed" }), {
-          status: 500,
-          statusText: "Network request failed"
-        });
-      });
-      return response ? response.clone() : fetchPromise;
-    });
-  };
-};
 
 // ../packages/sw/dist/src/private/logger.js
 var methodToColorMap = {
@@ -4529,121 +3860,549 @@ var logger = false ? (() => {
   return api;
 })();
 
-// ../packages/sw/dist/src/utils/worker.js
-function isMethod(request, methods) {
-  return methods.includes(request.method.toLowerCase());
-}
-function isAssetRequest(request, assetUrls = ["/build/", "/icons"]) {
-  return isMethod(request, ["get"]) && assetUrls.some((publicPath) => request.url.includes(publicPath));
-}
-function isLoaderRequest(request) {
-  const url = new URL(request.url);
-  return isMethod(request, ["get"]) && url.searchParams.get("_data");
-}
-var matchRequest = (request, assetUrls = ["/build/", "/icons"]) => {
-  if (isAssetRequest(request, assetUrls)) {
-    return "asset";
-  } else if (isLoaderRequest(request)) {
-    return "loader";
-  } else {
-    return null;
+// ../packages/sw/dist/src/utils/versioning.js
+var clearUpOldCaches = (cacheNames, version) => {
+  if (version) {
+    cacheNames = cacheNames.map((cacheName) => `${cacheName}-${version}`);
   }
+  return caches.keys().then((allCacheNames) => {
+    return Promise.all([
+      cacheNames.forEach((cacheName) => {
+        const { cacheActualName } = getCacheNameAndVersion(cacheName);
+        const cachesToDelete = allCacheNames.filter((cache) => cache.startsWith(cacheActualName) && cache !== cacheName);
+        console.log(cachesToDelete, allCacheNames);
+        cachesToDelete.forEach((oldCacheName) => {
+          caches.delete(oldCacheName);
+        });
+      })
+    ]);
+  });
+};
+var getCacheNameAndVersion = (cacheName) => {
+  const splittedName = cacheName.split("-");
+  const version = splittedName.pop();
+  const versionIndex = splittedName.length - 1;
+  const cacheActualName = splittedName.slice(0, versionIndex).join("-");
+  return { cacheActualName, version };
 };
 
-// ../packages/sw/dist/src/message/message.js
+// ../packages/sw/dist/src/message/MessageHandler.js
 var MessageHandler = class {
-  /**
-   * The plugins array is used to run plugins before and after the message handler.
-   * They are passed in when the handler is initialised.
-   */
-  plugins;
-  /**
-   * The state object is used to pass data between plugins.
-   */
-  state;
-  constructor({ plugins, state } = {}) {
-    this.plugins = plugins || [];
-    this.state = state || {};
+  eventName;
+  constructor(eventName) {
+    if (!self.__messageHandlers) {
+      self.__messageHandlers = /* @__PURE__ */ new Map();
+    }
+    this.eventName = eventName;
   }
-  /**
-   * The method that handles the message event.
-   *
-   * Takes in the MessageEvent as a mandatory argument as well as an optional
-   * object that can be used to pass further information/data.
-   */
-  async handle(event, state = {}) {
-    await this._handleMessage(event, state);
+  bind(fn, context) {
+    self.__messageHandlers.set(this.eventName, fn.bind(context));
   }
-  /**
-   * Runs the plugins that are passed in when the handler is initialised.
-   */
-  async runPlugins(hook, env) {
-    for (const plugin of this.plugins) {
-      if (plugin[hook]) {
-        plugin[hook](env);
+  async handleMessage(event) {
+    const { data } = event;
+    if (typeof data === "object" && data.type) {
+      const handler = self.__messageHandlers.get(data.type);
+      if (handler) {
+        await handler(event);
       }
     }
   }
 };
 
-// ../packages/sw/dist/src/message/remixNavigationHandler.js
-var RemixNavigationHandler = class extends MessageHandler {
-  dataCacheName;
-  documentCacheName;
-  constructor({ dataCache: dataCache2, documentCache: documentCache2, plugins, state }) {
-    super({ plugins, state });
-    this.dataCacheName = dataCache2;
-    this.documentCacheName = documentCache2;
-    this._handleMessage = this._handleMessage.bind(this);
+// ../packages/sw/dist/src/cache/BaseStrategy.js
+var CACHE_TIMESTAMP_HEADER = "sw-cache-timestamp";
+var BaseStrategy = class {
+  cacheName;
+  options;
+  /**
+   * Creates an instance of BaseStrategy.
+   * @param {string} cacheName - The name of the cache.
+   * @param {Object} options - Configuration options for the strategy.
+   */
+  constructor(cacheName, options = {}) {
+    this.cacheName = cacheName;
+    this.options = options;
+  }
+  /**
+   * Opens a cache with the given name.
+   * @returns {Promise<Cache>} The cache object.
+   */
+  async openCache() {
+    return await caches.open(this.cacheName);
+  }
+  ensureRequest(request) {
+    if (typeof request === "string") {
+      return new Request(request);
+    }
+    return request;
+  }
+  /**
+   * Optional method to clean up the cache based on the defined options.
+   * Can be overridden by subclasses for custom cleanup logic.
+   */
+  async cleanupCache() {
+    const cache = await this.openCache();
+    const requests = await cache.keys();
+    const now = Date.now();
+    const promises = requests.map(async (request) => {
+      const response = await cache.match(request);
+      const timestamp = response?.headers.get(CACHE_TIMESTAMP_HEADER);
+      if (timestamp && now - parseInt(timestamp, 10) > (this.options.maxAgeSeconds ?? 2592e3) * 1e3) {
+        await cache.delete(request);
+      }
+    });
+    await Promise.all(promises);
+  }
+};
+
+// ../packages/sw/dist/src/cache/CacheFirst.js
+var CacheFirst = class extends BaseStrategy {
+  cacheableResponse;
+  constructor(cacheName, options = {}) {
+    super(cacheName, options);
+    this.cacheableResponse = options.cacheableResponse ?? false;
+  }
+  /**
+   * Handles fetch requests by trying to fetch from the cache first.
+   * Falls back to network if the cache doesn't contain a response.
+   * @param {Request} req - The request to handle.
+   * @returns {Promise<Response>} The cached or network response.
+   */
+  async handleRequest(req) {
+    const request = this.ensureRequest(req);
+    const cache = await this.openCache();
+    let response = await cache.match(request);
+    if (!response) {
+      response = await fetch(request);
+      if (await this.validateResponse(response)) {
+        await this.putInCache(request, response.clone());
+        this.validateCache();
+      }
+    }
+    return response;
+  }
+  /**
+   * Puts a response into the cache.
+   * @param {Request} request - The request to cache.
+   * @param {Response} response - The response to cache.
+   */
+  async putInCache(request, response) {
+    const cache = await this.openCache();
+    const timestampedResponse = this.addTimestampHeader(response);
+    cache.put(request, timestampedResponse.clone());
+  }
+  /**
+   * Adds a timestamp header to the response.
+   * @param {Response} response - The original response.
+   * @returns {Response} The new response with the timestamp header.
+   */
+  addTimestampHeader(response) {
+    const headers = new Headers(response.headers);
+    headers.append(CACHE_TIMESTAMP_HEADER, Date.now().toString());
+    const timestampedResponse = new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers
+    });
+    return timestampedResponse;
+  }
+  async validateResponse(response) {
+    if (!this.cacheableResponse) {
+      return true;
+    }
+    const { headers = {}, statuses = [] } = this.cacheableResponse;
+    const isStatusValid = statuses.length > 0 ? statuses.includes(response.status) : true;
+    const isHeaderValid = Object.keys(headers).length > 0 ? Object.entries(headers).every(([key, value]) => response.headers.get(key) === value) : true;
+    return isStatusValid && isHeaderValid;
+  }
+  /**
+   * Validates the cache based on custom logic (e.g., max items, TTL).
+   * Override this method to implement custom cache validation.
+   */
+  async validateCache() {
+    super.cleanupCache();
+  }
+};
+
+// ../packages/sw/dist/src/cache/CacheOnly.js
+var CacheOnly = class extends BaseStrategy {
+  cacheableResponse;
+  constructor(cacheName, options = {}) {
+    super(cacheName, options);
+    this.cacheableResponse = options.cacheableResponse ?? false;
+  }
+  /**
+   * Handles fetch requests by trying to fetch from the cache first.
+   * Falls back to network if the cache doesn't contain a response.
+   * @param {Request} request - The request to handle.
+   * @returns {Promise<Response>} The cached or network response.
+   */
+  async handleRequest(req) {
+    const request = this.ensureRequest(req);
+    const cache = await this.openCache();
+    const response = await cache.match(request);
+    if (!response) {
+      throw new Error(`Couldn't locate ${request.url} in the cache!`);
+    }
+    await this.validateCache();
+    return response;
+  }
+  /**
+   * Manually adds a response to the cache.
+   * Useful for caching responses from external sources.
+   *
+   * @param {Request} request - The request to cache.
+   * @param {Response} response - The response to cache.
+   */
+  async addToCache(request, response) {
+    const cache = await caches.open(this.cacheName);
+    const timedRes = this.addTimestampHeader(response);
+    await cache.put(request, timedRes);
+  }
+  /**
+   * Adds a timestamp header to the response.
+   * @param {Response} response - The original response.
+   * @returns {Response} The new response with the timestamp header.
+   */
+  addTimestampHeader(response) {
+    const headers = new Headers(response.headers);
+    headers.append(CACHE_TIMESTAMP_HEADER, Date.now().toString());
+    const timestampedResponse = new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers
+    });
+    return timestampedResponse;
+  }
+  /**
+   * Validates the cache based on custom logic (e.g., max items, TTL).
+   * Override this method to implement custom cache validation.
+   */
+  async validateCache() {
+    super.cleanupCache();
+  }
+};
+
+// ../packages/sw/dist/src/cache/NetworkFirst.js
+var NetworkFirst = class extends BaseStrategy {
+  networkTimeoutSeconds;
+  cacheableResponse;
+  constructor(cacheName, options = {}) {
+    super(cacheName, options);
+    this.networkTimeoutSeconds = options.networkTimeoutInSeconds ?? 10;
+    this.cacheableResponse = options.cacheableResponse ?? false;
+  }
+  /**
+   * Handles fetch requests by trying to fetch from the network first.
+   * Falls back to cache if the network fails or times out.
+   * @param {Request} request - The request to handle.
+   * @returns {Promise<Response>} The network or cached response.
+   */
+  async handleRequest(req) {
+    const request = this.ensureRequest(req);
+    try {
+      const res = await this.fetchWithTimeout(request);
+      if (await this.validateResponse(res))
+        await this.putInCache(request, res);
+      return res;
+    } catch (error) {
+      const cache = await this.openCache();
+      const response = await cache.match(request);
+      if (response)
+        return response;
+      throw new Error("No response received from fetch: Timeout");
+    }
+  }
+  /**
+   * Puts a response into the cache.
+   * @param {Request} request - The request to cache.
+   * @param {Response} response - The response to cache.
+   */
+  async putInCache(request, response) {
+    const cache = await this.openCache();
+    const timestampedResponse = this.addTimestampHeader(response);
+    cache.put(request, timestampedResponse.clone());
+    this.cleanupCache();
+  }
+  /**
+   * Adds a timestamp header to the response.
+   * @param {Response} response - The original response.
+   * @returns {Response} The new response with the timestamp header.
+   */
+  addTimestampHeader(response) {
+    const headers = new Headers(response.headers);
+    headers.append(CACHE_TIMESTAMP_HEADER, Date.now().toString());
+    const timestampedResponse = new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers
+    });
+    return timestampedResponse;
+  }
+  async validateResponse(response) {
+    if (!this.cacheableResponse) {
+      return true;
+    }
+    const { headers = {}, statuses = [] } = this.cacheableResponse;
+    const isStatusValid = statuses.length > 0 ? statuses.includes(response.status) : true;
+    const isHeaderValid = Object.keys(headers).length > 0 ? Object.entries(headers).every(([key, value]) => response.headers.get(key) === value) : true;
+    return isStatusValid && isHeaderValid;
+  }
+  /**
+   * Fetches a request with a timeout.
+   * @param {Request} request - The request to fetch.
+   * @returns {Promise<Response>} The fetched response.
+   */
+  async fetchWithTimeout(request) {
+    const timeoutSeconds = this.networkTimeoutSeconds;
+    const timeoutPromise = timeoutSeconds !== Infinity ? new Promise((_resolve, reject) => setTimeout(() => reject(new Error(`Network timed out after ${timeoutSeconds} seconds`)), timeoutSeconds * 1e3)) : null;
+    if (timeoutPromise) {
+      return Promise.race([fetch(request), timeoutPromise]);
+    } else {
+      return fetch(request);
+    }
+  }
+};
+
+// ../packages/sw/dist/src/cache/StaleWhileRevalidate.js
+var StaleWhileRevalidate = class extends BaseStrategy {
+  // private ttl: number;
+  // private notifyUpdates: boolean;
+  // TODO(ShafSpecs): Add cacheableResponse capabilities to SWR!
+  constructor(cacheName, options = {}) {
+    super(cacheName, options);
+  }
+  /**
+   * Handles fetch requests by serving stale content from cache and revalidating from the network.
+   * @param {Request} request - The request to handle.
+   * @returns {Promise<Response>} The response from the cache or network.
+   */
+  async handleRequest(req) {
+    const request = this.ensureRequest(req);
+    const cache = await this.openCache();
+    const cachedResponse = await cache.match(request);
+    const networkFetch = fetch(request).then((response) => this.updateCache(request, response));
+    return cachedResponse || networkFetch;
+  }
+  /**
+   * Updates the cache with a new response from the network.
+   * @param {Request} request - The request associated with the response.
+   * @param {Response} response - The response to cache.
+   */
+  async updateCache(request, response) {
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.statusText}`);
+    }
+    const cache = await this.openCache();
+    const timedResponse = this.addTimestampHeader(response);
+    cache.put(request, timedResponse.clone());
+    await this.cleanupCache();
+    return timedResponse;
+  }
+  /**
+   * Adds a timestamp header to the response.
+   * @param {Response} response - The original response.
+   * @returns {Response} The new response with the timestamp header.
+   */
+  addTimestampHeader(response) {
+    const headers = new Headers(response.headers);
+    headers.append(CACHE_TIMESTAMP_HEADER, Date.now().toString());
+    const timestampedResponse = new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers
+    });
+    return timestampedResponse;
+  }
+};
+
+// ../packages/sw/dist/src/cache/EnhancedCache.js
+var EnhancedCache = class {
+  cacheName;
+  strategy;
+  constructor(cacheName, options = {}) {
+    this.cacheName = `${cacheName}-${options.version || "v1"}`;
+    this.strategy = this.selectStrategy(options.strategy, options.strategyOptions);
+  }
+  selectStrategy(strategyName, options) {
+    switch (strategyName) {
+      case "CacheFirst":
+        return new CacheFirst(this.cacheName, options);
+      case "CacheOnly":
+        return new CacheOnly(this.cacheName, options);
+      case "NetworkFirst":
+        return new NetworkFirst(this.cacheName, options);
+      case "StaleWhileRevalidate":
+        return new StaleWhileRevalidate(this.cacheName, options);
+      default:
+        return new NetworkFirst(this.cacheName, options);
+    }
+  }
+  async handleRequest(request) {
+    return await this.strategy.handleRequest(request);
+  }
+  /**
+   * Adds a timestamp header to the response.
+   * @param {Response} response - The original response.
+   * @returns {Response} The new response with the timestamp header.
+   */
+  addTimestampHeader(response) {
+    const headers = new Headers(response.headers);
+    headers.append(CACHE_TIMESTAMP_HEADER, Date.now().toString());
+    const timestampedResponse = new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers
+    });
+    return timestampedResponse;
+  }
+  /**
+   * Manually adds a response to the cache.
+   * Useful for caching responses from external sources.
+   *
+   * @param {Request} request - The request to cache.
+   * @param {Response} response - The response to cache.
+   */
+  async addToCache(request, response) {
+    if (typeof request === "string")
+      request = new Request(request);
+    const cache = await caches.open(this.cacheName);
+    const timestampedResponse = this.addTimestampHeader(response);
+    cache.put(request, timestampedResponse.clone());
+  }
+  /**
+   * Manually removes a response from the cache.
+   * Useful for removing responses from external sources.
+   *
+   * @param {Request | string | URL} request - The request to remove from the cache.
+   * @returns {Promise<void>}
+   */
+  async removeFromCache(request) {
+    if (typeof request === "string")
+      request = new URL(request);
+    const cache = await caches.open(this.cacheName);
+    await cache.delete(request);
+  }
+  async match(request) {
+    if (typeof request === "string")
+      request = new Request(request);
+    const cache = await caches.open(this.cacheName);
+    return await cache.match(request);
+  }
+  /**
+   * Clears the entire cache.
+   */
+  async clearCache() {
+    const cache = await caches.open(this.cacheName);
+    const requests = await cache.keys();
+    return Promise.all(requests.map((request) => cache.delete(request)));
+  }
+  /**
+   * Retrieves all cached requests and their corresponding responses.
+   * Useful for debugging or cache inspection.
+   *
+   * @returns {Promise<Array<{request: Request, response: Response | undefined}>>}
+   */
+  async getCacheEntries() {
+    const cache = await caches.open(this.cacheName);
+    const requests = await cache.keys();
+    const entries = await Promise.all(requests.map(async (request) => ({
+      request,
+      response: await cache.match(request)
+    })));
+    return entries;
+  }
+  /**
+   * Provides cache statistics like number of items and total size.
+   * Useful for debugging or cache inspection.
+   * @returns {Promise<CacheStats>}
+   */
+  async getCacheStats() {
+    const entries = await this.getCacheEntries();
+    const stats = {
+      itemCount: entries.length,
+      totalSize: 0
+    };
+    for (const entry2 of entries) {
+      const response = entry2.response;
+      if (response) {
+        const clonedResponse = response.clone();
+        const blob = await clonedResponse.blob();
+        stats.totalSize += blob.size;
+      }
+    }
+    return stats;
+  }
+  /**
+   * Updates cached assets with a newer version if available.
+   * Requires server to indicate asset version in response headers.
+   *
+   * @param {string[]} urlList - List of URLs to check for newer versions.
+   * @param {string} header - Header name to check for asset version.
+   * @returns {Promise<void>}
+   */
+  // Middlewares should expand this beyond just actions/loaders
+  async updateAssetsIfNewer(urlList, header = "X-Asset-Version") {
+    const cache = await caches.open(this.cacheName);
+    urlList.forEach(async (url) => {
+      const cachedResponse = await cache.match(url);
+      if (!cachedResponse)
+        return;
+      const cachedVersion = cachedResponse.headers.get(header) ?? "undefined";
+      const response = await fetch(url);
+      const newVersion = response.headers.get(header) ?? "undefined";
+      if (newVersion !== cachedVersion && response.ok) {
+        await cache.put(url, response);
+      }
+    });
+  }
+  /**
+   * Caches assets from a list of URLs.
+   * Useful for pre-caching critical assets or assets that are not part of the service worker scope.
+   *
+   * @param {string[]} urlList - List of URLs to cache.
+   * @returns {Promise<void>}
+   */
+  async preCacheUrls(urlList) {
+    const cache = await caches.open(this.cacheName);
+    urlList.forEach((url) => {
+      fetch(url).then((response) => {
+        if (response.ok)
+          cache.put(url, response);
+      });
+    });
+  }
+};
+
+// ../packages/sw/dist/src/message/NavigationHandler.js
+var NavigationHandler = class extends MessageHandler {
+  _allowList;
+  _denyList;
+  _documentCache;
+  constructor(options) {
+    super("REMIX_NAVIGATION");
+    this._allowList = options.allowList || [];
+    this._denyList = options.denyList || [];
+    if (typeof options.documentCache === "string") {
+      this._documentCache = new EnhancedCache(options.documentCache);
+    } else {
+      this._documentCache = options.documentCache;
+    }
+    this.bind(this._handleMessage, this);
   }
   async _handleMessage(event) {
     const { data } = event;
-    let dataCache2, documentCache2;
-    dataCache2 = this.dataCacheName;
-    documentCache2 = this.documentCacheName;
-    this.runPlugins("messageDidReceive", {
-      event
-    });
-    const cachePromises = /* @__PURE__ */ new Map();
     if (data.type === "REMIX_NAVIGATION") {
-      const { isMount, location: location2, manifest, matches } = data;
+      const { location: location2 } = data.payload;
       const documentUrl = location2.pathname + location2.search + location2.hash;
-      if (typeof dataCache2 === "string") {
-        dataCache2 = Storage.open(dataCache2);
+      if (this._allowList.length > 0 && !this._allowList.some((pattern) => documentUrl.match(pattern))) {
+        return;
       }
-      if (typeof documentCache2 === "string") {
-        documentCache2 = Storage.open(documentCache2);
+      if (this._denyList.length > 0 && this._denyList.some((pattern) => documentUrl.match(pattern))) {
+        return;
       }
-      const existingDocument = await Storage._match(documentUrl);
-      if (!existingDocument || !isMount) {
-        const response = await fetch(documentUrl);
-        cachePromises.set(documentUrl, documentCache2.put(documentUrl, response).catch((error) => {
-          if (true)
-            logger.error(`Failed to cache document for ${documentUrl}:`, error);
-        }));
-      }
-      if (isMount) {
-        for (const match of matches) {
-          if (manifest.routes[match.id].hasLoader) {
-            const params = new URLSearchParams(location2.search);
-            params.set("_data", match.id);
-            let search = params.toString();
-            search = search ? `?${search}` : "";
-            const url = location2.pathname + search + location2.hash;
-            if (!cachePromises.has(url)) {
-              if (true)
-                logger.debug("Caching data for:", url);
-              const response = await fetch(url);
-              cachePromises.set(url, dataCache2.put(url, response).catch((error) => {
-                if (true)
-                  logger.error(`Failed to cache data for ${url}:`, error);
-              }));
-            }
-          }
-        }
-      }
+      await this._documentCache.handleRequest(documentUrl);
     }
-    await Promise.all(cachePromises.values());
   }
 };
 
@@ -6108,8 +5867,8 @@ props(DexiePromise.prototype, {
   catch: function(onRejected) {
     if (arguments.length === 1)
       return this.then(null, onRejected);
-    var type2 = arguments[0], handler2 = arguments[1];
-    return typeof type2 === "function" ? this.then(null, (err) => err instanceof type2 ? handler2(err) : PromiseReject(err)) : this.then(null, (err) => err && err.name === type2 ? handler2(err) : PromiseReject(err));
+    var type2 = arguments[0], handler = arguments[1];
+    return typeof type2 === "function" ? this.then(null, (err) => err instanceof type2 ? handler(err) : PromiseReject(err)) : this.then(null, (err) => err && err.name === type2 ? handler(err) : PromiseReject(err));
   },
   finally: function(onFinally) {
     return this.then((value) => {
@@ -10254,31 +10013,14 @@ function createStorageRepository() {
 var database_default = createStorageRepository;
 
 // app/entry.worker.ts
-var PAGES = "page-cache";
-var DATA = "data-cache";
-var ASSETS = "assets-cache";
-var dataCache = Storage.open(DATA, {
-  ttl: 60 * 60 * 24 * 7 * 1e3
-  // 7 days
-});
-var documentCache = Storage.open(PAGES, {
-  maxItems: 3
-});
-var assetCache = Storage.open(ASSETS, {
-  maxItems: 4
-});
-var handler = new RemixNavigationHandler({
-  dataCache,
-  documentCache
-});
-var dataHandler = networkFirst({
-  cache: dataCache
-});
-var assetsHandler = cacheFirst({
-  cache: assetCache,
-  cacheQueryOptions: {
-    ignoreSearch: true,
-    ignoreVary: true
+var CURRENT_CACHE_VERSION = "v2";
+var assetCache = new EnhancedCache("remix-assets", {
+  version: CURRENT_CACHE_VERSION,
+  strategy: "CacheFirst",
+  strategyOptions: {
+    maxEntries: 2,
+    maxAgeSeconds: 60,
+    cacheableResponse: false
   }
 });
 registerQueue("offline-action");
@@ -10288,27 +10030,39 @@ var getLoadContext = () => {
     database: stores
   };
 };
-var defaultFetchHandler = ({ context, request }) => {
-  const type2 = matchRequest(request);
-  if (type2 === "asset") {
-    return assetsHandler(context.event.request);
-  }
-  if (type2 === "loader") {
-    return dataHandler(context.event.request);
-  }
-  return context.fetchFromServer();
-};
 self.addEventListener("install", (event) => {
   logger.log("installing service worker");
   logger.warn("This is a playground service worker \u{1F4E6}. It is not intended for production use.");
-  event.waitUntil(self.skipWaiting());
+  event.waitUntil(
+    Promise.all([
+      self.skipWaiting(),
+      assetCache.preCacheUrls(["/entry.worker.css"])
+      // assetCache.preCacheUrls(self.__workerManifest.assets) // - Ideal, lol. We wish!
+    ])
+  );
 });
 self.addEventListener("activate", (event) => {
-  logger.log(self.clients);
-  event.waitUntil(self.clients.claim());
+  logger.log(self.clients, "manifest:\n", self.__workerManifest);
+  event.waitUntil(
+    Promise.all([
+      clearUpOldCaches(["remix-assets"], CURRENT_CACHE_VERSION)
+    ]).then(() => {
+      self.clients.claim();
+    })
+  );
 });
-self.addEventListener("message", (event) => {
-  event.waitUntil(handler.handle(event));
+new NavigationHandler({
+  documentCache: new EnhancedCache("remix-document", {
+    version: CURRENT_CACHE_VERSION,
+    strategy: "CacheFirst",
+    strategyOptions: {
+      maxEntries: 10,
+      maxAgeSeconds: 60,
+      cacheableResponse: {
+        statuses: [200]
+      }
+    }
+  })
 });
 
 // entry-module:@remix-pwa/build/magic
@@ -10319,6 +10073,679 @@ var basic_caching_exports = {};
 __export(basic_caching_exports, {
   workerLoader: () => workerLoader
 });
+
+// ../node_modules/cachified/dist/index.mjs
+var k = Symbol();
+var w = Symbol();
+var f = Symbol();
+
+// ../node_modules/uint8array-extras/index.js
+var objectToString = Object.prototype.toString;
+var uint8ArrayStringified = "[object Uint8Array]";
+function isUint8Array(value) {
+  if (!value) {
+    return false;
+  }
+  if (value.constructor === Uint8Array) {
+    return true;
+  }
+  return objectToString.call(value) === uint8ArrayStringified;
+}
+function assertUint8Array(value) {
+  if (!isUint8Array(value)) {
+    throw new TypeError(`Expected \`Uint8Array\`, got \`${typeof value}\``);
+  }
+}
+var cachedDecoder = new globalThis.TextDecoder();
+function uint8ArrayToString(array) {
+  assertUint8Array(array);
+  return cachedDecoder.decode(array);
+}
+var cachedEncoder = new globalThis.TextEncoder();
+var byteToHexLookupTable = Array.from({ length: 256 }, (_, index) => index.toString(16).padStart(2, "0"));
+
+// ../node_modules/js-base64/base64.mjs
+var _hasatob = typeof atob === "function";
+var _hasBuffer = typeof Buffer === "function";
+var _TD = typeof TextDecoder === "function" ? new TextDecoder() : void 0;
+var _TE = typeof TextEncoder === "function" ? new TextEncoder() : void 0;
+var b64ch = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+var b64chs = Array.prototype.slice.call(b64ch);
+var b64tab = ((a) => {
+  let tab = {};
+  a.forEach((c, i) => tab[c] = i);
+  return tab;
+})(b64chs);
+var b64re = /^(?:[A-Za-z\d+\/]{4})*?(?:[A-Za-z\d+\/]{2}(?:==)?|[A-Za-z\d+\/]{3}=?)?$/;
+var _fromCC = String.fromCharCode.bind(String);
+var _U8Afrom = typeof Uint8Array.from === "function" ? Uint8Array.from.bind(Uint8Array) : (it) => new Uint8Array(Array.prototype.slice.call(it, 0));
+var _tidyB64 = (s) => s.replace(/[^A-Za-z0-9\+\/]/g, "");
+var atobPolyfill = (asc) => {
+  asc = asc.replace(/\s+/g, "");
+  if (!b64re.test(asc))
+    throw new TypeError("malformed base64.");
+  asc += "==".slice(2 - (asc.length & 3));
+  let u24, bin = "", r1, r2;
+  for (let i = 0; i < asc.length; ) {
+    u24 = b64tab[asc.charAt(i++)] << 18 | b64tab[asc.charAt(i++)] << 12 | (r1 = b64tab[asc.charAt(i++)]) << 6 | (r2 = b64tab[asc.charAt(i++)]);
+    bin += r1 === 64 ? _fromCC(u24 >> 16 & 255) : r2 === 64 ? _fromCC(u24 >> 16 & 255, u24 >> 8 & 255) : _fromCC(u24 >> 16 & 255, u24 >> 8 & 255, u24 & 255);
+  }
+  return bin;
+};
+var _atob = _hasatob ? (asc) => atob(_tidyB64(asc)) : _hasBuffer ? (asc) => Buffer.from(asc, "base64").toString("binary") : atobPolyfill;
+
+// ../packages/cache/dist/src/utils.js
+function mergeHeaders(...headers) {
+  const merged = new Headers();
+  for (const header of headers) {
+    if (!header)
+      continue;
+    for (const [key, value] of new Headers(header).entries()) {
+      merged.set(key, value);
+    }
+  }
+  return merged;
+}
+function omit(key, obj) {
+  const { [key]: omitted, ...rest } = obj;
+  return rest;
+}
+function assertString(value) {
+  if (typeof value !== "string") {
+    throw new TypeError(`Expected \`string\`, got \`${typeof value}\``);
+  }
+}
+function base64UrlToBase64(base64url) {
+  return base64url.replaceAll("-", "+").replaceAll("_", "/");
+}
+function base64ToUint8Array(base64String) {
+  assertString(base64String);
+  return Uint8Array.from(_atob(base64UrlToBase64(base64String)), (x) => x.codePointAt(0));
+}
+
+// ../packages/cache/dist/src/cache.js
+var Strategy;
+(function(Strategy2) {
+  Strategy2["CacheFirst"] = "cache-first";
+  Strategy2["NetworkFirst"] = "network-first";
+  Strategy2["CacheOnly"] = "cache-only";
+  Strategy2["NetworkOnly"] = "network-only";
+  Strategy2["StaleWhileRevalidate"] = "stale-while-revalidate";
+})(Strategy || (Strategy = {}));
+var RemixCache = class {
+  /**
+   * Create a new `RemixCache` instance. Don't invoke this directly! Use `RemixCacheStorage.open()` instead.
+   * @constructor
+   * @param {object} options - Options for the RemixCache instance.
+   */
+  constructor(options) {
+    this._ttl = Infinity;
+    this._strategy = Strategy.NetworkFirst;
+    this._maxItems = 100;
+    this.set = false;
+    this.name = options.name;
+    this._maxItems = options.maxItems || 100;
+    this._strategy = options.strategy || Strategy.NetworkFirst;
+    this._ttl = options.ttl || Infinity;
+    if (this._strategy === Strategy.NetworkOnly) {
+      this._ttl = -1;
+    }
+    if (options.maxItems || options.ttl || options.strategy) {
+      this.set = true;
+    } else {
+      this.set = false;
+    }
+  }
+  async _openCache() {
+    return await caches.open(`rp-${this.name}`);
+  }
+  async _getOrDeleteIfExpired(key, metadata) {
+    if (metadata.expiresAt === "Infinity") {
+      return false;
+    }
+    if (Number(metadata.expiresAt) <= Date.now()) {
+      return await this.delete(key);
+    }
+    return false;
+  }
+  async _lruCleanup() {
+    const isOverflowing = await this.length() >= this._maxItems;
+    if (isOverflowing) {
+      const cache = await this._openCache();
+      const keys2 = await cache.keys();
+      const values = await Promise.all(keys2.map((key) => cache.match(key)));
+      const keyVal = keys2.map((key, i) => ({ key, val: values[i] }));
+      const comparableArrayPromise = keyVal.map(async (val) => {
+        const { metadata } = await val.val.clone().json();
+        return {
+          metadata,
+          url: val.key.url
+        };
+      });
+      const comparableArray = await Promise.all(comparableArrayPromise);
+      const sortedArr = comparableArray.sort((a, b2) => {
+        return Number(a.metadata.accessedAt) - Number(b2.metadata.accessedAt);
+      });
+      const toBeDeletdItems = sortedArr.slice(0, sortedArr.length - this._maxItems + 1);
+      for (const deleted of toBeDeletdItems) {
+        await this.delete(deleted.url);
+      }
+    }
+  }
+  async _getResponseValue(request, response) {
+    const { metadata, value } = await response.clone().json();
+    const deleted = await this._getOrDeleteIfExpired(request, metadata);
+    const headers = new Headers(response.clone().headers);
+    if (!this.set) {
+      this.set = true;
+      this._ttl = metadata.cacheTtl;
+      this._maxItems = metadata.cacheMaxItems;
+      this._strategy = metadata.cacheStrategy;
+    }
+    const newHeader = new Headers(headers);
+    newHeader.set("X-Remix-PWA-TTL", metadata.expiresAt.toString());
+    newHeader.set("X-Remix-PWA-AccessTime", Date.now().toString());
+    newHeader.set("Content-Type", headers.get("X-Remix-PWA-Original-Content-Type") || "application/json");
+    const contentType = headers.get("X-Remix-PWA-Original-Content-Type") ?? "";
+    newHeader.delete("X-Remix-PWA-Original-Content-Type");
+    const responseOptions = {
+      status: response.status,
+      statusText: response.statusText,
+      headers: newHeader,
+      body: "null"
+    };
+    if (contentType.includes("application/json")) {
+      responseOptions.body = JSON.stringify(value);
+    } else if (contentType.includes("text")) {
+      responseOptions.body = value;
+    } else {
+      responseOptions.body = base64ToUint8Array(value);
+    }
+    if (!deleted) {
+      const res = new Response(responseOptions.body, omit("body", responseOptions));
+      await this.put(request, res.clone(), void 0);
+      return res;
+    }
+    return void 0;
+  }
+  /**
+   * Delete an entry from the cache.
+   * Takes in the same parameters as `Cache.delete`.
+   * @param {RequestInfo | URL} request - The request to delete.
+   * @param {CacheQueryOptions} [options] - Options for the delete operation.
+   * @returns {Promise<boolean>} Returns `true` if an entry was deleted, otherwise `false`.
+   *
+   * @example
+   * ```js
+   * const cache = await initCache({ name: 'my-cache' });
+   *
+   * await cache.put('/hello-world', new Response('Hello World!'));
+   * await cache.delete('/hello-world');
+   * ```
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Cache/delete
+   */
+  async delete(request, options) {
+    return this._openCache().then((cache) => cache.delete(request, options));
+  }
+  /**
+   * Returns a Promise that resolves to the length of the Cache object.
+   *
+   * @returns {Promise<number>} The number of entries in the cache.
+   */
+  async length() {
+    const keys2 = await this.keys();
+    return keys2.length;
+  }
+  /**
+   * Returns a `Promise` that resolves to an array of Cache keys.
+   *
+   * @returns {Promise<readonly Request[]>} An array of Cache keys.
+   */
+  async keys() {
+    const cache = await this._openCache();
+    return await cache.keys();
+  }
+  /**
+   * Return a `Promise` that resolves to an entry in the cache object. Accepts the
+   * same parameters as `Cache.match`.
+   *
+   * @param {RequestInfo | URL} request - The request to match.
+   * @param {CacheQueryOptions} [options] - Options for the match operation.
+   *
+   * @returns {Promise<Response | undefined>} A `Promise` that resolves to the response, or `undefined` if not found.
+   */
+  async match(request, options) {
+    const cache = await this._openCache();
+    if (request instanceof URL || typeof request === "string") {
+      request = new Request(request);
+    }
+    const response = await cache.match(request.clone(), options);
+    if (!response) {
+      return void 0;
+    }
+    return await this._getResponseValue(request, response.clone());
+  }
+  /**
+   * Add an entry to the cache.
+   * Takes in the same parameters as `Cache.put`.
+   *
+   * @param {RequestInfo | URL} request - The request to add.
+   * @param {Response} response - The response to add.
+   * @param {number | undefined} ttl - The time-to-live of the cache entry in ms. Defaults to cache ttl.
+   * @returns {Promise<void>} A `Promise` that resolves when the entry is added to the cache.
+   *
+   * @example
+   * ```js
+   * const cache = await initCache({ name: 'my-cache' });
+   *
+   * await cache.put('/hello-world', new Response('Hello World!'));
+   * ```
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Cache/put
+   */
+  async put(request, response, ttl = void 0) {
+    const cache = await this._openCache();
+    if (request instanceof URL || typeof request === "string") {
+      request = new Request(request);
+    }
+    if (this._ttl <= 0 || ttl && ttl <= 0)
+      return;
+    if (response === null || response.status === 204 || response.statusText.toLowerCase() === "no content") {
+      await this.delete(request);
+      return;
+    }
+    const contentType = response.headers.get("Content-Type");
+    let data;
+    if (contentType && contentType.includes("application/json")) {
+      data = await response.clone().json();
+    } else if (contentType && contentType.includes("text")) {
+      data = await response.clone().text();
+    } else {
+      const buffer = await response.clone().arrayBuffer();
+      data = uint8ArrayToString(new Uint8Array(buffer));
+    }
+    if (!this.set) {
+      this.set = true;
+      const keys2 = await cache.keys();
+      const firstVal = await cache.match(keys2[0]);
+      if (firstVal) {
+        const { metadata } = await firstVal.clone().json();
+        this._ttl = metadata.cacheTtl;
+        this._maxItems = metadata.cacheMaxItems;
+        this._strategy = metadata.cacheStrategy;
+      } else {
+        this._ttl = Infinity;
+        this._maxItems = 100;
+        this._strategy = Strategy.NetworkFirst;
+      }
+    }
+    const resHeaders = response.headers;
+    const expiresAt = resHeaders.get("X-Remix-PWA-TTL") || Date.now() + (ttl ?? this._ttl);
+    const accessedAt = resHeaders.get("X-Remix-PWA-AccessTime") || Date.now().toString();
+    const newHeaders = new Headers();
+    newHeaders.set("Content-Type", "application/json");
+    newHeaders.set("X-Remix-PWA-AccessTime", accessedAt);
+    newHeaders.set("X-Remix-PWA-Original-Content-Type", contentType || "text/plain");
+    newHeaders.set("X-Remix-PWA-TTL", expiresAt.toString());
+    const toBeCachedRes = new Response(JSON.stringify({
+      metadata: {
+        accessedAt,
+        // JSON can't store `Infinity`, so we store it as a string
+        expiresAt: expiresAt.toString(),
+        cacheTtl: this._ttl.toString(),
+        cacheMaxItems: this._maxItems,
+        cacheStrategy: this._strategy
+      },
+      value: data
+    }), {
+      status: response.status,
+      statusText: response.statusText,
+      headers: mergeHeaders(resHeaders, newHeaders)
+    });
+    Object.defineProperty(toBeCachedRes, "url", { value: response.url });
+    Object.defineProperty(toBeCachedRes, "type", { value: response.type });
+    Object.defineProperty(toBeCachedRes, "ok", { value: response.ok });
+    Object.defineProperty(toBeCachedRes, "redirected", { value: response.redirected });
+    try {
+      await this._lruCleanup();
+      return await cache.put(request, toBeCachedRes.clone());
+    } catch (error) {
+      if (true)
+        console.error("Failed to put to cache:", error);
+    }
+  }
+  async add(request) {
+    return (
+      /* await - should this be awaited? */
+      fetch(request).then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch");
+        }
+        return this.put(request, res.clone());
+      })
+    );
+  }
+  get ttl() {
+    return this._ttl;
+  }
+  get strategy() {
+    return this._strategy;
+  }
+};
+
+// ../packages/cache/dist/src/storage.js
+var RemixCacheStorage = class {
+  // eslint-disable-next-line no-useless-constructor
+  constructor() {
+  }
+  /**
+   * Initialize the Remix PWA Cache Storage. This will create a special cache for each
+   * existing cache in the browser or create a new map if none exist.
+   *
+   * Use in your service worker installation script. Make sure to call this before
+   * initializing any `RemixCache` instance.
+   *
+   * @example
+   * ```js
+   * import { RemixCacheStorage } from '@remix-run/cache';
+   *
+   * self.addEventListener('install', (event) => {
+   *  event.waitUntil(Promise.all[
+   *   RemixCacheStorage.init(),
+   *   // other stuff
+   *  ]);
+   * });
+   * ```
+   */
+  // static async init() {
+  //   if (typeof caches === 'undefined') {
+  //     throw new Error('Cache API is not available in this environment.');
+  //   }
+  //   if (this._instances.size > 0) {
+  //     return;
+  //   }
+  //   const cachesNames = await caches.keys();
+  //   for (const name of cachesNames) {
+  //     if (name.startsWith('rp-')) {
+  //       this._instances.set(name, new RemixCache({ name }));
+  //     }
+  //   }
+  // }
+  /**
+   * Create a custom cache that you can use across your application.
+   * Use this instead of initialising `RemixCache` directly.
+   */
+  static createCache(opts) {
+    const { name } = opts;
+    if (this._instances.has(name)) {
+      return this._instances.get(name);
+    }
+    const newCache = new RemixCache(opts);
+    this._instances.set(`${name}`, newCache);
+    caches.open(`rp-${name}`);
+    return newCache;
+  }
+  /**
+   * Check wether a cache with the given name exists.
+   *
+   * @param name
+   */
+  static has(name) {
+    return this._instances.has(name);
+  }
+  static async _get(name) {
+    const cache = this._instances.get(name);
+    if (!cache && await caches.has(`rp-${name}`)) {
+      this._instances.set(name, new RemixCache({ name }));
+      await this._instances.get(name)?.keys().then((keys2) => {
+        if (keys2.length > 0) {
+          caches.match(keys2[0]);
+        }
+      });
+    }
+    return this._instances.get(name);
+  }
+  /**
+   * Get a cache by name. Returns `undefined` if no cache with the given name exists.
+   * Use `has` to check if a cache exists. Or `open` to create one automatically if non exists.
+   *
+   * @param name
+   * @returns {RemixCache | undefined}
+   *
+   * @example
+   * ```js
+   * import { Storage } from '@remix-run/cache';
+   *
+   * const cache = Storage.get('my-cache');
+   * ```
+   */
+  static async get(name) {
+    return await this._get(name);
+  }
+  /**
+   * Get a cache by name. If no cache with the given name exists, create one.
+   *
+   * @param name Name of the cache - **must be unique**
+   * @param opts Options to pass to the `RemixCache` constructor if the cache is getting created
+   * @returns {RemixCache}
+   *
+   * @example
+   * ```js
+   * import { Storage } from '@remix-run/cache';
+   *
+   * const cache = Storage.open('my-cache');
+   * ```
+   */
+  static open(name, opts) {
+    const cache = this._instances.get(name);
+    if (!cache) {
+      return this.createCache({ name, ...opts });
+    }
+    return cache;
+  }
+  /**
+   * Delete a cache by name.
+   *
+   * @param name
+   */
+  static delete(name) {
+    const cache = this._instances.get(name);
+    if (cache) {
+      caches.delete(`rp-${name}`);
+      this._instances.delete(name);
+    }
+  }
+  /**
+   * Delete all caches.
+   */
+  static clear() {
+    caches.keys().then((keys2) => keys2.forEach((key) => key.startsWith("rp-") ? caches.delete(key) : null));
+    this._instances = /* @__PURE__ */ new Map();
+  }
+  /**
+   * Get all caches. **Don't use this except you know what you are doing!**
+   *
+   * Which, frankly speaking, you probably don't. So shoo away!
+   */
+  static get instances() {
+    return this._instances;
+  }
+  /**
+   * Get the number of caches.
+   *
+   * Return the length of the `RemixCacheStorage` store.
+   */
+  static get _length() {
+    return this._instances.size;
+  }
+  /**
+   * Check if a request is stored as the key of a response in all caches.
+   *
+   * Experimental. Use at your own risk!
+   *
+   * @param {RequestInfo | URL} request The request to check.
+   * @param {CacheQueryOptions} [options] Options to pass to the `Cache.match` method.
+   * @returns {Promise<Response | undefined>} A promise that resolves to the response if found, otherwise `undefined`.
+   */
+  static _match(request, options) {
+    return caches.match(request, options);
+  }
+};
+RemixCacheStorage._instances = /* @__PURE__ */ new Map();
+var Storage = RemixCacheStorage;
+
+// ../packages/strategy/dist/src/utils.js
+var isHttpRequest = (request) => {
+  if (request instanceof Request) {
+    return request.url.startsWith("http");
+  }
+  return request.toString().startsWith("http");
+};
+var toJSON = async (response) => {
+  if (response instanceof Response) {
+    return await response.clone().json();
+  }
+  return response;
+};
+
+// ../packages/strategy/dist/src/cacheFirst.js
+var cacheFirst = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0 }) => {
+  return async (request) => {
+    if (!isHttpRequest(request)) {
+      return new Response("Not a HTTP request", { status: 403 });
+    }
+    let remixCache;
+    if (typeof cacheName === "string") {
+      remixCache = Storage.open(cacheName, cacheOptions);
+    } else {
+      remixCache = cacheName;
+    }
+    const response = await remixCache.match(request, cacheQueryOptions);
+    if (!response) {
+      try {
+        const networkResponse = await fetch(request);
+        remixCache.put(request, networkResponse.clone());
+        return networkResponse;
+      } catch (err) {
+        if (fetchDidFail) {
+          await Promise.all(fetchDidFail.map((cb) => cb()));
+        }
+        throw err;
+      }
+    }
+    return response;
+  };
+};
+
+// ../packages/strategy/dist/src/cacheOnly.js
+var cacheOnly = ({ cache: cacheName, cacheOptions, cacheQueryOptions }) => {
+  return async (request) => {
+    if (!isHttpRequest(request)) {
+      return new Response("Not a HTTP request", { status: 403 });
+    }
+    let remixCache;
+    if (typeof cacheName === "string") {
+      remixCache = Storage.open(cacheName, cacheOptions);
+    } else {
+      remixCache = cacheName;
+    }
+    const response = await remixCache.match(request, cacheQueryOptions);
+    if (!response) {
+      const req = request instanceof Request ? request : new Request(request.toString());
+      const isGet = req.method.toLowerCase() === "get";
+      return new Response(JSON.stringify({
+        message: isGet ? "Not Found" : "No idea what you are trying to accomplish but this ain't it!"
+      }), {
+        status: isGet ? 404 : 400,
+        statusText: isGet ? "Not Found" : "Bad Request"
+      });
+    }
+    return response.clone();
+  };
+};
+
+// ../packages/strategy/dist/src/networkFirst.js
+var networkFirst = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0, fetchDidSucceed = void 0, networkTimeoutSeconds = 10 }) => {
+  return async (request) => {
+    if (!isHttpRequest(request)) {
+      return new Response("Not a HTTP request", { status: 403 });
+    }
+    let remixCache;
+    if (typeof cacheName === "string") {
+      remixCache = Storage.open(cacheName, cacheOptions);
+    } else {
+      remixCache = cacheName;
+    }
+    try {
+      const timeoutPromise = networkTimeoutSeconds !== Infinity ? new Promise((_resolve, reject) => {
+        setTimeout(() => {
+          reject(new Error(`Network timed out after ${networkTimeoutSeconds} seconds`));
+        }, networkTimeoutSeconds * 1e3);
+      }) : null;
+      const response = timeoutPromise ? await Promise.race([fetch(request), timeoutPromise]) : await fetch(request);
+      if (response) {
+        if (fetchDidSucceed) {
+          await Promise.all(fetchDidSucceed.map((cb) => cb()));
+        }
+        await remixCache.put(request, response.clone());
+        return response.clone();
+      }
+    } catch (error) {
+      if (fetchDidFail) {
+        await Promise.all(fetchDidFail.map((cb) => cb()));
+      }
+      const cachedResponse = await remixCache.match(request, cacheQueryOptions);
+      if (cachedResponse) {
+        return cachedResponse.clone();
+      }
+      return new Response(JSON.stringify({ message: "Network Error" }), {
+        status: 500
+      });
+    }
+    throw new Error("Failed to fetch. Network timed out.");
+  };
+};
+
+// ../packages/strategy/dist/src/staleWhileRevalidate.js
+var staleWhileRevalidate = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0, strict = false, swr: swr2 }) => {
+  return async (request) => {
+    if (!isHttpRequest(request)) {
+      return new Response("Not a HTTP request", { status: 403 });
+    }
+    let remixCache;
+    if (typeof cacheName === "string") {
+      remixCache = Storage.open(cacheName, cacheOptions);
+    } else {
+      remixCache = cacheName;
+    }
+    swr2 = swr2 ?? remixCache.ttl ?? 0;
+    return remixCache.match(request, cacheQueryOptions).then(async (response) => {
+      const res = response ? response.clone() : void 0;
+      if (res && !strict) {
+        const accessed = Number(res.headers.get("X-Remix-PWA-AccessTime")) ?? 0;
+        if (swr2 + accessed >= Date.now()) {
+          return res;
+        }
+      }
+      const fetchPromise = fetch(request).then(async (networkResponse) => {
+        await remixCache.put(request, networkResponse.clone(), strict ? swr2 : void 0);
+        return networkResponse;
+      }).catch(async (_err) => {
+        if (fetchDidFail) {
+          await Promise.all(fetchDidFail.map((cb) => cb()));
+        }
+        return new Response(JSON.stringify({ error: "Network request failed" }), {
+          status: 500,
+          statusText: "Network request failed"
+        });
+      });
+      return response ? response.clone() : fetchPromise;
+    });
+  };
+};
+
+// routes-module:routes/basic-caching.tsx?worker
 var workerLoader = async ({ context }) => {
   const customStrategy = cacheFirst({
     cache: "basic-caching",
@@ -10673,16 +11100,16 @@ function createArgumentsFrom({ event, loadContext, path }) {
     context: loadContext
   };
 }
-function isMethod2(request, methods) {
+function isMethod(request, methods) {
   return methods.includes(request.method.toLowerCase());
 }
 function isActionRequest(request) {
   const url = new URL(request.url);
-  return isMethod2(request, ["post", "delete", "put", "patch"]) && url.searchParams.get("_data");
+  return isMethod(request, ["post", "delete", "put", "patch"]) && url.searchParams.get("_data");
 }
-function isLoaderRequest2(request) {
+function isLoaderRequest(request) {
   const url = new URL(request.url);
-  return isMethod2(request, ["get"]) && url.searchParams.get("_data");
+  return isMethod(request, ["get"]) && url.searchParams.get("_data");
 }
 
 // ../packages/worker-runtime/dist/src/utils/response.js
@@ -10711,11 +11138,7 @@ async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, ev
     context: loadContext
   };
   try {
-    if (event.request.url.includes("basic-action")) {
-      console.log("");
-    }
-    if (isLoaderRequest2(event.request) && route?.module.workerLoader) {
-      console.log("Handling request(loader):", event.request.url);
+    if (isLoaderRequest(event.request) && route?.module.workerLoader) {
       return await handleLoader({
         event,
         loader: route.module.workerLoader,
@@ -10725,7 +11148,6 @@ async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, ev
       }).then(responseHandler);
     }
     if (isActionRequest(event.request) && route?.module?.workerAction) {
-      console.log("Handling request(action):", event.request.url);
       return await handleAction({
         event,
         action: route.module.workerAction,
@@ -10735,8 +11157,8 @@ async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, ev
       }).then(responseHandler);
     }
   } catch (error) {
-    const handler2 = (error2) => errorHandler(error2, _arguments);
-    return _errorHandler({ error, handler: handler2 });
+    const handler = (error2) => errorHandler(error2, _arguments);
+    return _errorHandler({ error, handler });
   }
   return defaultHandler2(_arguments);
 }
@@ -10824,6 +11246,8 @@ _self.__workerManifest = {
   assets,
   routes
 };
+if (!_self.__messageHandlers || typeof _self.__messageHandlers === "undefined")
+  _self.__messageHandlers = /* @__PURE__ */ new Map();
 _self.addEventListener(
   "fetch",
   /**
@@ -10840,11 +11264,19 @@ _self.addEventListener(
     return event.respondWith(response);
   }
 );
+_self.addEventListener("message", (event) => {
+  if (event.data && event.data.type) {
+    const handler = _self.__messageHandlers.get(event.data.type);
+    if (handler) {
+      handler(event);
+    }
+  }
+});
 /*! Bundled license information:
 
 @remix-run/router/dist/router.js:
   (**
-   * @remix-run/router v1.14.1
+   * @remix-run/router v1.14.2
    *
    * Copyright (c) Remix Software Inc.
    *
@@ -10856,7 +11288,7 @@ _self.addEventListener(
 
 @remix-run/server-runtime/dist/mode.js:
   (**
-   * @remix-run/server-runtime v2.4.1
+   * @remix-run/server-runtime v2.5.0
    *
    * Copyright (c) Remix Software Inc.
    *
@@ -10868,7 +11300,7 @@ _self.addEventListener(
 
 @remix-run/server-runtime/dist/errors.js:
   (**
-   * @remix-run/server-runtime v2.4.1
+   * @remix-run/server-runtime v2.5.0
    *
    * Copyright (c) Remix Software Inc.
    *
@@ -10880,7 +11312,7 @@ _self.addEventListener(
 
 @remix-run/server-runtime/dist/responses.js:
   (**
-   * @remix-run/server-runtime v2.4.1
+   * @remix-run/server-runtime v2.5.0
    *
    * Copyright (c) Remix Software Inc.
    *

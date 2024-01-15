@@ -33,7 +33,7 @@ export function loader() {
   });
 }
 
-export const workerAction = async ({ request, context }: LoaderArgs) => {
+const workerAction = async ({ request, context }: LoaderArgs) => {
   const formData = await request.formData();
   
   const { database, fetchFromServer } = context;
@@ -50,7 +50,7 @@ export const workerAction = async ({ request, context }: LoaderArgs) => {
   }
 };
 
-export const workerLoader = async ({ context }) => {
+const workerLoader = async ({ context }) => {
   try {
     const { fetchFromServer, database } = context;
     const [serverResult, clientResult] = await Promise.allSettled([

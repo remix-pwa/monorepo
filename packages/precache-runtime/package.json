@@ -1,7 +1,7 @@
 {
-  "name": "@remix-pwa/worker-runtime",
-  "version": "2.0.8",
-  "description": "A vanilla JavaScript worker runtime for Remix service workers",
+  "name": "@remix-pwa/precache-runtime",
+  "version": "2.0.0",
+  "description": "A vanilla JavaScript worker runtime for precaching in Remix service workers",
   "license": "MIT",
   "sideEffects": false,
   "main": "dist/src/service-worker.internal.js",
@@ -17,11 +17,11 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "rimraf ./dist && tsc",
+    "buildt": "rimraf ./dist && tsc",
     "format": "prettier --write \"src/**/*.ts\"",
-    "lint": "TIMING=1 eslint --fix src/",
+    "lintt": "TIMING=1 eslint --fix src/",
     "prepublishOnly": "npm run build && npm run lint && npm run test",
-    "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
+    "testt": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
   },
   "peerDependencies": {
     "@remix-run/server-runtime": "^1.19.2 || ^2.0.0"
@@ -35,7 +35,7 @@
     "@remix-run/router": "^1.9.0"
   },
   "devDependencies": {
-    "@remix-run/server-runtime": "^2.5.0",
+    "@remix-run/server-runtime": "^2.0.1",
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
     "eslint": "^8.50.0",
