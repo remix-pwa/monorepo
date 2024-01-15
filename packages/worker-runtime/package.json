@@ -35,7 +35,7 @@
     "@remix-run/router": "^1.9.0"
   },
   "devDependencies": {
-    "@remix-run/server-runtime": "^2.0.1",
+    "@remix-run/server-runtime": "^2.5.0",
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
     "eslint": "^8.50.0",
