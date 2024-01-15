@@ -15,7 +15,6 @@ const supportedRemixConfigKeys = [
   'ignoredRouteFiles',
   'publicPath',
   'routes',
-  'serverBuildPath',
   'serverModuleFormat',
 ] as const satisfies ReadonlyArray<keyof AppConfig>;
 
@@ -40,7 +39,8 @@ export async function resolveOptions(
   } = options;
 
   const defaults: Partial<RemixVitePluginOptions> = {
-    serverBuildPath: 'build/server/index.js',
+    serverBuildFile: 'index.js',
+    serverBuildDirectory: 'build/server',
     assetsBuildDirectory: 'build/client',
     publicPath: '/',
   };
