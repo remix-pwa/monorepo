@@ -19,6 +19,10 @@
     "./message": {
       "default": "./dist/src/message/index.js",
       "types": "./dist/src/message/index.d.ts"
+    },
+    "./use-sw-effect": {
+      "default": "./dist/src/hooks/useSWEffect.js",
+      "types": "./dist/src/hooks/useSWEffect.d.ts"
     }
   },
   "license": "MIT",
