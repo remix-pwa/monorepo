@@ -1,3 +1,10 @@
+# @remix-pwa/dev 2.1.0-dev.6 (2024-01-21)
+
+
+### Bug Fixes
+
+* **dev:** removed `worker-runtime` peer requirement da862d7
+
 # @remix-pwa/dev 2.1.0-dev.5 (2024-01-15)
 
 
