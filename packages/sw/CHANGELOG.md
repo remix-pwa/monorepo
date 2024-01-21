@@ -1,3 +1,10 @@
+# @remix-pwa/sw 2.2.0-dev.2 (2024-01-17)
+
+
+### Bug Fixes
+
+* **sw:** new exports from `sw` 03316f5
+
 # @remix-pwa/sw 2.2.0-dev.1 (2024-01-15)
 
 
