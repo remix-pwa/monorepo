@@ -1,3 +1,8 @@
+/**
+ * @param cacheNames - Array of cache names to clear up (auto-version).
+ * @param version - Optional version to append to the cache names. Used to determine cache versios and clean up mismatched versions.
+ * @returns {Promise<void>} - Promise that resolves when all caches are cleared.
+ */
 export const clearUpOldCaches = (cacheNames: string[], version?: string) => {
   if (version) {
     cacheNames = cacheNames.map(cacheName => `${cacheName}-${version}`);
