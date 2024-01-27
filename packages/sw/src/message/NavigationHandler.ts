@@ -1,12 +1,32 @@
 import { EnhancedCache } from '../cache/index.js';
 import { MessageHandler } from './MessageHandler.js';
 
+/**
+ * The options the `NavigationHandler` expects.
+ */
 export type NavigationHandlerOptions = {
+  /**
+   * A list of regular expressions or strings to match against the current document URL.
+   * If the current document URL does not match any of the patterns, the handler will not
+   * handle the message.
+   */
   allowList?: string[] | RegExp[];
+  /**
+   * A list of regular expressions or strings to match against the current document URL.
+   * If the current document URL matches any of the patterns, the handler will not
+   * handle the message.
+   */
   denyList?: string[] | RegExp[];
+  /**
+   * The cache to use for handling the navigation event - caching the HTML responses.
+   */
   documentCache: EnhancedCache | string;
 };
 
+/**
+ * The `NavigationHandler` handles navigation events from the client and caches the HTML responses
+ * as the user navigates between pages.
+ */
 export class NavigationHandler extends MessageHandler {
   private _allowList: string[] | RegExp[];
   private _denyList: string[] | RegExp[];

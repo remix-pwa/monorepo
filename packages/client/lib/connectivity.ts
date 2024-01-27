@@ -13,3 +13,5 @@ export const checkConnectivity = async (online: () => void, offline: () => void)
     return errorBlock(error);
   }
 };
+
+export const isOffline = () => 'onLine' in navigator && !navigator.onLine;

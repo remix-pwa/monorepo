@@ -5,8 +5,26 @@ import { NetworkFirst } from './NetworkFirst.js';
 import { StaleWhileRevalidate } from './StaleWhileRevalidate.js';
 import type { CacheStats, EnhancedCacheOptions, StrategyName } from './types.js';
 
+/**
+ * EnhancedCache is a wrapper around the different caching strategies.
+ *
+ * Enhances caching in Remix PWA with features like cache stats (for monitoring cache usage),
+ * cache inspection (for debugging), cache updates and versioning (for updating cached assets).
+ *
+ * ### Example
+ *
+ * ```js
+ * const cache = new EnhancedCache('my-cache', {
+ *  version: 'v1',
+ *  strategy: 'NetworkFirst',
+ *  strategyOptions: {
+ *   networkTimeoutInSeconds: 5
+ *  }
+ * });
+ * ```
+ */
 export class EnhancedCache {
-  private cacheName: string;
+  readonly cacheName: string;
   private strategy: BaseStrategy;
 
   constructor(cacheName: string, options: EnhancedCacheOptions = {}) {
@@ -30,6 +48,12 @@ export class EnhancedCache {
     }
   }
 
+  /**
+   * Handle a request using the selected caching strategy.
+   *
+   * @param request - The request to dynamically handle.
+   * @returns {Promise<Response>} The response from the cache or network.
+   */
   async handleRequest(request: Request | string): Promise<Response> {
     return await this.strategy.handleRequest(request);
   }
@@ -81,6 +105,12 @@ export class EnhancedCache {
     await cache.delete(request);
   }
 
+  /**
+   * Retrieves a cached response.
+   *
+   * @param request - The request to match against the cache.
+   * @returns - The cached response or undefined if not found.
+   */
   async match(request: Request | string): Promise<Response | undefined> {
     if (typeof request === 'string') request = new Request(request);
 
@@ -176,9 +206,13 @@ export class EnhancedCache {
    */
   async preCacheUrls(urlList: string[]): Promise<void> {
     const cache = await caches.open(this.cacheName);
+
     urlList.forEach(url => {
       fetch(url).then(response => {
-        if (response.ok) cache.put(url, response);
+        if (response.ok) {
+          const modifiedRes = this.addTimestampHeader(response.clone());
+          cache.put(url, modifiedRes);
+        }
       });
     });
   }
