@@ -105,6 +105,12 @@ export class EnhancedCache {
     await cache.delete(request);
   }
 
+  /**
+   * Retrieves a cached response.
+   *
+   * @param request - The request to match against the cache.
+   * @returns - The cached response or undefined if not found.
+   */
   async match(request: Request | string): Promise<Response | undefined> {
     if (typeof request === 'string') request = new Request(request);
 
