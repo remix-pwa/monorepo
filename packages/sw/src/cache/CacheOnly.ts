@@ -22,7 +22,7 @@ export class CacheOnly extends BaseStrategy {
     const request = this.ensureRequest(req);
 
     const cache = await this.openCache();
-    const response = await cache.match(request);
+    const response = await cache.match(request.clone());
 
     if (!response) {
       throw new Error(`Couldn't locate ${request.url} in the cache!`);
@@ -42,8 +42,8 @@ export class CacheOnly extends BaseStrategy {
    */
   async addToCache(request: Request, response: Response) {
     const cache = await caches.open(this.cacheName);
-    const timedRes = this.addTimestampHeader(response);
-    await cache.put(request, timedRes);
+    const timedRes = this.addTimestampHeader(response.clone());
+    await cache.put(request, timedRes.clone());
   }
 
   /**

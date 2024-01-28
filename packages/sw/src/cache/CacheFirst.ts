@@ -22,17 +22,17 @@ export class CacheFirst extends BaseStrategy {
     const request = this.ensureRequest(req);
 
     const cache = await this.openCache();
-    let response = await cache.match(request);
+    let response = await cache.match(request.clone());
 
     if (!response) {
       response = await fetch(request);
-      if (await this.validateResponse(response)) {
+      if (await this.validateResponse(response.clone())) {
         await this.putInCache(request, response.clone());
         this.validateCache();
       }
     }
 
-    return response;
+    return response.clone();
   }
 
   /**
@@ -42,7 +42,7 @@ export class CacheFirst extends BaseStrategy {
    */
   private async putInCache(request: Request, response: Response) {
     const cache = await this.openCache();
-    const timestampedResponse = this.addTimestampHeader(response);
+    const timestampedResponse = this.addTimestampHeader(response.clone());
     cache.put(request, timestampedResponse.clone());
   }
 

@@ -139,7 +139,7 @@ export class EnhancedCache {
     const entries = await Promise.all(
       requests.map(async request => ({
         request,
-        response: await cache.match(request),
+        response: (await cache.match(request))?.clone(),
       }))
     );
 
