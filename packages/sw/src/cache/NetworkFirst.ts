@@ -24,9 +24,9 @@ export class NetworkFirst extends BaseStrategy {
     const request = this.ensureRequest(req);
 
     try {
-      const res = await this.fetchWithTimeout(request);
+      const res = await this.fetchWithTimeout(request.clone());
       // If the code reaches this line, that means an error wasn't thrown
-      if (await this.validateResponse(res as Response)) await this.putInCache(request, res as Response);
+      if (await this.validateResponse(res as Response)) await this.putInCache(request, (res as Response).clone());
       return res as Response;
     } catch (error) {
       const cache = await this.openCache();
@@ -45,7 +45,7 @@ export class NetworkFirst extends BaseStrategy {
    */
   private async putInCache(request: Request, response: Response) {
     const cache = await this.openCache();
-    const timestampedResponse = this.addTimestampHeader(response);
+    const timestampedResponse = this.addTimestampHeader(response.clone());
     cache.put(request, timestampedResponse.clone());
     this.cleanupCache();
   }
@@ -59,7 +59,7 @@ export class NetworkFirst extends BaseStrategy {
     const headers = new Headers(response.headers);
     headers.append(CACHE_TIMESTAMP_HEADER, Date.now().toString());
 
-    const timestampedResponse = new Response(response.body, {
+    const timestampedResponse = new Response(response.clone().body, {
       status: response.status,
       statusText: response.statusText,
       headers,

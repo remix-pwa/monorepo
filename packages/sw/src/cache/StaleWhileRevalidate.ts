@@ -23,8 +23,8 @@ export class StaleWhileRevalidate extends BaseStrategy {
     const request = this.ensureRequest(req);
 
     const cache = await this.openCache();
-    const cachedResponse = await cache.match(request);
-    const networkFetch = fetch(request).then(response => this.updateCache(request, response));
+    const cachedResponse = await cache.match(request.clone());
+    const networkFetch = fetch(request).then(response => this.updateCache(request, response.clone()));
 
     return cachedResponse || networkFetch;
   }
@@ -40,7 +40,7 @@ export class StaleWhileRevalidate extends BaseStrategy {
     }
 
     const cache = await this.openCache();
-    const timedResponse = this.addTimestampHeader(response);
+    const timedResponse = this.addTimestampHeader(response.clone());
     cache.put(request, timedResponse.clone());
     //   if (this.notifyUpdates) {
     //     this.notifyClientsOfUpdate(request.url);
