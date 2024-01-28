@@ -1,3 +1,10 @@
+# @remix-pwa/sw 2.2.0-dev.3 (2024-01-27)
+
+
+### Bug Fixes
+
+* **sw:** updated `EnhancedCache` for better working with base strategy 6a72e9f
+
 # @remix-pwa/sw 2.2.0-dev.2 (2024-01-17)
 
 
