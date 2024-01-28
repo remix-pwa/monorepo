@@ -1,3 +1,10 @@
+# @remix-pwa/dev 2.1.0-dev.7 (2024-01-28)
+
+
+### Bug Fixes
+
+* **sw:** added HMR to ⚡ vite plugin e7fa974
+
 # @remix-pwa/dev 2.1.0-dev.6 (2024-01-21)
 
 
