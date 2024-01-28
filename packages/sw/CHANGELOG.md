@@ -1,3 +1,10 @@
+# @remix-pwa/sw 2.2.0-dev.4 (2024-01-28)
+
+
+### Bug Fixes
+
+* **sw:** fixed up caching a teeny-weeny bit ece4d5f
+
 # @remix-pwa/sw 2.2.0-dev.3 (2024-01-27)
 
 
