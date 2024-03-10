@@ -25,7 +25,7 @@
   "scripts": {
     "format": "prettier --write *.js",
     "lint": "TIMING=1 eslint --fix *.js",
-    "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
+    "test": "vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests"
   },
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",

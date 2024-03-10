@@ -24,7 +24,7 @@
   "scripts": {
     "format": "prettier --write 'src/'",
     "lint": "TIMING=1 eslint --fix 'src/'",
-    "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
+    "test": "vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests"
   },
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^6.7.3",

@@ -21,7 +21,7 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "TIMING=1 eslint --fix src/",
     "prepublishOnly": "npm run build && npm run lint && npm run test",
-    "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
+    "test": "vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests"
   },
   "peerDependencies": {
     "@remix-run/server-runtime": "^1.19.2 || ^2.0.0"
