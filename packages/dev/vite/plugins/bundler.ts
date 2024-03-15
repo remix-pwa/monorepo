@@ -1,33 +1,44 @@
-import { watch } from 'chokidar';
-import type { Plugin } from 'vite';
+import { resolve } from 'node:path';
+import type { Plugin, UserConfig } from 'vite';
 import { build, normalizePath } from 'vite';
 
 import type { PWAPluginContext } from '../types.js';
+import { VirtualSWPlugins } from './virtual-sw.js';
 
 export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
   async function buildWorker() {
     try {
+      // console.log(normalizePath(resolve(config.root ?? '', 'public')));
       // Customize build options as needed
-      // await build({
-      //   root: options.rootDirectory,
-      //   logLevel: 'error',
-      //   build: {
-      //     rollupOptions: {
-      //       input: {
-      //         [options.workerName]: options.workerEntryPoint,
-      //       },
-      //       output: {
-      //         dir: options.workerBuildDirectory,
-      //         format: 'esm',
-      //         chunkFileNames: '_shared/sw/[name]-[hash].js',
-      //         entryFileNames: '[name].js',
-      //       },
-      //     },
-      //     minify: options.workerMinify,
-      //     sourcemap: options.workerSourceMap,
-      //     watch: false, // We handle watching separately
-      //   },
-      // });
+      await build({
+        logLevel: 'error',
+        configFile: false,
+        appType: undefined,
+        plugins: [VirtualSWPlugins(ctx)],
+        build: {
+          outDir: normalizePath(resolve(process.cwd(), 'public')),
+          rollupOptions: {
+            input: {
+              worker: '@remix-pwa/worker-runtime',
+            },
+            output: {
+              entryFileNames: 'worker.js',
+              format: 'esm',
+              assetFileNames: '[name].[ext]',
+              chunkFileNames: '_shared/sw/[name]-[hash]',
+              name: 'worker',
+            },
+            treeshake: true,
+            watch: false,
+          },
+          minify: false,
+          sourcemap: false,
+          write: true,
+          watch: null,
+          emptyOutDir: false,
+          manifest: false,
+        },
+      });
       console.log('Worker built successfully');
     } catch (err) {
       console.error('Error during worker build:', err);
@@ -38,16 +49,19 @@ export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
     name: 'vite-plugin-remix-pwa:bundler',
     async configureServer(server) {
       const swPath = normalizePath(`${ctx.options.appDirectory}/${ctx.options.entryWorkerFile}`);
-      // Watch for file changes
-      const watcher = watch(swPath, {
-        ignored: /node_modules/,
-        ignoreInitial: true,
-      });
 
-      watcher.on('change', async () => {
-        console.log('Rebuilding worker due to change...');
-        await buildWorker();
-        server.hot.send({ type: 'full-reload' });
+      server.watcher.add(swPath);
+
+      server.watcher.on('change', async path => {
+        if (server.config.command === 'serve') {
+          console.log('Running during dev mode');
+        }
+
+        if (normalizePath(path) === swPath) {
+          server.config.logger.info('Rebuilding worker due to change...');
+          await buildWorker();
+          server.hot.send({ type: 'full-reload' });
+        }
       });
     },
     buildStart() {
