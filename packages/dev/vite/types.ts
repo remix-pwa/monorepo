@@ -1,11 +1,11 @@
 import type { RouteManifest } from '@remix-run/dev/dist/config/routes.js';
-import type { RemixVitePluginOptions } from '@remix-run/dev/dist/vite/plugin.js';
+import type { VitePluginConfig } from '@remix-run/dev/dist/vite/plugin.js';
 import type { ResolvedConfig } from 'vite';
 
 /**
  * The `@remix-pwa/dev` vite plugin options.
  */
-export interface PWAOptions extends RemixVitePluginOptions {
+export interface PWAOptions extends VitePluginConfig {
   /**
    * Auto-inject service worker registration script into root.tsx or not.
    * Possible values are:

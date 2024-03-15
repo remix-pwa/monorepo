@@ -1,6 +1,6 @@
 import type { AppConfig } from '@remix-run/dev/dist/config.js';
 import { resolveConfig } from '@remix-run/dev/dist/config.js';
-import type { RemixVitePluginOptions } from '@remix-run/dev/dist/vite/plugin.js';
+import type { VitePluginConfig } from '@remix-run/dev/dist/vite/plugin.js';
 import pick from 'lodash/pick.js';
 import { resolve } from 'path';
 import type { ResolvedConfig } from 'vite';
@@ -20,6 +20,8 @@ const supportedRemixConfigKeys = [
 
 const removeTrailingSlashes = (str: string): string => str.replace(/^\/|\/$/g, '');
 
+// hmr support -/- auto-register, prompt or do nothing
+
 export async function resolveOptions(
   options: Partial<PWAOptions>,
   viteConfig: ResolvedConfig
@@ -38,11 +40,8 @@ export async function resolveOptions(
     workerSourceMap = options.workerSourceMap || false,
   } = options;
 
-  const defaults: Partial<RemixVitePluginOptions> = {
+  const defaults: Partial<VitePluginConfig> = {
     serverBuildFile: 'index.js',
-    serverBuildDirectory: 'build/server',
-    assetsBuildDirectory: 'build/client',
-    publicPath: '/',
   };
 
   const remixConfig = {
