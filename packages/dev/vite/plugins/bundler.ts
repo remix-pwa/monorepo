@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import type { Plugin, UserConfig } from 'vite';
+import type { Plugin } from 'vite';
 import { build, normalizePath } from 'vite';
 
 import type { PWAPluginContext } from '../types.js';
@@ -8,13 +8,11 @@ import { VirtualSWPlugins } from './virtual-sw.js';
 export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
   async function buildWorker() {
     try {
-      // console.log(normalizePath(resolve(config.root ?? '', 'public')));
-      // Customize build options as needed
       await build({
         logLevel: 'error',
         configFile: false,
         appType: undefined,
-        plugins: [VirtualSWPlugins(ctx)],
+        plugins: [VirtualSWPlugins()],
         build: {
           outDir: normalizePath(resolve(process.cwd(), 'public')),
           rollupOptions: {
@@ -30,6 +28,7 @@ export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
             },
             treeshake: true,
             watch: false,
+            plugins: [VirtualSWPlugins()],
           },
           minify: false,
           sourcemap: false,
@@ -48,6 +47,10 @@ export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
   return <Plugin>{
     name: 'vite-plugin-remix-pwa:bundler',
     async configureServer(server) {
+      if (server.config.appType !== undefined) {
+        return;
+      }
+
       const swPath = normalizePath(`${ctx.options.appDirectory}/${ctx.options.entryWorkerFile}`);
 
       server.watcher.add(swPath);
