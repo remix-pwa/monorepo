@@ -35,7 +35,9 @@ export function LoaderPlugin(ctx: PWAPluginContext): Plugin {
             ' `}}',
             '/>',
             '</head>',
-          ].join('\n')
+          ]
+            .join('\n')
+            .trim()
         );
       }
     },
