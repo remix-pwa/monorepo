@@ -17,7 +17,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rimraf ./dist && tsc && npm run copy",
+    "build": "rimraf ./dist && tsc",
     "prepublishOnly": "npm run build",
     "compile": "tsc && node ./build.cjs",
     "copy": "cpy cli/templates dist",
