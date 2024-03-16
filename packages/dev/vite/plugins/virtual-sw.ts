@@ -1,8 +1,11 @@
 import type { RouteManifest } from '@remix-run/dev/dist/config/routes.js';
+import { readFile } from 'fs/promises';
 import { resolve } from 'pathe';
 import type { Plugin } from 'vite';
 import type { PWAPluginContext } from 'vite/types.js';
 
+import { parse } from '../babel.js';
+import { resolveRouteWorkerApis } from '../resolve-route-workers.js';
 import * as VirtualModule from '../vmod.js';
 
 export const shouldIgnoreRoute = (route: string, patterns: string[]): boolean => {
@@ -35,7 +38,7 @@ export const createRouteImports = (appDir: string, routes: RouteManifest, ignore
   return Object.keys(routes)
     .map((route, index) => {
       if (shouldIgnoreRoute(route, ignoredRoutes)) return '';
-      return `import * as route${index} from ${JSON.stringify(`${resolve(appDir)}/${routes[route].file}?worker`)};`;
+      return `import * as route${index} from ${JSON.stringify(`virtual:worker:${routes[route].file}`)};`;
     })
     .join('\n');
 };
@@ -60,6 +63,8 @@ export const createRouteManifest = (routes: RouteManifest, ignoredRoutes: string
 export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
   const entryId = VirtualModule.id('entry-sw');
 
+  const workerRouteCache = new Map();
+
   return <Plugin[]>[
     {
       name: 'vite-plugin-remix-pwa:virtual-entry-sw',
@@ -83,8 +88,6 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
             'export const msg = "hello world from virtual";',
           ].join('\n');
 
-          console.log(entryVirtualContents);
-
           return entryVirtualContents;
         }
       },
@@ -92,14 +95,37 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
     {
       name: 'vite-plugin-remix-pwa:virtual-routes-sw',
       resolveId(id) {
-        if (id.endsWith('?worker')) {
-          return VirtualModule.resolve(id);
+        if (id.startsWith('virtual:worker:')) {
+          return id;
         }
       },
-      load(id) {
-        if (id.endsWith('?worker')) {
-          console.log(id);
-          return 'export const msg = "hello world from virtual";';
+      async load(id) {
+        if (id.startsWith('virtual:worker:')) {
+          const filePath = id.replace('virtual:worker:', '');
+
+          if (workerRouteCache.has(filePath)) {
+            return workerRouteCache.get(filePath);
+          }
+
+          const virtualModuleSymlink = resolve(ctx.options.appDirectory, filePath);
+
+          const source = await readFile(virtualModuleSymlink, {
+            encoding: 'utf-8',
+          });
+          const sourceAst = parse(source, {
+            sourceType: 'module',
+            plugins: ['jsx', 'typescript'],
+          });
+          const virtualRouteSource = resolveRouteWorkerApis({ ast: sourceAst, source });
+
+          console.log(virtualRouteSource);
+
+          const workerContent = virtualRouteSource;
+
+          // Cache the worker content
+          workerRouteCache.set(filePath, workerContent);
+
+          return workerContent;
         }
       },
     },

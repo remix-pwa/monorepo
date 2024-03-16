@@ -62,7 +62,7 @@ export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
     buildStart() {
       if (!ctx.isRemixDevServer) return;
 
-      console.log('Building worker...', ctx.options.routes);
+      console.log('Building worker...');
       buildWorker(ctx);
     },
   };
