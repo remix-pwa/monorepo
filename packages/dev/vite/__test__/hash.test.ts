@@ -1,5 +1,4 @@
-import { afterEach } from 'node:test';
-import { afterAll, assert, beforeAll, describe, expect, test, vi } from 'vitest';
+import { afterAll, afterEach, assert, beforeAll, describe, expect, test, vi } from 'vitest';
 
 import type { ResolvedPWAOptions } from '../types.js';
 
@@ -12,7 +11,7 @@ vi.doMock('crypto', () => {
     }),
   };
 });
-vi.doMock('node:path', () => ({
+vi.doMock('pathe', () => ({
   join: () => './__test__/hash.test.ts',
 }));
 vi.doMock('fs', () => ({
@@ -24,12 +23,12 @@ describe('File Hashing test suite', () => {
     vi.doMock('../hash.js', () => {
       return {
         getWorkerHash: vi.fn().mockReturnValue('d41d8cd98f00b204e9800998ecf8427e'),
-        compareHash: (ws: any, oldHash: string, newHash: string) => {
+        compareHash: (hot: any, oldHash: string, newHash: string) => {
           if (oldHash === newHash) {
             return;
           }
 
-          ws.send({
+          hot.send({
             type: 'custom',
             event: 'pwa:worker-reload',
             data: {
@@ -81,7 +80,7 @@ describe('File Hashing test suite', () => {
 
   afterAll(() => {
     vi.doUnmock('crypto');
-    vi.doUnmock('node:path');
+    vi.doUnmock('pathe');
     vi.doUnmock('fs');
     vi.doUnmock('../hash.js');
   });

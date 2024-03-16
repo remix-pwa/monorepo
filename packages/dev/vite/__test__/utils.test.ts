@@ -37,10 +37,10 @@ describe('Plugin context test suite', () => {
   test('should create a global context when fed with user options', async () => {
     const { createContext } = await import('../context.js');
 
-    createContext({});
+    createContext();
 
     expect(createContext).toHaveBeenCalled();
-    expect(createContext).toHaveBeenCalledWith({});
+    expect(createContext).toHaveBeenCalledWith();
   });
 
   afterAll(() => {
@@ -69,13 +69,10 @@ describe('Plugin resolver test suite', () => {
       registerSW: 'script',
       workerSourceMap: false,
       publicPath: '/build/',
-      assetsBuildDirectory: '/Users/ryan/Projects/remix-pwa/public/build',
       entryWorkerFile: 'entry.worker.ts',
       workerEntryPoint: '@remix-pwa/worker-runtime',
       scope: '/',
       rootDirectory: '/Users/ryan/Projects/remix-pwa',
-      includeAssets: [/\.(js|css|html|svg|png|jpg|jpeg|webp)$/],
-      excludeAssets: [/\.map$/, /^manifest.*\.json$/, /^sw\.js$/],
       appDirectory: '/Users/ryan/Projects/remix-pwa/app',
       ignoredSWRouteFiles: [],
       workerMinify: false,
@@ -104,12 +101,9 @@ describe('Plugin resolver test suite', () => {
       registerSW: null,
       scope: '/pwa',
       rootDirectory: '/Users/ryan/Projects/remix-pwa',
-      includeAssets: [/\.(js|css|html|svg|png|jpg|jpeg|webp)$/],
-      excludeAssets: [/\.map$/, /^manifest.*\.json$/, /^sw\.js$/],
       appDirectory: '/Users/ryan/Projects/remix-pwa/app',
       ignoredSWRouteFiles: [],
       entryWorkerFile: 'entry.worker.ts',
-      assetsBuildDirectory: '/Users/ryan/Projects/remix-pwa/public/build',
       publicPath: '/build/',
       workerEntryPoint: '@remix-pwa/worker-runtime',
       workerSourceMap: false,
@@ -137,13 +131,10 @@ describe('Plugin resolver test suite', () => {
       registerSW: 'script',
       workerSourceMap: false,
       publicPath: '/build/',
-      assetsBuildDirectory: '/Users/ryan/Projects/remix-pwa/public/build',
       entryWorkerFile: 'entry.worker.ts',
       workerEntryPoint: '@remix-pwa/worker-runtime',
       scope: '/',
       rootDirectory: '/Users/ryan/Projects/remix-pwa',
-      includeAssets: [/\.(js|css|html|svg|png|jpg|jpeg|webp)$/],
-      excludeAssets: [/\.map$/, /^manifest.*\.json$/, /^sw\.js$/],
       appDirectory: '/Users/ryan/Projects/remix-pwa/app',
       ignoredSWRouteFiles: [],
       workerMinify: false,

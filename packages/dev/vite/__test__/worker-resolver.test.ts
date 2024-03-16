@@ -65,6 +65,7 @@ describe('Worker Route AST parser/resolver', () => {
         program: {
           type: 'Program',
           directives: [],
+          // @ts-expect-error
           sourceFile: 'worker-resource-route.ts',
           sourceType: 'module',
           body: [
@@ -133,6 +134,7 @@ describe('Worker Route AST parser/resolver', () => {
         program: {
           type: 'Program',
           directives: [],
+          // @ts-expect-error
           sourceFile: 'resource-route.ts',
           sourceType: 'module',
           body: [

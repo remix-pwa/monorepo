@@ -133,7 +133,7 @@ export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
       const TIME_LABEL = '💿 Built Service Worker in';
       console.time(TIME_LABEL);
 
-      console.log(`🏗️ Building Service Worker in ${ctx.isDev ? 'development' : 'production'} mode...`);
+      console.log(`🏗️  Building Service Worker in ${ctx.isDev ? 'development' : 'production'} mode...`);
       buildWorker(ctx);
 
       console.timeEnd(TIME_LABEL);
