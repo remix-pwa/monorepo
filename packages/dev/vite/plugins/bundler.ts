@@ -1,5 +1,6 @@
 import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
+import { resolve } from 'pathe';
 import esbuild from 'rollup-plugin-esbuild';
 import type { Plugin } from 'vite';
 import { build, normalizePath } from 'vite';
@@ -86,6 +87,29 @@ export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
           manifest: false,
         },
       });
+      // ESBuild
+      // await build({
+      //   entryPoints: {
+      //     [_ctx.options.workerName]: _ctx.options.workerEntryPoint,
+      //   },
+      //   outdir: _ctx.options.workerBuildDirectory,
+      //   bundle: true,
+      //   platform: 'browser',
+      //   absWorkingDir: resolve(_ctx.options.rootDirectory),
+      //   format: 'esm',
+      //   sourcemap: _ctx.options.workerSourceMap,
+      //   minify: _ctx.options.workerMinify,
+      //   logLevel: 'error',
+      //   splitting: true,
+      //   mainFields: ['browser', 'module', 'main'],
+      //   treeShaking: true,
+      //   supported: {
+      //     'import-meta': true,
+      //   },
+      //   // plugins: [
+      //   //   VirtualSWPlugins(_ctx),
+      //   // ],
+      // });
       console.log('Worker built successfully');
     } catch (err) {
       console.error('Error during worker build:', err);
@@ -94,20 +118,20 @@ export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
 
   return <Plugin>{
     name: 'vite-plugin-remix-pwa:bundler',
-    // async configureServer(server) {
-    // server.watcher.add(ctx.options.serviceWorkerPath);
+    async configureServer(server) {
+      server.watcher.add(ctx.options.serviceWorkerPath);
 
-    // if (!ctx.isRemixDevServer) return;
+      if (!ctx.isRemixDevServer) return;
 
-    // server.watcher.on('change', async path => {
-    //   if (normalizePath(path) === ctx.options.serviceWorkerPath) {
-    //     server.config.logger.info('Rebuilding worker due to change...');
-    //     // await buildWorker(ctx);
-    //     // update to custom later
-    //     server.hot.send({ type: 'full-reload' });
-    //   }
-    // });
-    // },
+      server.watcher.on('change', async path => {
+        if (normalizePath(path) === ctx.options.serviceWorkerPath) {
+          server.config.logger.info('Rebuilding worker due to change...');
+          // await buildWorker(ctx);
+          // update to custom later
+          // server.hot.send({ type: 'full-reload' });
+        }
+      });
+    },
     buildStart() {
       if (!ctx.isRemixDevServer) return;
 
