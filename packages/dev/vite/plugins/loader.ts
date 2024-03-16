@@ -7,7 +7,7 @@ export function LoaderPlugin(ctx: PWAPluginContext): Plugin {
     name: 'vite-plugin-remix-pwa:loader',
     enforce: 'pre',
     transform(code, id) {
-      if (Array.isArray(id.match(/root\.(tsx|jsx)$/))) {
+      if (Array.isArray(id.match(/root\.(tsx|jsx)$/)) && ctx.options.registerSW === 'script') {
         return code.replace(
           '</head>',
           [
