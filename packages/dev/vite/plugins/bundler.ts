@@ -7,59 +7,58 @@ import type { PWAPluginContext } from '../types.js';
 import { VirtualSWPlugins } from './virtual-sw.js';
 
 export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
-  async function buildWorker(_ctx: PWAPluginContext) {
-    try {
-      await build({
-        logLevel: 'error',
-        configFile: false,
-        appType: undefined,
-        plugins: [
-          nodeResolve({
-            browser: true,
-            mainFields: ['browser', 'module', 'main'],
-          }),
-          // @ts-ignore
-          commonjs(),
-          VirtualSWPlugins(_ctx),
-        ],
-        build: {
-          outDir: _ctx.options.workerBuildDirectory,
-          rollupOptions: {
-            input: {
-              [_ctx.options.workerName]: _ctx.options.workerEntryPoint,
-            },
-            output: {
-              entryFileNames: `${_ctx.options.workerName}.js`,
-              format: 'es',
-              assetFileNames: '[name].[ext]',
-              chunkFileNames: '_shared/sw/[name]-[hash]',
-              name: _ctx.options.workerName,
-            },
-            treeshake: true,
-            watch: false,
-            plugins: [
-              nodeResolve({
-                browser: true,
-                mainFields: ['browser', 'module', 'main'],
-              }),
-              // @ts-ignore
-              commonjs(),
-              VirtualSWPlugins(_ctx),
-            ],
-          },
-          minify: _ctx.options.workerMinify,
-          sourcemap: _ctx.options.workerSourceMap,
-          write: true,
-          watch: null,
-          emptyOutDir: false,
-          manifest: false,
-        },
-      });
-      console.log('Worker built successfully');
-    } catch (err) {
-      console.error('Error during worker build:', err);
-    }
-  }
+  // async function buildWorker(_ctx: PWAPluginContext) {
+  //   try {
+  //     await build({
+  //       logLevel: 'error',
+  //       configFile: false,
+  //       appType: undefined,
+  //       plugins: [
+  //         nodeResolve({
+  //           browser: true,
+  //           mainFields: ['browser', 'module', 'main'],
+  //         }),
+  //         // @ts-ignore
+  //         commonjs(),
+  //         VirtualSWPlugins(_ctx),
+  //       ],
+  //       build: {
+  //         outDir: _ctx.options.workerBuildDirectory,
+  //         rollupOptions: {
+  //           input: _ctx.options.workerEntryPoint,
+  //           output: {
+  //             // file: `${_ctx.options.workerName}.js`,
+  //             entryFileNames: `${_ctx.options.workerName}.js`,
+  //             format: 'es',
+  //             // assetFileNames: '[name].[ext]',
+  //             // chunkFileNames: '_shared/sw/[name]-[hash]',
+  //             // name: _ctx.options.workerName,
+  //           },
+  //           treeshake: true,
+  //           watch: false,
+  //           plugins: [
+  //             nodeResolve({
+  //               browser: true,
+  //               mainFields: ['browser', 'module', 'main'],
+  //             }),
+  //             // @ts-ignore
+  //             commonjs(),
+  //             VirtualSWPlugins(_ctx),
+  //           ],
+  //         },
+  //         minify: _ctx.options.workerMinify,
+  //         sourcemap: _ctx.options.workerSourceMap,
+  //         write: true,
+  //         watch: null,
+  //         emptyOutDir: false,
+  //         manifest: false,
+  //       },
+  //     });
+  //     console.log('Worker built successfully');
+  //   } catch (err) {
+  //     console.error('Error during worker build:', err);
+  //   }
+  // }
 
   return <Plugin>{
     name: 'vite-plugin-remix-pwa:bundler',
@@ -81,7 +80,12 @@ export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
       if (!ctx.isRemixDevServer) return;
 
       console.log('Building worker...');
-      buildWorker(ctx);
+      // buildWorker(ctx);
+    },
+    async generateBundle(_options, bundle) {
+      if (!ctx.isRemixDevServer) return;
+
+      console.log('Worker built successfully', _options, bundle);
     },
   };
 }
