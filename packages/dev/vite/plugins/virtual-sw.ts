@@ -34,7 +34,7 @@ export const shouldIgnoreRoute = (route: string, patterns: string[]): boolean =>
   return regexPatterns.some(regexPattern => regexPattern.test(route));
 };
 
-export const createRouteImports = (appDir: string, routes: RouteManifest, ignoredRoutes: string[] = []): string => {
+export const createRouteImports = (routes: RouteManifest, ignoredRoutes: string[] = []): string => {
   return Object.keys(routes)
     .map((route, index) => {
       if (shouldIgnoreRoute(route, ignoredRoutes)) return '';
@@ -78,7 +78,7 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
           const entryVirtualContents = [
             `import * as entryWorker from ${JSON.stringify(ctx.options.serviceWorkerPath)};`,
             '',
-            `${createRouteImports(ctx.options.appDirectory, ctx.options.routes, ctx.options.ignoredSWRouteFiles)}`,
+            `${createRouteImports(ctx.options.routes, ctx.options.ignoredSWRouteFiles)}`,
             '',
             'export const routes = {',
             `  ${createRouteManifest(ctx.options.routes, ctx.options.ignoredSWRouteFiles)}`,
