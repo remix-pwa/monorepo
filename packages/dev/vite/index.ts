@@ -9,5 +9,5 @@ import type { PWAOptions } from './types.js';
 export function RemixPWA(pwaOptions: Partial<PWAOptions> = {}): Plugin[] {
   const ctx = createContext();
 
-  return <Plugin[]>[EntryPlugin(ctx, pwaOptions), BundlerPlugin(ctx)];
+  return <Plugin[]>[EntryPlugin(ctx, pwaOptions), BundlerPlugin(ctx), LoaderPlugin(ctx)];
 }
