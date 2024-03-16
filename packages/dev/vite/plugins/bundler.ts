@@ -1,4 +1,3 @@
-import { resolve } from 'node:path';
 import type { Plugin } from 'vite';
 import { build, normalizePath } from 'vite';
 
@@ -6,32 +5,32 @@ import type { PWAPluginContext } from '../types.js';
 import { VirtualSWPlugins } from './virtual-sw.js';
 
 export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
-  async function buildWorker() {
+  async function buildWorker(_ctx: PWAPluginContext) {
     try {
       await build({
         logLevel: 'error',
         configFile: false,
         appType: undefined,
-        plugins: [VirtualSWPlugins()],
+        plugins: [VirtualSWPlugins(_ctx)],
         build: {
-          outDir: normalizePath(resolve(process.cwd(), 'public')),
+          outDir: _ctx.options.workerBuildDirectory,
           rollupOptions: {
             input: {
-              worker: '@remix-pwa/worker-runtime',
+              [_ctx.options.workerName]: _ctx.options.workerEntryPoint,
             },
             output: {
-              entryFileNames: 'worker.js',
+              entryFileNames: `${_ctx.options.workerName}.js`,
               format: 'esm',
               assetFileNames: '[name].[ext]',
               chunkFileNames: '_shared/sw/[name]-[hash]',
-              name: 'worker',
+              name: _ctx.options.workerName,
             },
             treeshake: true,
             watch: false,
-            plugins: [VirtualSWPlugins()],
+            plugins: [VirtualSWPlugins(_ctx)],
           },
-          minify: false,
-          sourcemap: false,
+          minify: _ctx.options.workerMinify,
+          sourcemap: _ctx.options.workerSourceMap,
           write: true,
           watch: null,
           emptyOutDir: false,
@@ -47,29 +46,24 @@ export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
   return <Plugin>{
     name: 'vite-plugin-remix-pwa:bundler',
     async configureServer(server) {
-      if (server.config.appType !== undefined) {
-        return;
-      }
+      server.watcher.add(ctx.options.serviceWorkerPath);
 
-      const swPath = normalizePath(`${ctx.options.appDirectory}/${ctx.options.entryWorkerFile}`);
-
-      server.watcher.add(swPath);
+      if (!ctx.isRemixDevServer) return;
 
       server.watcher.on('change', async path => {
-        if (server.config.command === 'serve') {
-          console.log('Running during dev mode');
-        }
-
-        if (normalizePath(path) === swPath) {
+        if (normalizePath(path) === ctx.options.serviceWorkerPath) {
           server.config.logger.info('Rebuilding worker due to change...');
-          await buildWorker();
+          await buildWorker(ctx);
+          // update to custom later
           server.hot.send({ type: 'full-reload' });
         }
       });
     },
     buildStart() {
-      console.log('Building worker...');
-      buildWorker();
+      if (!ctx.isRemixDevServer) return;
+
+      console.log('Building worker...', ctx.options.routes);
+      buildWorker(ctx);
     },
   };
 }
