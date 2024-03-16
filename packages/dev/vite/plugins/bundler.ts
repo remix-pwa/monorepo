@@ -1,14 +1,17 @@
 import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-import { resolve } from 'pathe';
+import { watch } from 'chokidar';
 import esbuild from 'rollup-plugin-esbuild';
 import type { Plugin } from 'vite';
 import { build, normalizePath } from 'vite';
 
+import { compareHash, getWorkerHash } from '../hash.js';
 import type { PWAPluginContext } from '../types.js';
 import { VirtualSWPlugins } from './virtual-sw.js';
 
 export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
+  let hash: string;
+
   async function buildWorker(_ctx: PWAPluginContext) {
     try {
       await build({
@@ -87,30 +90,8 @@ export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
           manifest: false,
         },
       });
-      // ESBuild
-      // await build({
-      //   entryPoints: {
-      //     [_ctx.options.workerName]: _ctx.options.workerEntryPoint,
-      //   },
-      //   outdir: _ctx.options.workerBuildDirectory,
-      //   bundle: true,
-      //   platform: 'browser',
-      //   absWorkingDir: resolve(_ctx.options.rootDirectory),
-      //   format: 'esm',
-      //   sourcemap: _ctx.options.workerSourceMap,
-      //   minify: _ctx.options.workerMinify,
-      //   logLevel: 'error',
-      //   splitting: true,
-      //   mainFields: ['browser', 'module', 'main'],
-      //   treeShaking: true,
-      //   supported: {
-      //     'import-meta': true,
-      //   },
-      //   // plugins: [
-      //   //   VirtualSWPlugins(_ctx),
-      //   // ],
-      // });
-      console.log('Worker built successfully');
+
+      hash = getWorkerHash(_ctx.options);
     } catch (err) {
       console.error('Error during worker build:', err);
     }
@@ -119,29 +100,43 @@ export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
   return <Plugin>{
     name: 'vite-plugin-remix-pwa:bundler',
     async configureServer(server) {
-      server.watcher.add(ctx.options.serviceWorkerPath);
-
       if (!ctx.isRemixDevServer) return;
 
-      server.watcher.on('change', async path => {
-        if (normalizePath(path) === ctx.options.serviceWorkerPath) {
-          server.config.logger.info('Rebuilding worker due to change...');
-          // await buildWorker(ctx);
-          // update to custom later
-          // server.hot.send({ type: 'full-reload' });
+      const watcher = watch(ctx.options.appDirectory, {
+        ignoreInitial: true,
+        ignored(testString: string) {
+          return testString.startsWith('.');
+        },
+        followSymlinks: false,
+        disableGlobbing: false,
+      });
+
+      const shouldAppReload = (path: string) => {
+        path = normalizePath(path);
+
+        return path === ctx.options.serviceWorkerPath || path.includes('/routes/') || path.endsWith('root.tsx');
+      };
+
+      watcher.on('change', async path => {
+        if (shouldAppReload(path)) {
+          const oldHash = hash;
+
+          await buildWorker(ctx);
+
+          compareHash(server.hot, oldHash, hash);
         }
       });
     },
     buildStart() {
       if (!ctx.isRemixDevServer) return;
 
-      console.log('Building worker...');
-      buildWorker(ctx);
-    },
-    // async generateBundle(_options, bundle) {
-    //   if (!ctx.isRemixDevServer) return;
+      const TIME_LABEL = '💿 Built Service Worker in';
+      console.time(TIME_LABEL);
 
-    //   console.log('Worker built successfully', _options, bundle);
-    // },
+      console.log(`🏗️ Building Service Worker in ${ctx.isDev ? 'development' : 'production'} mode...`);
+      buildWorker(ctx);
+
+      console.timeEnd(TIME_LABEL);
+    },
   };
 }
