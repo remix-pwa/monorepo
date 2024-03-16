@@ -2,7 +2,7 @@ import type { ResolvedRemixConfig } from '@remix-run/dev';
 import type { ResolvedConfig } from 'vite';
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 
-import type { PWAOptions, ResolvedPWAOptions } from '../types.js';
+import type { ResolvedPWAOptions } from '../types.js';
 import { mockViteConfig } from './vite-config.js';
 
 vi.doMock('@remix-run/dev/dist/config.js', () => {

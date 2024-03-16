@@ -1,4 +1,4 @@
-import { afterAll, afterEach, assert, assertType, beforeAll, describe, expect, test, vi } from 'vitest';
+import { afterAll, assert, assertType, beforeAll, describe, expect, test, vi } from 'vitest';
 
 vi.doMock('magic-string', () => {
   return {
