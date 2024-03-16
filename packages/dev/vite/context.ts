@@ -1,9 +1,11 @@
-import type { PWAOptions, PWAPluginContext } from './types.js';
+import type { PWAPluginContext } from './types.js';
 
-export function createContext(pwaOptions: Partial<PWAOptions>): PWAPluginContext {
+export function createContext(): PWAPluginContext {
   return {
     isDev: false,
-    pwaOptions,
+    isRemixDevServer: false,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    __remixPluginContext: undefined!,
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     options: undefined!,
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

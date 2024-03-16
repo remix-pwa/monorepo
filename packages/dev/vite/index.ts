@@ -7,7 +7,7 @@ import { EntryPlugin } from './plugins/main.js';
 import type { PWAOptions } from './types.js';
 
 export function RemixPWA(pwaOptions: Partial<PWAOptions> = {}): Plugin[] {
-  const ctx = createContext(pwaOptions);
+  const ctx = createContext();
 
-  return <Plugin[]>[EntryPlugin(ctx), BundlerPlugin(ctx)];
+  return <Plugin[]>[EntryPlugin(ctx, pwaOptions), BundlerPlugin(ctx)];
 }

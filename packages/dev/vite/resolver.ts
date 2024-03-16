@@ -2,7 +2,7 @@ import type { AppConfig } from '@remix-run/dev/dist/config.js';
 import { resolveConfig } from '@remix-run/dev/dist/config.js';
 import type { VitePluginConfig } from '@remix-run/dev/dist/vite/plugin.js';
 import pick from 'lodash/pick.js';
-import { resolve } from 'path';
+import { resolve } from 'pathe';
 import type { ResolvedConfig } from 'vite';
 import { normalizePath } from 'vite';
 
@@ -51,12 +51,9 @@ export async function resolveOptions(
 
   const rootDirectory = viteConfig.root ?? process.env.REMIX_ROOT ?? process.cwd();
 
-  const { appDirectory, assetsBuildDirectory, publicPath, routes } = await resolveConfig(remixConfig, {
+  const { appDirectory, publicPath, routes } = await resolveConfig(remixConfig, {
     rootDirectory,
   });
-
-  const includeAssets = [/\.(js|css|html|svg|png|jpg|jpeg|webp)$/];
-  const excludeAssets = [/\.map$/, /^manifest.*\.json$/, /^sw\.js$/];
 
   return {
     workerMinify,
@@ -65,13 +62,10 @@ export async function resolveOptions(
     workerSourceMap,
     workerBuildDirectory: resolve(viteConfig.root, removeTrailingSlashes(workerBuildDirectory)),
     registerSW,
-    assetsBuildDirectory,
     scope,
     routes,
     entryWorkerFile: removeTrailingSlashes(serviceWorkerFile),
     serviceWorkerPath: resolve(appDirectory, removeTrailingSlashes(serviceWorkerFile)),
-    includeAssets,
-    excludeAssets,
     appDirectory,
     ignoredSWRouteFiles,
     rootDirectory,
