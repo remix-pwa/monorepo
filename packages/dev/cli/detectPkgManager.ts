@@ -1,5 +1,5 @@
 import fse from 'fs-extra';
-import { resolve } from 'node:path';
+import { resolve } from 'pathe';
 import { pathToFileURL } from 'node:url';
 
 export type PackageManager = 'npm' | 'pnpm' | 'yarn';

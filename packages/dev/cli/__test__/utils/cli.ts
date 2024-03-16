@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
 import { pathExists } from 'fs-extra';
-import { resolve } from 'path';
+import { resolve } from 'pathe';
 
 /**
  * Validate the input from the user

@@ -4,7 +4,7 @@ import { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';
 import { redBright, whiteBright } from 'colorette';
 import type { BuildOptions, Plugin } from 'esbuild';
 import esbuild from 'esbuild';
-import path from 'node:path';
+import path from 'pathe';
 
 import assetsPlugin from './plugins/assets-module.js';
 import entryModulePlugin from './plugins/entry-module.js';

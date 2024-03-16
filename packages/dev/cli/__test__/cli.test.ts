@@ -1,6 +1,6 @@
 import { rmSync } from 'fs';
 import { cpSync, existsSync, readFileSync, writeFileSync } from 'fs-extra';
-import { resolve } from 'path';
+import { resolve } from 'pathe';
 import { afterAll, assert, beforeAll, describe, expect, test, vi } from 'vitest';
 
 import { createPWA } from '../create.js';

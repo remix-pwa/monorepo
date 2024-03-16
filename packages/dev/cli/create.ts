@@ -3,10 +3,9 @@ import { readConfig as _readConfig } from '@remix-run/dev/dist/config.js';
 import { ServerMode } from '@remix-run/dev/dist/config/serverModes.js';
 import { execSync } from 'child_process';
 import { blueBright, green, red, white } from 'colorette';
-import { cpSync } from 'fs';
 import pkg from 'fs-extra';
 import ora from 'ora';
-import { dirname, resolve } from 'path';
+import { dirname, resolve } from 'pathe';
 import { fileURLToPath } from 'url';
 
 import { getPkgVersion } from './getPkgVersion.js';
@@ -75,7 +74,7 @@ async function integrateManifest(templateDir: string, lang: 'ts' | 'js' = 'ts', 
 async function integrateIcons(projectDir: string) {
   const iconDir = resolve(__dirname, 'templates', 'icons');
 
-  cpSync(iconDir, resolveUrl(projectDir, 'public/icons'), {
+  pkg.cpSync(iconDir, resolveUrl(projectDir, 'public/icons'), {
     recursive: true,
     errorOnExist: false,
     force: false,
