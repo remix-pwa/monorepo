@@ -1,3 +1,5 @@
+import commonjs from '@rollup/plugin-commonjs';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 import type { Plugin } from 'vite';
 import { build, normalizePath } from 'vite';
 
@@ -11,7 +13,15 @@ export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
         logLevel: 'error',
         configFile: false,
         appType: undefined,
-        plugins: [VirtualSWPlugins(_ctx)],
+        plugins: [
+          nodeResolve({
+            browser: true,
+            mainFields: ['browser', 'module', 'main'],
+          }),
+          // @ts-ignore
+          commonjs(),
+          VirtualSWPlugins(_ctx),
+        ],
         build: {
           outDir: _ctx.options.workerBuildDirectory,
           rollupOptions: {
@@ -20,14 +30,22 @@ export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
             },
             output: {
               entryFileNames: `${_ctx.options.workerName}.js`,
-              format: 'esm',
+              format: 'es',
               assetFileNames: '[name].[ext]',
               chunkFileNames: '_shared/sw/[name]-[hash]',
               name: _ctx.options.workerName,
             },
             treeshake: true,
             watch: false,
-            plugins: [VirtualSWPlugins(_ctx)],
+            plugins: [
+              nodeResolve({
+                browser: true,
+                mainFields: ['browser', 'module', 'main'],
+              }),
+              // @ts-ignore
+              commonjs(),
+              VirtualSWPlugins(_ctx),
+            ],
           },
           minify: _ctx.options.workerMinify,
           sourcemap: _ctx.options.workerSourceMap,
