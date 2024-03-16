@@ -11,6 +11,8 @@ import * as VirtualModule from '../vmod.js';
 export const shouldIgnoreRoute = (route: string, patterns: string[]): boolean => {
   if (route === '' || patterns.length === 0) return false;
 
+  if (patterns.includes(route) || patterns.includes('*')) return true;
+
   function convertPatternToRegEx(pattern: string) {
     if (pattern.endsWith('/') && pattern.substring(-2) !== '*') {
       pattern = pattern.split('').slice(0, -1).join('');
@@ -22,9 +24,9 @@ export const shouldIgnoreRoute = (route: string, patterns: string[]): boolean =>
       .replace(/\*/g, '[^/]*') // Replace * with [^/]*
       .replace(/\//g, '\\/'); // Escape forward slashes
 
-    if (!pattern.startsWith('/')) {
-      regexPattern = '(?:\\/)?' + regexPattern; // Make leading slash optional
-    }
+    // if (!pattern.startsWith('/')) {
+    regexPattern = '(?:\\/)?' + regexPattern; // Make leading slash optional
+    // }
 
     return new RegExp('^' + regexPattern + '$');
   }
@@ -35,10 +37,10 @@ export const shouldIgnoreRoute = (route: string, patterns: string[]): boolean =>
 };
 
 export const createRouteImports = (routes: RouteManifest, ignoredRoutes: string[] = []): string => {
-  return Object.keys(routes)
+  return Object.values(routes)
     .map((route, index) => {
-      if (shouldIgnoreRoute(route, ignoredRoutes)) return '';
-      return `import * as route${index} from ${JSON.stringify(`virtual:worker:${routes[route].file}`)};`;
+      if (shouldIgnoreRoute(route.path ?? '', ignoredRoutes)) return '';
+      return `import * as route${index} from ${JSON.stringify(`virtual:worker:${routes[route.id].file}`)};`;
     })
     .join('\n');
 };
