@@ -66,7 +66,7 @@ export async function resolveOptions(
     routes,
     entryWorkerFile: removeTrailingSlashes(serviceWorkerFile),
     serviceWorkerPath: resolve(appDirectory, removeTrailingSlashes(serviceWorkerFile)),
-    appDirectory,
+    appDirectory: normalizePath(appDirectory),
     ignoredSWRouteFiles,
     rootDirectory,
     workerName,
