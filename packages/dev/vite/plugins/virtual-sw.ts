@@ -118,8 +118,6 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
           });
           const virtualRouteSource = resolveRouteWorkerApis({ ast: sourceAst, source });
 
-          console.log(virtualRouteSource);
-
           const workerContent = virtualRouteSource;
 
           // Cache the worker content
