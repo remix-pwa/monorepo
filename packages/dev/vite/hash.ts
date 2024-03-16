@@ -1,7 +1,7 @@
 import { createHash } from 'crypto';
 import { readFileSync } from 'fs';
-import { join } from 'node:path';
-import type { WebSocketServer } from 'vite';
+import { join } from 'pathe';
+import type { HMRBroadcaster } from 'vite';
 
 import type { ResolvedPWAOptions } from './types.js';
 
@@ -14,12 +14,12 @@ export const getWorkerHash = ({ workerBuildDirectory, workerName }: ResolvedPWAO
   return hash.digest('hex');
 };
 
-export const compareHash = (ws: WebSocketServer, oldHash: string, newHash: string) => {
+export const compareHash = (hot: HMRBroadcaster, oldHash: string, newHash: string): boolean => {
   if (oldHash === newHash) {
-    return;
+    return false;
   }
 
-  ws.send({
+  hot.send({
     type: 'custom',
     event: 'pwa:worker-reload',
     data: {
@@ -27,4 +27,6 @@ export const compareHash = (ws: WebSocketServer, oldHash: string, newHash: strin
       newHash,
     },
   });
+
+  return true;
 };
