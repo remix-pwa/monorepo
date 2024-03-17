@@ -102,7 +102,6 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
             '};',
             '',
             'export const entry = { module: entryWorker }',
-            'export const msg = "hello world from virtual";',
           ].join('\n');
 
           return entryVirtualContents;
