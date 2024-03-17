@@ -3,6 +3,55 @@ import { afterAll, afterEach, beforeEach, describe, expect, test, vi } from 'vit
 
 import type { PWAPluginContext } from '../../types';
 
+vi.doMock('pathe', () => {
+  return {
+    resolve: (path: string, filePath: string) => `${path}/${filePath}`,
+  };
+});
+vi.doMock('fs/promises', () => {
+  return {
+    readFile: async (path: string) => {
+      if (path.includes('home'))
+        return `
+      export const action = () => {
+        return { name: 'home' };
+      }`;
+
+      return `
+      export const action = () => {
+        return { name: 'about' };
+      }
+
+      export const loader = () => {
+        return { name: 'about', worker: false };
+      }
+
+      export const workerLoader = () => {
+        return { name: 'about', worker: true };
+      }
+      `;
+    },
+  };
+});
+vi.doMock('../../babel.js', () => {
+  return {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    parse: (code: string, _options: any) => code,
+  };
+});
+vi.doMock('../../resolve-route-workers.js', () => {
+  return {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    resolveRouteWorkerApis: ({ ast: _sourceAst, source }: any) => {
+      if (source.includes('workerLoader'))
+        return `export const workerLoader = () => {
+        return { name: 'about', worker: true };
+      }`;
+      else return 'module.exports = {}';
+    },
+  };
+});
+
 describe('Remix PWA Vite VirtualSW Plugin', () => {
   describe('Plugin utilities suite', () => {
     describe('Route ignore suite', () => {
@@ -231,9 +280,52 @@ describe('Remix PWA Vite VirtualSW Plugin', () => {
       plugin = _plugin(mockContext);
     });
 
-    describe('Virtual Entry Plugin', () => {});
+    describe('Virtual Entry Plugin', () => {
+      test('should return a plugin object', () => {
+        expect(plugin[0]).not.toBe(null);
+        expect(plugin[0]).toBeTypeOf('object');
+      });
 
-    describe('Virtual Routes Plugin', () => {});
+      test('should have the correct name', () => {
+        expect(plugin[0].name).toBe('vite-plugin-remix-pwa:virtual-entry-sw');
+      });
+
+      test('should resolve the virtual entry id correctly', () => {
+        expect(plugin[0].resolveId('virtual:entry-sw')).toBe('\0virtual:entry-sw');
+      });
+
+      test('should load the virtual entry module', () => {
+        expect(plugin[0].load('\0virtual:entry-sw')).toContain('export const routes = {');
+        expect(plugin[0].load('\0virtual:entry-sw')).toContain('export const entry = { module: entryWorker }');
+      });
+    });
+
+    describe('Virtual Routes Plugin', () => {
+      test('should return a plugin object', () => {
+        expect(plugin[1]).not.toBe(null);
+        expect(plugin[1]).toBeTypeOf('object');
+      });
+
+      test('should have the correct name', () => {
+        expect(plugin[1].name).toBe('vite-plugin-remix-pwa:virtual-routes-sw');
+      });
+
+      test('should resolve the virtual routes id correctly', () => {
+        expect(plugin[1].resolveId('virtual:worker:routes/home.tsx')).toBe('virtual:worker:routes/home.tsx');
+      });
+
+      test('should provide a virtual module for virtual worker files on load', async () => {
+        const result = await plugin[1].load('virtual:worker:routes/about.tsx');
+
+        expect(result).toContain('export const workerLoader = () => {');
+      });
+
+      test("should return an empty module if the route doesn't contain worker route apis", async () => {
+        const result = await plugin[1].load('virtual:worker:routes/home.tsx');
+
+        expect(result).toBe('module.exports = {}');
+      });
+    });
 
     afterEach(() => {
       vi.restoreAllMocks();
@@ -241,6 +333,10 @@ describe('Remix PWA Vite VirtualSW Plugin', () => {
 
     afterAll(() => {
       vi.clearAllMocks();
+      vi.doUnmock('pathe');
+      vi.doUnmock('fs/promises');
+      vi.doUnmock('../../babel.js');
+      vi.doUnmock('../../resolve-route-workers.js');
     });
   });
 });
