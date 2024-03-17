@@ -4,6 +4,7 @@
   "license": "MIT",
   "workspaces": [
     "packages/cache",
+    "packages/cli",
     "packages/client",
     "packages/dev",
     "packages/eslint-config",
