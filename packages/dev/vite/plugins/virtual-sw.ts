@@ -10,29 +10,42 @@ import * as VirtualModule from '../vmod.js';
 
 export const shouldIgnoreRoute = (route: string, patterns: string[]): boolean => {
   if (route === '' || patterns.length === 0) return false;
-
   if (patterns.includes(route) || patterns.includes('*')) return true;
 
-  function convertPatternToRegEx(pattern: string) {
-    if (pattern.endsWith('/') && pattern.substring(-2) !== '*') {
-      pattern = pattern.split('').slice(0, -1).join('');
+  route = route.startsWith('/') ? route : `/${route}`;
+
+  const convertPatternToRegex = (pattern: string) => {
+    // Remove leading and trailing slashes
+    pattern = pattern.replace(/^\/|\/$/g, '');
+
+    // Split the pattern into segments
+    const segments = pattern.split('/');
+
+    // Build the regex pattern
+    let regexPattern = '';
+
+    for (let i = 0; i < segments.length; i++) {
+      const segment = segments[i];
+
+      if (segment === '**') {
+        // Match any path segments
+        regexPattern += '(?:/.*)?';
+      } else if (segment === '*') {
+        // Match a single path segment
+        regexPattern += '/[^/]*';
+      } else {
+        // Match the literal segment
+        regexPattern += `/${segment}`;
+      }
     }
 
-    let regexPattern = pattern
-      .replace(/^\//, '') // Remove leading slash if exists
-      .replace(/\*\*/g, '.*') // Replace ** with .*
-      .replace(/\*/g, '[^/]*') // Replace * with [^/]*
-      .replace(/\//g, '\\/'); // Escape forward slashes
+    // Ensure the regex matches the entire route
+    regexPattern = `^${regexPattern}/?$`;
 
-    // if (!pattern.startsWith('/')) {
-    regexPattern = '(?:\\/)?' + regexPattern; // Make leading slash optional
-    // }
+    return new RegExp(regexPattern);
+  };
 
-    return new RegExp('^' + regexPattern + '$');
-  }
-
-  const regexPatterns = patterns.map(convertPatternToRegEx);
-
+  const regexPatterns = patterns.map(convertPatternToRegex);
   return regexPatterns.some(regexPattern => regexPattern.test(route));
 };
 
@@ -42,7 +55,8 @@ export const createRouteImports = (routes: RouteManifest, ignoredRoutes: string[
       if (shouldIgnoreRoute(route.path ?? '', ignoredRoutes)) return '';
       return `import * as route${index} from ${JSON.stringify(`virtual:worker:${routes[route.id].file}`)};`;
     })
-    .join('\n');
+    .join('\n')
+    .trim();
 };
 
 export const createRouteManifest = (routes: RouteManifest, ignoredRoutes: string[] = []): string => {
@@ -57,9 +71,10 @@ export const createRouteManifest = (routes: RouteManifest, ignoredRoutes: string
           index: ${JSON.stringify(route.index)},
           caseSensitive: ${JSON.stringify(route.caseSensitive)},
           module: route${index}
-        }`;
+        },`;
     })
-    .join(',\n');
+    .join('\n')
+    .trim();
 };
 
 export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
