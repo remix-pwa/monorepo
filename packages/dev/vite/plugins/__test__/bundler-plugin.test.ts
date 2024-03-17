@@ -1,28 +1,10 @@
-import commonjs from '@rollup/plugin-commonjs';
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import esbuild from 'rollup-plugin-esbuild';
-import { afterAll, afterEach, assert, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterAll, afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import type { PWAPluginContext } from '../../types';
-
-vi.mock('vite', () => ({
-  build: vi.fn(),
-  watch: vi.fn(),
-}));
-
-vi.mock('rollup-plugin-esbuild', () => vi.fn());
-vi.mock('@rollup/plugin-node-resolve', () => vi.fn());
-vi.mock('@rollup/plugin-commonjs', () => vi.fn());
-vi.mock('../virtual-sw.js', () => vi.fn());
-vi.mock('../../hash.js', () => ({
-  getWorkerHash: vi.fn(),
-}));
 
 describe('Remix PWA Vite Bundler Plugin', () => {
   let plugin: any;
   let mockPWAContext: PWAPluginContext;
-  let mockedBuild;
-  let mockedWatch;
 
   beforeEach(async () => {
     mockPWAContext = {
@@ -53,15 +35,44 @@ describe('Remix PWA Vite Bundler Plugin', () => {
     });
   });
 
-  describe('buildStart hook suite', () => {
-    test('should not do anything if not in a Remix dev server', () => {
+  describe('configureServer hook suite', () => {
+    test('should not do anything if not in a Remix dev server', async () => {
       mockPWAContext.isRemixDevServer = false;
+      const configureServerSpy = vi.spyOn(plugin, 'configureServer');
 
+      await plugin.configureServer({ hot: { invalidate: vi.fn() } });
+
+      expect(configureServerSpy).toHaveReturnedWith(undefined);
+    });
+  });
+
+  describe('buildStart hook suite', () => {
+    test('should not do anything if not in a Remix dev server', async () => {
+      mockPWAContext.isRemixDevServer = false;
       const buildStartSpy = vi.spyOn(plugin, 'buildStart');
+
+      await plugin.buildStart();
+
+      expect(buildStartSpy).toHaveReturnedWith(undefined);
+    });
+
+    test.skip('should build the worker and log the time', () => {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      const consoleTimeSpy = vi.spyOn(console, 'time').mockImplementation(() => {});
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      const consoleTimeEndSpy = vi.spyOn(console, 'timeEnd').mockImplementation(() => {});
 
       plugin.buildStart();
 
-      expect(buildStartSpy).toHaveReturnedWith(undefined);
+      expect(consoleTimeSpy).toHaveBeenCalledWith('💿 Built Service Worker in');
+      expect(consoleSpy).toHaveBeenCalledWith('🏗️ Building Service Worker in development mode...');
+      expect(consoleTimeEndSpy).toHaveBeenCalledWith('💿 Built Service Worker in');
+
+      consoleSpy.mockRestore();
+      consoleTimeSpy.mockRestore();
+      consoleTimeEndSpy.mockRestore();
     });
   });
 

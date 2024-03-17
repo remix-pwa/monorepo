@@ -9,93 +9,91 @@ import { compareHash, getWorkerHash } from '../hash.js';
 import type { PWAPluginContext } from '../types.js';
 import { VirtualSWPlugins } from './virtual-sw.js';
 
+export async function buildWorker(_ctx: PWAPluginContext) {
+  try {
+    await build({
+      logLevel: 'error',
+      configFile: false,
+      appType: undefined,
+      plugins: [
+        esbuild({
+          platform: 'browser',
+          color: true,
+          treeShaking: true,
+          format: 'esm',
+          logLevel: 'error',
+          sourcefile: _ctx.options.workerEntryPoint,
+          charset: 'utf8',
+          supported: {
+            'import-meta': true,
+          },
+        }),
+        nodeResolve({
+          browser: true,
+          mainFields: ['browser', 'module', 'main'],
+        }),
+        // @ts-ignore
+        commonjs(),
+        VirtualSWPlugins(_ctx),
+      ],
+      build: {
+        outDir: _ctx.options.workerBuildDirectory,
+        target: 'modules',
+        // eslint-disable-next-line no-void
+        lib: void 0,
+        rollupOptions: {
+          input: _ctx.options.workerEntryPoint,
+          output: {
+            entryFileNames: `${_ctx.options.workerName}.js`,
+            format: 'esm',
+            esModule: true,
+            exports: 'none',
+            strict: true,
+            interop: 'auto',
+            assetFileNames: '[name].[ext]',
+            chunkFileNames: '_shared/sw/[name]-[hash]',
+            name: _ctx.options.workerName,
+            sourcemap: _ctx.options.workerSourceMap,
+          },
+          treeshake: true,
+          watch: false,
+          plugins: [
+            esbuild({
+              platform: 'browser',
+              color: true,
+              treeShaking: true,
+              format: 'esm',
+              logLevel: 'error',
+              sourcefile: _ctx.options.workerEntryPoint,
+              charset: 'utf8',
+              supported: {
+                'import-meta': true,
+              },
+            }),
+            nodeResolve({
+              browser: true,
+              mainFields: ['browser', 'module', 'main'],
+            }),
+            // @ts-ignore
+            commonjs(),
+            VirtualSWPlugins(_ctx),
+          ],
+        },
+        minify: _ctx.options.workerMinify,
+        sourcemap: _ctx.options.workerSourceMap,
+        write: true,
+        watch: null,
+        emptyOutDir: false,
+        manifest: false,
+      },
+    });
+  } catch (err) {
+    console.error('Error during worker build:', err);
+  }
+}
+
 export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
   let hash: string;
-
-  async function buildWorker(_ctx: PWAPluginContext) {
-    try {
-      await build({
-        logLevel: 'error',
-        configFile: false,
-        appType: undefined,
-        plugins: [
-          esbuild({
-            platform: 'browser',
-            color: true,
-            treeShaking: true,
-            format: 'esm',
-            logLevel: 'error',
-            sourcefile: _ctx.options.workerEntryPoint,
-            charset: 'utf8',
-            supported: {
-              'import-meta': true,
-            },
-          }),
-          nodeResolve({
-            browser: true,
-            mainFields: ['browser', 'module', 'main'],
-          }),
-          // @ts-ignore
-          commonjs(),
-          VirtualSWPlugins(_ctx),
-        ],
-        build: {
-          outDir: _ctx.options.workerBuildDirectory,
-          target: 'modules',
-          // eslint-disable-next-line no-void
-          lib: void 0,
-          rollupOptions: {
-            input: _ctx.options.workerEntryPoint,
-            output: {
-              entryFileNames: `${_ctx.options.workerName}.js`,
-              format: 'esm',
-              esModule: true,
-              exports: 'none',
-              strict: true,
-              interop: 'auto',
-              assetFileNames: '[name].[ext]',
-              chunkFileNames: '_shared/sw/[name]-[hash]',
-              name: _ctx.options.workerName,
-              sourcemap: _ctx.options.workerSourceMap,
-            },
-            treeshake: true,
-            watch: false,
-            plugins: [
-              esbuild({
-                platform: 'browser',
-                color: true,
-                treeShaking: true,
-                format: 'esm',
-                logLevel: 'error',
-                sourcefile: _ctx.options.workerEntryPoint,
-                charset: 'utf8',
-                supported: {
-                  'import-meta': true,
-                },
-              }),
-              nodeResolve({
-                browser: true,
-                mainFields: ['browser', 'module', 'main'],
-              }),
-              // @ts-ignore
-              commonjs(),
-              VirtualSWPlugins(_ctx),
-            ],
-          },
-          minify: _ctx.options.workerMinify,
-          sourcemap: _ctx.options.workerSourceMap,
-          write: true,
-          watch: null,
-          emptyOutDir: false,
-          manifest: false,
-        },
-      });
-
-      hash = getWorkerHash(_ctx.options);
-    } catch (err) {
-      console.error('Error during worker build:', err);
-    }
-  }
 
   return <Plugin>{
     name: 'vite-plugin-remix-pwa:bundler',
@@ -122,19 +120,21 @@ export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
           const oldHash = hash;
 
           await buildWorker(ctx);
+          hash = getWorkerHash(ctx.options);
 
           compareHash(server.hot, oldHash, hash);
         }
       });
     },
-    buildStart() {
+    async buildStart() {
       if (!ctx.isRemixDevServer) return;
 
       const TIME_LABEL = '💿 Built Service Worker in';
       console.time(TIME_LABEL);
 
       console.log(`🏗️  Building Service Worker in ${ctx.isDev ? 'development' : 'production'} mode...`);
-      buildWorker(ctx);
+      await buildWorker(ctx);
+      hash = getWorkerHash(ctx.options);
 
       console.timeEnd(TIME_LABEL);
     },
