@@ -39,6 +39,8 @@ vi.doMock('../../babel.js', () => {
     parse: (code: string, _options: any) => code,
   };
 });
+// (ShafSpecs): Mocking this because test for resolvers already available
+// at packages/dev/vite/__test__/worker-resolver.test.ts
 vi.doMock('../../resolve-route-workers.js', () => {
   return {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
