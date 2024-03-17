@@ -1,6 +1,8 @@
 import type { RouteManifest } from '@remix-run/dev/dist/config/routes';
 import { afterAll, afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
+import type { PWAPluginContext } from '../../types';
+
 describe('Remix PWA Vite VirtualSW Plugin', () => {
   describe('Plugin utilities suite', () => {
     describe('Route ignore suite', () => {
@@ -194,7 +196,51 @@ describe('Remix PWA Vite VirtualSW Plugin', () => {
     });
   });
 
-  describe('VirtualSWPlugin suite', () => {
+  describe('VirtualSWPlugin test suite', () => {
+    let mockContext: PWAPluginContext;
+    let plugin: any;
+
+    beforeEach(async () => {
+      mockContext = {
+        options: {
+          serviceWorkerPath: '/Users/ryan/remix-project/app/service-worker.ts',
+          ignoredSWRouteFiles: [],
+          appDirectory: '/Users/ryan/remix-project/app',
+          routes: {
+            'routes/home': {
+              id: 'routes/home',
+              parentId: 'root',
+              path: '/home',
+              index: false,
+              caseSensitive: true,
+              file: 'home.tsx',
+            },
+            'routes/about': {
+              id: 'routes/about',
+              parentId: 'root',
+              path: '/about',
+              index: false,
+              caseSensitive: true,
+              file: 'about.tsx',
+            },
+          } as RouteManifest,
+        },
+      } as unknown as PWAPluginContext;
+
+      const _plugin = (await import('../virtual-sw')).VirtualSWPlugins;
+      plugin = _plugin(mockContext);
+    });
+
     describe('Virtual Entry Plugin', () => {});
+
+    describe('Virtual Routes Plugin', () => {});
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    afterAll(() => {
+      vi.clearAllMocks();
+    });
   });
 });
