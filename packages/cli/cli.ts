@@ -3,7 +3,7 @@
 import { Command } from '@commander-js/extra-typings';
 import colors from 'picocolors';
 
-const packageJson = await import('../package.json', { assert: { type: 'json' } });
+const packageJson = await import('./package.json', { assert: { type: 'json' } });
 
 const { magenta } = colors;
 

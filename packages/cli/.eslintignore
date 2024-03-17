@@ -1,1 +1,2 @@
-dist/**
+cli.js
+cli.d.ts

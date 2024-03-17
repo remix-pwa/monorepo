@@ -1,5 +1,5 @@
 {
-  "include": ["**/*.ts"],
+  "include": ["./cli.ts"],
   "exclude": ["dist", "**/__test__", "node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
@@ -15,6 +15,6 @@
     "emitDeclarationOnly": false,
     "allowJs": true,
     "rootDir": ".",
-    "outDir": "dist/"
+    "outDir": "."
   }
 }
