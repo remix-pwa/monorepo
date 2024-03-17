@@ -64,6 +64,8 @@ describe('Remix PWA Vite Bundler Plugin', () => {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       const consoleTimeEndSpy = vi.spyOn(console, 'timeEnd').mockImplementation(() => {});
 
+      // Todo: Mock the buildWorker, if you can
+
       plugin.buildStart();
 
       expect(consoleTimeSpy).toHaveBeenCalledWith('💿 Built Service Worker in');
