@@ -2,6 +2,7 @@
   "files": [],
   "references": [
     // { "path": "packages/cache" },
+    { "path": "packages/cli" },
     { "path": "packages/client" },
     { "path": "packages/dev" },
     // { "path": "packages/precache-runtime" },
