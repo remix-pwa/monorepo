@@ -195,8 +195,6 @@ describe('Remix PWA Vite VirtualSW Plugin', () => {
   });
 
   describe('VirtualSWPlugin suite', () => {
-    describe('Virtual Entry Plugin', () => {
-      
-    })
-  })
+    describe('Virtual Entry Plugin', () => {});
+  });
 });
