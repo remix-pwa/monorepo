@@ -10,23 +10,23 @@
   "homepage": "https://remix-pwa.run",
   "license": "MIT",
   "sideEffects": false,
+  "main": "dist/cli.js",
+  "types": "dist/cli.d.ts",
   "type": "module",
   "engines": {
     "node": ">=18.0.0"
   },
-  "bin": {
-    "remix-pwa-cli": "dist/cli.js"
-  },
   "scripts": {
-    "build": "rimraf ./dist && tsc",
+    "build": "tsc",
     "prepublishOnly": "npm run build",
-    "format": "prettier --write \"**/*.ts\"",
-    "lint": "TIMING=1 eslint --fix \"src/**/*.ts\"",
+    "format": "prettier --write \"cli.ts\"",
+    "lint": "TIMING=1 eslint --fix \"cli.ts\"",
     "prepublish": "npm run build",
     "test": "vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests --config ../../vitest.config.ts"
   },
   "files": [
-    "dist/",
+    "cli.js",
+    "cli.d.ts",
     "README.md"
   ],
   "peerDependencies": {
