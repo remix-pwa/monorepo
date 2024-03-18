@@ -160,14 +160,6 @@ program
     }
   });
 
-// program
-//   .command('icons')
-//   .description('Generate favicons and app icons')
-//   .action(() => {
-//     // Generate favicons and app icons here...
-//     console.log('Generating favicons and app icons...');
-//   });
-
 program.parse(process.argv);
 
 // export default program;
