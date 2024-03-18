@@ -1,4 +1,5 @@
-#!/usr/bin/env node --no-warnings
+#!/usr/bin/env node
+/* eslint-disable prefer-rest-params */
 
 import { Command } from '@commander-js/extra-typings';
 import { existsSync } from 'fs';
@@ -8,10 +9,29 @@ import colors from 'picocolors';
 import type { CompilerOptions } from 'typescript';
 import ts from 'typescript';
 
+// Disable experimental warnings (due to `import` statement assertions)
+//
+// Cherry-picked from:
+// https://github.com/yarnpkg/berry/blob/2cf0a8fe3e4d4bd7d4d344245d24a85a45d4c5c9/packages/yarnpkg-pnp/sources/loader/applyPatch.ts#L414-L435
+const originalEmit = process.emit;
+// @ts-expect-error - TS complains about the return type of originalEmit.apply
+process.emit = function (name, data, ..._args) {
+  if (
+    name === `warning` &&
+    typeof data === `object` &&
+    // @ts-ignore
+    data.name === `ExperimentalWarning`
+  )
+    return false;
+
+  return originalEmit.apply(process, arguments as unknown as Parameters<typeof process.emit>);
+};
+
 const packageJson = await import('./package.json', { assert: { type: 'json' } });
 
 const { magenta } = colors;
 const { ModuleKind, ScriptTarget, transpileModule } = ts;
+
 const __dirname = import.meta.dirname;
 
 const compilerOptions: CompilerOptions = {
