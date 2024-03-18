@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /* eslint-disable prefer-rest-params */
 
 import { Command } from '@commander-js/extra-typings';
@@ -180,6 +179,4 @@ program
     }
   });
 
-program.parse(process.argv);
-
-// export default program;
+export default program;
