@@ -27,8 +27,8 @@ export abstract class BaseStrategy implements CacheStrategy {
     return await caches.open(this.cacheName);
   }
 
-  protected ensureRequest(request: Request | string): Request {
-    if (typeof request === 'string') {
+  protected ensureRequest(request: Request | string | URL): Request {
+    if (request instanceof URL || typeof request === 'string') {
       return new Request(request);
     }
 

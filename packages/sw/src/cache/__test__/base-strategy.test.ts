@@ -1,4 +1,4 @@
-import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { BaseStrategy } from '../BaseStrategy.js';
 import type { CacheOptions } from '../types.js';
@@ -14,8 +14,13 @@ class MockStrategy extends BaseStrategy {
     this._options = options || {};
   }
 
-  async handleRequest(request: Request | string): Promise<Response> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async handleRequest(_request: Request | string): Promise<Response> {
     return new Response('mock response');
+  }
+
+  _ensureRequest(request: Request | string | URL): Request {
+    return this.ensureRequest(request);
   }
 
   async _cleanupCache(): Promise<void> {
@@ -27,7 +32,7 @@ class MockStrategy extends BaseStrategy {
   }
 }
 
-describe('BaseStrategy', () => {
+describe('BaseStrategy Testing Suite', () => {
   let mockCache: Cache;
 
   beforeEach(() => {
@@ -41,7 +46,7 @@ describe('BaseStrategy', () => {
     };
   });
 
-  it('initializes with the correct cacheName and options', () => {
+  test('initializes with the correct cacheName and options', () => {
     const options: CacheOptions = { maxAgeSeconds: 3600, maxEntries: 100 };
     const strategy = new MockStrategy('test-cache', options);
 
@@ -49,7 +54,7 @@ describe('BaseStrategy', () => {
     expect(strategy._options).toEqual(options);
   });
 
-  it('opens a cache with the specified cacheName', async () => {
+  test('opens a cache with the specified cacheName', async () => {
     const strategy = new MockStrategy('test-cache');
     const openCacheSpy = vi.spyOn(caches, 'open');
 
@@ -59,7 +64,18 @@ describe('BaseStrategy', () => {
     expect(cache).toBe(mockCache);
   });
 
-  it('cleans up the cache based on maxAgeSeconds option', async () => {
+  test('ensures a Request object', () => {
+    const strategy = new MockStrategy('test-cache');
+    const request = new Request('https://example.com');
+    const stringRequest = 'https://example.com';
+    const urlRequest = new URL('https://example.com');
+
+    expect(strategy._ensureRequest(request)).toBe(request);
+    expect(strategy._ensureRequest(stringRequest)).toBeInstanceOf(Request);
+    expect(strategy._ensureRequest(urlRequest)).toBeInstanceOf(Request);
+  });
+
+  test('cleans up the cache based on maxAgeSeconds option', async () => {
     const strategy = new MockStrategy('test-cache', { maxAgeSeconds: 1 }); // 1 second for testing
     const mockCache = {
       delete: vi.fn().mockResolvedValue(true),
