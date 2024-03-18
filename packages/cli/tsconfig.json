@@ -1,6 +1,6 @@
 {
   "include": ["./cli.ts"],
-  "exclude": ["dist", "**/__test__", "node_modules"],
+  "exclude": ["dist", "**/__test__", "node_modules", "**/templates/**"],
   "compilerOptions": {
     "baseUrl": ".",
     "lib": ["ES2020", "ESNext", "WebWorker"],
