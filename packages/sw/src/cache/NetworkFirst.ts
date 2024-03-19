@@ -57,7 +57,7 @@ export class NetworkFirst extends BaseStrategy {
    */
   private addTimestampHeader(response: Response): Response {
     const headers = new Headers(response.headers);
-    headers.append(CACHE_TIMESTAMP_HEADER, Date.now().toString());
+    headers.set(CACHE_TIMESTAMP_HEADER, Date.now().toString());
 
     const timestampedResponse = new Response(response.clone().body, {
       status: response.status,
