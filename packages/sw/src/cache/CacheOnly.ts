@@ -2,14 +2,20 @@ import { BaseStrategy, CACHE_TIMESTAMP_HEADER } from './BaseStrategy.js';
 import type { CacheFriendlyOptions, CacheOptions, CacheableResponseOptions } from './types.js';
 
 /**
- * CacheOnly strategy - only serve cached assets, nothing else.
+ * `CacheOnly` strategy - only serve cached assets, nothing else.
+ *
+ * Note, this strategy is not recommended for most use cases, as it will
+ * not handle network requests at all. It's useful for assets that are
+ * expected to be in the cache, and should not be updated.
+ *
+ * Keep in mind that time-to-live (TTL) and other cache validation still
+ * work with this strategy. So if you want to store items forever (a long time),
+ * you'll need to use a high `maxAgeSeconds` value (like 1 year+) and/or manually
+ * manage the cache.
  */
 export class CacheOnly extends BaseStrategy {
-  cacheableResponse: CacheableResponseOptions | false;
-
-  constructor(cacheName: string, options: CacheFriendlyOptions = {}) {
+  constructor(cacheName: string, options: Omit<CacheFriendlyOptions, 'cacheableResponse'> = {}) {
     super(cacheName, options as CacheOptions);
-    this.cacheableResponse = options.cacheableResponse ?? false;
   }
 
   /**
@@ -69,7 +75,6 @@ export class CacheOnly extends BaseStrategy {
    * Override this method to implement custom cache validation.
    */
   private async validateCache() {
-    super.cleanupCache();
-    // Implement validation logic, e.g., based on max items or TTL.
+    await super.cleanupCache();
   }
 }
