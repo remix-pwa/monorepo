@@ -7,6 +7,8 @@ import type { CacheOptions, SWROptions } from './types.js';
 export class StaleWhileRevalidate extends BaseStrategy {
   // private ttl: number;
   // private notifyUpdates: boolean;
+  // For concurrency management
+  private inProgressRequests: Map<string, Promise<Response>> = new Map();
 
   // TODO(ShafSpecs): Add cacheableResponse capabilities to SWR!
 
@@ -24,7 +26,24 @@ export class StaleWhileRevalidate extends BaseStrategy {
 
     const cache = await this.openCache();
     const cachedResponse = await cache.match(request.clone());
-    const networkFetch = fetch(request).then(response => this.updateCache(request, response.clone()));
+
+    // De-duping requests to the same URL (should I implement this for the rest?)
+    const inProgressRequest = this.inProgressRequests.get(request.url);
+    if (inProgressRequest) {
+      // Serve the cached response immediately,
+      // and let the in-progress request handle the background fetch
+      return cachedResponse || inProgressRequest;
+    }
+
+    const networkFetch = fetch(request).then(async response => {
+      // Do a more grandiose, customisable validation
+      // if (response.ok) await this.updateCache(request, response.clone());
+      const res = await this.updateCache(request, response.clone());
+      this.inProgressRequests.delete(request.url);
+      return res;
+    });
+
+    this.inProgressRequests.set(request.url, networkFetch);
 
     return cachedResponse || networkFetch;
   }
