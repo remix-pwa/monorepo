@@ -41,7 +41,7 @@ export abstract class BaseStrategy implements CacheStrategy {
    * @param {Request} request - The request to handle.
    * @returns {Promise<Response>} The response from the cache or network.
    */
-  abstract handleRequest(request: Request | string): Promise<Response>;
+  abstract handleRequest(request: Request | string | URL): Promise<Response>;
 
   /**
    * Optional method to clean up the cache based on the defined options.
