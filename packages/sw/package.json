@@ -60,7 +60,8 @@
     "@types/react": "^18.2.23",
     "react": "^18.2.0",
     "rimraf": "^5.0.5",
-    "terser": "^5.26.0"
+    "terser": "^5.26.0",
+    "vitest-fetch-mock": "^0.2.2"
   },
   "dependencies": {
     "@remix-run/server-runtime": "^2.5.0",
