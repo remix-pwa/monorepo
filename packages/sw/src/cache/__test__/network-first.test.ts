@@ -265,6 +265,8 @@ describe('NetworkFirst Strategy Testing Suite', () => {
     spiedOnCache.mockRestore();
   });
 
+  // Handle non-GET requests frrr...
+
   afterEach(() => {
     fetchMocker.resetMocks();
     vi.restoreAllMocks();
