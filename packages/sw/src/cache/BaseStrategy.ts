@@ -14,7 +14,7 @@ export abstract class BaseStrategy implements CacheStrategy {
    * @param {string} cacheName - The name of the cache.
    * @param {Object} options - Configuration options for the strategy.
    */
-  constructor(cacheName: string, options: CacheOptions = {}) {
+  constructor(cacheName: string, options: CacheOptions = { maxEntries: 50 }) {
     this.cacheName = cacheName;
     this.options = options;
   }
@@ -52,7 +52,7 @@ export abstract class BaseStrategy implements CacheStrategy {
     const requests = await cache.keys();
     const now = Date.now();
 
-    const promises = requests.map(async request => {
+    const maxAgePromises = requests.map(async request => {
       const response = await cache.match(request);
       const timestamp = response?.headers.get(CACHE_TIMESTAMP_HEADER);
 
@@ -65,6 +65,12 @@ export abstract class BaseStrategy implements CacheStrategy {
       }
     });
 
-    await Promise.all(promises);
+    const maxEntriesPromises = requests.map(async (_, index) => {
+      if (index >= (this.options.maxEntries ?? 50)) {
+        await cache.delete(requests[index]);
+      }
+    });
+
+    await Promise.all([maxAgePromises, maxEntriesPromises]);
   }
 }
