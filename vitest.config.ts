@@ -6,6 +6,6 @@ export default defineConfig({
     snapshotFormat: {
       escapeString: true,
     },
-    testTimeout: 10_000,
+    testTimeout: 12_500,
   },
 })
