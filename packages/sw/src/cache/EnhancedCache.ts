@@ -1,9 +1,13 @@
+import { openDB } from 'idb';
+import { gzip, ungzip } from 'pako';
+
 import { CACHE_TIMESTAMP_HEADER, type BaseStrategy } from './BaseStrategy.js';
 import { CacheFirst } from './CacheFirst.js';
 import { CacheOnly } from './CacheOnly.js';
 import { NetworkFirst } from './NetworkFirst.js';
 import { StaleWhileRevalidate } from './StaleWhileRevalidate.js';
 import type { CacheStats, EnhancedCacheOptions, StrategyName } from './types.js';
+import { mergeHeaders } from './utils.js';
 
 /**
  * EnhancedCache is a wrapper around the different caching strategies.
@@ -65,7 +69,7 @@ export class EnhancedCache {
    */
   private addTimestampHeader(response: Response): Response {
     const headers = new Headers(response.headers);
-    headers.append(CACHE_TIMESTAMP_HEADER, Date.now().toString());
+    headers.set(CACHE_TIMESTAMP_HEADER, Date.now().toString());
 
     const timestampedResponse = new Response(response.body, {
       status: response.status,
@@ -89,6 +93,23 @@ export class EnhancedCache {
     const cache = await caches.open(this.cacheName);
     const timestampedResponse = this.addTimestampHeader(response);
     cache.put(request, timestampedResponse.clone());
+  }
+
+  /**
+   * **A forbidden method 🤫. Use `addToCache` instead.**
+   *
+   * Honestly, this can potentially break cache validation and cleanup
+   * entirely if used wrongly (which is all the time). Recommend using
+   * `addToCache` instead.
+   *
+   * @param {Request} request - The request to cache.
+   * @param {Response} response - The response to cache.
+   */
+  async __putInCache(request: Request | string, response: Response) {
+    if (typeof request === 'string') request = new Request(request);
+
+    const cache = await caches.open(this.cacheName);
+    cache.put(request, response.clone());
   }
 
   /**
@@ -171,33 +192,6 @@ export class EnhancedCache {
   }
 
   /**
-   * Updates cached assets with a newer version if available.
-   * Requires server to indicate asset version in response headers.
-   *
-   * @param {string[]} urlList - List of URLs to check for newer versions.
-   * @param {string} header - Header name to check for asset version.
-   * @returns {Promise<void>}
-   */
-  // Middlewares should expand this beyond just actions/loaders
-  async updateAssetsIfNewer(urlList: string[], header = 'X-Asset-Version'): Promise<void> {
-    const cache = await caches.open(this.cacheName);
-
-    urlList.forEach(async url => {
-      const cachedResponse = await cache.match(url);
-
-      if (!cachedResponse) return;
-
-      const cachedVersion = cachedResponse.headers.get(header) ?? 'undefined';
-      const response = await fetch(url);
-      const newVersion = response.headers.get(header) ?? 'undefined';
-
-      if (newVersion !== cachedVersion && response.ok) {
-        await cache.put(url, response);
-      }
-    });
-  }
-
-  /**
    * Caches assets from a list of URLs.
    * Useful for pre-caching critical assets or assets that are not part of the service worker scope.
    *
@@ -205,15 +199,160 @@ export class EnhancedCache {
    * @returns {Promise<void>}
    */
   async preCacheUrls(urlList: string[]): Promise<void> {
-    const cache = await caches.open(this.cacheName);
-
-    urlList.forEach(url => {
-      fetch(url).then(response => {
+    await Promise.all(
+      urlList.map(async url => {
+        const response = await fetch(url);
         if (response.ok) {
-          const modifiedRes = this.addTimestampHeader(response.clone());
-          cache.put(url, modifiedRes);
+          await this.addToCache(url, response);
         }
-      });
+      })
+    );
+  }
+
+  /**
+   * Purges cached resources based on the provided criteria.
+   *
+   * @param {EnhancedCache} cache - The EnhancedCache instance to use.
+   * @param {(entry: { request: Request; response: Response | undefined }) => boolean} filterFn - A function that filters cache entries to be purged.
+   * @returns {Promise<void>}
+   */
+  static async purgeCache(
+    cache: EnhancedCache,
+    filterFn: (entry: { request: Request; response: Response | undefined }) => boolean
+  ): Promise<void> {
+    const entries = await cache.getCacheEntries();
+    const entriesToPurge = entries.filter(filterFn);
+
+    const purgingPromises = entriesToPurge.map(({ request }) => cache.removeFromCache(request));
+    await Promise.all(purgingPromises);
+  }
+
+  /**
+   * Visualizes the cache contents in a tree-like structure.
+   *
+   * @param {EnhancedCache} cache - The EnhancedCache instance to use.
+   * @returns {Promise<void>}
+   */
+  static async visualizeCache(cache: EnhancedCache): Promise<unknown> {
+    const entries = await cache.getCacheEntries();
+
+    const tree = entries.reduce((acc, { request, response }) => {
+      const url = new URL(request.url);
+      const path = url.pathname.split('/').filter(Boolean);
+      let currentLevel: any = acc;
+
+      for (const part of path) {
+        if (!currentLevel[part]) {
+          currentLevel[part] = {};
+        }
+        currentLevel = currentLevel[part];
+      }
+
+      currentLevel.request = request;
+      currentLevel.response = response;
+
+      return acc;
+    }, {});
+
+    return tree;
+  }
+
+  // You can extend this class easily, if you want to compress and
+  // de-compress, by default.
+  /**
+   * Compresses a response body using Pako (zlib).
+   *
+   * @param {Response} response - The response to compress.
+   * @returns {Promise<Response>}
+   */
+  static async compressResponse(response: Response): Promise<Response> {
+    const compressed = gzip(await response.arrayBuffer());
+    const compressedResponse = new Response(compressed, {
+      headers: mergeHeaders(response.headers, {
+        'Content-Encoding': 'gzip',
+        'Content-Type': response.headers.get('Content-Type') || 'plain/text',
+      }),
     });
+    return compressedResponse;
+  }
+
+  /**
+   * Decompresses a compressed response body.
+   *
+   * @param {Response} response - The compressed response to decompress.
+   * @returns {Promise<Response>}
+   */
+  static async decompressResponse(response: Response): Promise<Response> {
+    const decompressed = ungzip(await response.arrayBuffer());
+    const decompressedResponse = new Response(decompressed, {
+      headers: mergeHeaders(response.headers, {
+        'Content-Type': response.headers.get('Content-Type') || 'plain/text',
+      }),
+    });
+    return decompressedResponse;
+  }
+
+  /**
+   * Persists cached resources to IndexedDB.
+   *
+   * @param {EnhancedCache} cache - The EnhancedCache instance to use.
+   * @param {string} storeName - The name of the IndexedDB store to use.
+   * @returns {Promise<void>}
+   */
+  static async persistCache(cache: EnhancedCache, storeName: string): Promise<void> {
+    const db = await openDB('cache-store', 1, {
+      upgrade(db) {
+        db.createObjectStore(storeName);
+      },
+    });
+
+    const entries = await cache.getCacheEntries();
+    const tx = db.transaction(storeName, 'readwrite');
+    const store = tx.objectStore(storeName);
+
+    await Promise.all(
+      entries.map(async ({ request, response }) => {
+        if (response) {
+          // const _cache = await caches.open(cache.cacheName);
+          // const cachedResponse = await _cache.put(request, response.clone());
+          await store.put(response, request.url);
+        }
+      })
+    );
+
+    await tx.done;
+  }
+
+  /**
+   * Restores cached resources from IndexedDB.
+   *
+   * @param {EnhancedCache} cache - The EnhancedCache instance to use.
+   * @param {string} storeName - The name of the IndexedDB store to use.
+   * @param {boolean} restoreTtl - Whether to restore the previous timestamp header or not (reset time-to-live)
+   * @returns {Promise<void>}
+   */
+  static async restoreCache(cache: EnhancedCache, storeName: string, restoreTtl = false): Promise<void> {
+    const db = await openDB('cache-store', 1);
+    const tx = db.transaction(storeName, 'readonly');
+    const store = tx.objectStore(storeName);
+    const cursors = await store.openCursor();
+
+    if (cursors !== null) {
+      const restorePromises = [];
+      for await (const cursor of cursors) {
+        const request = new Request(String(cursor.key));
+        const response = await cursor.value;
+
+        if (restoreTtl) {
+          restorePromises.push(cache.__putInCache(request, response));
+        } else {
+          restorePromises.push(cache.addToCache(request, response));
+        }
+      }
+
+      await Promise.all(restorePromises);
+    }
+
+    await tx.done;
   }
 }
