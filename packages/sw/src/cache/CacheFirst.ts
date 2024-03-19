@@ -22,21 +22,25 @@ export class CacheFirst extends BaseStrategy {
     const request = this.ensureRequest(req);
 
     const cache = await this.openCache();
-    let response = await cache.match(request.clone());
+    const response = await cache.match(request.clone());
 
-    if (!response) {
-      response = await fetch(request);
-      if (await this.validateResponse(response.clone())) {
-        await this.putInCache(request, response.clone());
-        this.validateCache();
+    if (!response || !(await this.validateResponse(response.clone())) || !(await this.shouldMatch(response.clone()))) {
+      const _response = await fetch(request);
+
+      if (await this.validateResponse(_response.clone())) {
+        await this.putInCache(request, _response.clone());
+        await this.validateCache();
       }
+
+      return _response;
     }
 
     return response.clone();
   }
 
   /**
-   * Puts a response into the cache.
+   * Puts a response into the cache with a remix-pwa-specific header.
+   *
    * @param {Request} request - The request to cache.
    * @param {Response} response - The response to cache.
    */
@@ -80,11 +84,38 @@ export class CacheFirst extends BaseStrategy {
     return isStatusValid && isHeaderValid;
   }
 
+  private async shouldMatch(response: Response): Promise<boolean> {
+    const timestamp = response.headers.get(CACHE_TIMESTAMP_HEADER);
+
+    if (!timestamp) {
+      return false;
+    }
+
+    const now = Date.now();
+    const maxAge = this.options.maxAgeSeconds ?? 2_592_000;
+    const isExpired = now - parseInt(timestamp, 10) > maxAge * 1_000;
+
+    if (isExpired) {
+      return false;
+    }
+
+    const maxEntries = this.options.maxEntries ?? 50;
+    const cache = await this.openCache();
+    const requests = await cache.keys();
+    const isOverMaxEntries = requests.length > maxEntries;
+
+    if (isOverMaxEntries) {
+      return false;
+    }
+
+    return true;
+  }
+
   /**
    * Validates the cache based on custom logic (e.g., max items, TTL).
    * Override this method to implement custom cache validation.
    */
   private async validateCache() {
-    super.cleanupCache();
+    await super.cleanupCache();
   }
 }
