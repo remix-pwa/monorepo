@@ -47,7 +47,7 @@ export class NetworkFirst extends BaseStrategy {
     const cache = await this.openCache();
     const timestampedResponse = this.addTimestampHeader(response.clone());
     cache.put(request, timestampedResponse.clone());
-    this.cleanupCache();
+    await super.cleanupCache();
   }
 
   /**
