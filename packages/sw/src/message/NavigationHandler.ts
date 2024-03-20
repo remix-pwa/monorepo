@@ -1,4 +1,5 @@
-import { EnhancedCache } from '../cache/index.js';
+import type { EnhancedCache } from '../cache/index.js';
+import { logger } from '../private/logger.js';
 import { MessageHandler } from './MessageHandler.js';
 
 /**
@@ -20,7 +21,7 @@ export type NavigationHandlerOptions = {
   /**
    * The cache to use for handling the navigation event - caching the HTML responses.
    */
-  documentCache: EnhancedCache | string;
+  cache: EnhancedCache;
 };
 
 /**
@@ -28,40 +29,36 @@ export type NavigationHandlerOptions = {
  * as the user navigates between pages.
  */
 export class NavigationHandler extends MessageHandler {
-  private _allowList: string[] | RegExp[];
-  private _denyList: string[] | RegExp[];
-  private _documentCache: EnhancedCache;
+  private allowList: string[] | RegExp[];
+  private denyList: string[] | RegExp[];
+  private documentCache: EnhancedCache;
 
   constructor(options: NavigationHandlerOptions) {
     super('REMIX_NAVIGATION');
-    this._allowList = options.allowList || [];
-    this._denyList = options.denyList || [];
 
-    if (typeof options.documentCache === 'string') {
-      this._documentCache = new EnhancedCache(options.documentCache);
-    } else {
-      this._documentCache = options.documentCache;
-    }
+    this.allowList = options.allowList || [];
+    this.denyList = options.denyList || [];
+    this.documentCache = options.cache;
 
-    this.bind(this._handleMessage, this);
+    this.bind(this.handleNavigation.bind(this));
   }
 
-  async _handleMessage(event: ExtendableMessageEvent) {
+  private async handleNavigation(event: any) {
     const { data } = event;
+    const { location } = data.payload;
+    const documentUrl = location.pathname + location.search + location.hash;
 
-    if (data.type === 'REMIX_NAVIGATION') {
-      const { location } = data.payload;
-      const documentUrl = location.pathname + location.search + location.hash;
+    if (
+      (this.allowList.length > 0 && !this.allowList.some(pattern => documentUrl.match(pattern))) ||
+      (this.denyList.length > 0 && this.denyList.some(pattern => documentUrl.match(pattern)))
+    ) {
+      return;
+    }
 
-      if (this._allowList.length > 0 && !this._allowList.some(pattern => documentUrl.match(pattern))) {
-        return;
-      }
-
-      if (this._denyList.length > 0 && this._denyList.some(pattern => documentUrl.match(pattern))) {
-        return;
-      }
-
-      await this._documentCache.handleRequest(documentUrl);
+    try {
+      await this.documentCache.handleRequest(documentUrl);
+    } catch (error) {
+      logger.error(`Error handling document request for ${documentUrl}:`, error);
     }
   }
 }
