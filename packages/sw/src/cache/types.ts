@@ -73,6 +73,45 @@ export type EnhancedCacheOptions = {
 );
 
 export type CacheStats = {
-  itemCount: number;
+  /**
+   * The total number of items in the cache.
+   */
+  length: number;
+  /**
+   * The total size of items in the cache (in kilobytes)
+   */
   totalSize: number;
+  /**
+   * The distribution of cache items by content type (in percentages).
+   *
+   * This metric can help you understand which types of resources
+   * are being cached more effectively or require optimizations.
+   */
+  cacheDistribution: Record<string, number>;
+  /**
+   * The hit ratio of the cache. The ratio of cache hits to total requests.
+   *
+   * This metric can help you understand how effectively the cache is serving
+   * resources without needing to fetch from the network.
+   */
+  cacheHitRatio: number;
+  /**
+   * The efficiency of the cache. The ratio of cache
+   * hits to the total size of the cache (in percentage).
+   *
+   * This metric can help you understand how efficiently the cache is being utilized.
+   */
+  cacheEfficiency: number;
+  /**
+   * The average age of items in the cache (in seconds).
+   */
+  averageCacheAge: number;
+  /**
+   * The ratio of the total size of compressed cached resources to the
+   * total size of uncompressed cached resources (in percentage).
+   *
+   * This metric can help you understand the effectiveness of cache compression
+   * and the potential storage savings.
+   */
+  cacheCompressionRatio: number;
 };
