@@ -30,6 +30,8 @@ import { mergeHeaders } from './utils.js';
 export class EnhancedCache {
   readonly cacheName: string;
   private strategy: BaseStrategy;
+  private cacheHits = 0;
+  private totalRequests = 0;
 
   constructor(cacheName: string, options: EnhancedCacheOptions = {}) {
     this.cacheName = `${cacheName}-${options.version || 'v1'}`;
@@ -58,8 +60,15 @@ export class EnhancedCache {
    * @param request - The request to dynamically handle.
    * @returns {Promise<Response>} The response from the cache or network.
    */
-  async handleRequest(request: Request | string): Promise<Response> {
-    return await this.strategy.handleRequest(request);
+  async handleRequest(request: Request | string | URL): Promise<Response> {
+    this.totalRequests++;
+
+    const response = await this.strategy.handleRequest(request);
+    if (response && response.ok && response.headers.get('X-Cache-Hit') === 'true') {
+      this.cacheHits++;
+    }
+
+    return response;
   }
 
   /**
@@ -87,8 +96,8 @@ export class EnhancedCache {
    * @param {Request} request - The request to cache.
    * @param {Response} response - The response to cache.
    */
-  async addToCache(request: Request | string, response: Response) {
-    if (typeof request === 'string') request = new Request(request);
+  async addToCache(request: Request | string | URL, response: Response) {
+    if (typeof request === 'string' || request instanceof URL) request = new Request(request);
 
     const cache = await caches.open(this.cacheName);
     const timestampedResponse = this.addTimestampHeader(response);
@@ -120,7 +129,7 @@ export class EnhancedCache {
    * @returns {Promise<void>}
    */
   async removeFromCache(request: Request | string | URL): Promise<void> {
-    if (typeof request === 'string') request = new URL(request);
+    if (typeof request === 'string' || request instanceof URL) request = new Request(request);
 
     const cache = await caches.open(this.cacheName);
     await cache.delete(request);
@@ -174,19 +183,52 @@ export class EnhancedCache {
    */
   async getCacheStats(): Promise<CacheStats> {
     const entries = await this.getCacheEntries();
-    const stats = {
-      itemCount: entries.length,
+    const stats: CacheStats = {
+      length: entries.length,
       totalSize: 0,
+      cacheDistribution: {},
+      cacheHitRatio: this.totalRequests ? this.cacheHits / this.totalRequests : 0,
+      cacheEfficiency: 0,
+      averageCacheAge: 0,
+      cacheCompressionRatio: 0,
     };
+
+    const cacheAges = [];
+    let totalUncompressedSize = 0;
+    let totalCompressedSize = 0;
 
     for (const entry of entries) {
       const response = entry.response;
       if (response) {
+        const contentType = response.headers.get('Content-Type') || 'unknown';
+        const contentEncoding = response.headers.get('Content-Encoding');
+        const timestamp = response.headers.get(CACHE_TIMESTAMP_HEADER) || Date.now().toString();
+
         const clonedResponse = response.clone();
-        const blob = await clonedResponse.blob();
-        stats.totalSize += blob.size;
+        const contentLength = response.headers.get('Content-Length');
+
+        const size = contentLength ? parseInt(contentLength, 10) : (await clonedResponse.blob()).size;
+
+        if (contentEncoding === 'gzip' || contentEncoding === 'br') {
+          totalCompressedSize += size;
+        } else {
+          totalUncompressedSize += size;
+        }
+
+        stats.cacheDistribution[contentType] = (stats.cacheDistribution[contentType] || 0) + size;
+        stats.totalSize += size;
+        // stats.cacheEfficiency = stats.totalSize / (1024 * 1024); // in MB
+        stats.cacheEfficiency = (this.cacheHits / stats.totalSize) * 100; // in percentage
+        cacheAges.push(Date.now() - parseInt(timestamp, 10));
       }
     }
+
+    stats.averageCacheAge = cacheAges.reduce((acc, age) => acc + age, 0) / cacheAges.length / 1_000; // in seconds
+    for (const contentType in stats.cacheDistribution) {
+      stats.cacheDistribution[contentType] = (stats.cacheDistribution[contentType] / stats.totalSize) * 100;
+    }
+    stats.totalSize = stats.totalSize / 1024;
+    stats.cacheCompressionRatio = totalUncompressedSize ? (totalCompressedSize / totalUncompressedSize) * 100 : 0; // in percentage
 
     return stats;
   }
