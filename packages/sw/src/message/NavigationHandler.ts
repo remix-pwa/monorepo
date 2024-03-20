@@ -1,5 +1,5 @@
 import type { EnhancedCache } from '../cache/index.js';
-import { logger } from '../private/logger.js';
+import { logger } from '../logger/logger.js';
 import { MessageHandler } from './MessageHandler.js';
 
 /**

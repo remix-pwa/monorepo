@@ -1,6 +1,6 @@
 import type { AssetsManifest } from '@remix-run/dev';
 
-import { logger } from '../private/logger.js';
+import { logger } from '../logger/logger.js';
 
 declare global {
   interface Window {
@@ -18,6 +18,8 @@ export type LoadServiceWorkerOptions = {
 };
 
 /**
+ * **Deprecated**
+ *
  * Load service worker in `entry.client` when the client gets hydrated.
  *
  * All parameters are optional.

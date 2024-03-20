@@ -1,5 +1,5 @@
 {
-  "include": ["./**/*.ts", "package.json", "src/react/LiveReload.tsx"],
+  "include": ["./**/*.ts", "package.json", "src/components/ManifestLink.tsx"],
   "exclude": ["dist", "./**/__tests__",  "./**/__test__", "node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
