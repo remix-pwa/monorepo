@@ -44,7 +44,7 @@ export class CacheFirst extends BaseStrategy {
    * @param {Request} request - The request to cache.
    * @param {Response} response - The response to cache.
    */
-  private async putInCache(request: Request, response: Response) {
+  async putInCache(request: Request, response: Response) {
     const cache = await this.openCache();
     const timestampedResponse = this.addTimestampHeader(response.clone());
     cache.put(request, timestampedResponse.clone());
@@ -85,10 +85,23 @@ export class CacheFirst extends BaseStrategy {
   }
 
   private async shouldMatch(response: Response): Promise<boolean> {
+    const maxEntries = this.options.maxEntries ?? 50;
+    const cache = await this.openCache();
+    const requests = await cache.keys();
+    const isOverMaxEntries = requests.length > maxEntries;
+
+    if (isOverMaxEntries) {
+      return false;
+    }
+
     const timestamp = response.headers.get(CACHE_TIMESTAMP_HEADER);
 
     if (!timestamp) {
-      return false;
+      // should be `false`?
+      // Very gatekeeping imo to be false
+      // as that means it's not a valid response
+      // without a timestamp
+      return true;
     }
 
     const now = Date.now();
@@ -96,15 +109,6 @@ export class CacheFirst extends BaseStrategy {
     const isExpired = now - parseInt(timestamp, 10) > maxAge * 1_000;
 
     if (isExpired) {
-      return false;
-    }
-
-    const maxEntries = this.options.maxEntries ?? 50;
-    const cache = await this.openCache();
-    const requests = await cache.keys();
-    const isOverMaxEntries = requests.length > maxEntries;
-
-    if (isOverMaxEntries) {
       return false;
     }
 
