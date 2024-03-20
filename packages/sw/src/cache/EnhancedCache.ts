@@ -177,8 +177,9 @@ export class EnhancedCache {
   }
 
   /**
-   * Provides cache statistics like number of items and total size.
+   * Provides cache statistics like cache length, cache hit ratio and total size.
    * Useful for debugging or cache inspection.
+   *
    * @returns {Promise<CacheStats>}
    */
   async getCacheStats(): Promise<CacheStats> {
