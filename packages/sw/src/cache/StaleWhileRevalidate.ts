@@ -1,5 +1,6 @@
 import { BaseStrategy, CACHE_TIMESTAMP_HEADER } from './BaseStrategy.js';
 import type { CacheOptions, SWROptions } from './types.js';
+import { mergeHeaders } from './utils.js';
 
 /**
  * StaleWhileRevalidate strategy - serves from cache, then updates the cache from the network.
@@ -25,7 +26,15 @@ export class StaleWhileRevalidate extends BaseStrategy {
     const request = this.ensureRequest(req);
 
     const cache = await this.openCache();
-    const cachedResponse = await cache.match(request.clone());
+    let cachedResponse = await cache.match(request.clone());
+
+    if (cachedResponse) {
+      cachedResponse = new Response(cachedResponse.body, {
+        status: cachedResponse.status,
+        statusText: cachedResponse.statusText,
+        headers: mergeHeaders(cachedResponse.headers, { 'X-Cache-Hit': 'true' }),
+      });
+    }
 
     // De-duping requests to the same URL (should I implement this for the rest?)
     const inProgressRequest = this.inProgressRequests.get(request.url);

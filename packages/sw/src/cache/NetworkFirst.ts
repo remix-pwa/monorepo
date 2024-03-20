@@ -1,5 +1,6 @@
 import { BaseStrategy, CACHE_TIMESTAMP_HEADER } from './BaseStrategy.js';
 import type { CacheOptions, CacheableResponseOptions, NetworkFriendlyOptions } from './types.js';
+import { mergeHeaders } from './utils.js';
 
 /**
  * NetworkFirst strategy - prioritizes network responses, falling back to cache.
@@ -32,7 +33,12 @@ export class NetworkFirst extends BaseStrategy {
       const cache = await this.openCache();
       const response = await cache.match(request);
 
-      if (response) return response;
+      if (response)
+        return new Response(response.body, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: mergeHeaders(response.headers, { 'X-Cache-Hit': 'true' }),
+        });
 
       throw new Error('No response received from fetch: Timeout');
     }

@@ -1,5 +1,6 @@
 import { BaseStrategy, CACHE_TIMESTAMP_HEADER } from './BaseStrategy.js';
 import type { CacheFriendlyOptions, CacheOptions, CacheableResponseOptions } from './types.js';
+import { mergeHeaders } from './utils.js';
 
 /**
  * `CacheOnly` strategy - only serve cached assets, nothing else.
@@ -36,7 +37,11 @@ export class CacheOnly extends BaseStrategy {
 
     await this.validateCache();
 
-    return response;
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: mergeHeaders(response.headers, { 'X-Cache-Hit': 'true' }),
+    });
   }
 
   /**

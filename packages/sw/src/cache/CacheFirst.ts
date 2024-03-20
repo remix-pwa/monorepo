@@ -1,5 +1,6 @@
 import { BaseStrategy, CACHE_TIMESTAMP_HEADER } from './BaseStrategy.js';
 import type { CacheFriendlyOptions, CacheOptions, CacheableResponseOptions } from './types.js';
+import { mergeHeaders } from './utils.js';
 
 /**
  * CacheFirst strategy - prioritizes cached responses, falling back to network.
@@ -35,7 +36,11 @@ export class CacheFirst extends BaseStrategy {
       return _response;
     }
 
-    return response.clone();
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: mergeHeaders(response.headers, { 'X-Cache-Hit': 'true' }),
+    });
   }
 
   /**
