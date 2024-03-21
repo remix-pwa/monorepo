@@ -15,6 +15,9 @@ export async function buildWorker(_ctx: PWAPluginContext) {
       logLevel: 'error',
       configFile: false,
       appType: undefined,
+      define: {
+        'process.env.NODE_ENV': JSON.stringify(_ctx.isDev ? 'development' : 'production'),
+      },
       plugins: [
         esbuild({
           platform: 'browser',
@@ -24,6 +27,9 @@ export async function buildWorker(_ctx: PWAPluginContext) {
           logLevel: 'error',
           sourcefile: _ctx.options.workerEntryPoint,
           charset: 'utf8',
+          define: {
+            'process.env.NODE_ENV': JSON.stringify(_ctx.isDev ? 'development' : 'production'),
+          },
           supported: {
             'import-meta': true,
           },
