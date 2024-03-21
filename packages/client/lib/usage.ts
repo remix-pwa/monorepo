@@ -1,87 +1,37 @@
-import { errorBlock } from './utils';
-
-// Experimental!!! Why did I even implement this?!
-// export const idleDetection = async (
-//   action = 'start',
-//   callback = () => {
-//     // Idle.
-//   },
-//   threshold = 60000
-// ) => {
-//   try {
-//     if ('IdleDetector' in window) {
-//       const state = await IdleDetector.requestPermission();
-//       if (state === 'granted') {
-//         const controller = new AbortController();
-//         const signal = controller.signal;
-//         const idleDetector = new IdleDetector();
-//         idleDetector.addEventListener('change', () => {
-//           const userState = idleDetector.userState;
-//           if (userState === 'idle') callback();
-//         });
-//         if (action === 'start') {
-//           await idleDetector.start({
-//             threshold: threshold > 60000 ? threshold : 60000,
-//             signal,
-//           });
-//           return { ok: true, message: 'Started' };
-//         } else {
-//           controller.abort();
-//           return { ok: true, message: 'Aborted' };
-//         }
-//       } else {
-//         return { ok: false, message: 'Need to request permission first' };
-//       }
-//     } else {
-//       return { ok: false, message: 'Idle Detection API not supported' };
-//     }
-//   } catch (error) {
-//     return errorBlock(error);
-//   }
-// };
-
-export const wakeLock = async () => {
+export const wakeLock = async (): Promise<WakeLockSentinel | undefined> => {
   try {
     if ('wakeLock' in navigator) {
       const wakeLock = await navigator.wakeLock.request('screen');
 
       if (wakeLock) {
-        return { ok: true, message: 'WakeLock Active' };
-      } else {
-        return { ok: false, message: 'WakeLock Failed' };
+        return wakeLock;
       }
-    } else {
-      return { ok: false, message: 'WakeLock API not supported' };
     }
   } catch (error) {
-    return errorBlock(error);
+    console.error(error);
   }
 };
 
-export const checkVisibility = async (isVisible: () => void, notAvailable: () => void) => {
+export const checkVisibility = async (isVisible: () => void, notAvailable: () => void): Promise<boolean> => {
   try {
     if (document.visibilityState) {
       const state = document.visibilityState;
       if (state === 'visible') {
         isVisible();
-        return { ok: true, message: 'Visible' };
+        return true;
       }
+
+      return false;
     } else {
       notAvailable();
-      return {
-        ok: false,
-        message: 'Visibility API not supported',
-      };
+      return false;
     }
   } catch (error) {
-    return errorBlock(error);
+    console.error(error);
+    return false;
   }
 };
 
 export const wakeLockSupported = () => {
-  try {
-    return 'wakeLock' in navigator;
-  } catch (error) {
-    return errorBlock(error);
-  }
+  return navigator && 'wakeLock' in navigator;
 };

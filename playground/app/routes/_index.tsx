@@ -1,3 +1,4 @@
+import { usePWAManager } from "@remix-pwa/client";
 import type { LoaderFunction} from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link } from "@remix-run/react";
@@ -20,6 +21,8 @@ const CustomLink = ({ href, children }: any) => {
 }
 
 export default function Index() {
+  const { promptInstall } = usePWAManager();
+
   return (
     <div className="w-full h-screen flex flex-col px-6 mx-auto max-w-3xl">
       <div className="py-8 flex justify-between">
@@ -27,7 +30,8 @@ export default function Index() {
         <button
           type="submit"
           onClick={() => {
-            alert("You're logged in!\n\nActually nothing happened 😅. Yet.");
+            // alert("You're logged in!\n\nActually nothing happened 😅. Yet.");
+            promptInstall();
           }}
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
         >

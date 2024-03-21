@@ -1,4 +1,5 @@
-export { badgingSupported, clearBadge, setBadge } from './lib/badge';
+export { clearBadge, isBadgingSupported, setBadgeCount } from './lib/badge';
+export { getBatteryStatus } from './lib/battery';
 export {
   clipboardSupported,
   copyImageToClipboard,
@@ -6,8 +7,10 @@ export {
   readFilesFromClipboard,
   readTextFromClipboard,
 } from './lib/clipboard';
-export { checkConnectivity } from './lib/connectivity';
-export { shareData } from './lib/share';
+export { handleNetworkChange, isOffline, isOnline } from './lib/connectivity';
+export { openContactPicker } from './lib/contacts';
+export { displayMode, toggleFullScreen } from './lib/display';
+export { shareSupported as isShareSupported, shareData } from './lib/share';
 export { checkVisibility, wakeLock, wakeLockSupported } from './lib/usage';
 export {
   getBrowser,
@@ -31,8 +34,15 @@ export {
   isMacOSEdge,
   isOpera,
   isSafari,
+  isTouchAvailable,
   isTouchScreen,
+  isWindowAvailable,
   isWindows,
   isWindowsChrome,
   isWindowsEdge,
 } from './lib/user-agent';
+
+export { useBadgeApi } from './hooks/useBadgeApi';
+export { useBatteryManager } from './hooks/useBatteryManager';
+export { useNetworkConnectivity } from './hooks/useNetworkConnectivity';
+export { usePWAManager } from './hooks/usePWAManager';
