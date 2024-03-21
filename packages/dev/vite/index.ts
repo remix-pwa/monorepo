@@ -6,7 +6,7 @@ import { LoaderPlugin } from './plugins/loader.js';
 import { EntryPlugin } from './plugins/main.js';
 import type { PWAOptions } from './types.js';
 
-export function RemixPWA(pwaOptions: Partial<PWAOptions> = {}): Plugin[] {
+export function remixPWA(pwaOptions: Partial<PWAOptions> = {}): Plugin[] {
   const ctx = createContext();
 
   return <Plugin[]>[EntryPlugin(ctx, pwaOptions), BundlerPlugin(ctx), LoaderPlugin(ctx)];
