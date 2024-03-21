@@ -98,7 +98,6 @@ export class Logger {
     if (isProductionEnv) return;
 
     const method = level;
-    // const self = typeof globalThis.self !== 'undefined' ? globalThis.self : globalThis;
 
     if (method === 'groupCollapsed') {
       if (/^((?!chrome|android).*safari)/i.test(navigator.userAgent)) {
