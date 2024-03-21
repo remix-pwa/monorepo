@@ -25,7 +25,7 @@ export async function workerLoader ({ context }: any) {
     fetchFromServer()
       .then((response: any) => response.json())
       .then(({ message }: any) => message),
-    new Promise((resolve) => setTimeout(resolve, 500, 'Hello World!\n\n• This message is sent to you from the client 😜!'))
+    new Promise((resolve) => setTimeout(resolve, 500, 'Hello World!\n\n• This message is sent to you from the client 😜 (Edited, again ---)!'))
   ]);
 
   return new Response(JSON.stringify({

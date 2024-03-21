@@ -10,7 +10,7 @@ export const loader = async () => {
   const date = new Date();
 
   return json({
-    data: `Some random data --- 0xb8000. Time: ${date.getMinutes()}:${date.getSeconds()}`,
+    data: `Some random data --- 0xb8000 ----. Time: ${date.getMinutes()}:${date.getSeconds()}`,
     message: `Starting up the server at ${date.getMinutes()}:${date.getSeconds()}...`
   });
 }
@@ -25,6 +25,7 @@ export const workerLoader = async ({ context }: any) => {
       maxItems: 5,
       ttl: 30 * 1_000 // 30 seconds time-to-live (maxAge)
     },
+
     fetchDidFail: [
       () => console.log('Fetch failed!')
     ]
