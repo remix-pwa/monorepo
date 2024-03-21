@@ -72,8 +72,6 @@ export class Logger {
         fontWeight: 'bold',
         padding: '2px 0.5em',
       },
-      // groupCollapsed: 'background: #3498db; color: white; border-radius: 0.5em; font-weight: bold; padding: 2px 0.5em;',
-      // groupEnd: 'color: white; border-radius: 0.5em; font-weight: bold; padding: 2px 0.5em;',
     },
     logLevel: 'debug',
     isProductionEnv: process.env.NODE_ENV === 'production',
