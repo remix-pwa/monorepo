@@ -1,5 +1,5 @@
 import type { Location } from '@remix-run/react';
-import { useLocation, useRevalidator } from '@remix-run/react';
+import { useLocation } from '@remix-run/react';
 import { useEffect, useRef } from 'react';
 interface SWMessagePayload {
   location: Location<any>;
@@ -18,12 +18,7 @@ export type UseSWEffectOptions =
  */
 export function useSWEffect(options: UseSWEffectOptions = { cacheType: 'jit' }): void {
   const location = useLocation();
-  const revalidator = useRevalidator();
   const messageDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    revalidator.revalidate();
-  }, []);
 
   useEffect(() => {
     const sendMessageToSW = (event: string, payload: SWMessagePayload) => {
