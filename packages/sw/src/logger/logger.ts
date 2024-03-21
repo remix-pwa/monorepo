@@ -1,6 +1,6 @@
 export type LogLevel = 'debug' | 'info' | 'log' | 'warn' | 'error' | 'groupCollapsed' | 'groupEnd';
 
-interface LoggerStyles {
+export interface LoggerStyles {
   background: string;
   borderRadius: string;
   color: string;
@@ -9,7 +9,7 @@ interface LoggerStyles {
   [key: string]: string;
 }
 
-interface LoggerOptions {
+export interface LoggerOptions {
   prefix: string;
   styles: {
     [level in LogLevel]: LoggerStyles;
