@@ -12,7 +12,6 @@ declare global {
       assets: string[];
       routes: build.WorkerRouteManifest;
     };
-    __messageHandlers: Map<string, (event: ExtendableMessageEvent) => Promise<void>>;
   }
 }
 
@@ -49,7 +48,6 @@ _self.__workerManifest = {
   assets: [],
   routes: build.routes,
 };
-if (!_self.__messageHandlers || typeof _self.__messageHandlers === 'undefined') _self.__messageHandlers = new Map();
 
 // DO NOT OVERRIDE!!!
 _self.addEventListener(
@@ -69,13 +67,3 @@ _self.addEventListener(
     return (event as FetchEvent).respondWith(response);
   }
 );
-
-_self.addEventListener('message', event => {
-  if (event.data && event.data.type) {
-    const handler = _self.__messageHandlers.get(event.data.type);
-
-    if (handler) {
-      handler(event);
-    }
-  }
-});
