@@ -1,6 +1,6 @@
 // Vite ✨
-export { remixPWA } from './vite/index.js';
-export type { PWAOptions as PWAViteOptions } from './vite/types.js';
+export { remixPWA } from './src/index.js';
+export type { PWAOptions as PWAViteOptions } from './src/types.js';
 
 export interface WebAppManifest {
   /**

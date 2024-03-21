@@ -2,10 +2,10 @@ import type { RouteManifest } from '@remix-run/dev/dist/config/routes.js';
 import { readFile } from 'fs/promises';
 import { resolve } from 'pathe';
 import type { Plugin } from 'vite';
-import type { PWAPluginContext } from 'vite/types.js';
 
 import { parse } from '../babel.js';
 import { resolveRouteWorkerApis } from '../resolve-route-workers.js';
+import type { PWAPluginContext } from '../types.js';
 import * as VirtualModule from '../vmod.js';
 
 export const shouldIgnoreRoute = (route: string, patterns: string[]): boolean => {

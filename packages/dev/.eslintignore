@@ -3,4 +3,3 @@
 **/templates/**/*.ts
 **/templates/**/*.js
 **/dist/**
-compiler/plugins/assets-module.ts
