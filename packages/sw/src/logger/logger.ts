@@ -1,155 +1,100 @@
-/* eslint-disable no-var */
-// these only become globals with var
-declare global {
-  /**
-   * Disable all logs from displaying in the console.
-   *
-   * @default false
-   */
-  var __DISABLE_PWA_DEV_LOGS: boolean;
-  /**
-   * Disable debug logs from displaying in the console.
-   *
-   * @default false
-   */
-  var __DISABLE_PWA_DEBUG_LOGS: boolean;
-  /**
-   * Disable info logs from displaying in the console.
-   *
-   * @default false
-   */
-  var __DISABLE_PWA_INFO_LOGS: boolean;
-  /**
-   * Disable warning logs from displaying in the console.
-   *
-   * @default false
-   */
-  var __DISABLE_PWA_WARN_LOGS: boolean;
-  /**
-   * Disable error logs from displaying in the console.
-   *
-   * @default false
-   */
-  var __DISABLE_PWA_ERROR_LOGS: boolean;
+export type LogLevel = 'debug' | 'info' | 'log' | 'warn' | 'error' | 'groupCollapsed' | 'groupEnd';
+
+interface LoggerOptions {
+  prefix: string;
+  styles: {
+    [level in LogLevel]: string;
+  };
+  logLevel: LogLevel;
+  isProductionEnv: boolean;
 }
-/* eslint-enable no-var */
 
-export type LoggerMethods = 'debug' | 'info' | 'log' | 'warn' | 'error' | 'groupCollapsed' | 'groupEnd';
+export class Logger {
+  static defaultOptions: LoggerOptions = {
+    prefix: 'remix-pwa',
+    styles: {
+      debug: 'background: #7f8c8d; color: white; border-radius: 0.5em; font-weight: bold; padding: 2px 0.5em;',
+      info: 'background: #3498db; color: white; border-radius: 0.5em; font-weight: bold; padding: 2px 0.5em;',
+      log: 'background: #2ecc71; color: white; border-radius: 0.5em; font-weight: bold; padding: 2px 0.5em;',
+      warn: 'background: #f39c12; color: white; border-radius: 0.5em; font-weight: bold; padding: 2px 0.5em;',
+      error: 'background: #c0392b; color: white; border-radius: 0.5em; font-weight: bold; padding: 2px 0.5em;',
+      groupCollapsed: 'background: #3498db; color: white; border-radius: 0.5em; font-weight: bold; padding: 2px 0.5em;',
+      groupEnd: 'color: white; border-radius: 0.5em; font-weight: bold; padding: 2px 0.5em;',
+    },
+    logLevel: 'debug',
+    isProductionEnv: process.env.NODE_ENV === 'production',
+  };
 
-const methodToColorMap: { [methodName: string]: string | null } = {
-  debug: `#7f8c8d`, // Gray
-  log: `#2ecc71`, // Green
-  info: `#3498db`, // Blue
-  warn: `#f39c12`, // Yellow
-  error: `#c0392b`, // Red
-  groupCollapsed: `#3498db`, // Blue
-  groupEnd: null, // No colored prefix on groupEnd
-};
+  private options: LoggerOptions;
+  private inGroup = false;
 
-export const logger = (
-  process.env.NODE_ENV === 'production'
-    ? (() => {
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        const api: { [methodName: string]: Function } = {};
-        const loggerMethods = Object.keys(methodToColorMap);
+  constructor(options?: Partial<LoggerOptions>) {
+    this.options = { ...Logger.defaultOptions, ...options };
+  }
 
-        for (const key of loggerMethods) {
-          const method = key as LoggerMethods;
-          api[method] = () => {};
-        }
+  private print(level: LogLevel, args: any[]) {
+    const { isProductionEnv, styles } = this.options;
 
-        return api as unknown;
-      })()
-    : (() => {
-        // Todo: Add a way to disable logs by default, ig.
-        // This throws an error: `self is not defined`
-        // if (('__DISABLE_PWA_DEBUG_LOGS' in self) == false) {
-        //   self.__DISABLE_PWA_DEBUG_LOGS = false;
-        // }
+    if (isProductionEnv) return;
 
-        // if (('__DISABLE_PWA_DEV_LOGS' in self) == false) {
-        //   self.__DISABLE_PWA_DEV_LOGS = false;
-        // }
+    const method = level;
+    // const self = typeof globalThis.self !== 'undefined' ? globalThis.self : globalThis;
 
-        // if (('__DISABLE_PWA_DEBUG_LOGS' in self) == false) {
-        //   self.__DISABLE_PWA_DEBUG_LOGS = false;
-        // }
+    if (method === 'groupCollapsed') {
+      if (/^((?!chrome|android).*safari)/i.test(navigator.userAgent)) {
+        console[method](...args);
+        return;
+      }
+    }
 
-        // if (('__DISABLE_PWA_INFO_LOGS' in self) == false) {
-        //   self.__DISABLE_PWA_INFO_LOGS = false;
-        // }
+    const logPrefix = this.inGroup ? [] : [`%c${this.options.prefix}`, styles[level]];
+    console[method](...logPrefix, ...args);
 
-        // if (('__DISABLE_PWA_WARN_LOGS' in self) == false) {
-        //   self.__DISABLE_PWA_WARN_LOGS = false;
-        // }
+    if (method === 'groupCollapsed') {
+      this.inGroup = true;
+    }
 
-        let inGroup = false;
+    if (method === 'groupEnd') {
+      this.inGroup = false;
+    }
+  }
 
-        const print = function (method: LoggerMethods, args: any[]) {
-          const self = typeof globalThis.self !== 'undefined' ? globalThis.self : globalThis;
+  debug(...args: any[]) {
+    this.shouldLog('debug') && this.print('debug', args);
+  }
 
-          // Conditionals to handle various log levels.
-          if (self.__DISABLE_PWA_DEV_LOGS) {
-            return;
-          }
+  info(...args: any[]) {
+    this.shouldLog('info') && this.print('info', args);
+  }
 
-          if (method === 'debug' && self.__DISABLE_PWA_DEBUG_LOGS) {
-            return;
-          }
+  log(...args: any[]) {
+    this.shouldLog('log') && this.print('log', args);
+  }
 
-          if (method === 'info' && self.__DISABLE_PWA_INFO_LOGS) {
-            return;
-          }
+  warn(...args: any[]) {
+    this.shouldLog('warn') && this.print('warn', args);
+  }
 
-          if (method === 'warn' && self.__DISABLE_PWA_WARN_LOGS) {
-            return;
-          }
+  error(...args: any[]) {
+    this.shouldLog('error') && this.print('error', args);
+  }
 
-          if (method === 'error' && self.__DISABLE_PWA_ERROR_LOGS) {
-            return;
-          }
+  groupCollapsed(...args: any[]) {
+    this.print('groupCollapsed', args);
+  }
 
-          if (method === 'groupCollapsed') {
-            // Safari doesn't print all console.groupCollapsed() arguments:
-            // https://bugs.webkit.org/show_bug.cgi?id=182754
-            if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
-              console[method](...args);
-              return;
-            }
-          }
+  groupEnd() {
+    this.print('groupEnd', []);
+  }
 
-          const styles = [
-            `background: ${methodToColorMap[method]!}`,
-            `border-radius: 0.5em`,
-            `color: white`,
-            `font-weight: bold`,
-            `padding: 2px 0.5em`,
-          ];
+  private shouldLog(level: LogLevel) {
+    const { logLevel } = this.options;
+    const logLevels = ['debug', 'info', 'log', 'warn', 'error'];
+    const currentLogLevel = logLevels.indexOf(level);
+    const targetLogLevel = logLevels.indexOf(logLevel);
 
-          const logPrefix = inGroup ? [] : ['%cremix-pwa', styles.join(';')];
+    return currentLogLevel >= targetLogLevel;
+  }
+}
 
-          console[method](...logPrefix, ...args);
-
-          if (method === 'groupCollapsed') {
-            inGroup = true;
-          }
-          if (method === 'groupEnd') {
-            inGroup = false;
-          }
-        };
-
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        const api: { [methodName: string]: Function } = {};
-        const loggerMethods = Object.keys(methodToColorMap);
-
-        for (const key of loggerMethods) {
-          const method = key as LoggerMethods;
-
-          api[method] = (...args: any[]) => {
-            print(method, args);
-          };
-        }
-
-        return api as unknown;
-      })()
-) as Console;
+export const logger = new Logger();

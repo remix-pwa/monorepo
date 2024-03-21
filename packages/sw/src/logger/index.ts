@@ -1,2 +1,2 @@
-export { logger } from './logger.js';
-export type { LoggerMethods } from './logger.js';
+export { Logger, logger } from './logger.js';
+export type { LogLevel } from './logger.js';

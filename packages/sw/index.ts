@@ -1,8 +1,8 @@
 export { unregisterServiceWorker } from './src/utils/registration.js';
 export { clearUpOldCaches } from './src/utils/versioning.js';
 
-export { logger } from './src/logger/logger.js';
-export type { LoggerMethods } from './src/logger/logger.js';
+export { Logger, logger } from './src/logger/logger.js';
+export type { LogLevel } from './src/logger/logger.js';
 
 export { UseSWEffectOptions, useSWEffect } from './src/hooks/useSWEffect.js';
 
