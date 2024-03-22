@@ -20,13 +20,14 @@ export type WorkerDataFunctionArgs = Omit<DataFunctionArgs, 'context'> & {
 };
 export type WorkerLoaderArgs = WorkerDataFunctionArgs;
 export type WorkerActionArgs = WorkerDataFunctionArgs;
+export type DefaultFetchHandlerArgs = WorkerDataFunctionArgs;
 export interface WorkerActionFunction {
   (args: WorkerActionArgs): ReturnType<ActionFunction>;
 }
 export interface WorkerLoaderFunction {
   (args: WorkerLoaderArgs): ReturnType<LoaderFunction>;
 }
-export type DefaultFetchHandler = (args: WorkerDataFunctionArgs) => Promise<Response>;
+export type DefaultFetchHandler = (args: DefaultFetchHandlerArgs) => Promise<Response>;
 export type DefaultErrorHandler = (error: Error, args: WorkerDataFunctionArgs) => void;
 export interface WorkerRouteModule extends ServerRouteModule {
   workerAction?: WorkerActionFunction;
