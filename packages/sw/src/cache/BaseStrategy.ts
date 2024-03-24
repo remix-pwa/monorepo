@@ -27,6 +27,12 @@ export abstract class BaseStrategy implements CacheStrategy {
     return await caches.open(this.cacheName);
   }
 
+  /**
+   * Ensures the request is a Request object.
+   *
+   * @param request - The request to ensure.
+   * @returns The request as a `Request` object.
+   */
   protected ensureRequest(request: Request | string | URL): Request {
     if (request instanceof URL || typeof request === 'string') {
       return new Request(request);
@@ -72,5 +78,23 @@ export abstract class BaseStrategy implements CacheStrategy {
     });
 
     await Promise.all([maxAgePromises, maxEntriesPromises]);
+  }
+
+  /**
+   * Adds a timestamp header to the response.
+   * @param {Response} response - The original response.
+   * @returns {Response} The new response with the timestamp header.
+   */
+  protected addTimestampHeader(response: Response): Response {
+    const headers = new Headers(response.headers);
+    headers.set(CACHE_TIMESTAMP_HEADER, Date.now().toString());
+
+    const timestampedResponse = new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+
+    return timestampedResponse;
   }
 }

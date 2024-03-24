@@ -1,3 +1,4 @@
+import { isHttpRequest } from '../utils/utils.js';
 import { BaseStrategy, CACHE_TIMESTAMP_HEADER } from './BaseStrategy.js';
 import type { CacheOptions, SWROptions } from './types.js';
 import { mergeHeaders } from './utils.js';
@@ -24,6 +25,10 @@ export class StaleWhileRevalidate extends BaseStrategy {
    */
   async handleRequest(req: Request | string): Promise<Response> {
     const request = this.ensureRequest(req);
+
+    if (!isHttpRequest(request)) {
+      return fetch(request);
+    }
 
     const cache = await this.openCache();
     let cachedResponse = await cache.match(request.clone());
@@ -76,24 +81,6 @@ export class StaleWhileRevalidate extends BaseStrategy {
     await this.cleanupCache();
 
     return timedResponse;
-  }
-
-  /**
-   * Adds a timestamp header to the response.
-   * @param {Response} response - The original response.
-   * @returns {Response} The new response with the timestamp header.
-   */
-  private addTimestampHeader(response: Response): Response {
-    const headers = new Headers(response.headers);
-    headers.append(CACHE_TIMESTAMP_HEADER, Date.now().toString());
-
-    const timestampedResponse = new Response(response.body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers,
-    });
-
-    return timestampedResponse;
   }
 
   /**

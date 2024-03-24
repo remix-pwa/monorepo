@@ -1,5 +1,6 @@
+import { isHttpRequest } from '../utils/utils.js';
 import { BaseStrategy, CACHE_TIMESTAMP_HEADER } from './BaseStrategy.js';
-import type { CacheFriendlyOptions, CacheOptions, CacheableResponseOptions } from './types.js';
+import type { CacheFriendlyOptions, CacheOptions } from './types.js';
 import { mergeHeaders } from './utils.js';
 
 /**
@@ -28,6 +29,10 @@ export class CacheOnly extends BaseStrategy {
   async handleRequest(req: Request | string): Promise<Response> {
     const request = this.ensureRequest(req);
 
+    if (!isHttpRequest(request)) {
+      return fetch(request);
+    }
+
     const cache = await this.openCache();
     const response = await cache.match(request.clone());
 
@@ -55,24 +60,6 @@ export class CacheOnly extends BaseStrategy {
     const cache = await caches.open(this.cacheName);
     const timedRes = this.addTimestampHeader(response.clone());
     await cache.put(request, timedRes.clone());
-  }
-
-  /**
-   * Adds a timestamp header to the response.
-   * @param {Response} response - The original response.
-   * @returns {Response} The new response with the timestamp header.
-   */
-  private addTimestampHeader(response: Response): Response {
-    const headers = new Headers(response.headers);
-    headers.append(CACHE_TIMESTAMP_HEADER, Date.now().toString());
-
-    const timestampedResponse = new Response(response.body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers,
-    });
-
-    return timestampedResponse;
   }
 
   /**
