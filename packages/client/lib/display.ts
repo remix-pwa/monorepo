@@ -29,6 +29,8 @@ export const displayMode = async (
 };
 
 export const toggleFullScreen = () => {
+  if (!isWindowAvailable()) return;
+
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen();
   } else if (document.exitFullscreen) {

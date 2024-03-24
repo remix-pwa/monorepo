@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react';
 
 import { isWindowAvailable } from '../lib/user-agent';
 
-export const useNetworkConnectivity = (options: {
-  onOnline?: (isOnline: boolean) => void;
-  onOffline?: (isOnline: boolean) => void;
-}) => {
+export const useNetworkConnectivity = (
+  options: {
+    onOnline?: (isOnline: boolean) => void;
+    onOffline?: (isOnline: boolean) => void;
+  } = {}
+) => {
   const [isOnline, setIsOnline] = useState(isWindowAvailable() ? navigator.onLine : false);
 
   const handleOnline = () => {
@@ -31,5 +33,5 @@ export const useNetworkConnectivity = (options: {
     }
   }, []);
 
-  return { isOnline };
+  return isOnline;
 };

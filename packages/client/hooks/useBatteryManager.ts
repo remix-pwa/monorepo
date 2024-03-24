@@ -6,7 +6,7 @@ export const useBatteryManager = ({
 }: {
   onChargingChange?: (isCharging: boolean) => void;
   onLevelChange?: (batteryLevel: number) => void;
-}) => {
+} = {}) => {
   const [isCharging, setIsCharging] = useState(false);
   const [batteryLevel, setBatteryLevel] = useState(1);
 
