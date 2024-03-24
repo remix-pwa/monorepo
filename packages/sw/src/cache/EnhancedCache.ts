@@ -76,7 +76,7 @@ export class EnhancedCache {
    * @param {Response} response - The original response.
    * @returns {Response} The new response with the timestamp header.
    */
-  private addTimestampHeader(response: Response): Response {
+  protected addTimestampHeader(response: Response): Response {
     const headers = new Headers(response.headers);
     headers.set(CACHE_TIMESTAMP_HEADER, Date.now().toString());
 
