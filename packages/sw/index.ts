@@ -11,7 +11,16 @@ export { NavigationHandler, NavigationHandlerOptions } from './src/message/Navig
 
 export { defer } from './src/utils/defer.js';
 export { LoadServiceWorkerOptions, loadServiceWorker } from './src/utils/loader.js';
-export { isHttpRequest, isLoaderRequest, isMethod, json, redirect, timeout, toJSON } from './src/utils/utils.js';
+export {
+  isActionRequest,
+  isHttpRequest,
+  isLoaderRequest,
+  isMethod,
+  json,
+  redirect,
+  timeout,
+  toJSON,
+} from './src/utils/utils.js';
 export type { JsonFunction, RedirectFunction } from './src/utils/utils.js';
 
 export { ManifestLink } from './src/components/ManifestLink.js';

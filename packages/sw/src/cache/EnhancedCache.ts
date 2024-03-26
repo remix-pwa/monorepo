@@ -309,7 +309,7 @@ export class EnhancedCache {
    * @returns {Promise<Response>}
    */
   static async compressResponse(response: Response): Promise<Response> {
-    const compressed = gzip(await response.arrayBuffer());
+    const compressed = gzip(await response.clone().arrayBuffer());
     const compressedResponse = new Response(compressed, {
       headers: mergeHeaders(response.headers, {
         'Content-Encoding': 'gzip',
@@ -326,7 +326,7 @@ export class EnhancedCache {
    * @returns {Promise<Response>}
    */
   static async decompressResponse(response: Response): Promise<Response> {
-    const decompressed = ungzip(await response.arrayBuffer());
+    const decompressed = ungzip(await response.clone().arrayBuffer());
     const decompressedResponse = new Response(decompressed, {
       headers: mergeHeaders(response.headers, {
         'Content-Type': response.headers.get('Content-Type') || 'plain/text',

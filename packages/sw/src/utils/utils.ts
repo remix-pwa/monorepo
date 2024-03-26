@@ -64,6 +64,17 @@ export function isLoaderRequest(request: Request): string | false | null {
 }
 
 /**
+ * Checks if given request is a action request.
+ *
+ * @param request The request to check.
+ * @returns {string | false | null} Whether the request is for action or not.
+ */
+export function isActionRequest(request: Request): string | false | null {
+  const url = new URL(request.url);
+  return isMethod(request, ['post', 'delete', 'put', 'patch']) && url.searchParams.get('_data');
+}
+
+/**
  * Returns a promise that resolves and the passed number of milliseconds.
  * This utility is an async/await-friendly version of `setTimeout`.
  *
