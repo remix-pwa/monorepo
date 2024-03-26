@@ -14,9 +14,7 @@ export default defineConfig({
     }),
     tsconfigPaths(),
     remixPWA(<Partial<PWAViteOptions>>{
-      // workerMinify: true,
-      // workerSourceMap: true,
-      workerEntryPoint: './runtime.js'
+      // workerEntryPoint: './runtime.js'
     }),
   ],
   server: {
