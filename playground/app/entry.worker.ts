@@ -1,8 +1,14 @@
 /// <reference lib="WebWorker" />
 
-import { logger } from '../../packages/sw/src/logger/logger';
+import { EnhancedCache, logger, NavigationHandler } from '@remix-pwa/sw';
 
 declare let self: ServiceWorkerGlobalScope;
+
+const documentCache = new EnhancedCache('document-cache', {
+  version: 'v1',
+  strategy: 'NetworkFirst',
+  strategyOptions: {}
+})
 
 /**
  * The load context works same as in Remix. The return values of this function will be injected in the worker action/loader.
@@ -15,8 +21,14 @@ export const getLoadContext = () => {
   return {
     database: [],
     stores: [],
+    caches: [documentCache],
   };
 };
+
+export const defaultFetchHandler = async ({ context }: any) => {
+  // logger.log('default handler');
+  return context.fetchFromServer();
+}
 
 self.addEventListener('install', (event: ExtendableEvent) => {
   logger.log('installing service worker');
@@ -29,40 +41,11 @@ self.addEventListener('activate', event => {
 });
 
 
-// export const msg = 'Hello from the worker edite d!'
-// function shouldIgnoreRoute(route, patterns) {
-//   // Function to convert a pattern to a regular expression
-//   function convertPatternToRegEx(pattern) {
-//   if (pattern.endsWith('/') && pattern.substring(-2) !== '*') {
-//     pattern = pattern.split('').slice(0, -1).join('')
-//   }
-//   /* console.log(pattern) */
-//       let regexPattern = pattern
-//           .replace(/^\//, '')      // Remove leading slash if exists
-//           .replace(/\*\*/g, '.*')  // Replace ** with .*
-//           .replace(/\*/g, '[^/]*') // Replace * with [^/]*
-//           .replace(/\//g, '\\/');  // Escape forward slashes
 
-//       if (!pattern.startsWith('/')) {
-//           regexPattern = '(?:\\/)?' + regexPattern; // Make leading slash optional
-//       }
+const msgHandler = new NavigationHandler({
+  cache: documentCache,
+})
 
-//       return new RegExp('^' + regexPattern + '$');
-//   }
-
-//   // Convert all patterns to regular expressions
-//   const regexPatterns = patterns.map(convertPatternToRegEx);
-
-//   // Check if the route matches any of the patterns
-//   return regexPatterns.some(regexPattern => regexPattern.test(route));
-// }
-
-// // Example usage
-// const patterns = ['landing/*', '**/landing/*/', '/**/landing/'];
-// console.log(shouldIgnoreRoute('/landing/page', patterns));  // true
-// console.log(shouldIgnoreRoute('landing/page', patterns));   // true
-// console.log(shouldIgnoreRoute('/home/landing/page', patterns)); // true
-// console.log(shouldIgnoreRoute('/home/landing/page', patterns)); // true
-// console.log(shouldIgnoreRoute('home/landing', patterns));  // true
-// console.log(shouldIgnoreRoute('/landingpage', patterns));  // false
-// console.log(shouldIgnoreRoute('landingpage', patterns));   // false
+self.addEventListener('message', async event => {
+  await msgHandler.handleMessage(event);
+})

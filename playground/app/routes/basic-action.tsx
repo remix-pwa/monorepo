@@ -41,6 +41,10 @@ export const workerAction = async ({ context }: WorkerActionArgs) => {
   });
 }
 
+export const loader = () => {
+  return null;
+}
+
 export default function BasicAction() {
   const fetcher = useFetcher();
   const actionData = useActionData<typeof workerAction>();

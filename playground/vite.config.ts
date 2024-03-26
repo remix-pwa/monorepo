@@ -16,6 +16,7 @@ export default defineConfig({
     remixPWA(<Partial<PWAViteOptions>>{
       // workerMinify: true,
       // workerSourceMap: true,
+      workerEntryPoint: './runtime.js'
     }),
   ],
   server: {

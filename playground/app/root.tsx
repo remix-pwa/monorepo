@@ -44,7 +44,7 @@ import { usePWAManager } from "@remix-pwa/client";
 // }
 
 export default function App() {
-  // useSWEffect()
+  useSWEffect()
   const { updateAvailable } = usePWAManager();
 
   // usePWAHMR()
