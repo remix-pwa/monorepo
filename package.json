@@ -8,7 +8,6 @@
     "packages/dev",
     "packages/eslint-config",
     "packages/lint-staged-config",
-    "packages/strategy",
     "packages/sw",
     "packages/sync",
     "packages/worker-runtime",
