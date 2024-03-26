@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/cli",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "An elegant CLI for everything Remix PWA 💖",
   "repository": {
     "type": "git",
@@ -10,8 +10,8 @@
   "homepage": "https://remix-pwa.run",
   "license": "MIT",
   "sideEffects": false,
-  "main": "dist/cli.js",
-  "types": "dist/cli.d.ts",
+  "main": "cli.js",
+  "types": "cli.d.ts",
   "type": "module",
   "engines": {
     "node": ">=18.0.0"
