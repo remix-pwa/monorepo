@@ -45,7 +45,7 @@ const defaultErrorHandler =
 
 _self.__workerManifest = {
   // assets: build.assets,
-  assets: [],
+  assets: process.env.NODE_ENV === 'development' ? [] : [], // get assets in prod.
   routes: build.routes,
 };
 
