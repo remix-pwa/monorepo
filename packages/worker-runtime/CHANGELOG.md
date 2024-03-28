@@ -1,3 +1,10 @@
+# @remix-pwa/worker-runtime 2.1.0-dev.3 (2024-03-28)
+
+
+### Features
+
+* **worker-runtime:** bumping `worker-runtime` to `v3` 2b16093
+
 # @remix-pwa/worker-runtime 2.1.0-dev.2 (2024-03-28)
 
 
