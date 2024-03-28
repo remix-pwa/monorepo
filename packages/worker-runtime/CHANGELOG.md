@@ -1,3 +1,13 @@
+# @remix-pwa/worker-runtime 2.1.0 (2024-03-28)
+
+
+### Features
+
+* **worker-runtime:** bumping `worker-runtime` to `v3` 2b16093
+* **worker-runtime:** cleaned up worker runtime c0e400c
+* **worker-runtime:** updated `worker-runtime` for just JiT caching ac8549a
+* **worker-runtime:** upgrading to `v3` 5501f17
+
 # @remix-pwa/worker-runtime 2.1.0-dev.3 (2024-03-28)
 
 
