@@ -1,3 +1,11 @@
+# @remix-pwa/worker-runtime 2.1.0-dev.2 (2024-03-28)
+
+
+### Features
+
+* **worker-runtime:** cleaned up worker runtime c0e400c
+* **worker-runtime:** upgrading to `v3` 5501f17
+
 # @remix-pwa/worker-runtime 2.1.0-dev.1 (2024-01-15)
 
 
