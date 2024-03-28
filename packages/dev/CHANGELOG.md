@@ -1,3 +1,29 @@
+# @remix-pwa/dev 3.0.0-dev.1 (2024-03-28)
+
+
+### Bug Fixes
+
+* **dev:** added checker for auto-registration b160158
+* **dev:** removed `strip-routes` plugin - remix now supports custom exports 8f6358b
+* **dev:** updated loader code transformation b3abceb
+
+
+### Features
+
+* **dev:** A somewhat (85%) working bundler :fire: e05cc46
+* **dev:** removed `esbuild` internal compiler from remix-pwa 44eb920
+* **dev:** trashing `esbuild` for Remix Vite - now hooking into Vite fully! 9831495
+* **dev:** upgraded `@remix-pwa/dev` to v4 fully ff629ba
+* **dev:** wrapping up main SW bundler 28616f1
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/worker-runtime:** upgraded to 2.1.0-dev.2
+
 # @remix-pwa/dev 2.1.0-dev.7 (2024-01-28)
 
 
