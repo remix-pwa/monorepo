@@ -1,3 +1,32 @@
+# @remix-pwa/sw 3.0.0 (2024-03-28)
+
+
+### Bug Fixes
+
+* **sw:** fixed `EnhancedCache` multiple errors + new utilities d4a2cc8
+* **sw:** fixed up caching a teeny-weeny bit ece4d5f
+* **sw:** fixed up some bunch of hidden issues in `CacheFirst` as well as re-ordered priorities 1ac7387
+* **sw:** init assetCache correctly c90cc49
+* **sw:** new exports from `sw` 03316f5
+* **sw:** provided new utilities + safeguards for strategies fba0038
+* **sw:** removed initial validation from sw effect hook 402b16d
+* **sw:** updated `EnhancedCache` for better working with base strategy 6a72e9f
+
+
+### Features
+
+* **sw:** added requests de-duping to `StaleWhileRevalidate` strategy 388057a
+* **sw:** breaking changes - upgrading `@remix-pwa/sw` to `v3` d9004ea
+* **sw:** getting rid of former `MessageHandler`s 7329c0f
+* **sw:** new `useSWEffect` hook semantics 73516dc
+* **sw:** new caching approaches + strategies f50307a
+* **sw:** new message handlers 7cdc3a6
+* **sw:** new message sub-module 4db3538
+* **sw:** new versioning utility to handle auto-versioning 6a3543d
+* **sw:** removed `NetworkOnly` strategy - it's just `fetch` 31a7c43
+* **sw:** revamped `logger` - added extensibility 9c12cdc
+* **sw:** supercharged `EnhancedCache` even further :fire: 10aedeb
+
 # @remix-pwa/sw 3.0.0-dev.1 (2024-03-28)
 
 
