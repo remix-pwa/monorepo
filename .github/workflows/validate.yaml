@@ -29,6 +29,8 @@ jobs:
           key: ${{ runner.os }}-turbo-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-turbo-
+      - name: Sync sandbox
+        run: npm run preinstall -w @remix-pwa/playground
       - name: Install dependencies
         run: npm clean-install
       - name: Run Commitlint
