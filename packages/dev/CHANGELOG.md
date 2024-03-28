@@ -1,4 +1,108 @@
+# @remix-pwa/dev 3.0.0-dev.2 (2024-03-28)
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/worker-runtime:** upgraded to 2.1.0-dev.3
+
+# @remix-pwa/dev 3.0.0-dev.1 (2024-03-28)
+
+
+### Bug Fixes
+
+* **dev:** added checker for auto-registration b160158
+* **dev:** removed `strip-routes` plugin - remix now supports custom exports 8f6358b
+* **dev:** updated loader code transformation b3abceb
+
+
+### Features
+
+* **dev:** A somewhat (85%) working bundler :fire: e05cc46
+* **dev:** removed `esbuild` internal compiler from remix-pwa 44eb920
+* **dev:** trashing `esbuild` for Remix Vite - now hooking into Vite fully! 9831495
+* **dev:** upgraded `@remix-pwa/dev` to v4 fully ff629ba
+* **dev:** wrapping up main SW bundler 28616f1
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/worker-runtime:** upgraded to 2.1.0-dev.2
+
+# @remix-pwa/dev 2.1.0-dev.7 (2024-01-28)
+
+
+### Bug Fixes
+
+* **sw:** added HMR to ⚡ vite plugin e7fa974
+
+# @remix-pwa/dev 2.1.0-dev.6 (2024-01-21)
+
+
+### Bug Fixes
+
+* **dev:** removed `worker-runtime` peer requirement da862d7
+
+# @remix-pwa/dev 2.1.0-dev.5 (2024-01-15)
+
+
+### Bug Fixes
+
+* **dev:** fixed up vite plugin for Remix v2.5.x 5124745
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/worker-runtime:** upgraded to 2.1.0-dev.1
+
+# @remix-pwa/dev 2.1.0-dev.4 (2023-12-25)
+
+
+### Bug Fixes
+
+* **dev:** added support for route worker APIs 686494d
+
+# @remix-pwa/dev 2.1.0-dev.3 (2023-12-24)
+
+
+### Bug Fixes
+
+* **dev:** fixed `scope` property error in script injector plugin fa3ac74
+* **dev:** temporary fix - removed build logs e4689ca
+
+# @remix-pwa/dev 2.1.0-dev.2 (2023-12-23)
+
+
+### Bug Fixes
+
+* **dev:** fixed route resolution on windows 5b4f6fd
+
+# @remix-pwa/dev 2.1.0-dev.1 (2023-12-23)
+
+
+### Features
+
+* **dev:** Vite + Remix PWA 🔥🚀 0e99c63
+
 ## @remix-pwa/dev 2.0.31 (2023-10-20)
+
+### Dependencies
+
+* **@remix-pwa/worker-runtime:** upgraded to 2.0.8
+
+## @remix-pwa/dev 2.0.31-dev.1 (2023-10-20)
+
+### Dependencies
+
+* **@remix-pwa/worker-runtime:** upgraded to 2.0.8-dev.1
 
 
 ### Bug Fixes
@@ -7,14 +111,6 @@
 * **dev:** fixed `NODE_ENV` inconsistencies during build a704228
 * **dev:** fixed `yarn` installation dba5d3c
 * **dev:** fixed CLI script assignment 7239580
-
-
-
-
-
-### Dependencies
-
-* **@remix-pwa/worker-runtime:** upgraded to 2.0.8
 
 ## @remix-pwa/dev 2.0.30-dev.3 (2023-10-13)
 

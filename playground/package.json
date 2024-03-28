@@ -1,5 +1,6 @@
 {
   "name": "@remix-pwa/playground",
+  "type": "module",
   "version": "0.0.0",
   "description": "A Playground for Remix PWA 3.0",
   "repository": {
@@ -11,25 +12,22 @@
   "sideEffects": false,
   "private": true,
   "scripts": {
-    "build:worker": "node ./sw.ts build",
-    "buildt": "run-p build:*",
-    "dev": "run-p dev:*",
-    "start": "remix-serve ./build/index.js",
+    "build:worker": "tsx ../packages/dev/index.ts build",
+    "buildt": "remix vite:build",
+    "dev": "remix vite:dev",
+    "preinstall": "echo \"Updating @remix-pwa/* packages\" && node ../scripts/update-sandbox.js",
+    "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc",
-    "dev:worker": "ts-node ./sw.ts dev",
-    "dev:remix": "remix dev",
     "build:remix": "remix build"
   },
   "dependencies": {
-    "@remix-pwa/cache": "^2.0.10",
-    "@remix-pwa/strategy": "^2.1.9-dev.1",
-    "@remix-pwa/sw": "2.1.11-dev.2",
-    "@remix-pwa/sync": "^2.0.1",
-    "@remix-pwa/worker-runtime": "^2.0.6",
-    "@remix-run/css-bundle": "^2.0.1",
-    "@remix-run/node": "^2.0.1",
-    "@remix-run/react": "^2.0.1",
-    "@remix-run/serve": "^2.0.1",
+    "@remix-pwa/client": "3.0.0-dev.1",
+    "@remix-pwa/sw": "3.0.0-dev.1",
+    "@remix-pwa/sync": "2.0.2",
+    "@remix-pwa/worker-runtime": "2.1.0-dev.2",
+    "@remix-run/node": "^2.8.1",
+    "@remix-run/react": "^2.8.1",
+    "@remix-run/serve": "^2.8.1",
     "chokidar": "^3.5.3",
     "dexie": "^3.2.4",
     "dotenv": "^16.3.1",
@@ -38,16 +36,18 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@remix-pwa/dev": "^2.0.30-dev.2",
-    "@remix-run/eslint-config": "^2.0.1",
+    "@remix-pwa/dev": "3.0.0-dev.1",
+    "@remix-run/dev": "^2.8.1",
+    "@remix-run/eslint-config": "^2.8.1",
     "@types/react": "^18.2.22",
     "@types/react-dom": "^18.2.7",
+    "autoprefixer": "^10.4.16",
     "eslint": "^8.49.0",
-    "npm-run-all": "^4.1.5",
-    "remix-pwa": "^3.0.17",
     "tailwindcss": "^3.3.3",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.2.2"
+    "tsx": "^3.14.0",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.2",
+    "vite-tsconfig-paths": "^4.2.1"
   },
   "engines": {
     "node": ">=14.0.0"

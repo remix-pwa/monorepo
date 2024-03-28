@@ -1,38 +1,26 @@
-import { errorBlock } from './utils';
-
-export const setBadge = async (unreadCount: number) => {
-  try {
-    if (navigator.setAppBadge) {
-      await navigator.setAppBadge(unreadCount);
-      return { ok: true, message: 'Set app badge successfully' };
-    } else {
-      return {
-        ok: false,
-        message: 'Badging API not supported',
-      };
-    }
-  } catch (error) {
-    return errorBlock(error);
+export const setBadgeCount = (count: number) => {
+  if (navigator && 'setAppBadge' in navigator) {
+    navigator.setAppBadge(count).catch(error => {
+      console.error('Failed to set app badge:', error);
+    });
+  } else {
+    console.warn('Badge API is not supported');
   }
 };
 
-export const clearBadge = async () => {
+export const clearBadge = async (): Promise<boolean> => {
   try {
-    if (navigator.clearAppBadge) {
+    if (navigator && navigator.clearAppBadge) {
       await navigator.clearAppBadge();
-      return { ok: true, message: 'Cleared app badges' };
+      return true;
     } else {
-      return { ok: false, message: 'Badging API not supported' };
+      return false;
     }
   } catch (error) {
-    return errorBlock(error);
+    return false;
   }
 };
 
-export const badgingSupported = async () => {
-  try {
-    return !!('setAppBadge' in navigator && 'clearAppBadge' in navigator);
-  } catch (error) {
-    return errorBlock(error);
-  }
+export const isBadgingSupported = async () => {
+  return !!(navigator && 'setAppBadge' in navigator && 'clearAppBadge' in navigator);
 };

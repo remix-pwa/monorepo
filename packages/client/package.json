@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/client",
-  "version": "2.0.2",
+  "version": "3.0.0-dev.1",
   "description": "A set of utilities for client-side development to enhance the native feel of your Remix App",
   "repository": {
     "type": "git",
@@ -12,6 +12,20 @@
   "types": "dist/index.d.ts",
   "license": "MIT",
   "type": "module",
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./utils": {
+      "default": "./dist/lib/user-agent.js",
+      "types": "./dist/lib/user-agent.d.ts"
+    },
+    "./hooks": {
+      "default": "./dist/hooks/index.js",
+      "types": "./dist/hooks/index.d.ts"
+    }
+  },
   "files": [
     "dist/",
     "README.md",
@@ -22,13 +36,14 @@
     "format": "prettier --write \"**/*.ts\"",
     "lint": "TIMING=1 eslint --fix \"lib/**/*.ts\"",
     "prepublish": "npm run build",
-    "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
+    "test": "echo \"No tests in `client`\""
   },
   "engines": {
     "node": ">=14.0.0"
   },
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
-    "@remix-pwa/lint-staged-config": "^0.0.0"
+    "@remix-pwa/lint-staged-config": "^0.0.0",
+    "@types/react": "^18.2.67"
   }
 }

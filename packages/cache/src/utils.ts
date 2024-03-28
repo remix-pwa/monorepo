@@ -1,3 +1,5 @@
+import { atob } from 'js-base64';
+
 /**
  * Merge multiple headers objects into one (uses set so headers are overridden)
  */
@@ -33,4 +35,19 @@ export function omit(key: string, obj: Record<string, any>) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { [key]: omitted, ...rest } = obj;
   return rest;
+}
+
+function assertString(value: string) {
+  if (typeof value !== 'string') {
+    throw new TypeError(`Expected \`string\`, got \`${typeof value}\``);
+  }
+}
+
+function base64UrlToBase64(base64url: string) {
+  return base64url.replaceAll('-', '+').replaceAll('_', '/');
+}
+
+export function base64ToUint8Array(base64String: string) {
+  assertString(base64String);
+  return Uint8Array.from(atob(base64UrlToBase64(base64String)), x => x.codePointAt(0) as number);
 }

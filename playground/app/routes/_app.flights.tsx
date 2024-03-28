@@ -1,9 +1,10 @@
 import { redirect, defer, json } from "@remix-run/router";
 import { useLoaderData, Form, useNavigation, Await } from "@remix-run/react";
 import { Suspense } from "react";
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import { ActionFunctionArgs } from "@remix-run/node";
+import { WorkerActionArgs } from "@remix-pwa/sw";
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const flight = formData.get("flightId");
 
@@ -33,7 +34,7 @@ export function loader() {
   });
 }
 
-export const workerAction = async ({ request, context }: LoaderArgs) => {
+export const workerAction = async ({ request, context }: WorkerActionArgs) => {
   const formData = await request.formData();
   
   const { database, fetchFromServer } = context;

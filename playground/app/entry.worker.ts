@@ -1,46 +1,14 @@
 /// <reference lib="WebWorker" />
 
-import { Storage } from '@remix-pwa/cache';
-import { cacheFirst, networkFirst } from '@remix-pwa/strategy';
-import type { DefaultFetchHandler } from '@remix-pwa/sw';
-import { RemixNavigationHandler, logger, matchRequest } from '@remix-pwa/sw';
-import { registerQueue } from '@remix-pwa/sync';
-import createStorageRepository from './database';
+import { EnhancedCache, logger, NavigationHandler } from '@remix-pwa/sw';
 
 declare let self: ServiceWorkerGlobalScope;
 
-const PAGES = 'page-cache';
-const DATA = 'data-cache';
-const ASSETS = 'assets-cache';
-
-const dataCache = Storage.open(DATA, {
-  ttl: 60 * 60 * 24 * 7 * 1_000, // 7 days
-});
-const documentCache = Storage.open(PAGES, {
-  maxItems: 3
-});
-const assetCache = Storage.open(ASSETS, {
-  maxItems: 5
-});
-
-let handler = new RemixNavigationHandler({
-  dataCache: dataCache,
-  documentCache: documentCache,
-});
-
-const dataHandler = networkFirst({
-  cache: dataCache,
-});
-
-const assetsHandler = cacheFirst({
-  cache: assetCache,
-  cacheQueryOptions: {
-    ignoreSearch: true,
-    ignoreVary: true,
-  },
-});
-
-registerQueue('offline-action');
+const documentCache = new EnhancedCache('document-cache', {
+  version: 'v1',
+  strategy: 'NetworkFirst',
+  strategyOptions: {}
+})
 
 /**
  * The load context works same as in Remix. The return values of this function will be injected in the worker action/loader.
@@ -48,28 +16,19 @@ registerQueue('offline-action');
  * @returns {object} the context object.
  */
 export const getLoadContext = () => {
-  const stores = createStorageRepository();
+  // const stores = createStorageRepository();
 
   return {
-    database: stores,
+    database: [],
+    stores: [],
+    caches: [documentCache],
   };
 };
 
-// The default fetch event handler will be invoke if the
-// route is not matched by any of the worker action/loader.
-export const defaultFetchHandler: DefaultFetchHandler = ({ context, request }) => {
-  const type = matchRequest(request);
-
-  if (type === 'asset') {
-    return assetsHandler(context.event.request);
-  }
-
-  if (type === 'loader') {
-    return dataHandler(context.event.request);
-  }
-
+export const defaultFetchHandler = async ({ context }: any) => {
+  // logger.log('default handler');
   return context.fetchFromServer();
-};
+}
 
 self.addEventListener('install', (event: ExtendableEvent) => {
   logger.log('installing service worker');
@@ -78,11 +37,15 @@ self.addEventListener('install', (event: ExtendableEvent) => {
 });
 
 self.addEventListener('activate', event => {
-  logger.log(self.clients)
   event.waitUntil(self.clients.claim());
 });
 
-self.addEventListener('message', event => {
-  event.waitUntil(handler.handle(event));
-});
 
+
+const msgHandler = new NavigationHandler({
+  cache: documentCache,
+})
+
+self.addEventListener('message', async event => {
+  await msgHandler.handleMessage(event);
+})

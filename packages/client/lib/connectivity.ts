@@ -1,15 +1,16 @@
-import { errorBlock } from './utils';
+import { isWindowAvailable } from './user-agent';
 
-export const checkConnectivity = async (online: () => void, offline: () => void) => {
-  try {
-    if (navigator.onLine) {
-      online();
-      return { ok: true, message: 'Online' };
-    } else {
-      offline();
-      return { ok: true, message: 'Offline' };
-    }
-  } catch (error) {
-    return errorBlock(error);
-  }
+/* eslint-disable n/no-callback-literal */
+export const isOnline = () => navigator.onLine;
+
+export const isOffline = () => !navigator.onLine;
+
+export const handleNetworkChange = (callback: (online: boolean) => void) => {
+  const handleOnline = () => callback(true);
+  const handleOffline = () => callback(false);
+
+  if (!isWindowAvailable()) return;
+
+  window.addEventListener('online', handleOnline);
+  window.addEventListener('offline', handleOffline);
 };

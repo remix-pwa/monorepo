@@ -1,3 +1,22 @@
+# @remix-pwa/client 3.0.0-dev.1 (2024-03-28)
+
+
+### Features
+
+* **client:** Building `client` v3 - done and dusted (mostly) 503a232
+
+
+### BREAKING CHANGES
+
+* **client:** v3
+
+# @remix-pwa/client 2.1.0-dev.1 (2024-01-27)
+
+
+### Features
+
+* **cache:** new utilities: user agent e9fc488
+
 ## @remix-pwa/client 2.0.2 (2023-09-21)
 
 

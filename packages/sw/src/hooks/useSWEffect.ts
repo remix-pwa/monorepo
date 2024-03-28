@@ -1,89 +1,74 @@
-import type { UIMatch } from '@remix-run/react';
-import { useLocation, useMatches, useRevalidator } from '@remix-run/react';
+import type { Location } from '@remix-run/react';
+import { useLocation } from '@remix-run/react';
 import { useEffect, useRef } from 'react';
+interface SWMessagePayload {
+  location: Location<any>;
+  [key: string]: any;
+}
+
+// Add debounce customisability later on...
+export type UseSWEffectOptions =
+  | { cacheType?: 'jit' }
+  | { cacheType?: 'precache' }
+  | { cacheType: 'custom'; eventName: string; payload?: SWMessagePayload };
 
 /**
  * This hook is used to send navigation events to the service worker.
  * It is to be called in the `root` file of your Remix application.
  */
-export function useSWEffect(): void {
+export function useSWEffect(options: UseSWEffectOptions = { cacheType: 'jit' }): void {
   const location = useLocation();
-  const matches = useMatches();
-  const revalidator = useRevalidator();
-  const isMount = useRef(true);
-
-  function isPromise(p: any): boolean {
-    if (p && typeof p === 'object' && typeof p.then === 'function') {
-      return true;
-    }
-    return false;
-  }
-
-  function isFunction(p: any): boolean {
-    if (typeof p === 'function') {
-      return true;
-    }
-    return false;
-  }
+  const messageDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    revalidator.revalidate();
-  }, []);
+    const sendMessageToSW = (event: string, payload: SWMessagePayload) => {
+      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: event, payload });
+      }
+    };
 
-  useEffect(() => {
-    const mounted = isMount;
-    isMount.current = false;
+    const handleLocationChange = () => {
+      if (messageDebounceRef.current) {
+        clearTimeout(messageDebounceRef.current);
+      }
+
+      messageDebounceRef.current = setTimeout(() => {
+        let event: string;
+        let payload: SWMessagePayload = { location };
+
+        switch (options.cacheType) {
+          case 'jit':
+            event = 'REMIX_NAVIGATION';
+            break;
+          case 'precache':
+            event = 'REMIX_PRECACHE';
+            break;
+          case 'custom':
+            event = options.eventName;
+            payload = { location, ...(options.payload || {}) };
+            break;
+          default:
+            event = 'REMIX_NAVIGATION';
+            break;
+        }
+
+        sendMessageToSW(event, payload);
+      }, 25);
+    };
+
+    handleLocationChange();
 
     if ('serviceWorker' in navigator) {
-      if (navigator.serviceWorker.controller) {
-        navigator.serviceWorker.controller?.postMessage({
-          type: 'REMIX_NAVIGATION',
-          isMount: mounted,
-          location,
-          // @ts-expect-error
-          matches: matches.filter(filteredMatches).map(sanitizeHandleObject),
-          manifest: window.__remixManifest,
-        });
-      } else {
-        const listener = async () => {
-          await navigator.serviceWorker.ready;
-          navigator.serviceWorker.controller?.postMessage({
-            type: 'REMIX_NAVIGATION',
-            isMount: mounted,
-            location,
-            // @ts-expect-error
-            matches: matches.filter(filteredMatches).map(sanitizeHandleObject),
-            manifest: window.__remixManifest,
-          });
-        };
-        navigator.serviceWorker.addEventListener('controllerchange', listener);
-        return () => {
-          navigator.serviceWorker.removeEventListener('controllerchange', listener);
-        };
-      }
+      navigator.serviceWorker.addEventListener('controllerchange', handleLocationChange);
     }
 
-    function filteredMatches(route: UIMatch) {
-      if (route.data) {
-        return (
-          Object.values(route.data).filter(elem => {
-            return isPromise(elem);
-          }).length === 0
-        );
+    return () => {
+      if (messageDebounceRef.current) {
+        clearTimeout(messageDebounceRef.current);
       }
-      return true;
-    }
-
-    function sanitizeHandleObject(route: UIMatch) {
-      let handle = route.handle;
-
-      if (handle) {
-        const filterInvalidTypes = ([, value]: any) => !isPromise(value) && !isFunction(value);
-        handle = Object.fromEntries(Object.entries(route.handle!).filter(filterInvalidTypes));
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.removeEventListener('controllerchange', handleLocationChange);
       }
-      return { ...route, handle };
-    }
-
-    return () => {};
-  }, [location, matches]);
+    };
+  }, [location]);
 }

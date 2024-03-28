@@ -1,14 +1,9 @@
 import type { WorkerActionArgs } from "@remix-pwa/sw";
 import { redirect } from "@remix-run/node";
-import type { ActionFunction } from "@remix-run/node";
 import { Form, useActionData, useFetcher } from "@remix-run/react";
 import { useEffect } from "react";
 
-export const loader = () => {
-  return redirect('/error-would-happen');
-}
-
-export const action: ActionFunction = () => {
+export function action () {
   const actionData = {
     message: 'This is from a simple action. Nothing more to see here.'
   }
@@ -44,6 +39,10 @@ export const workerAction = async ({ context }: WorkerActionArgs) => {
       'Content-Type': 'application/json; charset=utf-8'
     }
   });
+}
+
+export const loader = () => {
+  return null;
 }
 
 export default function BasicAction() {

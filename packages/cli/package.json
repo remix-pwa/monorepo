@@ -1,0 +1,56 @@
+{
+  "name": "@remix-pwa/cli",
+  "version": "1.0.0-dev.1",
+  "description": "An elegant CLI for everything Remix PWA 💖",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/remix-pwa/monorepo.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://remix-pwa.run",
+  "license": "MIT",
+  "sideEffects": false,
+  "main": "cli.js",
+  "types": "cli.d.ts",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "format": "prettier --write \"cli.ts\"",
+    "lint": "TIMING=1 eslint --fix \"cli.ts\"",
+    "prepublish": "npm run build",
+    "test": "vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests --config ../../vitest.config.ts"
+  },
+  "files": [
+    "cli.js",
+    "cli.d.ts",
+    "README.md",
+    "templates/**"
+  ],
+  "peerDependencies": {
+    "@remix-run/dev": "^1.15.0 || ^2.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@remix-run/dev": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@remix-pwa/eslint-config": "^0.0.0",
+    "@remix-pwa/lint-staged-config": "^0.0.0",
+    "@remix-run/dev": "^2.8.1"
+  },
+  "dependencies": {
+    "@commander-js/extra-typings": "^12.0.1",
+    "commander": "^12.0.0",
+    "pathe": "^1.1.2",
+    "picocolors": "^1.0.0",
+    "typescript": "^5.4.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

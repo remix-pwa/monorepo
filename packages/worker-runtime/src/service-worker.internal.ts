@@ -1,6 +1,6 @@
 // @ts-expect-error
 // eslint-disable-next-line import/no-unresolved
-import * as build from '@remix-pwa/build/magic';
+import * as build from 'virtual:entry-sw';
 
 import { handleRequest } from './utils/handle-request.js';
 
@@ -9,7 +9,6 @@ const _self = self as unknown as ServiceWorkerGlobalScope & typeof globalThis;
 declare global {
   interface ServiceWorkerGlobalScope {
     __workerManifest: {
-      assets: string[];
       routes: build.WorkerRouteManifest;
     };
   }
@@ -34,7 +33,7 @@ const defaultHandler =
   (build.entry.module.defaultFetchHandler as build.DefaultFetchHandler) ||
   ((event: FetchEvent) => fetch(event.request.clone()));
 
-// if the user export a `errorHandler` inside the entry.worker.js, we use that one as default handler
+// // if the user export a `errorHandler` inside the entry.worker.js, we use that one as default handler
 const defaultErrorHandler =
   (build.entry.module.errorHandler as build.DefaultErrorHandler) ||
   ((error: Error, { request }: build.WorkerDataFunctionArgs) => {
@@ -44,7 +43,8 @@ const defaultErrorHandler =
   });
 
 _self.__workerManifest = {
-  assets: build.assets,
+  // assets: build.assets,
+  // assets: process.env.NODE_ENV === 'development' ? [] : [], // get assets in prod.
   routes: build.routes,
 };
 
