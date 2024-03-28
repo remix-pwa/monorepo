@@ -1,26 +1,29 @@
 export { unregisterServiceWorker } from './src/utils/registration.js';
 export { clearUpOldCaches } from './src/utils/versioning.js';
-export {
-  MatchRequest,
-  MatchResponse,
-  isAssetRequest,
-  isLoaderRequest,
-  isMethod,
-  matchRequest,
-} from './src/utils/worker.js';
 
-export { logger } from './src/private/logger.js';
+export { Logger, logger } from './src/logger/logger.js';
+export type { LogLevel, LoggerOptions, LoggerStyles } from './src/logger/logger.js';
 
 export { UseSWEffectOptions, useSWEffect } from './src/hooks/useSWEffect.js';
 
 export { MessageHandler } from './src/message/MessageHandler.js';
 export { NavigationHandler, NavigationHandlerOptions } from './src/message/NavigationHandler.js';
 
-export { defer } from './src/react/defer.js';
-export { LoadServiceWorkerOptions, loadServiceWorker } from './src/react/loader.js';
-export { json, redirect } from './src/react/utils.js';
+export { defer } from './src/utils/defer.js';
+export { LoadServiceWorkerOptions, loadServiceWorker } from './src/utils/loader.js';
+export {
+  isActionRequest,
+  isHttpRequest,
+  isLoaderRequest,
+  isMethod,
+  json,
+  redirect,
+  timeout,
+  toJSON,
+} from './src/utils/utils.js';
+export type { JsonFunction, RedirectFunction } from './src/utils/utils.js';
 
-export { LiveReload, LiveReloadV1 } from './src/react/LiveReload.js';
+export { ManifestLink } from './src/components/ManifestLink.js';
 
 export type {
   DefaultErrorHandler,

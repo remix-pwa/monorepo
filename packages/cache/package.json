@@ -22,7 +22,7 @@
     "format": "prettier --write \"**/*.ts\"",
     "lint": "TIMING=1 eslint --fix \"**/*.ts\"",
     "prepublish": "npm run build",
-    "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
+    "test": "vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests"
   },
   "engines": {
     "node": ">=14.0.0"

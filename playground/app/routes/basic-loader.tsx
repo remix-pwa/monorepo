@@ -1,3 +1,4 @@
+import { WorkerLoaderArgs } from "@remix-pwa/sw";
 import type { LoaderFunction } from "@remix-run/node";
 import { defer } from "@remix-run/node"
 import { Await, useLoaderData } from "@remix-run/react";
@@ -11,7 +12,7 @@ export const loader: LoaderFunction = async () => {
   });
 }
 
-export async function workerLoader ({ context }: any) {
+export async function workerLoader ({ context }: WorkerLoaderArgs) {
   // `fetchFromServer` is a utility function provided to 
   // allow you to make requests to the server directly from the worker.
   const { fetchFromServer } = context;
@@ -25,7 +26,7 @@ export async function workerLoader ({ context }: any) {
     fetchFromServer()
       .then((response: any) => response.json())
       .then(({ message }: any) => message),
-    new Promise((resolve) => setTimeout(resolve, 500, 'Hello World!\n\n• This message is sent to you from the client 😜!'))
+    new Promise((resolve) => setTimeout(resolve, 500, 'Hello World!\n\n• This message is sent to you from the client 😜 (Edited, again ---)!'))
   ]);
 
   return new Response(JSON.stringify({
@@ -39,7 +40,7 @@ export async function workerLoader ({ context }: any) {
 }
 
 export default function Basic() {
-  const loaderData = useLoaderData();
+  const loaderData = useLoaderData<typeof workerLoader>();
 
   return (
     <div className="w-full h-screen px-6 flex flex-col mx-auto max-w-3xl">

@@ -1,5 +1,7 @@
+import { isHttpRequest } from '../utils/utils.js';
 import { BaseStrategy, CACHE_TIMESTAMP_HEADER } from './BaseStrategy.js';
 import type { CacheOptions, CacheableResponseOptions, NetworkFriendlyOptions } from './types.js';
+import { mergeHeaders } from './utils.js';
 
 /**
  * NetworkFirst strategy - prioritizes network responses, falling back to cache.
@@ -23,6 +25,10 @@ export class NetworkFirst extends BaseStrategy {
   async handleRequest(req: Request | string): Promise<Response> {
     const request = this.ensureRequest(req);
 
+    if (!isHttpRequest(request)) {
+      return fetch(request);
+    }
+
     try {
       const res = await this.fetchWithTimeout(request.clone());
       // If the code reaches this line, that means an error wasn't thrown
@@ -32,7 +38,12 @@ export class NetworkFirst extends BaseStrategy {
       const cache = await this.openCache();
       const response = await cache.match(request);
 
-      if (response) return response;
+      if (response)
+        return new Response(response.body, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: mergeHeaders(response.headers, { 'X-Cache-Hit': 'true' }),
+        });
 
       throw new Error('No response received from fetch: Timeout');
     }
@@ -47,25 +58,7 @@ export class NetworkFirst extends BaseStrategy {
     const cache = await this.openCache();
     const timestampedResponse = this.addTimestampHeader(response.clone());
     cache.put(request, timestampedResponse.clone());
-    this.cleanupCache();
-  }
-
-  /**
-   * Adds a timestamp header to the response.
-   * @param {Response} response - The original response.
-   * @returns {Response} The new response with the timestamp header.
-   */
-  private addTimestampHeader(response: Response): Response {
-    const headers = new Headers(response.headers);
-    headers.append(CACHE_TIMESTAMP_HEADER, Date.now().toString());
-
-    const timestampedResponse = new Response(response.clone().body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers,
-    });
-
-    return timestampedResponse;
+    await super.cleanupCache();
   }
 
   private async validateResponse(response: Response): Promise<boolean> {

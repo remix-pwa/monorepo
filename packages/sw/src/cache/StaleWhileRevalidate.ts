@@ -1,5 +1,7 @@
+import { isHttpRequest } from '../utils/utils.js';
 import { BaseStrategy, CACHE_TIMESTAMP_HEADER } from './BaseStrategy.js';
 import type { CacheOptions, SWROptions } from './types.js';
+import { mergeHeaders } from './utils.js';
 
 /**
  * StaleWhileRevalidate strategy - serves from cache, then updates the cache from the network.
@@ -7,6 +9,8 @@ import type { CacheOptions, SWROptions } from './types.js';
 export class StaleWhileRevalidate extends BaseStrategy {
   // private ttl: number;
   // private notifyUpdates: boolean;
+  // For concurrency management
+  private inProgressRequests: Map<string, Promise<Response>> = new Map();
 
   // TODO(ShafSpecs): Add cacheableResponse capabilities to SWR!
 
@@ -22,9 +26,38 @@ export class StaleWhileRevalidate extends BaseStrategy {
   async handleRequest(req: Request | string): Promise<Response> {
     const request = this.ensureRequest(req);
 
+    if (!isHttpRequest(request)) {
+      return fetch(request);
+    }
+
     const cache = await this.openCache();
-    const cachedResponse = await cache.match(request.clone());
-    const networkFetch = fetch(request).then(response => this.updateCache(request, response.clone()));
+    let cachedResponse = await cache.match(request.clone());
+
+    if (cachedResponse) {
+      cachedResponse = new Response(cachedResponse.body, {
+        status: cachedResponse.status,
+        statusText: cachedResponse.statusText,
+        headers: mergeHeaders(cachedResponse.headers, { 'X-Cache-Hit': 'true' }),
+      });
+    }
+
+    // De-duping requests to the same URL (should I implement this for the rest?)
+    const inProgressRequest = this.inProgressRequests.get(request.url);
+    if (inProgressRequest) {
+      // Serve the cached response immediately,
+      // and let the in-progress request handle the background fetch
+      return cachedResponse || inProgressRequest;
+    }
+
+    const networkFetch = fetch(request).then(async response => {
+      // Do a more grandiose, customisable validation
+      // if (response.ok) await this.updateCache(request, response.clone());
+      const res = await this.updateCache(request, response.clone());
+      this.inProgressRequests.delete(request.url);
+      return res;
+    });
+
+    this.inProgressRequests.set(request.url, networkFetch);
 
     return cachedResponse || networkFetch;
   }
@@ -48,24 +81,6 @@ export class StaleWhileRevalidate extends BaseStrategy {
     await this.cleanupCache();
 
     return timedResponse;
-  }
-
-  /**
-   * Adds a timestamp header to the response.
-   * @param {Response} response - The original response.
-   * @returns {Response} The new response with the timestamp header.
-   */
-  private addTimestampHeader(response: Response): Response {
-    const headers = new Headers(response.headers);
-    headers.append(CACHE_TIMESTAMP_HEADER, Date.now().toString());
-
-    const timestampedResponse = new Response(response.body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers,
-    });
-
-    return timestampedResponse;
   }
 
   /**

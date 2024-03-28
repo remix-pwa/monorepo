@@ -1,6 +1,8 @@
 /**
  * Wether the user agent is iOS or not
  */
+export const isWindowAvailable = () => typeof window !== 'undefined';
+
 // @ts-ignore
 export const isIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
@@ -50,11 +52,16 @@ export const getPlatform = () => {
  * Wether user's device is touch screen or not
  */
 export const isTouchScreen = () => {
+  if (!isWindowAvailable()) return false;
+
   return (
+    'ontouchstart' in window ||
     (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
     (window.matchMedia && window.matchMedia('(any-pointer:coarse)').matches)
   );
 };
+
+export const isTouchAvailable = () => isTouchScreen();
 
 export const isChrome = () => getBrowser() === 'chrome';
 

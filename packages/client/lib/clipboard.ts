@@ -1,41 +1,39 @@
 import { errorBlock } from './utils';
 
-export const copyTextToClipboard = async (text: string): Promise<{ ok: boolean; message: string }> => {
+export const copyTextToClipboard = async (text: string): Promise<boolean> => {
   try {
-    if (navigator.clipboard) {
+    if (navigator && navigator.clipboard) {
       await navigator.clipboard.writeText(text);
-      return { ok: true, message: 'Copied' };
+      return true;
     } else {
-      return {
-        ok: false,
-        message: 'Copy Text API not supported',
-      };
+      return false;
     }
   } catch (err) {
-    return errorBlock(err);
+    console.error(err);
+    return false;
   }
 };
 
 export const readTextFromClipboard = async (): Promise<{
   ok: boolean;
-  message: string;
+  message?: string;
   text: string | null;
 }> => {
   try {
-    if (navigator.clipboard) {
+    if (navigator && navigator.clipboard) {
       const text = await navigator.clipboard.readText();
       return { ok: true, message: 'Read text successfully', text };
     } else {
       return { ok: false, message: 'Read Text API not supported', text: null };
     }
   } catch (error) {
-    return { ...errorBlock(error), text: null };
+    return { ok: false, text: null };
   }
 };
 
-export const copyImageToClipboard = async (imgURL: string): Promise<{ ok: boolean; message: string }> => {
+export const copyImageToClipboard = async (imgURL: string): Promise<boolean> => {
   try {
-    if (navigator.clipboard) {
+    if (navigator && navigator.clipboard) {
       const data = await fetch(imgURL);
       const blob = await data.blob();
 
@@ -45,21 +43,18 @@ export const copyImageToClipboard = async (imgURL: string): Promise<{ ok: boolea
         }),
       ]);
 
-      return {
-        ok: true,
-        message: 'Image copied to the clipboard successfully',
-      };
+      return true;
     } else {
-      return { ok: false, message: 'Clipboard API not supported!' };
+      return false;
     }
   } catch (error) {
-    return errorBlock(error);
+    return false;
   }
 };
 
 export const readFilesFromClipboard = async (): Promise<{ ok: boolean; message: string; files: File[] | null }> => {
   try {
-    if (navigator.clipboard) {
+    if (navigator && navigator.clipboard) {
       const files = [] as File[];
       const items = await navigator.clipboard.read();
 
@@ -81,9 +76,5 @@ export const readFilesFromClipboard = async (): Promise<{ ok: boolean; message: 
 };
 
 export const clipboardSupported = async () => {
-  try {
-    return 'clipboard' in navigator;
-  } catch (error) {
-    return errorBlock(error);
-  }
+  return navigator && 'clipboard' in navigator;
 };

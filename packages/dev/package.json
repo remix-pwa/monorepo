@@ -17,14 +17,12 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rimraf ./dist && tsc && npm run copy",
+    "build": "rimraf ./dist && tsc",
     "prepublishOnly": "npm run build",
-    "compile": "tsc && node ./build.cjs",
-    "copy": "cpy cli/templates dist",
-    "format": "prettier --write \"cli/**/*.ts\" \"compiler/**/*.ts\"",
-    "lint": "TIMING=1 eslint --fix cli/ compiler/",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "TIMING=1 eslint --fix src",
     "prepublish": "npm run build",
-    "test": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
+    "test": "vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests --config ../../vitest.config.ts"
   },
   "files": [
     "dist/",
@@ -43,31 +41,26 @@
     "@babel/core": "^7.23.6",
     "@babel/generator": "^7.23.6",
     "@babel/traverse": "^7.23.6",
-    "arg": "^5.0.2",
-    "chokidar": "^3.5.3",
-    "colorette": "^2.0.20",
-    "enquirer": "^2.4.1",
-    "es-module-lexer": "^1.4.1",
-    "esbuild": "^0.19.3",
-    "fs-extra": "^11.1.1",
+    "chokidar": "^3.6.0",
+    "fs-extra": "^11.2.0",
     "lodash": "^4.17.21",
-    "magic-string": "^0.30.5",
-    "ora": "^7.0.1",
-    "stdin-discarder": "^0.1.0"
+    "magic-string": "^0.30.8",
+    "pathe": "^1.1.2"
   },
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
     "@remix-pwa/worker-runtime": "^2.1.0-dev.1",
-    "@remix-run/dev": "^2.5.0",
+    "@remix-run/dev": "^2.8.1",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/babel__core": "^7.20.5",
     "@types/babel__generator": "^7.6.7",
     "@types/babel__traverse": "^7.20.4",
-    "@types/fs-extra": "^11.0.2",
-    "@types/lodash": "^4.14.202",
-    "cpy-cli": "^5.0.0",
-    "cross-env": "^7.0.3",
+    "@types/fs-extra": "^11.0.4",
+    "@types/lodash": "^4.17.0",
     "rimraf": "^5.0.5",
-    "vite": "^5.0.2"
+    "rollup-plugin-esbuild": "^6.1.1",
+    "vite": "^5.2.2"
   }
 }

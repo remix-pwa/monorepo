@@ -1,6 +1,6 @@
 // @ts-expect-error
 // eslint-disable-next-line import/no-unresolved
-import * as build from '@remix-pwa/build/magic';
+import * as build from 'virtual:entry-sw';
 
 import { handleRequest } from './utils/handle-request.js';
 
@@ -12,7 +12,6 @@ declare global {
       assets: string[];
       routes: build.WorkerRouteManifest;
     };
-    __messageHandlers: Map<string, (event: ExtendableMessageEvent) => Promise<void>>;
   }
 }
 
@@ -35,7 +34,7 @@ const defaultHandler =
   (build.entry.module.defaultFetchHandler as build.DefaultFetchHandler) ||
   ((event: FetchEvent) => fetch(event.request.clone()));
 
-// if the user export a `errorHandler` inside the entry.worker.js, we use that one as default handler
+// // if the user export a `errorHandler` inside the entry.worker.js, we use that one as default handler
 const defaultErrorHandler =
   (build.entry.module.errorHandler as build.DefaultErrorHandler) ||
   ((error: Error, { request }: build.WorkerDataFunctionArgs) => {
@@ -45,10 +44,10 @@ const defaultErrorHandler =
   });
 
 _self.__workerManifest = {
-  assets: build.assets,
+  // assets: build.assets,
+  assets: process.env.NODE_ENV === 'development' ? [] : [], // get assets in prod.
   routes: build.routes,
 };
-if (!_self.__messageHandlers || typeof _self.__messageHandlers === 'undefined') _self.__messageHandlers = new Map();
 
 // DO NOT OVERRIDE!!!
 _self.addEventListener(
@@ -68,13 +67,3 @@ _self.addEventListener(
     return (event as FetchEvent).respondWith(response);
   }
 );
-
-_self.addEventListener('message', event => {
-  if (event.data && event.data.type) {
-    const handler = _self.__messageHandlers.get(event.data.type);
-
-    if (handler) {
-      handler(event);
-    }
-  }
-});

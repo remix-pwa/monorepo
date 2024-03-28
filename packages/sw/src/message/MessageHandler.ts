@@ -1,33 +1,28 @@
-export abstract class MessageHandler {
-  private eventName: string;
+interface MessageHandlerMap {
+  [eventName: string]: (event: any) => Promise<void>;
+}
+
+export class MessageHandler {
+  protected eventName: string;
+  private static messageHandlers: MessageHandlerMap = {};
 
   constructor(eventName: string) {
-    // @ts-expect-error
-    if (!self.__messageHandlers) {
-      // @ts-expect-error
-      self.__messageHandlers = new Map();
-    }
-
     this.eventName = eventName;
   }
 
-  protected bind(fn: (...args: any[]) => any, context: any) {
-    // @ts-expect-error
-    self.__messageHandlers.set(this.eventName, fn.bind(context));
+  protected bind(handler: (event: any) => Promise<void>) {
+    MessageHandler.messageHandlers[this.eventName] = handler;
   }
 
   async handleMessage(event: ExtendableMessageEvent) {
     const { data } = event;
 
-    if (typeof data === 'object' && data.type) {
-      // @ts-expect-error
-      const handler = self.__messageHandlers.get(data.type);
-
-      if (handler) {
-        await handler(event);
+    if (typeof data === 'object' && data.type && MessageHandler.messageHandlers[data.type]) {
+      try {
+        await MessageHandler.messageHandlers[data.type](event);
+      } catch (error) {
+        console.error(`Error handling message of type ${data.type}:`, error);
       }
     }
   }
-
-  protected abstract _handleMessage(event: ExtendableMessageEvent): Promise<void>;
 }

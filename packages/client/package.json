@@ -17,9 +17,13 @@
       "default": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./user-agent": {
+    "./utils": {
       "default": "./dist/lib/user-agent.js",
       "types": "./dist/lib/user-agent.d.ts"
+    },
+    "./hooks": {
+      "default": "./dist/hooks/index.js",
+      "types": "./dist/hooks/index.d.ts"
     }
   },
   "files": [
@@ -39,6 +43,7 @@
   },
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
-    "@remix-pwa/lint-staged-config": "^0.0.0"
+    "@remix-pwa/lint-staged-config": "^0.0.0",
+    "@types/react": "^18.2.67"
   }
 }

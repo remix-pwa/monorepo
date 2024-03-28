@@ -21,7 +21,7 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "lintt": "TIMING=1 eslint --fix src/",
     "prepublishOnly": "npm run build && npm run lint && npm run test",
-    "testt": "vitest --run --environment node --threads --single-thread --pass-with-no-tests"
+    "testt": "vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests"
   },
   "peerDependencies": {
     "@remix-run/server-runtime": "^1.19.2 || ^2.0.0"
@@ -40,7 +40,6 @@
     "@remix-pwa/lint-staged-config": "^0.0.0",
     "eslint": "^8.50.0",
     "prettier": "^3.0.3",
-    "typescript": "^5.2.2",
-    "vitest": "^0.34.5"
+    "typescript": "^5.2.2"
   }
 }

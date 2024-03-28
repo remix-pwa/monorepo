@@ -1,4 +1,4 @@
-import { logger } from '../private/logger.js';
+import { logger } from '../logger/logger.js';
 
 /**
  * Unregister current active service worker (if found).

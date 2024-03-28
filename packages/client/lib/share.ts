@@ -1,39 +1,30 @@
-import { errorBlock } from './utils';
-
-export const shareData = async (data: ShareData) => {
+export const shareData = async (data: ShareData): Promise<boolean> => {
   try {
     if (data.files) {
-      if (navigator.canShare && navigator.canShare(data)) {
+      if (navigator && navigator.canShare && navigator.canShare(data)) {
         await navigator.share(data);
-        return { ok: true, message: 'Shared successfully' };
+        return true;
       } else {
-        return { ok: false, message: 'Share Files API not supported' };
+        return false;
       }
     } else {
       if (navigator.share) {
         await navigator.share(data);
-        return { ok: true, message: 'Shared successfully' };
+        return true;
       } else {
-        return { ok: false, message: 'Web Share API not supported' };
+        return false;
       }
     }
   } catch (error) {
-    return errorBlock(error);
+    console.error(error);
+    return false;
   }
 };
 
 export const shareSupported = () => {
-  try {
-    return 'share' in navigator;
-  } catch (error) {
-    return errorBlock(error);
-  }
+  return navigator && 'share' in navigator;
 };
 
 export const shareFilesSupported = () => {
-  try {
-    return 'canShare' in navigator;
-  } catch (error) {
-    return errorBlock(error);
-  }
+  return navigator && 'canShare' in navigator;
 };

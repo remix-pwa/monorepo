@@ -14,7 +14,7 @@ export abstract class BaseStrategy implements CacheStrategy {
    * @param {string} cacheName - The name of the cache.
    * @param {Object} options - Configuration options for the strategy.
    */
-  constructor(cacheName: string, options: CacheOptions = {}) {
+  constructor(cacheName: string, options: CacheOptions = { maxEntries: 50 }) {
     this.cacheName = cacheName;
     this.options = options;
   }
@@ -27,8 +27,14 @@ export abstract class BaseStrategy implements CacheStrategy {
     return await caches.open(this.cacheName);
   }
 
-  protected ensureRequest(request: Request | string): Request {
-    if (typeof request === 'string') {
+  /**
+   * Ensures the request is a Request object.
+   *
+   * @param request - The request to ensure.
+   * @returns The request as a `Request` object.
+   */
+  protected ensureRequest(request: Request | string | URL): Request {
+    if (request instanceof URL || typeof request === 'string') {
       return new Request(request);
     }
 
@@ -41,7 +47,7 @@ export abstract class BaseStrategy implements CacheStrategy {
    * @param {Request} request - The request to handle.
    * @returns {Promise<Response>} The response from the cache or network.
    */
-  abstract handleRequest(request: Request | string): Promise<Response>;
+  abstract handleRequest(request: Request | string | URL): Promise<Response>;
 
   /**
    * Optional method to clean up the cache based on the defined options.
@@ -52,7 +58,7 @@ export abstract class BaseStrategy implements CacheStrategy {
     const requests = await cache.keys();
     const now = Date.now();
 
-    const promises = requests.map(async request => {
+    const maxAgePromises = requests.map(async request => {
       const response = await cache.match(request);
       const timestamp = response?.headers.get(CACHE_TIMESTAMP_HEADER);
 
@@ -65,6 +71,30 @@ export abstract class BaseStrategy implements CacheStrategy {
       }
     });
 
-    await Promise.all(promises);
+    const maxEntriesPromises = requests.map(async (_, index) => {
+      if (index >= (this.options.maxEntries ?? 50)) {
+        await cache.delete(requests[index]);
+      }
+    });
+
+    await Promise.all([maxAgePromises, maxEntriesPromises]);
+  }
+
+  /**
+   * Adds a timestamp header to the response.
+   * @param {Response} response - The original response.
+   * @returns {Response} The new response with the timestamp header.
+   */
+  protected addTimestampHeader(response: Response): Response {
+    const headers = new Headers(response.headers);
+    headers.set(CACHE_TIMESTAMP_HEADER, Date.now().toString());
+
+    const timestampedResponse = new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+
+    return timestampedResponse;
   }
 }
