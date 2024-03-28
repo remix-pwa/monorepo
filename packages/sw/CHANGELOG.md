@@ -1,3 +1,21 @@
+# @remix-pwa/sw 3.0.0-dev.1 (2024-03-28)
+
+
+### Bug Fixes
+
+* **sw:** fixed `EnhancedCache` multiple errors + new utilities d4a2cc8
+* **sw:** fixed up some bunch of hidden issues in `CacheFirst` as well as re-ordered priorities 1ac7387
+* **sw:** provided new utilities + safeguards for strategies fba0038
+* **sw:** removed initial validation from sw effect hook 402b16d
+
+
+### Features
+
+* **sw:** added requests de-duping to `StaleWhileRevalidate` strategy 388057a
+* **sw:** breaking changes - upgrading `@remix-pwa/sw` to `v3` d9004ea
+* **sw:** revamped `logger` - added extensibility 9c12cdc
+* **sw:** supercharged `EnhancedCache` even further :fire: 10aedeb
+
 # @remix-pwa/sw 2.2.0-dev.4 (2024-01-28)
 
 
