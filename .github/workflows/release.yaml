@@ -20,6 +20,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
+      - name: Sync sandbox
+        run: npm run preinstall -w @remix-pwa/playground
       - name: Install dependencies
         run: npm clean-install
       - name: Build packages
