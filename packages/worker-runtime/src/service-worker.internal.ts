@@ -9,7 +9,6 @@ const _self = self as unknown as ServiceWorkerGlobalScope & typeof globalThis;
 declare global {
   interface ServiceWorkerGlobalScope {
     __workerManifest: {
-      assets: string[];
       routes: build.WorkerRouteManifest;
     };
   }
@@ -45,7 +44,7 @@ const defaultErrorHandler =
 
 _self.__workerManifest = {
   // assets: build.assets,
-  assets: process.env.NODE_ENV === 'development' ? [] : [], // get assets in prod.
+  // assets: process.env.NODE_ENV === 'development' ? [] : [], // get assets in prod.
   routes: build.routes,
 };
 
