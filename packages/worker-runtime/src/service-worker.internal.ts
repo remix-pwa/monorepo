@@ -10,6 +10,7 @@ declare global {
   interface ServiceWorkerGlobalScope {
     __workerManifest: {
       routes: build.WorkerRouteManifest;
+      assets: string[];
     };
   }
 }
@@ -43,8 +44,7 @@ const defaultErrorHandler =
   });
 
 _self.__workerManifest = {
-  // assets: build.assets,
-  // assets: process.env.NODE_ENV === 'development' ? [] : [], // get assets in prod.
+  assets: build.assets,
   routes: build.routes,
 };
 
