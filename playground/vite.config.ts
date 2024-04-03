@@ -11,6 +11,7 @@ export default defineConfig({
   plugins: [
     remix({
       ignoredRouteFiles: ["**/.*"],
+      appDirectory: './src/app'
     }),
     tsconfigPaths(),
     remixPWA(<Partial<PWAViteOptions>>{
