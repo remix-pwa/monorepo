@@ -1,4 +1,5 @@
 import type { RouteManifest } from '@remix-run/dev/dist/config/routes.js';
+import * as _glob from 'fast-glob';
 import { readFile } from 'fs/promises';
 import { resolve } from 'pathe';
 import type { Plugin } from 'vite';
@@ -7,6 +8,8 @@ import { parse } from '../babel.js';
 import { resolveRouteWorkerApis } from '../resolve-route-workers.js';
 import type { PWAPluginContext } from '../types.js';
 import * as VirtualModule from '../vmod.js';
+
+const { default: glob } = _glob;
 
 export const shouldIgnoreRoute = (route: string, patterns: string[]): boolean => {
   if (route === '' || patterns.length === 0) return false;
@@ -79,6 +82,7 @@ export const createRouteManifest = (routes: RouteManifest, ignoredRoutes: string
 
 export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
   const entryId = VirtualModule.id('entry-sw');
+  const assetsId = VirtualModule.id('assets-sw');
 
   const workerRouteCache = new Map();
 
@@ -101,6 +105,7 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
             `  ${createRouteManifest(ctx.options.routes, ctx.options.ignoredSWRouteFiles)}`,
             '};',
             '',
+            "export { assets } from 'virtual:assets-sw';",
             'export const entry = { module: entryWorker }',
           ].join('\n');
 
@@ -116,7 +121,7 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
         }
       },
       async load(id) {
-        if (id.startsWith('virtual:worker:')) {
+        if (id.startsWith('virtual:worker:') && ctx.isRemixDevServer) {
           const filePath = id.replace('virtual:worker:', '');
 
           if (workerRouteCache.has(filePath)) {
@@ -140,6 +145,41 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
           workerRouteCache.set(filePath, workerContent);
 
           return workerContent;
+        }
+      },
+    },
+    {
+      name: 'vite-plugin-remix-pwa:virtual-assets-sw',
+      resolveId(id) {
+        if (id === assetsId) {
+          return VirtualModule.resolve(assetsId);
+        }
+      },
+      async load(id) {
+        if (id === VirtualModule.resolve(assetsId) && ctx.isRemixDevServer) {
+          console.log('Building assets', ctx.isDev);
+          const remixPluginContext = ctx.__remixPluginContext;
+
+          if (ctx.isDev) {
+            return 'export const assets = []';
+          }
+
+          const files = await glob(`**/*`, {
+            ignore: ['**/*.map'],
+            absolute: false,
+            unique: true,
+            caseSensitiveMatch: true,
+            onlyFiles: true,
+            cwd: resolve(remixPluginContext.remixConfig.buildDirectory, 'client'),
+          }).catch(() => []);
+
+          const assetsVirtualContents = `export const assets = ${JSON.stringify(
+            files.map(file => `/${file}`),
+            null,
+            2
+          )};`;
+
+          return assetsVirtualContents;
         }
       },
     },
