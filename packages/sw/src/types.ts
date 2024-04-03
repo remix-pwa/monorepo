@@ -91,6 +91,5 @@ declare global {
       routes: WorkerRouteManifest;
       assets: string[];
     };
-    __messageHandlers: Map<string, (event: ExtendableMessageEvent) => Promise<void>>;
   }
 }

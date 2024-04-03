@@ -45,7 +45,7 @@ export class NavigationHandler extends MessageHandler {
 
   private async handleNavigation(event: any) {
     const { data } = event;
-    const { location } = data.payload;
+    const { isSsr, location } = data.payload;
     const documentUrl = location.pathname + location.search + location.hash;
 
     if (
@@ -57,6 +57,14 @@ export class NavigationHandler extends MessageHandler {
 
     try {
       await this.documentCache.handleRequest(documentUrl);
+
+      if (isSsr) {
+        logger.setLogLevel('warn');
+        logger.log(`Document request for ${documentUrl} handled.`);
+        logger.setLogLevel('debug');
+
+        // Todo: Handle loader events on document request
+      }
     } catch (error) {
       logger.error(`Error handling document request for ${documentUrl}:`, error);
     }
