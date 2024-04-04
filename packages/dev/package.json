@@ -22,7 +22,7 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "TIMING=1 eslint --fix src",
     "prepublish": "npm run build",
-    "test": "vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests --config ../../vitest.config.ts"
+    "test": "cross-env VITEST_WORKSPACE=true vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests --config ../../vitest.config.ts"
   },
   "files": [
     "dist/",
