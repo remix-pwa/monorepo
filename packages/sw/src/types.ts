@@ -3,6 +3,8 @@ import type { ActionFunction, AppLoadContext, DataFunctionArgs, LoaderFunction }
 import type { ServerRouteModule } from '@remix-run/server-runtime/dist/routeModules.js';
 import type { ServerRoute } from '@remix-run/server-runtime/dist/routes.js';
 
+import type { Logger } from './logger/logger.js';
+
 /**
  * An object of unknown type for routes worker actions and loaders provided
  * by the worker's `getLoadContext` function.
@@ -52,6 +54,13 @@ export interface WorkerRouteModule extends ServerRouteModule {
 }
 
 export interface WorkerRoute extends Omit<ServerRoute, 'children'> {
+  id: string;
+  parentId?: string;
+  path?: string;
+  index?: boolean;
+  caseSensitive?: boolean;
+  hasAction: boolean;
+  hasLoader: boolean;
   hasWorkerAction: boolean;
   hasWorkerLoader: boolean;
   module: WorkerRouteModule;
@@ -91,5 +100,6 @@ declare global {
       routes: WorkerRouteManifest;
       assets: string[];
     };
+    logger: Logger | undefined;
   }
 }
