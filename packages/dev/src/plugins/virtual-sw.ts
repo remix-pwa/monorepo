@@ -5,6 +5,7 @@ import { resolve } from 'pathe';
 import type { Plugin } from 'vite';
 
 import { parse } from '../babel.js';
+import { resolveRouteModules } from '../resolve-route-modules.js';
 import { resolveRouteWorkerApis } from '../resolve-route-workers.js';
 import type { PWAPluginContext } from '../types.js';
 import * as VirtualModule from '../vmod.js';
@@ -62,20 +63,39 @@ export const createRouteImports = (routes: RouteManifest, ignoredRoutes: string[
     .trim();
 };
 
-export const createRouteManifest = (routes: RouteManifest, ignoredRoutes: string[] = []): string => {
-  return Object.entries(routes)
-    .map(([key, route], index) => {
-      if (shouldIgnoreRoute(route.path ?? '', ignoredRoutes)) return '';
+export const createRouteManifest = async (
+  routes: RouteManifest,
+  appDirectory: string,
+  ignoredRoutes: string[] = []
+): Promise<string> => {
+  return (
+    await Promise.all(
+      Object.entries(routes).map(async ([key, route], index) => {
+        if (shouldIgnoreRoute(route.path ?? '', ignoredRoutes)) return '';
 
-      return `${JSON.stringify(key)}: {
+        const srcContent = await readFile(resolve(appDirectory, route.file), 'utf-8');
+        const sourceAst = parse(srcContent, {
+          sourceType: 'module',
+          plugins: ['jsx', 'typescript'],
+        });
+
+        const { hasAction, hasLoader, hasWorkerAction, hasWorkerLoader } = resolveRouteModules(sourceAst);
+
+        return `${JSON.stringify(key)}: {
           id: "${route.id}",
           parentId: ${JSON.stringify(route.parentId)},
           path: ${JSON.stringify(route.path)},
           index: ${JSON.stringify(route.index)},
           caseSensitive: ${JSON.stringify(route.caseSensitive)},
+          hasLoader: ${hasLoader},
+          hasAction: ${hasAction},
+          hasWorkerLoader: ${hasWorkerLoader},
+          hasWorkerAction: ${hasWorkerAction},
           module: route${index}
         },`;
-    })
+      })
+    )
+  )
     .join('\n')
     .trim();
 };
@@ -94,7 +114,7 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
           return VirtualModule.resolve(entryId);
         }
       },
-      load(id) {
+      async load(id) {
         if (id === VirtualModule.resolve(entryId)) {
           const entryVirtualContents = [
             `import * as entryWorker from ${JSON.stringify(ctx.options.serviceWorkerPath)};`,
@@ -102,12 +122,14 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
             `${createRouteImports(ctx.options.routes, ctx.options.ignoredSWRouteFiles)}`,
             '',
             'export const routes = {',
-            `  ${createRouteManifest(ctx.options.routes, ctx.options.ignoredSWRouteFiles)}`,
+            `  ${await createRouteManifest(ctx.options.routes, ctx.options.appDirectory, ctx.options.ignoredSWRouteFiles)}`,
             '};',
             '',
             "export { assets } from 'virtual:assets-sw';",
             'export const entry = { module: entryWorker }',
-          ].join('\n');
+          ]
+            .join('\n')
+            .trim();
 
           return entryVirtualContents;
         }
