@@ -157,11 +157,30 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
       },
       async load(id) {
         if (id === VirtualModule.resolve(assetsId) && ctx.isRemixDevServer) {
-          console.log('Building assets', ctx.isDev);
           const remixPluginContext = ctx.__remixPluginContext;
 
           if (ctx.isDev) {
-            return 'export const assets = []';
+            const files = await glob(`**/*`, {
+              ignore: ['**/*.map'],
+              absolute: false,
+              unique: true,
+              caseSensitiveMatch: true,
+              onlyFiles: true,
+              cwd: resolve(remixPluginContext.rootDirectory, 'public'),
+            }).catch(() => []);
+
+            const root = ctx.options.rootDirectory;
+            const app = ctx.options.appDirectory;
+
+            Object.values(ctx.options.routes).forEach(route => {
+              return (files as string[]).push(`${app.replace(root, '').substring(1)}/${route.file}`);
+            });
+
+            return `export const assets = ${JSON.stringify(
+              files.map(file => `/${file}`),
+              null,
+              2
+            )};`;
           }
 
           const files = await glob(`**/*`, {
