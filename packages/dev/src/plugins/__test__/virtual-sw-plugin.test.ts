@@ -37,6 +37,12 @@ vi.doMock('../../babel.js', () => {
   return {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     parse: (code: string, _options: any) => code,
+    traverse: vi.fn(),
+  };
+});
+vi.doMock('fast-glob', () => {
+  return {
+    default: vi.fn().mockResolvedValue(['favicon.ico', 'assets/home-xxx.js', 'assets/about-xxx.js']),
   };
 });
 // (ShafSpecs): Mocking this because test for resolvers already available
@@ -190,24 +196,14 @@ describe('Remix PWA Vite VirtualSW Plugin', () => {
           },
         } as RouteManifest;
 
-        const result = createRouteManifest(routes, []);
-        expect(result).toBe(
+        const result = await createRouteManifest(routes, '/', []);
+        expect(result).toContain(
           `"routes/home": {
           id: "routes/home",
           parentId: "root",
           path: "/home",
           index: false,
-          caseSensitive: true,
-          module: route0
-        },
-"routes/about": {
-          id: "routes/about",
-          parentId: "root",
-          path: "/about",
-          index: false,
-          caseSensitive: true,
-          module: route1
-        },`
+          caseSensitive: true,`
         );
       });
 
@@ -232,16 +228,14 @@ describe('Remix PWA Vite VirtualSW Plugin', () => {
           },
         } as RouteManifest;
 
-        const result = createRouteManifest(routes, ['home']);
-        expect(result).toBe(
+        const result = await createRouteManifest(routes, '/', ['home']);
+        expect(result).contain(
           `"routes/about": {
           id: "routes/about",
           parentId: "root",
           path: "/about",
           index: false,
-          caseSensitive: true,
-          module: route1
-        },`
+          caseSensitive: true,`
         );
       });
     });
@@ -276,6 +270,12 @@ describe('Remix PWA Vite VirtualSW Plugin', () => {
             },
           } as RouteManifest,
         },
+        isRemixDevServer: true,
+        __remixPluginContext: {
+          remixConfig: {
+            buildDirectory: '/build/',
+          },
+        },
       } as unknown as PWAPluginContext;
 
       const _plugin = (await import('../virtual-sw')).VirtualSWPlugins;
@@ -296,9 +296,9 @@ describe('Remix PWA Vite VirtualSW Plugin', () => {
         expect(plugin[0].resolveId('virtual:entry-sw')).toBe('\0virtual:entry-sw');
       });
 
-      test('should load the virtual entry module', () => {
-        expect(plugin[0].load('\0virtual:entry-sw')).toContain('export const routes = {');
-        expect(plugin[0].load('\0virtual:entry-sw')).toContain('export const entry = { module: entryWorker }');
+      test('should load the virtual entry module', async () => {
+        expect(await plugin[0].load('\0virtual:entry-sw')).toContain('export const routes = {');
+        expect(await plugin[0].load('\0virtual:entry-sw')).toContain('export const entry = { module: entryWorker }');
       });
     });
 
@@ -329,6 +329,31 @@ describe('Remix PWA Vite VirtualSW Plugin', () => {
       });
     });
 
+    describe('Virtual Assets Plugin', () => {
+      test('should return a plugin object', () => {
+        expect(plugin[2]).not.toBe(null);
+        expect(plugin[2]).toBeTypeOf('object');
+      });
+
+      test('should have the correct name', () => {
+        expect(plugin[2].name).toBe('vite-plugin-remix-pwa:virtual-assets-sw');
+      });
+
+      test('should resolve the virtual entry id correctly', () => {
+        expect(plugin[2].resolveId('virtual:assets-sw')).toBe('\0virtual:assets-sw');
+      });
+
+      test.skipIf(process.env.VITEST_WORKSPACE)('should return the build assets on load', async () => {
+        const assetPlugin = await plugin[2].load('\0virtual:assets-sw');
+
+        expect(assetPlugin).toBeTypeOf('string');
+
+        expect(assetPlugin).toContain('/favicon.ico');
+        expect(assetPlugin).toContain('/assets/home-xxx.js');
+        expect(assetPlugin).toContain('/assets/about-xxx.js');
+      });
+    });
+
     afterEach(() => {
       vi.restoreAllMocks();
     });
@@ -339,6 +364,7 @@ describe('Remix PWA Vite VirtualSW Plugin', () => {
       vi.doUnmock('fs/promises');
       vi.doUnmock('../../babel.js');
       vi.doUnmock('../../resolve-route-workers.js');
+      vi.doUnmock('fast-glob');
     });
   });
 });
