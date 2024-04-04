@@ -56,7 +56,23 @@ export class NavigationHandler extends MessageHandler {
     }
 
     try {
-      await this.documentCache.handleRequest(documentUrl);
+      const cacheMatch = await this.documentCache.match(documentUrl);
+
+      // eslint-disable-next-line dot-notation
+      if (!cacheMatch && this.documentCache['strategy'].constructor.name !== 'CacheOnly') {
+        logger.debug(`Document request for ${documentUrl} not found in cache. Fetching from server...`);
+
+        const response = await fetch(documentUrl).catch(error => {
+          logger.error(`Error fetching document for ${documentUrl}:`, error);
+        });
+
+        if (!response) {
+          return;
+        }
+
+        return await this.documentCache.addToCache(documentUrl, response.clone());
+      }
+      // await this.documentCache.handleRequest(documentUrl);
 
       if (isSsr) {
         logger.setLogLevel('warn');
