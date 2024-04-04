@@ -35,15 +35,15 @@ const _Logger = class _Logger2 {
   setStyles(o) {
     this.options.styles = { ...this.options.styles, ...o };
   }
-  print(o, i) {
-    const { isProductionEnv: r, styles: e } = this.options;
-    if (r)
+  print(o, r) {
+    const { isProductionEnv: i, styles: e } = this.options;
+    if (i)
       return;
     const t = o;
     if ("groupCollapsed" === t && /^((?!chrome|android).*safari)/i.test(navigator.userAgent))
-      return void console[t](...i);
-    const n = Object.entries(e[o]).map(([o2, i2]) => `${o2}: ${i2}`).join("; "), s = this.inGroup ? [] : [`%c${this.options.prefix}`, n];
-    console[t](...s, ...i), "groupCollapsed" === t && (this.inGroup = true), "groupEnd" === t && (this.inGroup = false);
+      return void console[t](...r);
+    const n = Object.entries(e[o]).map(([o2, r2]) => `${o2}: ${r2}`).join("; "), s = this.inGroup ? [] : [`%c${this.options.prefix}`, n];
+    console[t](...s, ...r), "groupCollapsed" === t && (this.inGroup = true), "groupEnd" === t && (this.inGroup = false);
   }
   debug(...o) {
     this.shouldLog("debug") && this.print("debug", o);
@@ -67,11 +67,11 @@ const _Logger = class _Logger2 {
     this.print("groupEnd", []);
   }
   shouldLog(o) {
-    const { logLevel: i } = this.options, r = ["debug", "info", "log", "warn", "error"];
-    return r.indexOf(o) >= r.indexOf(i);
+    const { logLevel: r } = this.options, i = ["debug", "info", "log", "warn", "error"];
+    return i.indexOf(o) >= i.indexOf(r);
   }
 };
-__publicField$c(_Logger, "defaultOptions", { prefix: "remix-pwa", styles: { debug: { background: "#7f8c8d", color: "white", borderRadius: "0.5em", fontWeight: "bold", padding: "2px 0.5em" }, info: { background: "#3498db", color: "white", borderRadius: "0.5em", fontWeight: "bold", padding: "2px 0.5em" }, log: { background: "#2ecc71", color: "white", borderRadius: "0.5em", fontWeight: "bold", padding: "2px 0.5em" }, warn: { background: "#f39c12", color: "white", borderRadius: "0.5em", fontWeight: "bold", padding: "2px 0.5em" }, error: { background: "#c0392b", color: "white", borderRadius: "0.5em", fontWeight: "bold", padding: "2px 0.5em" }, groupCollapsed: { background: "#3498db", color: "white", borderRadius: "0.5em", fontWeight: "bold", padding: "2px 0.5em" }, groupEnd: { background: null, color: "white", borderRadius: "0.5em", fontWeight: "bold", padding: "2px 0.5em" } }, logLevel: "debug", isProductionEnv: false });
+__publicField$c(_Logger, "defaultOptions", { prefix: "remix-pwa", styles: { debug: { background: "#7f8c8d", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, info: { background: "#3498db", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, log: { background: "#2ecc71", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, warn: { background: "#f39c12", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, error: { background: "#c0392b", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, groupCollapsed: { background: "#3498db", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, groupEnd: { background: null, color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" } }, logLevel: "debug", isProductionEnv: false });
 let Logger = _Logger;
 const logger = new Logger();
 function getAugmentedNamespace(n) {
@@ -3693,7 +3693,7 @@ const _MessageHandler = class _MessageHandler2 {
       try {
         await _MessageHandler2.messageHandlers[s.type](e);
       } catch (e2) {
-        console.error(`Error handling message of type ${s.type}:`, e2);
+        logger.error(`Error handling message of type ${s.type}:`, e2);
       }
   }
 };
@@ -3706,22 +3706,41 @@ var __publicField$a = (obj, key, value) => {
   return value;
 };
 class NavigationHandler extends MessageHandler {
-  constructor(t) {
+  constructor(e) {
     super("REMIX_NAVIGATION");
     __publicField$a(this, "allowList");
     __publicField$a(this, "denyList");
     __publicField$a(this, "documentCache");
-    this.allowList = t.allowList || [], this.denyList = t.denyList || [], this.documentCache = t.cache, this.bind(this.handleNavigation.bind(this));
+    this.allowList = e.allowList || [], this.denyList = e.denyList || [], this.documentCache = e.cache, this.bind(this.handleNavigation.bind(this));
   }
-  async handleNavigation(t) {
-    const { data: e } = t, { location: a } = e.payload, s = a.pathname + a.search + a.hash;
-    if (!(this.allowList.length > 0 && !this.allowList.some((t2) => s.match(t2)) || this.denyList.length > 0 && this.denyList.some((t2) => s.match(t2))))
+  async handleNavigation(e) {
+    const { data: t } = e, { isSsr: o, location: a } = t.payload, r = a.pathname + a.search + a.hash;
+    if (!(this.allowList.length > 0 && !this.allowList.some((e2) => r.match(e2)) || this.denyList.length > 0 && this.denyList.some((e2) => r.match(e2))))
       try {
-        await this.documentCache.handleRequest(s);
-      } catch (t2) {
-        logger.error(`Error handling document request for ${s}:`, t2);
+        if (!await this.documentCache.match(r) && "CacheOnly" !== this.documentCache.strategy.constructor.name) {
+          logger.debug(`Document request for ${r} not found in cache. Fetching from server...`);
+          const e2 = await fetch(r).catch((e3) => {
+            logger.error(`Error fetching document for ${r}:`, e3);
+          });
+          if (!e2)
+            return;
+          return await this.documentCache.addToCache(r, e2.clone());
+        }
+        o && (logger.setLogLevel("warn"), logger.log(`Document request for ${r} handled.`), logger.setLogLevel("debug"));
+      } catch (e2) {
+        logger.error(`Error handling document request for ${r}:`, e2);
       }
   }
+}
+function isMethod$1(t, e) {
+  return e.includes(t.method.toLowerCase());
+}
+function isLoaderRequest$1(t) {
+  const e = new URL(t.url);
+  return isMethod$1(t, ["get"]) && e.searchParams.get("_data");
+}
+function isDocumentRequest(t) {
+  return isMethod$1(t, ["get"]) && "navigate" === t.mode;
 }
 const isHttpRequest = (t) => t instanceof Request ? t.url.startsWith("http") : t.toString().startsWith("http");
 var __defProp$9 = Object.defineProperty;
@@ -8434,7 +8453,18 @@ class EnhancedCache {
     await s.done;
   }
 }
+self.logger = logger;
 const documentCache = new EnhancedCache("document-cache", {
+  version: "v1",
+  strategy: "NetworkFirst",
+  strategyOptions: {}
+});
+const assetCache = new EnhancedCache("asset-cache", {
+  version: "v1",
+  strategy: "CacheFirst",
+  strategyOptions: {}
+});
+const dataCache = new EnhancedCache("data-cache", {
   version: "v1",
   strategy: "NetworkFirst",
   strategyOptions: {}
@@ -8443,10 +8473,25 @@ const getLoadContext = () => {
   return {
     database: [],
     stores: [],
-    caches: [documentCache]
+    caches: [documentCache, dataCache]
   };
 };
-const defaultFetchHandler = async ({ context }) => {
+const isAssetRequest = (request) => {
+  const url = new URL(request.url);
+  const hasNoParams = url.search === "";
+  return self.__workerManifest.assets.includes(url.pathname) && hasNoParams;
+};
+const defaultFetchHandler = async ({ request, context }) => {
+  if (isAssetRequest(request)) {
+    return assetCache.handleRequest(request);
+  }
+  if (isDocumentRequest(request)) {
+    return documentCache.handleRequest(request);
+  }
+  const url = new URL(context.event.request.url);
+  if (isLoaderRequest$1(request) && self.__workerManifest.routes[url.searchParams.get("_data") ?? ""].hasLoader) {
+    return dataCache.handleRequest(request);
+  }
   return context.fetchFromServer();
 };
 self.addEventListener("install", (event) => {
@@ -8506,7 +8551,8 @@ const route1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
 async function workerLoader$3({ context }) {
   const { fetchFromServer } = context;
   const message = await Promise.race([
-    fetchFromServer().then((response) => response.json()).then(({ message: message2 }) => message2),
+    fetchFromServer().then((response) => response.json()).then(({ message: message2 }) => message2).catch(() => new Promise((resolve) => setTimeout(() => resolve(null), 5e3))),
+    // utilizing a slower one even when cached
     new Promise((resolve) => setTimeout(resolve, 500, "Hello World!\n\n• This message is sent to you from the client 😜 (Edited, again ---)!"))
   ]);
   return new Response(
@@ -9490,6 +9536,20 @@ const route7 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   __proto__: null,
   workerLoader
 }, Symbol.toStringTag, { value: "Module" }));
+const assets = [
+  "/entry.worker.css",
+  "/entry.worker.js",
+  "/favicon.ico",
+  "/manifest.json",
+  "/src/app/root.tsx",
+  "/src/app/routes/basic-action.tsx",
+  "/src/app/routes/basic-loader.tsx",
+  "/src/app/routes/_app.flights.tsx",
+  "/src/app/routes/selection.tsx",
+  "/src/app/routes/sync-away.tsx",
+  "/src/app/routes/_index.tsx",
+  "/src/app/routes/_app.tsx"
+];
 const routes = {
   "root": {
     id: "root",
@@ -9497,6 +9557,10 @@ const routes = {
     path: "",
     index: void 0,
     caseSensitive: void 0,
+    hasLoader: false,
+    hasAction: false,
+    hasWorkerLoader: false,
+    hasWorkerAction: false,
     module: route0
   },
   "routes/basic-action": {
@@ -9505,6 +9569,10 @@ const routes = {
     path: "basic-action",
     index: void 0,
     caseSensitive: void 0,
+    hasLoader: true,
+    hasAction: true,
+    hasWorkerLoader: false,
+    hasWorkerAction: true,
     module: route1
   },
   "routes/basic-loader": {
@@ -9513,6 +9581,10 @@ const routes = {
     path: "basic-loader",
     index: void 0,
     caseSensitive: void 0,
+    hasLoader: true,
+    hasAction: false,
+    hasWorkerLoader: true,
+    hasWorkerAction: false,
     module: route2
   },
   "routes/_app.flights": {
@@ -9521,6 +9593,10 @@ const routes = {
     path: "flights",
     index: void 0,
     caseSensitive: void 0,
+    hasLoader: true,
+    hasAction: true,
+    hasWorkerLoader: true,
+    hasWorkerAction: true,
     module: route3
   },
   "routes/selection": {
@@ -9529,6 +9605,10 @@ const routes = {
     path: "selection",
     index: void 0,
     caseSensitive: void 0,
+    hasLoader: true,
+    hasAction: false,
+    hasWorkerLoader: true,
+    hasWorkerAction: false,
     module: route4
   },
   "routes/sync-away": {
@@ -9537,6 +9617,10 @@ const routes = {
     path: "sync-away",
     index: void 0,
     caseSensitive: void 0,
+    hasLoader: false,
+    hasAction: true,
+    hasWorkerLoader: false,
+    hasWorkerAction: true,
     module: route5
   },
   "routes/_index": {
@@ -9545,6 +9629,10 @@ const routes = {
     path: void 0,
     index: true,
     caseSensitive: void 0,
+    hasLoader: true,
+    hasAction: false,
+    hasWorkerLoader: false,
+    hasWorkerAction: false,
     module: route6
   },
   "routes/_app": {
@@ -9553,6 +9641,10 @@ const routes = {
     path: void 0,
     index: void 0,
     caseSensitive: void 0,
+    hasLoader: true,
+    hasAction: false,
+    hasWorkerLoader: true,
+    hasWorkerAction: false,
     module: route7
   }
 };
@@ -9946,8 +10038,7 @@ const defaultErrorHandler = entry.module.errorHandler || ((error, { request }) =
   }
 });
 _self.__workerManifest = {
-  // assets: build.assets,
-  // assets: process.env.NODE_ENV === 'development' ? [] : [], // get assets in prod.
+  assets,
   routes
 };
 _self.addEventListener(

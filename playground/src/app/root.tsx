@@ -14,7 +14,6 @@ import {
 // import { routes } from 'virtual:pwa-entry-module';
 
 import './tailwind.css';
-import { useEffect, useState } from "react";
 import { usePWAManager } from "@remix-pwa/client";
 
 // const usePWAHMR = () => {
@@ -46,13 +45,12 @@ import { usePWAManager } from "@remix-pwa/client";
 export default function App() {
   useSWEffect()
   const { updateAvailable } = usePWAManager();
-
   // usePWAHMR()
 
   // logger.log("App rendered", msg);
-  useEffect(() => {
-    console.log(updateAvailable);
-  }, [updateAvailable]);
+  // useEffect(() => {
+  //   console.log(updateAvailable);
+  // }, [updateAvailable]);
 
   return (
     <html lang="en">

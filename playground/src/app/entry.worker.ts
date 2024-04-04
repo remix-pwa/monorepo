@@ -1,10 +1,24 @@
 /// <reference lib="WebWorker" />
 
-import { EnhancedCache, logger, NavigationHandler } from '@remix-pwa/sw';
+import { EnhancedCache, isDocumentRequest, isLoaderRequest, logger, NavigationHandler } from '@remix-pwa/sw';
 
 declare let self: ServiceWorkerGlobalScope;
 
+self.logger = logger;
+
 const documentCache = new EnhancedCache('document-cache', {
+  version: 'v1',
+  strategy: 'NetworkFirst',
+  strategyOptions: {}
+})
+
+const assetCache = new EnhancedCache('asset-cache', {
+  version: 'v1',
+  strategy: 'CacheFirst',
+  strategyOptions: {}
+})
+
+const dataCache = new EnhancedCache('data-cache', {
   version: 'v1',
   strategy: 'NetworkFirst',
   strategyOptions: {}
@@ -21,11 +35,35 @@ export const getLoadContext = () => {
   return {
     database: [],
     stores: [],
-    caches: [documentCache],
+    caches: [documentCache, dataCache],
   };
 };
 
-export const defaultFetchHandler = async ({ context }: any) => {
+const isAssetRequest = (request: Request)=> {
+  const url = new URL(request.url);
+
+  const hasNoParams = url.search === '';
+
+  return self.__workerManifest.assets.includes(url.pathname) && hasNoParams;
+}
+
+export const defaultFetchHandler = async ({ request, context }: any) => {
+  if (isAssetRequest(request)) {
+    return assetCache.handleRequest(request);
+  }
+
+  if (isDocumentRequest(request)) {
+    return documentCache.handleRequest(request);
+  }
+
+  const url = new URL(context.event.request.url);
+
+  // If it is loader request, and there's no worker route API for it,
+  // we have to run it ourselves
+  if (isLoaderRequest(request) && self.__workerManifest.routes[url.searchParams.get('_data') ?? ''].hasLoader) {
+    return dataCache.handleRequest(request);
+  }
+
   // logger.log('default handler');
   return context.fetchFromServer();
 }
@@ -39,8 +77,6 @@ self.addEventListener('install', (event: ExtendableEvent) => {
 self.addEventListener('activate', event => {
   event.waitUntil(self.clients.claim());
 });
-
-
 
 const msgHandler = new NavigationHandler({
   cache: documentCache,
