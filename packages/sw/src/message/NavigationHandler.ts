@@ -72,7 +72,6 @@ export class NavigationHandler extends MessageHandler {
 
         return await this.documentCache.addToCache(documentUrl, response.clone());
       }
-      // await this.documentCache.handleRequest(documentUrl);
 
       if (isSsr) {
         logger.setLogLevel('warn');
