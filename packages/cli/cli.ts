@@ -3,10 +3,12 @@
 import { Command } from '@commander-js/extra-typings';
 import { existsSync } from 'fs';
 import { readFile, writeFile } from 'fs/promises';
+import path from 'path';
 import { resolve } from 'pathe';
 import colors from 'picocolors';
 import type { CompilerOptions } from 'typescript';
 import ts from 'typescript';
+import { fileURLToPath } from 'url';
 
 // Disable experimental warnings (due to `import` statement assertions)
 //
@@ -31,7 +33,8 @@ const packageJson = await import('./package.json', { assert: { type: 'json' } })
 const { magenta } = colors;
 const { ModuleKind, ScriptTarget, transpileModule } = ts;
 
-const __dirname = import.meta.dirname;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const compilerOptions: CompilerOptions = {
   module: ModuleKind.ES2022,
