@@ -32,8 +32,8 @@ const packageJson = await import('./package.json', { assert: { type: 'json' } })
 const { magenta } = colors;
 const { ModuleKind, ScriptTarget, transpileModule } = ts;
 
-// const __dirname = dirname(fileURLToPath(import.meta.url));
-const __dirname = import.meta.dirname;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const compilerOptions: CompilerOptions = {
   module: ModuleKind.ES2022,
