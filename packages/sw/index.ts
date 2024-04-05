@@ -13,6 +13,7 @@ export { defer } from './src/utils/defer.js';
 export { LoadServiceWorkerOptions, loadServiceWorker } from './src/utils/loader.js';
 export {
   isActionRequest,
+  isDocumentRequest,
   isHttpRequest,
   isLoaderRequest,
   isMethod,

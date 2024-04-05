@@ -1,12 +1,16 @@
 import type { RouteManifest } from '@remix-run/dev/dist/config/routes.js';
+import * as _glob from 'fast-glob';
 import { readFile } from 'fs/promises';
 import { resolve } from 'pathe';
 import type { Plugin } from 'vite';
 
 import { parse } from '../babel.js';
+import { resolveRouteModules } from '../resolve-route-modules.js';
 import { resolveRouteWorkerApis } from '../resolve-route-workers.js';
 import type { PWAPluginContext } from '../types.js';
 import * as VirtualModule from '../vmod.js';
+
+const { default: glob } = _glob;
 
 export const shouldIgnoreRoute = (route: string, patterns: string[]): boolean => {
   if (route === '' || patterns.length === 0) return false;
@@ -59,26 +63,46 @@ export const createRouteImports = (routes: RouteManifest, ignoredRoutes: string[
     .trim();
 };
 
-export const createRouteManifest = (routes: RouteManifest, ignoredRoutes: string[] = []): string => {
-  return Object.entries(routes)
-    .map(([key, route], index) => {
-      if (shouldIgnoreRoute(route.path ?? '', ignoredRoutes)) return '';
+export const createRouteManifest = async (
+  routes: RouteManifest,
+  appDirectory: string,
+  ignoredRoutes: string[] = []
+): Promise<string> => {
+  return (
+    await Promise.all(
+      Object.entries(routes).map(async ([key, route], index) => {
+        if (shouldIgnoreRoute(route.path ?? '', ignoredRoutes)) return '';
 
-      return `${JSON.stringify(key)}: {
+        const srcContent = await readFile(resolve(appDirectory, route.file), 'utf-8');
+        const sourceAst = parse(srcContent, {
+          sourceType: 'module',
+          plugins: ['jsx', 'typescript'],
+        });
+
+        const { hasAction, hasLoader, hasWorkerAction, hasWorkerLoader } = resolveRouteModules(sourceAst);
+
+        return `${JSON.stringify(key)}: {
           id: "${route.id}",
           parentId: ${JSON.stringify(route.parentId)},
           path: ${JSON.stringify(route.path)},
           index: ${JSON.stringify(route.index)},
           caseSensitive: ${JSON.stringify(route.caseSensitive)},
+          hasLoader: ${hasLoader},
+          hasAction: ${hasAction},
+          hasWorkerLoader: ${hasWorkerLoader},
+          hasWorkerAction: ${hasWorkerAction},
           module: route${index}
         },`;
-    })
+      })
+    )
+  )
     .join('\n')
     .trim();
 };
 
 export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
   const entryId = VirtualModule.id('entry-sw');
+  const assetsId = VirtualModule.id('assets-sw');
 
   const workerRouteCache = new Map();
 
@@ -90,7 +114,7 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
           return VirtualModule.resolve(entryId);
         }
       },
-      load(id) {
+      async load(id) {
         if (id === VirtualModule.resolve(entryId)) {
           const entryVirtualContents = [
             `import * as entryWorker from ${JSON.stringify(ctx.options.serviceWorkerPath)};`,
@@ -98,11 +122,14 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
             `${createRouteImports(ctx.options.routes, ctx.options.ignoredSWRouteFiles)}`,
             '',
             'export const routes = {',
-            `  ${createRouteManifest(ctx.options.routes, ctx.options.ignoredSWRouteFiles)}`,
+            `  ${await createRouteManifest(ctx.options.routes, ctx.options.appDirectory, ctx.options.ignoredSWRouteFiles)}`,
             '};',
             '',
+            "export { assets } from 'virtual:assets-sw';",
             'export const entry = { module: entryWorker }',
-          ].join('\n');
+          ]
+            .join('\n')
+            .trim();
 
           return entryVirtualContents;
         }
@@ -116,7 +143,7 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
         }
       },
       async load(id) {
-        if (id.startsWith('virtual:worker:')) {
+        if (id.startsWith('virtual:worker:') && ctx.isRemixDevServer) {
           const filePath = id.replace('virtual:worker:', '');
 
           if (workerRouteCache.has(filePath)) {
@@ -140,6 +167,53 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
           workerRouteCache.set(filePath, workerContent);
 
           return workerContent;
+        }
+      },
+    },
+    {
+      name: 'vite-plugin-remix-pwa:virtual-assets-sw',
+      resolveId(id) {
+        if (id === assetsId) {
+          return VirtualModule.resolve(assetsId);
+        }
+      },
+      async load(id) {
+        if (id === VirtualModule.resolve(assetsId) && ctx.isRemixDevServer) {
+          const remixPluginContext = ctx.__remixPluginContext;
+
+          if (ctx.isDev) {
+            const files = await glob(`**/*`, {
+              ignore: ['**/*.map'],
+              absolute: false,
+              unique: true,
+              caseSensitiveMatch: true,
+              onlyFiles: true,
+              cwd: resolve(remixPluginContext.rootDirectory, 'public'),
+            }).catch(() => []);
+
+            return `export const assets = ${JSON.stringify(
+              files.map(file => `/${file}`),
+              null,
+              2
+            )};`;
+          }
+
+          const files = await glob(`**/*`, {
+            ignore: ['**/*.map'],
+            absolute: false,
+            unique: true,
+            caseSensitiveMatch: true,
+            onlyFiles: true,
+            cwd: resolve(remixPluginContext.remixConfig.buildDirectory, 'client'),
+          }).catch(() => []);
+
+          const assetsVirtualContents = `export const assets = ${JSON.stringify(
+            files.map(file => `/${file}`),
+            null,
+            2
+          )};`;
+
+          return assetsVirtualContents;
         }
       },
     },

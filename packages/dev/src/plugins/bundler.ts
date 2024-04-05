@@ -135,14 +135,16 @@ export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
     async buildStart() {
       if (!ctx.isRemixDevServer) return;
 
-      const TIME_LABEL = '💿 Built Service Worker in';
-      console.time(TIME_LABEL);
+      if (ctx.isDev || ctx.__remixPluginContext.isSsrBuild) {
+        const TIME_LABEL = '💿 Built Service Worker in';
+        console.time(TIME_LABEL);
 
-      console.log(`🏗️  Building Service Worker in ${ctx.isDev ? 'development' : 'production'} mode...`);
-      await buildWorker(ctx);
-      hash = getWorkerHash(ctx.options);
+        console.log(`🏗️  Building Service Worker in ${ctx.isDev ? 'development' : 'production'} mode...`);
+        await buildWorker(ctx);
+        hash = getWorkerHash(ctx.options);
 
-      console.timeEnd(TIME_LABEL);
+        console.timeEnd(TIME_LABEL);
+      }
     },
   };
 }

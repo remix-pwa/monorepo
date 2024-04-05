@@ -1,10 +1,36 @@
 /* eslint-disable no-void */
 /* eslint-disable dot-notation */
-import { describe, expect, test, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import createFetchMock from 'vitest-fetch-mock';
 
 import { NavigationHandler } from '../NavigationHandler';
 
+const fetchMocker = createFetchMock(vi);
+
 describe('NavigationHandler testing Suite', () => {
+  let cache: any;
+
+  beforeAll(() => {
+    fetchMocker.enableMocks();
+  });
+
+  beforeEach(() => {
+    fetchMocker.doMock();
+
+    fetchMocker.mockResponse('response');
+
+    cache = {
+      match: vi.fn().mockResolvedValue(void 0),
+      strategy: {
+        constructor: {
+          name: 'NetworkFirst',
+        },
+      },
+      handleRequest: vi.fn().mockResolvedValue(void 0),
+      addToCache: vi.fn().mockResolvedValue(void 0),
+    };
+  });
+
   test('constructor correctly assigns options', () => {
     const cache = {} as any;
     const allowList = [/^\/$/];
@@ -21,9 +47,6 @@ describe('NavigationHandler testing Suite', () => {
   });
 
   test('handleNavigation correctly handles navigation event', async () => {
-    const cache = {
-      handleRequest: vi.fn().mockResolvedValue(void 0),
-    } as any;
     const navigationHandler = new NavigationHandler({
       cache,
     });
@@ -37,20 +60,18 @@ describe('NavigationHandler testing Suite', () => {
             search: '',
             hash: '',
           },
+          isSsr: true,
         },
       },
     } as any;
 
     await navigationHandler.handleMessage(event);
 
-    expect(cache.handleRequest).toHaveBeenCalledTimes(1);
-    expect(cache.handleRequest).toHaveBeenCalledWith('/');
+    expect(cache.match).toHaveBeenCalledTimes(1);
+    expect(cache.match).toHaveBeenCalledWith('/');
   });
 
   test('handleNavigation correctly handles navigation event with allowList', async () => {
-    const cache = {
-      handleRequest: vi.fn().mockResolvedValue(void 0),
-    } as any;
     const allowList = [/^\/$/];
     const navigationHandler = new NavigationHandler({
       cache,
@@ -66,6 +87,7 @@ describe('NavigationHandler testing Suite', () => {
             search: '',
             hash: '',
           },
+          isSsr: true,
         },
       },
     } as any;
@@ -76,9 +98,6 @@ describe('NavigationHandler testing Suite', () => {
   });
 
   test("handleNavigation correctly handles navigation event with denyList (doesn't handle it)", async () => {
-    const cache = {
-      handleRequest: vi.fn().mockResolvedValue(void 0),
-    } as any;
     const denyList = [/^\/$/];
     const navigationHandler = new NavigationHandler({
       cache,
@@ -94,6 +113,7 @@ describe('NavigationHandler testing Suite', () => {
             search: '',
             hash: '',
           },
+          isSsr: true,
         },
       },
     } as any;
@@ -104,9 +124,6 @@ describe('NavigationHandler testing Suite', () => {
   });
 
   test('handleNavigation denyList overrides allowList', async () => {
-    const cache = {
-      handleRequest: vi.fn().mockResolvedValue(void 0),
-    } as any;
     const allowList = [/^\/home$/];
     const denyList = [/^\/$/];
     const navigationHandler = new NavigationHandler({
@@ -124,6 +141,7 @@ describe('NavigationHandler testing Suite', () => {
             search: '',
             hash: '',
           },
+          isSsr: true,
         },
       },
     } as any;
@@ -131,5 +149,15 @@ describe('NavigationHandler testing Suite', () => {
     await navigationHandler.handleMessage(event);
 
     expect(cache.handleRequest).toHaveBeenCalledTimes(0);
+  });
+
+  afterEach(() => {
+    fetchMocker.resetMocks();
+    vi.restoreAllMocks();
+  });
+
+  afterAll(() => {
+    fetchMocker.disableMocks();
+    vi.clearAllMocks();
   });
 });
