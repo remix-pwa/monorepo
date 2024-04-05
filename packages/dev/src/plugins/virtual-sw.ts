@@ -191,13 +191,6 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
               cwd: resolve(remixPluginContext.rootDirectory, 'public'),
             }).catch(() => []);
 
-            const root = ctx.options.rootDirectory;
-            const app = ctx.options.appDirectory;
-
-            Object.values(ctx.options.routes).forEach(route => {
-              return (files as string[]).push(`${app.replace(root, '').substring(1)}/${route.file}`);
-            });
-
             return `export const assets = ${JSON.stringify(
               files.map(file => `/${file}`),
               null,
