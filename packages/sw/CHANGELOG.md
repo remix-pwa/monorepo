@@ -1,3 +1,12 @@
+## @remix-pwa/sw 3.0.1-dev.1 (2024-04-05)
+
+
+### Bug Fixes
+
+* **dev:** SSR support + document request detection 1898870
+* **sw:** fixed `Logger` styling 88a7836
+* **sw:** updated messaging to be more open :+1: b7f0ce5
+
 # @remix-pwa/sw 3.0.0 (2024-03-28)
 
 
