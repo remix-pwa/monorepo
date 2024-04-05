@@ -15,6 +15,7 @@ import { fileURLToPath } from 'url';
 // https://github.com/yarnpkg/berry/blob/2cf0a8fe3e4d4bd7d4d344245d24a85a45d4c5c9/packages/yarnpkg-pnp/sources/loader/applyPatch.ts#L414-L435
 const originalEmit = process.emit;
 // @ts-expect-error - TS complains about the return type of originalEmit.apply
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 process.emit = function (name, data, ..._args) {
   if (
     name === `warning` &&
