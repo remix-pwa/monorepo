@@ -1,3 +1,12 @@
+## @remix-pwa/dev 3.0.1-dev.1 (2024-04-05)
+
+
+### Bug Fixes
+
+* **dev:** added assets support to `remix-pwa` a2e32b1
+* **dev:** assets for `development` environments? 0e0dfd1
+* **dev:** patched worker route manifest 732406d
+
 # @remix-pwa/dev 3.0.0 (2024-03-28)
 
 
