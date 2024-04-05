@@ -1,22 +1,8 @@
-import type { AppConfig } from '@remix-run/dev/dist/config.js';
-import { resolveConfig } from '@remix-run/dev/dist/config.js';
-import type { VitePluginConfig } from '@remix-run/dev/dist/vite/plugin.js';
-import pick from 'lodash/pick.js';
 import { resolve } from 'pathe';
 import type { ResolvedConfig } from 'vite';
 import { normalizePath } from 'vite';
 
 import type { PWAOptions, ResolvedPWAOptions } from './types.js';
-
-const supportedRemixConfigKeys = [
-  'appDirectory',
-  'assetsBuildDirectory',
-  'future',
-  'ignoredRouteFiles',
-  'publicPath',
-  'routes',
-  'serverModuleFormat',
-] as const satisfies ReadonlyArray<keyof AppConfig>;
 
 const removeTrailingSlashes = (str: string): string => str.replace(/^\/|\/$/g, '');
 
@@ -24,8 +10,12 @@ const removeTrailingSlashes = (str: string): string => str.replace(/^\/|\/$/g, '
 
 export async function resolveOptions(
   options: Partial<PWAOptions>,
-  viteConfig: ResolvedConfig
+  viteConfig: ResolvedConfig & { __remixPluginContext?: any }
 ): Promise<ResolvedPWAOptions> {
+  if (!viteConfig.__remixPluginContext) {
+    return {} as ResolvedPWAOptions;
+  }
+
   const {
     entryWorkerFile: serviceWorkerFile = (options.entryWorkerFile || 'entry.worker.ts').trim(),
     ignoredSWRouteFiles = options.ignoredSWRouteFiles || [],
@@ -40,20 +30,9 @@ export async function resolveOptions(
     workerSourceMap = options.workerSourceMap || false,
   } = options;
 
-  const defaults: Partial<VitePluginConfig> = {
-    serverBuildFile: 'index.js',
-  };
-
-  const remixConfig = {
-    ...defaults,
-    ...pick(options, supportedRemixConfigKeys),
-  };
-
   const rootDirectory = viteConfig.root ?? process.env.REMIX_ROOT ?? process.cwd();
 
-  const { appDirectory, publicPath, routes } = await resolveConfig(remixConfig, {
-    rootDirectory,
-  });
+  const { appDirectory, publicPath, routes } = viteConfig.__remixPluginContext.remixConfig;
 
   return {
     workerMinify,

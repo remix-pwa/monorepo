@@ -2,9 +2,9 @@ export type LogLevel = 'debug' | 'info' | 'log' | 'warn' | 'error' | 'groupColla
 
 export interface LoggerStyles {
   background: string;
-  borderRadius: string;
+  'border-radius': string;
   color: string;
-  fontWeight: string;
+  'font-weight': string;
   padding: string;
   [key: string]: string;
 }
@@ -25,51 +25,51 @@ export class Logger {
       debug: {
         background: '#7f8c8d',
         color: 'white',
-        borderRadius: '0.5em',
-        fontWeight: 'bold',
+        'border-radius': '0.5em',
+        'font-weight': 'bold',
         padding: '2px 0.5em',
       },
       info: {
         background: '#3498db',
         color: 'white',
-        borderRadius: '0.5em',
-        fontWeight: 'bold',
+        'border-radius': '0.5em',
+        'font-weight': 'bold',
         padding: '2px 0.5em',
       },
       log: {
         background: '#2ecc71',
         color: 'white',
-        borderRadius: '0.5em',
-        fontWeight: 'bold',
+        'border-radius': '0.5em',
+        'font-weight': 'bold',
         padding: '2px 0.5em',
       },
       warn: {
         background: '#f39c12',
         color: 'white',
-        borderRadius: '0.5em',
-        fontWeight: 'bold',
+        'border-radius': '0.5em',
+        'font-weight': 'bold',
         padding: '2px 0.5em',
       },
       error: {
         background: '#c0392b',
         color: 'white',
-        borderRadius: '0.5em',
-        fontWeight: 'bold',
+        'border-radius': '0.5em',
+        'font-weight': 'bold',
         padding: '2px 0.5em',
       },
       groupCollapsed: {
         background: '#3498db',
         color: 'white',
-        borderRadius: '0.5em',
-        fontWeight: 'bold',
+        'border-radius': '0.5em',
+        'font-weight': 'bold',
         padding: '2px 0.5em',
       },
       groupEnd: {
         // @ts-expect-error - no bg color on `groupEnd`
         background: null,
         color: 'white',
-        borderRadius: '0.5em',
-        fontWeight: 'bold',
+        'border-radius': '0.5em',
+        'font-weight': 'bold',
         padding: '2px 0.5em',
       },
     },

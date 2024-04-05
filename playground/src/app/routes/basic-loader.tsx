@@ -25,7 +25,8 @@ export async function workerLoader ({ context }: WorkerLoaderArgs) {
   const message = await Promise.race([
     fetchFromServer()
       .then((response: any) => response.json())
-      .then(({ message }: any) => message),
+      .then(({ message }: any) => message)
+      .catch(() => new Promise((resolve) => setTimeout(() => resolve(null), 5_000))), // utilizing a slower one even when cached
     new Promise((resolve) => setTimeout(resolve, 500, 'Hello World!\n\n• This message is sent to you from the client 😜 (Edited, again ---)!'))
   ]);
 

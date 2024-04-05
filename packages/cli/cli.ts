@@ -3,10 +3,11 @@
 import { Command } from '@commander-js/extra-typings';
 import { existsSync } from 'fs';
 import { readFile, writeFile } from 'fs/promises';
-import { resolve } from 'pathe';
+import { dirname, resolve } from 'pathe';
 import colors from 'picocolors';
 import type { CompilerOptions } from 'typescript';
 import ts from 'typescript';
+import { fileURLToPath } from 'url';
 
 // Disable experimental warnings (due to `import` statement assertions)
 //
@@ -14,6 +15,7 @@ import ts from 'typescript';
 // https://github.com/yarnpkg/berry/blob/2cf0a8fe3e4d4bd7d4d344245d24a85a45d4c5c9/packages/yarnpkg-pnp/sources/loader/applyPatch.ts#L414-L435
 const originalEmit = process.emit;
 // @ts-expect-error - TS complains about the return type of originalEmit.apply
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 process.emit = function (name, data, ..._args) {
   if (
     name === `warning` &&
@@ -31,7 +33,8 @@ const packageJson = await import('./package.json', { assert: { type: 'json' } })
 const { magenta } = colors;
 const { ModuleKind, ScriptTarget, transpileModule } = ts;
 
-const __dirname = import.meta.dirname;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const compilerOptions: CompilerOptions = {
   module: ModuleKind.ES2022,

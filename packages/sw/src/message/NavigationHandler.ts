@@ -45,7 +45,7 @@ export class NavigationHandler extends MessageHandler {
 
   private async handleNavigation(event: any) {
     const { data } = event;
-    const { location } = data.payload;
+    const { isSsr, location } = data.payload;
     const documentUrl = location.pathname + location.search + location.hash;
 
     if (
@@ -56,7 +56,30 @@ export class NavigationHandler extends MessageHandler {
     }
 
     try {
-      await this.documentCache.handleRequest(documentUrl);
+      const cacheMatch = await this.documentCache.match(documentUrl);
+
+      // eslint-disable-next-line dot-notation
+      if (!cacheMatch && this.documentCache['strategy'].constructor.name !== 'CacheOnly') {
+        logger.debug(`Document request for ${documentUrl} not found in cache. Fetching from server...`);
+
+        const response = await fetch(documentUrl).catch(error => {
+          logger.error(`Error fetching document for ${documentUrl}:`, error);
+        });
+
+        if (!response) {
+          return;
+        }
+
+        return await this.documentCache.addToCache(documentUrl, response.clone());
+      }
+
+      if (isSsr) {
+        logger.setLogLevel('warn');
+        logger.log(`Document request for ${documentUrl} handled.`);
+        logger.setLogLevel('debug');
+
+        // Todo: Handle loader events on document request
+      }
     } catch (error) {
       logger.error(`Error handling document request for ${documentUrl}:`, error);
     }

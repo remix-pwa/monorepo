@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/dev",
-  "version": "3.0.0-dev.2",
+  "version": "3.0.0",
   "description": "An esbuild compiler for Service Workers in Remix.run",
   "repository": {
     "type": "git",
@@ -22,7 +22,7 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "TIMING=1 eslint --fix src",
     "prepublish": "npm run build",
-    "test": "vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests --config ../../vitest.config.ts"
+    "test": "cross-env VITEST_WORKSPACE=true vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests --config ../../vitest.config.ts"
   },
   "files": [
     "dist/",
@@ -42,6 +42,7 @@
     "@babel/generator": "^7.23.6",
     "@babel/traverse": "^7.23.6",
     "chokidar": "^3.6.0",
+    "fast-glob": "^3.3.2",
     "fs-extra": "^11.2.0",
     "lodash": "^4.17.21",
     "magic-string": "^0.30.8",
@@ -50,7 +51,7 @@
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
-    "@remix-pwa/worker-runtime": "^2.1.0-dev.3",
+    "@remix-pwa/worker-runtime": "^2.1.0",
     "@remix-run/dev": "^2.8.1",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",

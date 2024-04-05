@@ -2,7 +2,16 @@ import type { Location } from '@remix-run/react';
 import { useLocation } from '@remix-run/react';
 import { useEffect, useRef } from 'react';
 interface SWMessagePayload {
+  /**
+   * The current location of the application.
+   */
   location: Location<any>;
+  /**
+   * This flag is used to determine if the current navigation event is the first
+   * render of the application. This is useful for the service worker to determine
+   * full document requests (when `isSsr` is `true`) and client-side navigations.
+   */
+  isSsr: boolean;
   [key: string]: any;
 }
 
@@ -19,6 +28,7 @@ export type UseSWEffectOptions =
 export function useSWEffect(options: UseSWEffectOptions = { cacheType: 'jit' }): void {
   const location = useLocation();
   const messageDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     const sendMessageToSW = (event: string, payload: SWMessagePayload) => {
@@ -34,7 +44,7 @@ export function useSWEffect(options: UseSWEffectOptions = { cacheType: 'jit' }):
 
       messageDebounceRef.current = setTimeout(() => {
         let event: string;
-        let payload: SWMessagePayload = { location };
+        let payload: SWMessagePayload = { location, isSsr: isFirstRender.current };
 
         switch (options.cacheType) {
           case 'jit':
@@ -45,7 +55,7 @@ export function useSWEffect(options: UseSWEffectOptions = { cacheType: 'jit' }):
             break;
           case 'custom':
             event = options.eventName;
-            payload = { location, ...(options.payload || {}) };
+            payload = { ...payload, ...(options.payload || {}) };
             break;
           default:
             event = 'REMIX_NAVIGATION';
@@ -69,6 +79,7 @@ export function useSWEffect(options: UseSWEffectOptions = { cacheType: 'jit' }):
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.removeEventListener('controllerchange', handleLocationChange);
       }
+      if (isFirstRender.current) isFirstRender.current = false;
     };
   }, [location]);
 }

@@ -1,3 +1,5 @@
+import { logger } from '../logger/logger.js';
+
 interface MessageHandlerMap {
   [eventName: string]: (event: any) => Promise<void>;
 }
@@ -21,7 +23,7 @@ export class MessageHandler {
       try {
         await MessageHandler.messageHandlers[data.type](event);
       } catch (error) {
-        console.error(`Error handling message of type ${data.type}:`, error);
+        logger.error(`Error handling message of type ${data.type}:`, error);
       }
     }
   }
