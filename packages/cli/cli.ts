@@ -3,8 +3,7 @@
 import { Command } from '@commander-js/extra-typings';
 import { existsSync } from 'fs';
 import { readFile, writeFile } from 'fs/promises';
-import path from 'path';
-import { resolve } from 'pathe';
+import { dirname, resolve } from 'pathe';
 import colors from 'picocolors';
 import type { CompilerOptions } from 'typescript';
 import ts from 'typescript';
@@ -34,7 +33,7 @@ const { magenta } = colors;
 const { ModuleKind, ScriptTarget, transpileModule } = ts;
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(__filename);
 
 const compilerOptions: CompilerOptions = {
   module: ModuleKind.ES2022,

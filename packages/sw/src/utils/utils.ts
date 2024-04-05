@@ -75,6 +75,16 @@ export function isActionRequest(request: Request): string | false | null {
 }
 
 /**
+ * Checks if the given request is a document navigation event (client-side) navigation
+ *
+ * @param request The request to check
+ * @returns {boolean} Wether the request is a document request
+ */
+export function isDocumentRequest(request: Request): boolean {
+  return isMethod(request, ['get']) && request.mode === 'navigate';
+}
+
+/**
  * Returns a promise that resolves and the passed number of milliseconds.
  * This utility is an async/await-friendly version of `setTimeout`.
  *

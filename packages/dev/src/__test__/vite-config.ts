@@ -17,4 +17,14 @@ export const mockViteConfig = <Partial<ResolvedConfig>>{
     preserveSymlinks: false,
     preferRelative: false,
   },
+  __remixPluginContext: {
+    remixConfig: {
+      appDirectory: '/Users/ryan/Projects/remix-pwa/app',
+      rootDirectory: '/Users/ryan/Projects/remix-pwa',
+      routes: {},
+      assetsBuildDirectory: '/Users/ryan/Projects/remix-pwa/public/build',
+      ignoredRouteFiles: ['**/.*'],
+      publicPath: '/build/',
+    },
+  },
 };

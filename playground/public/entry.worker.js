@@ -35,15 +35,15 @@ const _Logger = class _Logger2 {
   setStyles(o) {
     this.options.styles = { ...this.options.styles, ...o };
   }
-  print(o, i) {
-    const { isProductionEnv: r, styles: e } = this.options;
-    if (r)
+  print(o, r) {
+    const { isProductionEnv: i, styles: e } = this.options;
+    if (i)
       return;
     const t = o;
     if ("groupCollapsed" === t && /^((?!chrome|android).*safari)/i.test(navigator.userAgent))
-      return void console[t](...i);
-    const n = Object.entries(e[o]).map(([o2, i2]) => `${o2}: ${i2}`).join("; "), s = this.inGroup ? [] : [`%c${this.options.prefix}`, n];
-    console[t](...s, ...i), "groupCollapsed" === t && (this.inGroup = true), "groupEnd" === t && (this.inGroup = false);
+      return void console[t](...r);
+    const n = Object.entries(e[o]).map(([o2, r2]) => `${o2}: ${r2}`).join("; "), s = this.inGroup ? [] : [`%c${this.options.prefix}`, n];
+    console[t](...s, ...r), "groupCollapsed" === t && (this.inGroup = true), "groupEnd" === t && (this.inGroup = false);
   }
   debug(...o) {
     this.shouldLog("debug") && this.print("debug", o);
@@ -67,11 +67,11 @@ const _Logger = class _Logger2 {
     this.print("groupEnd", []);
   }
   shouldLog(o) {
-    const { logLevel: i } = this.options, r = ["debug", "info", "log", "warn", "error"];
-    return r.indexOf(o) >= r.indexOf(i);
+    const { logLevel: r } = this.options, i = ["debug", "info", "log", "warn", "error"];
+    return i.indexOf(o) >= i.indexOf(r);
   }
 };
-__publicField$c(_Logger, "defaultOptions", { prefix: "remix-pwa", styles: { debug: { background: "#7f8c8d", color: "white", borderRadius: "0.5em", fontWeight: "bold", padding: "2px 0.5em" }, info: { background: "#3498db", color: "white", borderRadius: "0.5em", fontWeight: "bold", padding: "2px 0.5em" }, log: { background: "#2ecc71", color: "white", borderRadius: "0.5em", fontWeight: "bold", padding: "2px 0.5em" }, warn: { background: "#f39c12", color: "white", borderRadius: "0.5em", fontWeight: "bold", padding: "2px 0.5em" }, error: { background: "#c0392b", color: "white", borderRadius: "0.5em", fontWeight: "bold", padding: "2px 0.5em" }, groupCollapsed: { background: "#3498db", color: "white", borderRadius: "0.5em", fontWeight: "bold", padding: "2px 0.5em" }, groupEnd: { background: null, color: "white", borderRadius: "0.5em", fontWeight: "bold", padding: "2px 0.5em" } }, logLevel: "debug", isProductionEnv: true });
+__publicField$c(_Logger, "defaultOptions", { prefix: "remix-pwa", styles: { debug: { background: "#7f8c8d", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, info: { background: "#3498db", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, log: { background: "#2ecc71", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, warn: { background: "#f39c12", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, error: { background: "#c0392b", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, groupCollapsed: { background: "#3498db", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, groupEnd: { background: null, color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" } }, logLevel: "debug", isProductionEnv: false });
 let Logger = _Logger;
 const logger = new Logger();
 function getAugmentedNamespace(n) {
@@ -3693,7 +3693,7 @@ const _MessageHandler = class _MessageHandler2 {
       try {
         await _MessageHandler2.messageHandlers[s.type](e);
       } catch (e2) {
-        console.error(`Error handling message of type ${s.type}:`, e2);
+        logger.error(`Error handling message of type ${s.type}:`, e2);
       }
   }
 };
@@ -3706,24 +3706,43 @@ var __publicField$a = (obj, key, value) => {
   return value;
 };
 class NavigationHandler extends MessageHandler {
-  constructor(t) {
+  constructor(e) {
     super("REMIX_NAVIGATION");
     __publicField$a(this, "allowList");
     __publicField$a(this, "denyList");
     __publicField$a(this, "documentCache");
-    this.allowList = t.allowList || [], this.denyList = t.denyList || [], this.documentCache = t.cache, this.bind(this.handleNavigation.bind(this));
+    this.allowList = e.allowList || [], this.denyList = e.denyList || [], this.documentCache = e.cache, this.bind(this.handleNavigation.bind(this));
   }
-  async handleNavigation(t) {
-    const { data: e } = t, { location: a } = e.payload, s = a.pathname + a.search + a.hash;
-    if (!(this.allowList.length > 0 && !this.allowList.some((t2) => s.match(t2)) || this.denyList.length > 0 && this.denyList.some((t2) => s.match(t2))))
+  async handleNavigation(e) {
+    const { data: t } = e, { isSsr: o, location: a } = t.payload, r = a.pathname + a.search + a.hash;
+    if (!(this.allowList.length > 0 && !this.allowList.some((e2) => r.match(e2)) || this.denyList.length > 0 && this.denyList.some((e2) => r.match(e2))))
       try {
-        await this.documentCache.handleRequest(s);
-      } catch (t2) {
-        logger.error(`Error handling document request for ${s}:`, t2);
+        if (!await this.documentCache.match(r) && "CacheOnly" !== this.documentCache.strategy.constructor.name) {
+          logger.debug(`Document request for ${r} not found in cache. Fetching from server...`);
+          const e2 = await fetch(r).catch((e3) => {
+            logger.error(`Error fetching document for ${r}:`, e3);
+          });
+          if (!e2)
+            return;
+          return await this.documentCache.addToCache(r, e2.clone());
+        }
+        o && (logger.setLogLevel("warn"), logger.log(`Document request for ${r} handled.`), logger.setLogLevel("debug"));
+      } catch (e2) {
+        logger.error(`Error handling document request for ${r}:`, e2);
       }
   }
 }
-const isHttpRequest$1 = (t) => t instanceof Request ? t.url.startsWith("http") : t.toString().startsWith("http");
+function isMethod$1(t, e) {
+  return e.includes(t.method.toLowerCase());
+}
+function isLoaderRequest$1(t) {
+  const e = new URL(t.url);
+  return isMethod$1(t, ["get"]) && e.searchParams.get("_data");
+}
+function isDocumentRequest(t) {
+  return isMethod$1(t, ["get"]) && "navigate" === t.mode;
+}
+const isHttpRequest = (t) => t instanceof Request ? t.url.startsWith("http") : t.toString().startsWith("http");
 var __defProp$9 = Object.defineProperty;
 var __defNormalProp$9 = (obj, key, value) => key in obj ? __defProp$9(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField$9 = (obj, key, value) => {
@@ -3758,7 +3777,7 @@ class BaseStrategy {
     return new Response(e.body, { status: e.status, statusText: e.statusText, headers: t });
   }
 }
-function mergeHeaders$1(...e) {
+function mergeHeaders(...e) {
   const r = new Headers();
   for (const n of e)
     if (n)
@@ -3780,14 +3799,14 @@ class CacheFirst extends BaseStrategy {
   }
   async handleRequest(e) {
     const t = this.ensureRequest(e);
-    if (!isHttpRequest$1(t))
+    if (!isHttpRequest(t))
       return fetch(t);
     const s = await this.openCache(), a = await s.match(t.clone());
     if (!a || !await this.validateResponse(a.clone()) || !await this.shouldMatch(a.clone())) {
       const e2 = await fetch(t);
       return await this.validateResponse(e2.clone()) && (await this.putInCache(t, e2.clone()), await this.validateCache()), e2;
     }
-    return new Response(a.body, { status: a.status, statusText: a.statusText, headers: mergeHeaders$1(a.headers, { "X-Cache-Hit": "true" }) });
+    return new Response(a.body, { status: a.status, statusText: a.statusText, headers: mergeHeaders(a.headers, { "X-Cache-Hit": "true" }) });
   }
   async putInCache(e, t) {
     const s = await this.openCache(), a = this.addTimestampHeader(t.clone());
@@ -3819,12 +3838,12 @@ class CacheOnly extends BaseStrategy {
   }
   async handleRequest(e) {
     const t = this.ensureRequest(e);
-    if (!isHttpRequest$1(t))
+    if (!isHttpRequest(t))
       return fetch(t);
     const a = await this.openCache(), s = await a.match(t.clone());
     if (!s)
       throw new Error(`Couldn't locate ${t.url} in the cache!`);
-    return await this.validateCache(), new Response(s.body, { status: s.status, statusText: s.statusText, headers: mergeHeaders$1(s.headers, { "X-Cache-Hit": "true" }) });
+    return await this.validateCache(), new Response(s.body, { status: s.status, statusText: s.statusText, headers: mergeHeaders(s.headers, { "X-Cache-Hit": "true" }) });
   }
   async addToCache(e, t) {
     const a = await caches.open(this.cacheName), s = this.addTimestampHeader(t.clone());
@@ -8243,7 +8262,7 @@ class NetworkFirst extends BaseStrategy {
   }
   async handleRequest(e) {
     const t = this.ensureRequest(e);
-    if (!isHttpRequest$1(t))
+    if (!isHttpRequest(t))
       return fetch(t);
     try {
       const e2 = await this.fetchWithTimeout(t.clone());
@@ -8251,7 +8270,7 @@ class NetworkFirst extends BaseStrategy {
     } catch (e2) {
       const s = await this.openCache(), a = await s.match(t);
       if (a)
-        return new Response(a.body, { status: a.status, statusText: a.statusText, headers: mergeHeaders$1(a.headers, { "X-Cache-Hit": "true" }) });
+        return new Response(a.body, { status: a.status, statusText: a.statusText, headers: mergeHeaders(a.headers, { "X-Cache-Hit": "true" }) });
       throw new Error("No response received from fetch: Timeout");
     }
   }
@@ -8283,11 +8302,11 @@ class StaleWhileRevalidate extends BaseStrategy {
   }
   async handleRequest(e) {
     const t = this.ensureRequest(e);
-    if (!isHttpRequest$1(t))
+    if (!isHttpRequest(t))
       return fetch(t);
     const s = await this.openCache();
     let a = await s.match(t.clone());
-    a && (a = new Response(a.body, { status: a.status, statusText: a.statusText, headers: mergeHeaders$1(a.headers, { "X-Cache-Hit": "true" }) }));
+    a && (a = new Response(a.body, { status: a.status, statusText: a.statusText, headers: mergeHeaders(a.headers, { "X-Cache-Hit": "true" }) }));
     const r = this.inProgressRequests.get(t.url);
     if (r)
       return a || r;
@@ -8407,11 +8426,11 @@ class EnhancedCache {
   }
   static async compressResponse(e) {
     const t = gzip_1(await e.clone().arrayBuffer());
-    return new Response(t, { headers: mergeHeaders$1(e.headers, { "Content-Encoding": "gzip", "Content-Type": e.headers.get("Content-Type") || "plain/text" }) });
+    return new Response(t, { headers: mergeHeaders(e.headers, { "Content-Encoding": "gzip", "Content-Type": e.headers.get("Content-Type") || "plain/text" }) });
   }
   static async decompressResponse(e) {
     const t = ungzip_1(await e.clone().arrayBuffer());
-    return new Response(t, { headers: mergeHeaders$1(e.headers, { "Content-Type": e.headers.get("Content-Type") || "plain/text" }) });
+    return new Response(t, { headers: mergeHeaders(e.headers, { "Content-Type": e.headers.get("Content-Type") || "plain/text" }) });
   }
   static async persistCache(e, t) {
     const a = await openDB$1("cache-store", 1, { upgrade(e2) {
@@ -8434,7 +8453,18 @@ class EnhancedCache {
     await s.done;
   }
 }
+self.logger = logger;
 const documentCache = new EnhancedCache("document-cache", {
+  version: "v1",
+  strategy: "NetworkFirst",
+  strategyOptions: {}
+});
+const assetCache = new EnhancedCache("asset-cache", {
+  version: "v1",
+  strategy: "CacheFirst",
+  strategyOptions: {}
+});
+const dataCache = new EnhancedCache("data-cache", {
   version: "v1",
   strategy: "NetworkFirst",
   strategyOptions: {}
@@ -8443,10 +8473,25 @@ const getLoadContext = () => {
   return {
     database: [],
     stores: [],
-    caches: [documentCache]
+    caches: [documentCache, dataCache]
   };
 };
-const defaultFetchHandler = async ({ context }) => {
+const isAssetRequest = (request) => {
+  const url = new URL(request.url);
+  const hasNoParams = url.search === "";
+  return self.__workerManifest.assets.includes(url.pathname) && hasNoParams;
+};
+const defaultFetchHandler = async ({ request, context }) => {
+  if (isAssetRequest(request)) {
+    return assetCache.handleRequest(request);
+  }
+  if (isDocumentRequest(request)) {
+    return documentCache.handleRequest(request);
+  }
+  const url = new URL(context.event.request.url);
+  if (isLoaderRequest$1(request) && self.__workerManifest.routes[url.searchParams.get("_data") ?? ""].hasLoader) {
+    return dataCache.handleRequest(request);
+  }
   return context.fetchFromServer();
 };
 self.addEventListener("install", (event) => {
@@ -8482,685 +8527,7 @@ const route0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   __proto__: null,
   default: worker_runtime_default$1
 }, Symbol.toStringTag, { value: "Module" }));
-const objectToString = Object.prototype.toString;
-const uint8ArrayStringified = "[object Uint8Array]";
-function isUint8Array(value) {
-  if (!value) {
-    return false;
-  }
-  if (value.constructor === Uint8Array) {
-    return true;
-  }
-  return objectToString.call(value) === uint8ArrayStringified;
-}
-function assertUint8Array(value) {
-  if (!isUint8Array(value)) {
-    throw new TypeError(`Expected \`Uint8Array\`, got \`${typeof value}\``);
-  }
-}
-const cachedDecoder = new globalThis.TextDecoder();
-function uint8ArrayToString(array) {
-  assertUint8Array(array);
-  return cachedDecoder.decode(array);
-}
-new globalThis.TextEncoder();
-Array.from({ length: 256 }, (_, index) => index.toString(16).padStart(2, "0"));
-const _hasBuffer = typeof Buffer === "function";
-typeof TextDecoder === "function" ? new TextDecoder() : void 0;
-typeof TextEncoder === "function" ? new TextEncoder() : void 0;
-const b64ch = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-const b64chs = Array.prototype.slice.call(b64ch);
-const b64tab = ((a) => {
-  let tab = {};
-  a.forEach((c, i) => tab[c] = i);
-  return tab;
-})(b64chs);
-const b64re = /^(?:[A-Za-z\d+\/]{4})*?(?:[A-Za-z\d+\/]{2}(?:==)?|[A-Za-z\d+\/]{3}=?)?$/;
-const _fromCC = String.fromCharCode.bind(String);
-typeof Uint8Array.from === "function" ? Uint8Array.from.bind(Uint8Array) : (it) => new Uint8Array(Array.prototype.slice.call(it, 0));
-const _tidyB64 = (s) => s.replace(/[^A-Za-z0-9\+\/]/g, "");
-const atobPolyfill = (asc) => {
-  asc = asc.replace(/\s+/g, "");
-  if (!b64re.test(asc))
-    throw new TypeError("malformed base64.");
-  asc += "==".slice(2 - (asc.length & 3));
-  let u24, bin = "", r1, r2;
-  for (let i = 0; i < asc.length; ) {
-    u24 = b64tab[asc.charAt(i++)] << 18 | b64tab[asc.charAt(i++)] << 12 | (r1 = b64tab[asc.charAt(i++)]) << 6 | (r2 = b64tab[asc.charAt(i++)]);
-    bin += r1 === 64 ? _fromCC(u24 >> 16 & 255) : r2 === 64 ? _fromCC(u24 >> 16 & 255, u24 >> 8 & 255) : _fromCC(u24 >> 16 & 255, u24 >> 8 & 255, u24 & 255);
-  }
-  return bin;
-};
-const _atob = typeof atob === "function" ? (asc) => atob(_tidyB64(asc)) : _hasBuffer ? (asc) => Buffer.from(asc, "base64").toString("binary") : atobPolyfill;
-function mergeHeaders(...headers) {
-  const merged = new Headers();
-  for (const header of headers) {
-    if (!header)
-      continue;
-    for (const [key, value] of new Headers(header).entries()) {
-      merged.set(key, value);
-    }
-  }
-  return merged;
-}
-function omit(key, obj) {
-  const { [key]: omitted, ...rest } = obj;
-  return rest;
-}
-function assertString(value) {
-  if (typeof value !== "string") {
-    throw new TypeError(`Expected \`string\`, got \`${typeof value}\``);
-  }
-}
-function base64UrlToBase64(base64url) {
-  return base64url.replaceAll("-", "+").replaceAll("_", "/");
-}
-function base64ToUint8Array(base64String) {
-  assertString(base64String);
-  return Uint8Array.from(_atob(base64UrlToBase64(base64String)), (x) => x.codePointAt(0));
-}
-var Strategy;
-(function(Strategy2) {
-  Strategy2["CacheFirst"] = "cache-first";
-  Strategy2["NetworkFirst"] = "network-first";
-  Strategy2["CacheOnly"] = "cache-only";
-  Strategy2["NetworkOnly"] = "network-only";
-  Strategy2["StaleWhileRevalidate"] = "stale-while-revalidate";
-})(Strategy || (Strategy = {}));
-class RemixCache {
-  /**
-   * Create a new `RemixCache` instance. Don't invoke this directly! Use `RemixCacheStorage.open()` instead.
-   * @constructor
-   * @param {object} options - Options for the RemixCache instance.
-   */
-  constructor(options) {
-    this._ttl = Infinity;
-    this._strategy = Strategy.NetworkFirst;
-    this._maxItems = 100;
-    this.set = false;
-    this.name = options.name;
-    this._maxItems = options.maxItems || 100;
-    this._strategy = options.strategy || Strategy.NetworkFirst;
-    this._ttl = options.ttl || Infinity;
-    if (this._strategy === Strategy.NetworkOnly) {
-      this._ttl = -1;
-    }
-    if (options.maxItems || options.ttl || options.strategy) {
-      this.set = true;
-    } else {
-      this.set = false;
-    }
-  }
-  async _openCache() {
-    return await caches.open(`rp-${this.name}`);
-  }
-  async _getOrDeleteIfExpired(key, metadata) {
-    if (metadata.expiresAt === "Infinity") {
-      return false;
-    }
-    if (Number(metadata.expiresAt) <= Date.now()) {
-      return await this.delete(key);
-    }
-    return false;
-  }
-  async _lruCleanup() {
-    const isOverflowing = await this.length() >= this._maxItems;
-    if (isOverflowing) {
-      const cache = await this._openCache();
-      const keys = await cache.keys();
-      const values = await Promise.all(keys.map((key) => cache.match(key)));
-      const keyVal = keys.map((key, i) => ({ key, val: values[i] }));
-      const comparableArrayPromise = keyVal.map(async (val) => {
-        const { metadata } = await val.val.clone().json();
-        return {
-          metadata,
-          url: val.key.url
-        };
-      });
-      const comparableArray = await Promise.all(comparableArrayPromise);
-      const sortedArr = comparableArray.sort((a, b) => {
-        return Number(a.metadata.accessedAt) - Number(b.metadata.accessedAt);
-      });
-      const toBeDeletdItems = sortedArr.slice(0, sortedArr.length - this._maxItems + 1);
-      for (const deleted of toBeDeletdItems) {
-        await this.delete(deleted.url);
-      }
-    }
-  }
-  async _getResponseValue(request, response) {
-    const { metadata, value } = await response.clone().json();
-    const deleted = await this._getOrDeleteIfExpired(request, metadata);
-    const headers = new Headers(response.clone().headers);
-    if (!this.set) {
-      this.set = true;
-      this._ttl = metadata.cacheTtl;
-      this._maxItems = metadata.cacheMaxItems;
-      this._strategy = metadata.cacheStrategy;
-    }
-    const newHeader = new Headers(headers);
-    newHeader.set("X-Remix-PWA-TTL", metadata.expiresAt.toString());
-    newHeader.set("X-Remix-PWA-AccessTime", Date.now().toString());
-    newHeader.set("Content-Type", headers.get("X-Remix-PWA-Original-Content-Type") || "application/json");
-    const contentType = headers.get("X-Remix-PWA-Original-Content-Type") ?? "";
-    newHeader.delete("X-Remix-PWA-Original-Content-Type");
-    const responseOptions = {
-      status: response.status,
-      statusText: response.statusText,
-      headers: newHeader,
-      body: "null"
-    };
-    if (contentType.includes("application/json")) {
-      responseOptions.body = JSON.stringify(value);
-    } else if (contentType.includes("text")) {
-      responseOptions.body = value;
-    } else {
-      responseOptions.body = base64ToUint8Array(value);
-    }
-    if (!deleted) {
-      const res = new Response(responseOptions.body, omit("body", responseOptions));
-      await this.put(request, res.clone(), void 0);
-      return res;
-    }
-    return void 0;
-  }
-  /**
-   * Delete an entry from the cache.
-   * Takes in the same parameters as `Cache.delete`.
-   * @param {RequestInfo | URL} request - The request to delete.
-   * @param {CacheQueryOptions} [options] - Options for the delete operation.
-   * @returns {Promise<boolean>} Returns `true` if an entry was deleted, otherwise `false`.
-   *
-   * @example
-   * ```js
-   * const cache = await initCache({ name: 'my-cache' });
-   *
-   * await cache.put('/hello-world', new Response('Hello World!'));
-   * await cache.delete('/hello-world');
-   * ```
-   *
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/Cache/delete
-   */
-  async delete(request, options) {
-    return this._openCache().then((cache) => cache.delete(request, options));
-  }
-  /**
-   * Returns a Promise that resolves to the length of the Cache object.
-   *
-   * @returns {Promise<number>} The number of entries in the cache.
-   */
-  async length() {
-    const keys = await this.keys();
-    return keys.length;
-  }
-  /**
-   * Returns a `Promise` that resolves to an array of Cache keys.
-   *
-   * @returns {Promise<readonly Request[]>} An array of Cache keys.
-   */
-  async keys() {
-    const cache = await this._openCache();
-    return await cache.keys();
-  }
-  /**
-   * Return a `Promise` that resolves to an entry in the cache object. Accepts the
-   * same parameters as `Cache.match`.
-   *
-   * @param {RequestInfo | URL} request - The request to match.
-   * @param {CacheQueryOptions} [options] - Options for the match operation.
-   *
-   * @returns {Promise<Response | undefined>} A `Promise` that resolves to the response, or `undefined` if not found.
-   */
-  async match(request, options) {
-    const cache = await this._openCache();
-    if (request instanceof URL || typeof request === "string") {
-      request = new Request(request);
-    }
-    const response = await cache.match(request.clone(), options);
-    if (!response) {
-      return void 0;
-    }
-    return await this._getResponseValue(request, response.clone());
-  }
-  /**
-   * Add an entry to the cache.
-   * Takes in the same parameters as `Cache.put`.
-   *
-   * @param {RequestInfo | URL} request - The request to add.
-   * @param {Response} response - The response to add.
-   * @param {number | undefined} ttl - The time-to-live of the cache entry in ms. Defaults to cache ttl.
-   * @returns {Promise<void>} A `Promise` that resolves when the entry is added to the cache.
-   *
-   * @example
-   * ```js
-   * const cache = await initCache({ name: 'my-cache' });
-   *
-   * await cache.put('/hello-world', new Response('Hello World!'));
-   * ```
-   *
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/Cache/put
-   */
-  async put(request, response, ttl = void 0) {
-    const cache = await this._openCache();
-    if (request instanceof URL || typeof request === "string") {
-      request = new Request(request);
-    }
-    if (this._ttl <= 0 || ttl && ttl <= 0)
-      return;
-    if (response === null || response.status === 204 || response.statusText.toLowerCase() === "no content") {
-      await this.delete(request);
-      return;
-    }
-    const contentType = response.headers.get("Content-Type");
-    let data;
-    if (contentType && contentType.includes("application/json")) {
-      data = await response.clone().json();
-    } else if (contentType && contentType.includes("text")) {
-      data = await response.clone().text();
-    } else {
-      const buffer = await response.clone().arrayBuffer();
-      data = uint8ArrayToString(new Uint8Array(buffer));
-    }
-    if (!this.set) {
-      this.set = true;
-      const keys = await cache.keys();
-      const firstVal = await cache.match(keys[0]);
-      if (firstVal) {
-        const { metadata } = await firstVal.clone().json();
-        this._ttl = metadata.cacheTtl;
-        this._maxItems = metadata.cacheMaxItems;
-        this._strategy = metadata.cacheStrategy;
-      } else {
-        this._ttl = Infinity;
-        this._maxItems = 100;
-        this._strategy = Strategy.NetworkFirst;
-      }
-    }
-    const resHeaders = response.headers;
-    const expiresAt = resHeaders.get("X-Remix-PWA-TTL") || Date.now() + (ttl ?? this._ttl);
-    const accessedAt = resHeaders.get("X-Remix-PWA-AccessTime") || Date.now().toString();
-    const newHeaders = new Headers();
-    newHeaders.set("Content-Type", "application/json");
-    newHeaders.set("X-Remix-PWA-AccessTime", accessedAt);
-    newHeaders.set("X-Remix-PWA-Original-Content-Type", contentType || "text/plain");
-    newHeaders.set("X-Remix-PWA-TTL", expiresAt.toString());
-    const toBeCachedRes = new Response(JSON.stringify({
-      metadata: {
-        accessedAt,
-        // JSON can't store `Infinity`, so we store it as a string
-        expiresAt: expiresAt.toString(),
-        cacheTtl: this._ttl.toString(),
-        cacheMaxItems: this._maxItems,
-        cacheStrategy: this._strategy
-      },
-      value: data
-    }), {
-      status: response.status,
-      statusText: response.statusText,
-      headers: mergeHeaders(resHeaders, newHeaders)
-    });
-    Object.defineProperty(toBeCachedRes, "url", { value: response.url });
-    Object.defineProperty(toBeCachedRes, "type", { value: response.type });
-    Object.defineProperty(toBeCachedRes, "ok", { value: response.ok });
-    Object.defineProperty(toBeCachedRes, "redirected", { value: response.redirected });
-    try {
-      await this._lruCleanup();
-      return await cache.put(request, toBeCachedRes.clone());
-    } catch (error) {
-    }
-  }
-  async add(request) {
-    return (
-      /* await - should this be awaited? */
-      fetch(request).then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to fetch");
-        }
-        return this.put(request, res.clone());
-      })
-    );
-  }
-  get ttl() {
-    return this._ttl;
-  }
-  get strategy() {
-    return this._strategy;
-  }
-}
-class RemixCacheStorage {
-  // eslint-disable-next-line no-useless-constructor
-  constructor() {
-  }
-  /**
-   * Initialize the Remix PWA Cache Storage. This will create a special cache for each
-   * existing cache in the browser or create a new map if none exist.
-   *
-   * Use in your service worker installation script. Make sure to call this before
-   * initializing any `RemixCache` instance.
-   *
-   * @example
-   * ```js
-   * import { RemixCacheStorage } from '@remix-run/cache';
-   *
-   * self.addEventListener('install', (event) => {
-   *  event.waitUntil(Promise.all[
-   *   RemixCacheStorage.init(),
-   *   // other stuff
-   *  ]);
-   * });
-   * ```
-   */
-  // static async init() {
-  //   if (typeof caches === 'undefined') {
-  //     throw new Error('Cache API is not available in this environment.');
-  //   }
-  //   if (this._instances.size > 0) {
-  //     return;
-  //   }
-  //   const cachesNames = await caches.keys();
-  //   for (const name of cachesNames) {
-  //     if (name.startsWith('rp-')) {
-  //       this._instances.set(name, new RemixCache({ name }));
-  //     }
-  //   }
-  // }
-  /**
-   * Create a custom cache that you can use across your application.
-   * Use this instead of initialising `RemixCache` directly.
-   */
-  static createCache(opts) {
-    const { name } = opts;
-    if (this._instances.has(name)) {
-      return this._instances.get(name);
-    }
-    const newCache = new RemixCache(opts);
-    this._instances.set(`${name}`, newCache);
-    caches.open(`rp-${name}`);
-    return newCache;
-  }
-  /**
-   * Check wether a cache with the given name exists.
-   *
-   * @param name
-   */
-  static has(name) {
-    return this._instances.has(name);
-  }
-  static async _get(name) {
-    var _a;
-    const cache = this._instances.get(name);
-    if (!cache && await caches.has(`rp-${name}`)) {
-      this._instances.set(name, new RemixCache({ name }));
-      await ((_a = this._instances.get(name)) == null ? void 0 : _a.keys().then((keys) => {
-        if (keys.length > 0) {
-          caches.match(keys[0]);
-        }
-      }));
-    }
-    return this._instances.get(name);
-  }
-  /**
-   * Get a cache by name. Returns `undefined` if no cache with the given name exists.
-   * Use `has` to check if a cache exists. Or `open` to create one automatically if non exists.
-   *
-   * @param name
-   * @returns {RemixCache | undefined}
-   *
-   * @example
-   * ```js
-   * import { Storage } from '@remix-run/cache';
-   *
-   * const cache = Storage.get('my-cache');
-   * ```
-   */
-  static async get(name) {
-    return await this._get(name);
-  }
-  /**
-   * Get a cache by name. If no cache with the given name exists, create one.
-   *
-   * @param name Name of the cache - **must be unique**
-   * @param opts Options to pass to the `RemixCache` constructor if the cache is getting created
-   * @returns {RemixCache}
-   *
-   * @example
-   * ```js
-   * import { Storage } from '@remix-run/cache';
-   *
-   * const cache = Storage.open('my-cache');
-   * ```
-   */
-  static open(name, opts) {
-    const cache = this._instances.get(name);
-    if (!cache) {
-      return this.createCache({ name, ...opts });
-    }
-    return cache;
-  }
-  /**
-   * Delete a cache by name.
-   *
-   * @param name
-   */
-  static delete(name) {
-    const cache = this._instances.get(name);
-    if (cache) {
-      caches.delete(`rp-${name}`);
-      this._instances.delete(name);
-    }
-  }
-  /**
-   * Delete all caches.
-   */
-  static clear() {
-    caches.keys().then((keys) => keys.forEach((key) => key.startsWith("rp-") ? caches.delete(key) : null));
-    this._instances = /* @__PURE__ */ new Map();
-  }
-  /**
-   * Get all caches. **Don't use this except you know what you are doing!**
-   *
-   * Which, frankly speaking, you probably don't. So shoo away!
-   */
-  static get instances() {
-    return this._instances;
-  }
-  /**
-   * Get the number of caches.
-   *
-   * Return the length of the `RemixCacheStorage` store.
-   */
-  static get _length() {
-    return this._instances.size;
-  }
-  /**
-   * Check if a request is stored as the key of a response in all caches.
-   *
-   * Experimental. Use at your own risk!
-   *
-   * @param {RequestInfo | URL} request The request to check.
-   * @param {CacheQueryOptions} [options] Options to pass to the `Cache.match` method.
-   * @returns {Promise<Response | undefined>} A promise that resolves to the response if found, otherwise `undefined`.
-   */
-  static _match(request, options) {
-    return caches.match(request, options);
-  }
-}
-RemixCacheStorage._instances = /* @__PURE__ */ new Map();
-const Storage = RemixCacheStorage;
-const isHttpRequest = (request) => {
-  if (request instanceof Request) {
-    return request.url.startsWith("http");
-  }
-  return request.toString().startsWith("http");
-};
-const toJSON = async (response) => {
-  if (response instanceof Response) {
-    return await response.clone().json();
-  }
-  return response;
-};
-const cacheFirst = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0 }) => {
-  return async (request) => {
-    if (!isHttpRequest(request)) {
-      return new Response("Not a HTTP request", { status: 403 });
-    }
-    let remixCache;
-    if (typeof cacheName === "string") {
-      remixCache = Storage.open(cacheName, cacheOptions);
-    } else {
-      remixCache = cacheName;
-    }
-    const response = await remixCache.match(request, cacheQueryOptions);
-    if (!response) {
-      try {
-        const networkResponse = await fetch(request);
-        remixCache.put(request, networkResponse.clone());
-        return networkResponse;
-      } catch (err2) {
-        if (fetchDidFail) {
-          await Promise.all(fetchDidFail.map((cb) => cb()));
-        }
-        throw err2;
-      }
-    }
-    return response;
-  };
-};
-const cacheOnly = ({ cache: cacheName, cacheOptions, cacheQueryOptions }) => {
-  return async (request) => {
-    if (!isHttpRequest(request)) {
-      return new Response("Not a HTTP request", { status: 403 });
-    }
-    let remixCache;
-    if (typeof cacheName === "string") {
-      remixCache = Storage.open(cacheName, cacheOptions);
-    } else {
-      remixCache = cacheName;
-    }
-    const response = await remixCache.match(request, cacheQueryOptions);
-    if (!response) {
-      const req = request instanceof Request ? request : new Request(request.toString());
-      const isGet = req.method.toLowerCase() === "get";
-      return new Response(JSON.stringify({
-        message: isGet ? "Not Found" : "No idea what you are trying to accomplish but this ain't it!"
-      }), {
-        status: isGet ? 404 : 400,
-        statusText: isGet ? "Not Found" : "Bad Request"
-      });
-    }
-    return response.clone();
-  };
-};
-const networkFirst = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0, fetchDidSucceed = void 0, networkTimeoutSeconds = 10 }) => {
-  return async (request) => {
-    if (!isHttpRequest(request)) {
-      return new Response("Not a HTTP request", { status: 403 });
-    }
-    let remixCache;
-    if (typeof cacheName === "string") {
-      remixCache = Storage.open(cacheName, cacheOptions);
-    } else {
-      remixCache = cacheName;
-    }
-    try {
-      const timeoutPromise = networkTimeoutSeconds !== Infinity ? new Promise((_resolve, reject) => {
-        setTimeout(() => {
-          reject(new Error(`Network timed out after ${networkTimeoutSeconds} seconds`));
-        }, networkTimeoutSeconds * 1e3);
-      }) : null;
-      const response = timeoutPromise ? await Promise.race([fetch(request), timeoutPromise]) : await fetch(request);
-      if (response) {
-        if (fetchDidSucceed) {
-          await Promise.all(fetchDidSucceed.map((cb) => cb()));
-        }
-        await remixCache.put(request, response.clone());
-        return response.clone();
-      }
-    } catch (error) {
-      if (fetchDidFail) {
-        await Promise.all(fetchDidFail.map((cb) => cb()));
-      }
-      const cachedResponse = await remixCache.match(request, cacheQueryOptions);
-      if (cachedResponse) {
-        return cachedResponse.clone();
-      }
-      return new Response(JSON.stringify({ message: "Network Error" }), {
-        status: 500
-      });
-    }
-    throw new Error("Failed to fetch. Network timed out.");
-  };
-};
-const staleWhileRevalidate = ({ cache: cacheName, cacheOptions, cacheQueryOptions, fetchDidFail = void 0, strict = false, swr: swr2 }) => {
-  return async (request) => {
-    if (!isHttpRequest(request)) {
-      return new Response("Not a HTTP request", { status: 403 });
-    }
-    let remixCache;
-    if (typeof cacheName === "string") {
-      remixCache = Storage.open(cacheName, cacheOptions);
-    } else {
-      remixCache = cacheName;
-    }
-    swr2 = swr2 ?? remixCache.ttl ?? 0;
-    return remixCache.match(request, cacheQueryOptions).then(async (response) => {
-      const res = response ? response.clone() : void 0;
-      if (res && !strict) {
-        const accessed = Number(res.headers.get("X-Remix-PWA-AccessTime")) ?? 0;
-        if (swr2 + accessed >= Date.now()) {
-          return res;
-        }
-      }
-      const fetchPromise = fetch(request).then(async (networkResponse) => {
-        await remixCache.put(request, networkResponse.clone(), strict ? swr2 : void 0);
-        return networkResponse;
-      }).catch(async (_err) => {
-        if (fetchDidFail) {
-          await Promise.all(fetchDidFail.map((cb) => cb()));
-        }
-        return new Response(JSON.stringify({ error: "Network request failed" }), {
-          status: 500,
-          statusText: "Network request failed"
-        });
-      });
-      return response ? response.clone() : fetchPromise;
-    });
-  };
-};
-const workerLoader$4 = async ({ context }) => {
-  const customStrategy = cacheFirst({
-    cache: "basic-caching",
-    cacheQueryOptions: {
-      ignoreSearch: true
-    },
-    cacheOptions: {
-      maxItems: 5,
-      ttl: 30 * 1e3
-      // 30 seconds time-to-live (maxAge)
-    },
-    fetchDidFail: [
-      () => console.log("Fetch failed!")
-    ]
-  });
-  let response = await customStrategy(context.event.request);
-  await customStrategy(new Request("https://images.unsplash.com/photo-1695570804246-a9470af7e197?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2903&q=80"));
-  let data = await toJSON(response);
-  const date = /* @__PURE__ */ new Date();
-  return new Response(JSON.stringify({
-    data: data.data,
-    // Only this shows an updated time, the other one doesn't because it's cached.
-    // Try deleting the cache and reloading the page to see the difference.
-    message: `Server already up and running! Time: ${date.getMinutes()}:${date.getSeconds()}`
-  }), {
-    headers: {
-      "Content-Type": "application/json"
-    }
-  });
-};
-const route1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  workerLoader: workerLoader$4
-}, Symbol.toStringTag, { value: "Module" }));
-const workerAction$3 = async ({ context }) => {
+const workerAction$2 = async ({ context }) => {
   const { fetchFromServer } = context;
   console.log("Worker action called");
   try {
@@ -9177,14 +8544,15 @@ const workerAction$3 = async ({ context }) => {
     }
   });
 };
-const route2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const route1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  workerAction: workerAction$3
+  workerAction: workerAction$2
 }, Symbol.toStringTag, { value: "Module" }));
 async function workerLoader$3({ context }) {
   const { fetchFromServer } = context;
   const message = await Promise.race([
-    fetchFromServer().then((response) => response.json()).then(({ message: message2 }) => message2),
+    fetchFromServer().then((response) => response.json()).then(({ message: message2 }) => message2).catch(() => new Promise((resolve) => setTimeout(() => resolve(null), 5e3))),
+    // utilizing a slower one even when cached
     new Promise((resolve) => setTimeout(resolve, 500, "Hello World!\n\n• This message is sent to you from the client 😜 (Edited, again ---)!"))
   ]);
   return new Response(
@@ -9198,11 +8566,11 @@ async function workerLoader$3({ context }) {
     }
   );
 }
-const route3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const route2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   workerLoader: workerLoader$3
 }, Symbol.toStringTag, { value: "Module" }));
-const workerAction$2 = async ({ request, context }) => {
+const workerAction$1 = async ({ request, context }) => {
   const formData = await request.formData();
   const { database, fetchFromServer } = context;
   try {
@@ -9237,49 +8605,17 @@ const workerLoader$2 = async ({ context }) => {
     throw json$1({ message: "Something went wrong", error }, 500);
   }
 };
-const route4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const route3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  workerAction: workerAction$2,
+  workerAction: workerAction$1,
   workerLoader: workerLoader$2
-}, Symbol.toStringTag, { value: "Module" }));
-const workerAction$1 = async ({ context }) => {
-  const { event } = context;
-  const formData = await event.request.clone().formData();
-  const strategy = formData.get("strategy");
-  switch (strategy) {
-    case "cache-only":
-      await cacheOnly({
-        cache: "strategies-cache-only"
-      });
-      break;
-    case "cache-first":
-      await cacheFirst({
-        cache: "strategies-cache-first"
-      });
-      break;
-    case "network-first":
-      await networkFirst({
-        cache: "strategies-network-first"
-      });
-      break;
-    case "swr":
-      await staleWhileRevalidate({
-        cache: "strategies-swr"
-      });
-      break;
-  }
-  return null;
-};
-const route5 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  workerAction: workerAction$1
 }, Symbol.toStringTag, { value: "Module" }));
 async function workerLoader$1({ context }) {
   const { database } = context;
   const selections = await database.selections.toArray();
   return json$1({ selections });
 }
-const route6 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const route4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   workerLoader: workerLoader$1
 }, Symbol.toStringTag, { value: "Module" }));
@@ -10032,8 +9368,8 @@ class Queue {
     while (entry2 = await this.shiftRequest()) {
       try {
         await fetch(entry2.request.clone());
-        if (false)
-          ;
+        if (true) {
+        }
       } catch (error) {
         await this.unshiftRequest(entry2);
       }
@@ -10168,7 +9504,7 @@ const workerAction = async ({ context }) => {
     }
   });
 };
-const route7 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const route5 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   workerAction
 }, Symbol.toStringTag, { value: "Module" }));
@@ -10182,7 +9518,7 @@ var require_worker_runtime = __commonJS({
   }
 });
 var worker_runtime_default = require_worker_runtime();
-const route8 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const route6 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: worker_runtime_default
 }, Symbol.toStringTag, { value: "Module" }));
@@ -10196,10 +9532,24 @@ async function workerLoader({ context }) {
     }
   });
 }
-const route9 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const route7 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   workerLoader
 }, Symbol.toStringTag, { value: "Module" }));
+const assets = [
+  "/entry.worker.css",
+  "/entry.worker.js",
+  "/favicon.ico",
+  "/manifest.json",
+  "/src/app/root.tsx",
+  "/src/app/routes/basic-action.tsx",
+  "/src/app/routes/basic-loader.tsx",
+  "/src/app/routes/_app.flights.tsx",
+  "/src/app/routes/selection.tsx",
+  "/src/app/routes/sync-away.tsx",
+  "/src/app/routes/_index.tsx",
+  "/src/app/routes/_app.tsx"
+];
 const routes = {
   "root": {
     id: "root",
@@ -10207,15 +9557,11 @@ const routes = {
     path: "",
     index: void 0,
     caseSensitive: void 0,
+    hasLoader: false,
+    hasAction: false,
+    hasWorkerLoader: false,
+    hasWorkerAction: false,
     module: route0
-  },
-  "routes/basic-caching": {
-    id: "routes/basic-caching",
-    parentId: "root",
-    path: "basic-caching",
-    index: void 0,
-    caseSensitive: void 0,
-    module: route1
   },
   "routes/basic-action": {
     id: "routes/basic-action",
@@ -10223,7 +9569,11 @@ const routes = {
     path: "basic-action",
     index: void 0,
     caseSensitive: void 0,
-    module: route2
+    hasLoader: true,
+    hasAction: true,
+    hasWorkerLoader: false,
+    hasWorkerAction: true,
+    module: route1
   },
   "routes/basic-loader": {
     id: "routes/basic-loader",
@@ -10231,7 +9581,11 @@ const routes = {
     path: "basic-loader",
     index: void 0,
     caseSensitive: void 0,
-    module: route3
+    hasLoader: true,
+    hasAction: false,
+    hasWorkerLoader: true,
+    hasWorkerAction: false,
+    module: route2
   },
   "routes/_app.flights": {
     id: "routes/_app.flights",
@@ -10239,15 +9593,11 @@ const routes = {
     path: "flights",
     index: void 0,
     caseSensitive: void 0,
-    module: route4
-  },
-  "routes/strategies": {
-    id: "routes/strategies",
-    parentId: "root",
-    path: "strategies",
-    index: void 0,
-    caseSensitive: void 0,
-    module: route5
+    hasLoader: true,
+    hasAction: true,
+    hasWorkerLoader: true,
+    hasWorkerAction: true,
+    module: route3
   },
   "routes/selection": {
     id: "routes/selection",
@@ -10255,7 +9605,11 @@ const routes = {
     path: "selection",
     index: void 0,
     caseSensitive: void 0,
-    module: route6
+    hasLoader: true,
+    hasAction: false,
+    hasWorkerLoader: true,
+    hasWorkerAction: false,
+    module: route4
   },
   "routes/sync-away": {
     id: "routes/sync-away",
@@ -10263,7 +9617,11 @@ const routes = {
     path: "sync-away",
     index: void 0,
     caseSensitive: void 0,
-    module: route7
+    hasLoader: false,
+    hasAction: true,
+    hasWorkerLoader: false,
+    hasWorkerAction: true,
+    module: route5
   },
   "routes/_index": {
     id: "routes/_index",
@@ -10271,7 +9629,11 @@ const routes = {
     path: void 0,
     index: true,
     caseSensitive: void 0,
-    module: route8
+    hasLoader: true,
+    hasAction: false,
+    hasWorkerLoader: false,
+    hasWorkerAction: false,
+    module: route6
   },
   "routes/_app": {
     id: "routes/_app",
@@ -10279,7 +9641,11 @@ const routes = {
     path: void 0,
     index: void 0,
     caseSensitive: void 0,
-    module: route9
+    hasLoader: true,
+    hasAction: false,
+    hasWorkerLoader: true,
+    hasWorkerAction: false,
+    module: route7
   }
 };
 const entry = { module: entryWorker };
@@ -10672,9 +10038,7 @@ const defaultErrorHandler = entry.module.errorHandler || ((error, { request }) =
   }
 });
 _self.__workerManifest = {
-  // assets: build.assets,
-  assets: [],
-  // get assets in prod.
+  assets,
   routes
 };
 _self.addEventListener(

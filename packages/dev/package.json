@@ -22,7 +22,7 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "TIMING=1 eslint --fix src",
     "prepublish": "npm run build",
-    "test": "vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests --config ../../vitest.config.ts"
+    "test": "cross-env VITEST_WORKSPACE=true vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests --config ../../vitest.config.ts"
   },
   "files": [
     "dist/",
@@ -42,6 +42,7 @@
     "@babel/generator": "^7.23.6",
     "@babel/traverse": "^7.23.6",
     "chokidar": "^3.6.0",
+    "fast-glob": "^3.3.2",
     "fs-extra": "^11.2.0",
     "lodash": "^4.17.21",
     "magic-string": "^0.30.8",

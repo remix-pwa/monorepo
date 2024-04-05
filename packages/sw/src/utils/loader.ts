@@ -86,13 +86,13 @@ export function loadServiceWorker(
 
         await navigator.serviceWorker.ready;
 
-        if (process.env.NODE_ENV === 'development') logger.debug('Syncing manifest...');
+        logger.debug('Syncing manifest...');
 
         if (navigator.serviceWorker.controller) {
           syncRemixManifest();
         } else {
           navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if (process.env.NODE_ENV === 'development') logger.debug('Syncing manifest...');
+            logger.debug('Syncing manifest...');
             syncRemixManifest();
           });
         }
