@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/dev",
-  "version": "3.0.2",
+  "version": "3.0.3-dev.1",
   "description": "An esbuild compiler for Service Workers in Remix.run",
   "repository": {
     "type": "git",
@@ -54,7 +54,7 @@
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
-    "@remix-pwa/worker-runtime": "^2.1.0",
+    "@remix-pwa/worker-runtime": "^2.1.1-dev.1",
     "@remix-run/dev": "^2.8.1",
     "@types/babel__core": "^7.20.5",
     "@types/babel__generator": "^7.6.7",

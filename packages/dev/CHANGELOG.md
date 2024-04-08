@@ -1,3 +1,13 @@
+## @remix-pwa/dev 3.0.3-dev.1 (2024-04-08)
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/worker-runtime:** upgraded to 2.1.1-dev.1
+
 ## @remix-pwa/dev 3.0.2 (2024-04-08)
 
 
