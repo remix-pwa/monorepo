@@ -1,3 +1,10 @@
+## @remix-pwa/dev 3.0.4 (2024-04-08)
+
+
+### Bug Fixes
+
+* **dev:** patching up yet another inconsistency adf3d85
+
 ## @remix-pwa/dev 3.0.4-dev.1 (2024-04-08)
 
 
