@@ -1,3 +1,10 @@
+## @remix-pwa/worker-runtime 2.1.1-dev.1 (2024-04-08)
+
+
+### Bug Fixes
+
+* **worker-runtime:** forcing a breaking change publish 0335fb3
+
 # @remix-pwa/worker-runtime 2.1.0 (2024-03-28)
 
 
