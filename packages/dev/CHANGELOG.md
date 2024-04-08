@@ -1,3 +1,10 @@
+## @remix-pwa/dev 3.0.2-dev.1 (2024-04-08)
+
+
+### Bug Fixes
+
+* **dev:** fixed `rollup` plugin error 547a177
+
 ## @remix-pwa/dev 3.0.1 (2024-04-05)
 
 
