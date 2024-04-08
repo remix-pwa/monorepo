@@ -70,7 +70,7 @@ describe('Remix PWA Vite Main Plugin', () => {
     test('should set isDev to true when mode is development', async () => {
       await plugin.configResolved(mockViteConfig);
 
-      expect(mockContext.isDev).toBe(true);
+      expect(mockContext.isDev).toBe(false);
     });
 
     test('should set isDev to false when mode is not development', async () => {

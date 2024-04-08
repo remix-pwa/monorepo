@@ -16,14 +16,15 @@ export async function resolveOptions(
     return {} as ResolvedPWAOptions;
   }
 
+  const isDev = process.env.NODE_ENV === 'development';
+
   const {
     entryWorkerFile: serviceWorkerFile = (options.entryWorkerFile || 'entry.worker.ts').trim(),
     ignoredSWRouteFiles = options.ignoredSWRouteFiles || [],
     registerSW = options.registerSW ?? 'script',
     scope = options.scope || viteConfig.base,
-    workerBuildDirectory = options.workerBuildDirectory ||
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- viteConfig.publicDir is always defined
-      normalizePath(viteConfig.publicDir).split(normalizePath(viteConfig.root)).pop()!,
+    // If it isn't 'public', or 'build/client' then the user input their own override 📌
+    workerBuildDirectory = options.workerBuildDirectory || isDev ? 'public' : 'build/client',
     workerEntryPoint = options.workerEntryPoint || '@remix-pwa/worker-runtime',
     workerMinify = options.workerMinify || false,
     workerName = options.workerName || 'entry.worker',
