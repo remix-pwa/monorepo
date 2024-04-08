@@ -1,3 +1,10 @@
+## @remix-pwa/dev 3.0.3 (2024-04-08)
+
+
+### Bug Fixes
+
+* **dev:** removed `worker-runtime` from dependencies 93e6af8
+
 ## @remix-pwa/dev 3.0.3-dev.2 (2024-04-08)
 
 

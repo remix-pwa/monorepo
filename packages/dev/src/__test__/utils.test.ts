@@ -65,7 +65,7 @@ describe('Plugin resolver test suite', () => {
 
     assert(options);
     expect(options).toEqual(<ResolvedPWAOptions>{
-      workerBuildDirectory: '/Users/ryan/Projects/remix-pwa/public',
+      workerBuildDirectory: '/Users/ryan/Projects/remix-pwa/build/client',
       registerSW: 'script',
       workerSourceMap: false,
       publicPath: '/build/',
