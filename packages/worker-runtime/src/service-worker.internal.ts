@@ -44,6 +44,7 @@ const defaultErrorHandler =
   });
 
 _self.__workerManifest = {
+  // Re-publishing this. Somehow it's not available as `latest`
   assets: build.assets,
   routes: build.routes,
 };
