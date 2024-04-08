@@ -8,7 +8,7 @@ export function EntryPlugin(ctx: PWAPluginContext, pwaOptions: Partial<PWAOption
     name: 'vite-plugin-remix-pwa:entry',
     enforce: 'pre',
     async configResolved(config) {
-      ctx.isDev = config.mode === 'development';
+      ctx.isDev = process.env.NODE_ENV === 'development';
       // @ts-ignore - Utilizing remix special config here
       ctx.isRemixDevServer = config.__remixPluginContext !== undefined;
       ctx.viteConfig = config;
