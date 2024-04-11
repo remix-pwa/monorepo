@@ -1,6 +1,7 @@
 /* eslint-disable prefer-rest-params */
 
 import { Command } from '@commander-js/extra-typings';
+import { execSync } from 'child_process';
 import { existsSync } from 'fs';
 import { readFile, writeFile } from 'fs/promises';
 import { dirname, resolve } from 'pathe';
@@ -30,7 +31,7 @@ process.emit = function (name, data, ..._args) {
 
 const packageJson = await import('./package.json', { assert: { type: 'json' } });
 
-const { magenta } = colors;
+const { magenta, red } = colors;
 const { ModuleKind, ScriptTarget, transpileModule } = ts;
 
 const __filename = fileURLToPath(import.meta.url);
@@ -180,6 +181,66 @@ program
 
       await writeFile(resolve(process.cwd(), dirPath, fileName.replace(/\.js$/, '.ts')), templateContent);
     }
+  });
+
+program
+  .command('update')
+  .alias('upgrade')
+  .description('Update all `@remix-pwa/*` packages to latest')
+  .option('-p, --packages <packages...>', 'Individual packages to update')
+  .option('-r, --root <root>', "Location of app's root directory (where package.json is located)", '.')
+  .action(async options => {
+    const root = resolve(process.cwd(), options.root);
+    const packagesToUpdate = options.packages ?? [];
+
+    const packageJSON = (await import(resolve(root, 'package.json'), { assert: { type: 'json' } })).default;
+    const dependencies = packageJSON.dependencies;
+    const devDependencies = packageJSON.devDependencies;
+
+    if (!packagesToUpdate.length) {
+      Object.keys(dependencies).forEach(dep => {
+        if (dep.startsWith('@remix-pwa')) {
+          try {
+            execSync(`npm i ${dep}@latest`);
+          } catch (err) {
+            console.error(`${red(`Error occured whilst installing ${dep}:`)}\n\n${err}`);
+          }
+        }
+      });
+
+      Object.keys(devDependencies).forEach(dep => {
+        if (dep.startsWith('@remix-pwa')) {
+          try {
+            execSync(`npm i -D ${dep}@latest`);
+          } catch (err) {
+            console.error(`${red(`Error occured whilst installing ${dep}:`)}\n\n${err}`);
+          }
+        }
+      });
+
+      return;
+    }
+
+    packagesToUpdate.forEach(dep => {
+      let depType: 'dep' | 'devDep' = 'dep';
+
+      if (Object.keys(devDependencies).includes(dep)) depType = 'devDep';
+      if (Object.keys(dependencies).includes(dep)) depType = 'dep';
+
+      if (depType === 'dep') {
+        try {
+          execSync(`npm i ${dep}@latest`);
+        } catch (err) {
+          console.error(`${red(`Error occured whilst installing ${dep}:`)}\n\n${err}`);
+        }
+      } else {
+        try {
+          execSync(`npm i -D ${dep}@latest`);
+        } catch (err) {
+          console.error(`${red(`Error occured whilst installing ${dep}:`)}\n\n${err}`);
+        }
+      }
+    });
   });
 
 export default program;
