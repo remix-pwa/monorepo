@@ -1,3 +1,15 @@
+# @remix-pwa/cli 1.1.0 (2024-04-11)
+
+
+### Bug Fixes
+
+* **cli:** fixed manifest template 1b02e50
+
+
+### Features
+
+* **cli:** new `update` command to update `remix-pwa` packages d3f9baf
+
 # @remix-pwa/cli 1.1.0-dev.1 (2024-04-11)
 
 
