@@ -36,7 +36,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@remix-pwa/dev": "3.0.3",
+    "@remix-pwa/dev": "3.0.4",
     "@remix-run/dev": "^2.8.1",
     "@remix-run/eslint-config": "^2.8.1",
     "@types/react": "^18.2.22",

@@ -3,14 +3,14 @@ import { json } from '@remix-run/node';
 
 export const loader = () => {
   return json(
-    <WebAppManifest>{
+    {
       short_name: 'PWA',
       name: 'Remix PWA',
       start_url: '/',
       display: 'standalone',
       background_color: '#d3d7dd',
       theme_color: '#c34138',
-    },
+    } as WebAppManifest,
     {
       headers: {
         'Cache-Control': 'public, max-age=600',
