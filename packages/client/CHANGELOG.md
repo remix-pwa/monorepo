@@ -1,3 +1,17 @@
+## @remix-pwa/client 3.0.2 (2024-04-14)
+
+
+### Bug Fixes
+
+* **client:** updated manager event listeners ba2253b
+
+## @remix-pwa/client 3.0.2-dev.1 (2024-04-14)
+
+
+### Bug Fixes
+
+* **client:** updated manager event listeners ba2253b
+
 ## @remix-pwa/client 3.0.1 (2024-04-14)
 
 
