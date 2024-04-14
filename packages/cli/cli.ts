@@ -4,7 +4,7 @@ import { Command } from '@commander-js/extra-typings';
 import { execSync } from 'child_process';
 import { existsSync } from 'fs';
 import { readFile, writeFile } from 'fs/promises';
-import { dirname, join, resolve } from 'pathe';
+import { dirname, resolve } from 'pathe';
 import colors from 'picocolors';
 import type { CompilerOptions } from 'typescript';
 import ts from 'typescript';
@@ -190,10 +190,10 @@ program
   .option('-p, --packages <packages...>', 'Individual packages to update')
   .option('-r, --root <root>', "Location of app's root directory (where package.json is located)", '.')
   .action(async options => {
-    const root = new URL(`file:///${join(process.cwd(), options.root, 'package.json')}`).toString();
+    const root = fileURLToPath(resolve(process.cwd(), options.root));
     const packagesToUpdate = options.packages ?? [];
 
-    const packageJSON = (await import(root, { assert: { type: 'json' } })).default;
+    const packageJSON = (await import(resolve(root, 'package.json'), { assert: { type: 'json' } })).default;
     const dependencies = packageJSON.dependencies;
     const devDependencies = packageJSON.devDependencies;
 
