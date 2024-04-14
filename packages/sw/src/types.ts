@@ -100,6 +100,5 @@ declare global {
       routes: WorkerRouteManifest;
       assets: string[];
     };
-    logger: Logger | undefined;
   }
 }
