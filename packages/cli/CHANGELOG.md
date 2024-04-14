@@ -1,3 +1,11 @@
+## @remix-pwa/cli 1.1.1 (2024-04-14)
+
+
+### Bug Fixes
+
+* **cli:** fixed `update` command - more verbose + url bug 4613723
+* **cli:** fixed file url resolution across platforms 811e545
+
 ## @remix-pwa/cli 1.1.1-dev.1 (2024-04-14)
 
 
