@@ -8,6 +8,7 @@ export { UseSWEffectOptions, useSWEffect } from './src/hooks/useSWEffect.js';
 
 export { MessageHandler } from './src/message/MessageHandler.js';
 export { NavigationHandler, NavigationHandlerOptions } from './src/message/NavigationHandler.js';
+export { SkipWaitHandler } from './src/message/SkipWaitHandler.js';
 
 export { defer } from './src/utils/defer.js';
 export { LoadServiceWorkerOptions, loadServiceWorker } from './src/utils/loader.js';
@@ -19,6 +20,7 @@ export {
   isMethod,
   json,
   redirect,
+  sendSkipWaitingMessage,
   timeout,
   toJSON,
 } from './src/utils/utils.js';

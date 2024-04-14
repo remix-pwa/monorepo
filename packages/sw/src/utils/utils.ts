@@ -123,3 +123,7 @@ export const toJSON = async (response: Response | any) => {
 
   return response;
 };
+
+export const sendSkipWaitingMessage = async (worker: ServiceWorker) => {
+  worker.postMessage({ type: 'SKIP_WAITING' });
+};
