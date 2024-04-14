@@ -1,5 +1,5 @@
-import { isWindowAvailable } from './user-agent';
-import { errorBlock } from './utils';
+import { isWindowAvailable } from './user-agent.js';
+import { errorBlock } from './utils.js';
 
 /**
  * Get the display mode of your progressive web app.

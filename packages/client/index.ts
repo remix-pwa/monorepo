@@ -1,17 +1,17 @@
-export { clearBadge, isBadgingSupported, setBadgeCount } from './lib/badge';
-export { getBatteryStatus } from './lib/battery';
+export { clearBadge, isBadgingSupported, setBadgeCount } from './lib/badge.js';
+export { getBatteryStatus } from './lib/battery.js';
 export {
   clipboardSupported,
   copyImageToClipboard,
   copyTextToClipboard,
   readFilesFromClipboard,
   readTextFromClipboard,
-} from './lib/clipboard';
-export { handleNetworkChange, isOffline, isOnline } from './lib/connectivity';
-export { openContactPicker } from './lib/contacts';
-export { displayMode, toggleFullScreen } from './lib/display';
-export { shareSupported as isShareSupported, shareData } from './lib/share';
-export { checkVisibility, wakeLock, wakeLockSupported } from './lib/usage';
+} from './lib/clipboard.js';
+export { handleNetworkChange, isOffline, isOnline } from './lib/connectivity.js';
+export { openContactPicker } from './lib/contacts.js';
+export { displayMode, toggleFullScreen } from './lib/display.js';
+export { shareSupported as isShareSupported, shareData } from './lib/share.js';
+export { checkVisibility, wakeLock, wakeLockSupported } from './lib/usage.js';
 export {
   getBrowser,
   getPlatform,
@@ -40,9 +40,11 @@ export {
   isWindows,
   isWindowsChrome,
   isWindowsEdge,
-} from './lib/user-agent';
+} from './lib/user-agent.js';
 
-export { useBadgeApi } from './hooks/useBadgeApi';
-export { useBatteryManager } from './hooks/useBatteryManager';
-export { useNetworkConnectivity } from './hooks/useNetworkConnectivity';
-export { usePWAManager } from './hooks/usePWAManager';
+export { useBadgeApi } from './hooks/useBadgeApi.js';
+export { useBatteryManager } from './hooks/useBatteryManager.js';
+export { useNetworkConnectivity } from './hooks/useNetworkConnectivity.js';
+export { usePWAManager } from './hooks/usePWAManager.js';
+export { usePermission } from './hooks/usePermission.js';
+export type { PermissionName, PermissionState, PermissionStatus } from './hooks/usePermission.js';

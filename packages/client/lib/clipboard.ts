@@ -1,4 +1,4 @@
-import { errorBlock } from './utils';
+import { errorBlock } from './utils.js';
 
 export const copyTextToClipboard = async (text: string): Promise<boolean> => {
   try {
