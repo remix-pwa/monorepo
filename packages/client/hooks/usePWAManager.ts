@@ -2,8 +2,17 @@ import { useEffect, useState } from 'react';
 
 import { isWindowAvailable } from '../lib/user-agent';
 
+type UpdateAvailable = {
+  isUpdateAvailable: boolean;
+  newWorker: ServiceWorker | null;
+};
+
 export const usePWAManager = () => {
-  const [updateAvailable, setUpdateAvailable] = useState(false);
+  const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
+  const [swUpdate, setSwUpdate] = useState<UpdateAvailable>({
+    isUpdateAvailable: false,
+    newWorker: null,
+  });
   const [installPromptEvent, setInstallPromptEvent] = useState<Event | null>(null);
   const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
   const [userChoice, setUserChoice] = useState<'accepted' | 'dismissed' | null>(null);
@@ -41,7 +50,6 @@ export const usePWAManager = () => {
     };
 
     const handleControllerChange = () => {
-      setUpdateAvailable(true);
       getRegistration();
     };
 
@@ -64,5 +72,34 @@ export const usePWAManager = () => {
     };
   }, []);
 
-  return { updateAvailable, promptInstall, swRegistration: registration, userInstallChoice: userChoice };
+  useEffect(() => {
+    const updateFalse = { isUpdateAvailable: false, newWorker: null };
+
+    if (!registration) {
+      setSwUpdate(updateFalse);
+      setUpdateAvailable(false);
+      return;
+    }
+
+    registration.onupdatefound = () => {
+      const newWorker = registration.installing;
+
+      if (newWorker) {
+        newWorker.onstatechange = () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            setSwUpdate({ isUpdateAvailable: true, newWorker });
+            setUpdateAvailable(true);
+          }
+        };
+      }
+    };
+
+    return () => {
+      registration.onupdatefound = null;
+      setSwUpdate(updateFalse);
+      setUpdateAvailable(false);
+    };
+  }, [registration]);
+
+  return { updateAvailable, swUpdate, promptInstall, swRegistration: registration, userInstallChoice: userChoice };
 };

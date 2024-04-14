@@ -1,3 +1,11 @@
+## @remix-pwa/client 3.0.1-dev.1 (2024-04-14)
+
+
+### Bug Fixes
+
+* **client:** updated `updateAvailable` schematics 3b5f3f2
+* **sw:** fixed linting + updated hook to reflect both updates & workers ea05e01
+
 # @remix-pwa/client 3.0.0 (2024-03-28)
 
 
