@@ -1,3 +1,10 @@
+## @remix-pwa/sw 3.0.2-dev.1 (2024-04-14)
+
+
+### Bug Fixes
+
+* **sw:** re-pushing `sw` to nightly build 6586c68
+
 ## @remix-pwa/sw 3.0.1 (2024-04-05)
 
 
