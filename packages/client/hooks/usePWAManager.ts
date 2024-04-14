@@ -8,7 +8,8 @@ type UpdateAvailable = {
 };
 
 export const usePWAManager = () => {
-  const [updateAvailable, setUpdateAvailable] = useState<UpdateAvailable>({
+  const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
+  const [swUpdate, setSwUpdate] = useState<UpdateAvailable>({
     isUpdateAvailable: false,
     newWorker: null,
   });
@@ -75,7 +76,8 @@ export const usePWAManager = () => {
     const updateFalse = { isUpdateAvailable: false, newWorker: null };
 
     if (!registration) {
-      setUpdateAvailable(updateFalse);
+      setSwUpdate(updateFalse);
+      setUpdateAvailable(false);
       return;
     }
 
@@ -85,7 +87,8 @@ export const usePWAManager = () => {
       if (newWorker) {
         newWorker.onstatechange = () => {
           if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            setUpdateAvailable({ isUpdateAvailable: true, newWorker });
+            setSwUpdate({ isUpdateAvailable: true, newWorker });
+            setUpdateAvailable(true);
           }
         };
       }
@@ -93,9 +96,10 @@ export const usePWAManager = () => {
 
     return () => {
       registration.onupdatefound = null;
-      setUpdateAvailable(updateFalse);
+      setSwUpdate(updateFalse);
+      setUpdateAvailable(false);
     };
   }, [registration]);
 
-  return { updateAvailable, promptInstall, swRegistration: registration, userInstallChoice: userChoice };
+  return { updateAvailable, swUpdate, promptInstall, swRegistration: registration, userInstallChoice: userChoice };
 };
