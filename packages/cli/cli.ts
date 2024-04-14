@@ -31,7 +31,7 @@ process.emit = function (name, data, ..._args) {
 
 const packageJson = await import('./package.json', { assert: { type: 'json' } });
 
-const { magenta, red } = colors;
+const { green, magenta, red } = colors;
 const { ModuleKind, ScriptTarget, transpileModule } = ts;
 
 const __filename = fileURLToPath(import.meta.url);
@@ -190,7 +190,7 @@ program
   .option('-p, --packages <packages...>', 'Individual packages to update')
   .option('-r, --root <root>', "Location of app's root directory (where package.json is located)", '.')
   .action(async options => {
-    const root = resolve(process.cwd(), options.root);
+    const root = fileURLToPath(resolve(process.cwd(), options.root));
     const packagesToUpdate = options.packages ?? [];
 
     const packageJSON = (await import(resolve(root, 'package.json'), { assert: { type: 'json' } })).default;
@@ -241,6 +241,11 @@ program
         }
       }
     });
+
+    console.log(
+      green('Successfully installed all packages:'),
+      packagesToUpdate.forEach(pkg => console.log(green(`\n- ${pkg}`)))
+    );
   });
 
 export default program;

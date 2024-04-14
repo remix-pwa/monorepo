@@ -1,7 +1,7 @@
 /* eslint-disable n/no-callback-literal */
 import { useEffect, useState } from 'react';
 
-import { isWindowAvailable } from '../lib/user-agent';
+import { isWindowAvailable } from '../lib/user-agent.js';
 
 export const useNetworkConnectivity = (
   options: {

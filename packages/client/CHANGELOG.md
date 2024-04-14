@@ -1,3 +1,10 @@
+## @remix-pwa/client 3.0.3-dev.1 (2024-04-14)
+
+
+### Bug Fixes
+
+* **client:** refactored `client` + new hook: `usePermission` 9b9b4fc
+
 ## @remix-pwa/client 3.0.2 (2024-04-14)
 
 
