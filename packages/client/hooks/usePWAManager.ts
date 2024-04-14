@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { isWindowAvailable } from '../lib/user-agent';
+import { isWindowAvailable } from '../lib/user-agent.js';
 
 type UpdateAvailable = {
   isUpdateAvailable: boolean;

@@ -1,4 +1,4 @@
-import { isWindowAvailable } from './user-agent';
+import { isWindowAvailable } from './user-agent.js';
 
 /* eslint-disable n/no-callback-literal */
 export const isOnline = () => navigator.onLine;
