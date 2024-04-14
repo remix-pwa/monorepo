@@ -81,21 +81,25 @@ export const usePWAManager = () => {
       return;
     }
 
-    registration.onupdatefound = () => {
+    const update = () => {
       const newWorker = registration.installing;
 
       if (newWorker) {
-        newWorker.onstatechange = () => {
+        const newSWUpdate = () => {
           if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
             setSwUpdate({ isUpdateAvailable: true, newWorker });
             setUpdateAvailable(true);
           }
         };
+
+        newWorker.addEventListener('statechange', newSWUpdate);
       }
     };
 
+    registration.addEventListener('updatefound', update);
+
     return () => {
-      registration.onupdatefound = null;
+      registration.removeEventListener('updatefound', update);
       setSwUpdate(updateFalse);
       setUpdateAvailable(false);
     };
