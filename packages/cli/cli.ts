@@ -31,7 +31,7 @@ process.emit = function (name, data, ..._args) {
 
 const packageJson = await import('./package.json', { assert: { type: 'json' } });
 
-const { green, magenta, red } = colors;
+const { blue, bold, green, italic, magenta, red } = colors;
 const { ModuleKind, ScriptTarget, transpileModule } = ts;
 
 const __filename = fileURLToPath(import.meta.url);
@@ -190,42 +190,75 @@ program
   .option('-p, --packages <packages...>', 'Individual packages to update')
   .option('-r, --root <root>', "Location of app's root directory (where package.json is located)", '.')
   .action(async options => {
-    const root = fileURLToPath(resolve(process.cwd(), options.root));
+    const root = resolve(process.cwd(), options.root);
     const packagesToUpdate = options.packages ?? [];
 
-    const packageJSON = (await import(resolve(root, 'package.json'), { assert: { type: 'json' } })).default;
+    const packageJSON = (
+      await import('file://' + fileURLToPath(`file:///${resolve(root, 'package.json').replace(/\\/g, '/')}`), {
+        assert: { type: 'json' },
+      })
+    ).default;
     const dependencies = packageJSON.dependencies;
     const devDependencies = packageJSON.devDependencies;
 
     if (!packagesToUpdate.length) {
-      Object.keys(dependencies).forEach(dep => {
-        if (dep.startsWith('@remix-pwa')) {
+      const allPackages = Object.keys(dependencies)
+        .filter(dep => dep.startsWith('@remix-pwa'))
+        .concat(['|'])
+        .concat(Object.keys(devDependencies).filter(dep => dep.startsWith('@remix-pwa')));
+
+      if (!allPackages.length) {
+        console.error(red(bold('No `@remix-pwa/*` packages found in dependencies')));
+        process.exit(1);
+      }
+
+      console.log(
+        blue('Found the following `@remix-pwa/*` packages:'),
+        allPackages.forEach(pkg => pkg !== '|' && console.log(green(`\n- ${pkg}`))),
+        '\n\n',
+        blue(`Updating all packages to ${italic('latest')}...`)
+      );
+
+      allPackages.forEach(pkg => {
+        if (pkg === '|') return;
+
+        const depType: 'dep' | 'devDep' = Object.keys(devDependencies).includes(pkg) ? 'devDep' : 'dep';
+
+        if (depType === 'dep') {
           try {
-            execSync(`npm i ${dep}@latest`);
+            execSync(`npm i ${pkg}@latest`);
           } catch (err) {
-            console.error(`${red(`Error occured whilst installing ${dep}:`)}\n\n${err}`);
+            console.error(`${red(`Error occured whilst installing ${pkg}:`)}\n\n${err}`);
+          }
+        } else {
+          try {
+            execSync(`npm i -D ${pkg}@latest`);
+          } catch (err) {
+            console.error(`${red(`Error occured whilst installing ${pkg}:`)}\n\n${err}`);
           }
         }
       });
 
-      Object.keys(devDependencies).forEach(dep => {
-        if (dep.startsWith('@remix-pwa')) {
-          try {
-            execSync(`npm i -D ${dep}@latest`);
-          } catch (err) {
-            console.error(`${red(`Error occured whilst installing ${dep}:`)}\n\n${err}`);
-          }
-        }
-      });
+      console.log(
+        green('Successfully installed all packages:'),
+        allPackages.forEach(pkg => pkg !== '|' && console.log(green(`\n- ${pkg}`)))
+      );
 
-      return;
+      process.exit(0);
     }
+
+    console.log(
+      blue('Confirmed and updating the following packages:'),
+      packagesToUpdate.forEach(pkg => console.log(green(`\n- @remix-pwa/${pkg}`))),
+      '\n\n',
+      blue(`Updating all confirmed packages to ${italic('latest')}...`)
+    );
 
     packagesToUpdate.forEach(dep => {
       let depType: 'dep' | 'devDep' = 'dep';
 
-      if (Object.keys(devDependencies).includes(dep)) depType = 'devDep';
-      if (Object.keys(dependencies).includes(dep)) depType = 'dep';
+      if (Object.keys(devDependencies).includes(`@remix-pwa/${dep}`)) depType = 'devDep';
+      if (Object.keys(dependencies).includes(`@remix-pwa/${dep}`)) depType = 'dep';
 
       if (depType === 'dep') {
         try {
