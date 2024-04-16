@@ -208,13 +208,13 @@ program
         .concat(Object.keys(devDependencies).filter(dep => dep.startsWith('@remix-pwa')));
 
       if (!allPackages.length) {
-        console.error(red(bold('No `@remix-pwa/*` packages found in dependencies')));
+        console.error(red(bold('💥 No `@remix-pwa/*` packages found in dependencies')));
         process.exit(1);
       }
 
       console.log(blue('Found the following `@remix-pwa/*` packages:'));
       allPackages.forEach(pkg => pkg !== '|' && console.log(green(`- ${pkg}`)));
-      console.log('\n', blue(`Updating all packages to ${italic('latest')}...`));
+      console.log('\n', blue(`🚀 Updating all packages to ${italic('latest')}...`));
 
       allPackages.forEach(pkg => {
         if (pkg === '|') return;
@@ -225,18 +225,18 @@ program
           try {
             execSync(`npm i ${pkg}@latest`);
           } catch (err) {
-            console.error(`${red(`Error occured whilst installing ${pkg}:`)}\n\n${err}`);
+            console.error(`${red(`💥 Error occured whilst installing ${pkg}:`)}\n\n${err}`);
           }
         } else {
           try {
             execSync(`npm i -D ${pkg}@latest`);
           } catch (err) {
-            console.error(`${red(`Error occured whilst installing ${pkg}:`)}\n\n${err}`);
+            console.error(`${red(`💥 Error occured whilst installing ${pkg}:`)}\n\n${err}`);
           }
         }
       });
 
-      console.log(green('Successfully installed all packages:'));
+      console.log(green('✅ Successfully installed all packages:'));
       allPackages.forEach(pkg => pkg !== '|' && console.log(green(`- ${pkg}`)));
 
       process.exit(0);
@@ -244,7 +244,7 @@ program
 
     console.log(blue('Confirmed and updating the following packages:'));
     packagesToUpdate.forEach(pkg => console.log(green(`- @remix-pwa/${pkg}`)));
-    console.log('\n', blue(`Updating all confirmed packages to ${italic('latest')}...`));
+    console.log('\n', blue(`🚀 Updating all confirmed packages to ${italic('latest')}...`));
 
     packagesToUpdate.forEach(dep => {
       let depType: 'dep' | 'devDep' = 'dep';
@@ -256,18 +256,18 @@ program
         try {
           execSync(`npm i ${dep}@latest`);
         } catch (err) {
-          console.error(`${red(`Error occured whilst installing ${dep}:`)}\n\n${err}`);
+          console.error(`${red(`💥 Error occured whilst installing ${dep}:`)}\n\n${err}`);
         }
       } else {
         try {
           execSync(`npm i -D ${dep}@latest`);
         } catch (err) {
-          console.error(`${red(`Error occured whilst installing ${dep}:`)}\n\n${err}`);
+          console.error(`${red(`💥 Error occured whilst installing ${dep}:`)}\n\n${err}`);
         }
       }
     });
 
-    console.log(green('Successfully installed all packages:'));
+    console.log(green('✅ Successfully installed all packages:'));
     packagesToUpdate.forEach(pkg => console.log(green(`- ${pkg}`)));
   });
 
