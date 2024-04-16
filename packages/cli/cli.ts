@@ -87,7 +87,7 @@ program
 
     if (js) {
       // Generate JavaScript web manifest file here...
-      console.log('Generating JavaScript web manifest file...');
+      console.log('🔃 Generating JavaScript web manifest file...');
 
       const path = resolve(process.cwd(), dest);
       const dirPath = path.split('/').slice(0, -1).join('/');
@@ -110,9 +110,10 @@ program
       }
 
       await writeFile(resolve(process.cwd(), dirPath, fileName.replace(/\.ts$/, '.js')), outputText);
+      console.log(green('✅ Successfully generated web manifest file'));
     } else {
       // Generate TypeScript web manifest file here...
-      console.log('Generating TypeScript web manifest file...');
+      console.log('🔃 Generating TypeScript web manifest file...');
 
       const path = resolve(process.cwd(), dest);
       const dirPath = path.split('/').slice(0, -1).join('/');
@@ -126,6 +127,7 @@ program
       const templateContent = await readFile(resolve(__dirname, 'templates', 'manifest[.webmanifest].ts'), 'utf-8');
 
       await writeFile(resolve(process.cwd(), dirPath, fileName.replace(/\.js$/, '.ts')), templateContent);
+      console.log(green('✅ Successfully generated web manifest file'));
     }
   });
 
@@ -141,7 +143,7 @@ program
 
     if (js) {
       // Generate JavaScript service worker file here...
-      console.log('Generating JavaScript service worker file...');
+      console.log('🔃 Generating JavaScript service worker file...');
 
       const path = resolve(process.cwd(), dest);
       const dirPath = path.split('/').slice(0, -1).join('/');
@@ -164,9 +166,10 @@ program
       }
 
       await writeFile(resolve(process.cwd(), dirPath, fileName.replace(/\.ts$/, '.js')), outputText);
+      console.log(green('✅ Successfully generated service worker file'));
     } else {
       // Generate TypeScript service worker file here...
-      console.log('Generating TypeScript service worker file...');
+      console.log('🔃 Generating TypeScript service worker file...');
 
       const path = resolve(process.cwd(), dest);
       const dirPath = path.split('/').slice(0, -1).join('/');
@@ -180,6 +183,7 @@ program
       const templateContent = await readFile(resolve(__dirname, 'templates', 'entry.worker.ts'), 'utf-8');
 
       await writeFile(resolve(process.cwd(), dirPath, fileName.replace(/\.js$/, '.ts')), templateContent);
+      console.log(green('✅ Successfully generated service worker file'));
     }
   });
 
