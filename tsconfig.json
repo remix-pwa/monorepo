@@ -5,6 +5,7 @@
     { "path": "packages/cli" },
     { "path": "packages/client" },
     { "path": "packages/dev" },
+    { "path": "packages/push" },
     // { "path": "packages/precache-runtime" },
     // { "path": "packages/strategy" },
     { "path": "packages/sw" },
