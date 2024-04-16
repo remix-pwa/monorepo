@@ -212,12 +212,9 @@ program
         process.exit(1);
       }
 
-      console.log(
-        blue('Found the following `@remix-pwa/*` packages:'),
-        allPackages.forEach(pkg => pkg !== '|' && console.log(green(`\n- ${pkg}`))),
-        '\n\n',
-        blue(`Updating all packages to ${italic('latest')}...`)
-      );
+      console.log(blue('Found the following `@remix-pwa/*` packages:'));
+      allPackages.forEach(pkg => pkg !== '|' && console.log(green(`- ${pkg}`)));
+      console.log('\n', blue(`Updating all packages to ${italic('latest')}...`));
 
       allPackages.forEach(pkg => {
         if (pkg === '|') return;
@@ -239,20 +236,15 @@ program
         }
       });
 
-      console.log(
-        green('Successfully installed all packages:'),
-        allPackages.forEach(pkg => pkg !== '|' && console.log(green(`\n- ${pkg}`)))
-      );
+      console.log(green('Successfully installed all packages:'));
+      allPackages.forEach(pkg => pkg !== '|' && console.log(green(`- ${pkg}`)));
 
       process.exit(0);
     }
 
-    console.log(
-      blue('Confirmed and updating the following packages:'),
-      packagesToUpdate.forEach(pkg => console.log(green(`\n- @remix-pwa/${pkg}`))),
-      '\n\n',
-      blue(`Updating all confirmed packages to ${italic('latest')}...`)
-    );
+    console.log(blue('Confirmed and updating the following packages:'));
+    packagesToUpdate.forEach(pkg => console.log(green(`- @remix-pwa/${pkg}`)));
+    console.log('\n', blue(`Updating all confirmed packages to ${italic('latest')}...`));
 
     packagesToUpdate.forEach(dep => {
       let depType: 'dep' | 'devDep' = 'dep';
@@ -275,10 +267,8 @@ program
       }
     });
 
-    console.log(
-      green('Successfully installed all packages:'),
-      packagesToUpdate.forEach(pkg => console.log(green(`\n- ${pkg}`)))
-    );
+    console.log(green('Successfully installed all packages:'));
+    packagesToUpdate.forEach(pkg => console.log(green(`- ${pkg}`)));
   });
 
 export default program;
