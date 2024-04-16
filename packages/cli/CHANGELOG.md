@@ -1,3 +1,47 @@
+## @remix-pwa/cli 1.2.1 (2024-04-16)
+
+
+### Bug Fixes
+
+* **cli:** fixed log inconsistencies and bugs c4683c5
+
+## @remix-pwa/cli 1.2.1-dev.1 (2024-04-16)
+
+
+### Bug Fixes
+
+* **cli:** fixed log inconsistencies and bugs c4683c5
+
+# @remix-pwa/cli 1.2.0 (2024-04-15)
+
+
+### Features
+
+* **cli:** new CLI command: `update` c66caf2
+
+# @remix-pwa/cli 1.2.0-dev.1 (2024-04-15)
+
+
+### Features
+
+* **cli:** new CLI command: `update` c66caf2
+
+## @remix-pwa/cli 1.1.1 (2024-04-14)
+
+
+### Bug Fixes
+
+* **cli:** fixed `update` command - more verbose + url bug 4613723
+* **cli:** fixed file url resolution across platforms 811e545
+
+## @remix-pwa/cli 1.1.1-dev.1 (2024-04-14)
+
+
+### Bug Fixes
+
+* **cli:** fixed `update` command - more verbose + url bug 4613723
+* **cli:** fixed file url resolution across platforms 811e545
+
 # @remix-pwa/cli 1.1.0 (2024-04-11)
 
 

@@ -1,3 +1,47 @@
+## @remix-pwa/client 3.0.3 (2024-04-14)
+
+
+### Bug Fixes
+
+* **client:** refactored `client` + new hook: `usePermission` 9b9b4fc
+
+## @remix-pwa/client 3.0.3-dev.1 (2024-04-14)
+
+
+### Bug Fixes
+
+* **client:** refactored `client` + new hook: `usePermission` 9b9b4fc
+
+## @remix-pwa/client 3.0.2 (2024-04-14)
+
+
+### Bug Fixes
+
+* **client:** updated manager event listeners ba2253b
+
+## @remix-pwa/client 3.0.2-dev.1 (2024-04-14)
+
+
+### Bug Fixes
+
+* **client:** updated manager event listeners ba2253b
+
+## @remix-pwa/client 3.0.1 (2024-04-14)
+
+
+### Bug Fixes
+
+* **client:** updated `updateAvailable` schematics 3b5f3f2
+* **sw:** fixed linting + updated hook to reflect both updates & workers ea05e01
+
+## @remix-pwa/client 3.0.1-dev.1 (2024-04-14)
+
+
+### Bug Fixes
+
+* **client:** updated `updateAvailable` schematics 3b5f3f2
+* **sw:** fixed linting + updated hook to reflect both updates & workers ea05e01
+
 # @remix-pwa/client 3.0.0 (2024-03-28)
 
 
