@@ -1,3 +1,10 @@
+# @remix-pwa/cli 1.2.0 (2024-04-15)
+
+
+### Features
+
+* **cli:** new CLI command: `update` c66caf2
+
 # @remix-pwa/cli 1.2.0-dev.1 (2024-04-15)
 
 
