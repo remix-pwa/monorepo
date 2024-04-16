@@ -87,7 +87,7 @@ program
 
     if (js) {
       // Generate JavaScript web manifest file here...
-      console.log('Generating JavaScript web manifest file...');
+      console.log('🔃 Generating JavaScript web manifest file...');
 
       const path = resolve(process.cwd(), dest);
       const dirPath = path.split('/').slice(0, -1).join('/');
@@ -110,9 +110,10 @@ program
       }
 
       await writeFile(resolve(process.cwd(), dirPath, fileName.replace(/\.ts$/, '.js')), outputText);
+      console.log(green('✅ Successfully generated web manifest file'));
     } else {
       // Generate TypeScript web manifest file here...
-      console.log('Generating TypeScript web manifest file...');
+      console.log('🔃 Generating TypeScript web manifest file...');
 
       const path = resolve(process.cwd(), dest);
       const dirPath = path.split('/').slice(0, -1).join('/');
@@ -126,6 +127,7 @@ program
       const templateContent = await readFile(resolve(__dirname, 'templates', 'manifest[.webmanifest].ts'), 'utf-8');
 
       await writeFile(resolve(process.cwd(), dirPath, fileName.replace(/\.js$/, '.ts')), templateContent);
+      console.log(green('✅ Successfully generated web manifest file'));
     }
   });
 
@@ -141,7 +143,7 @@ program
 
     if (js) {
       // Generate JavaScript service worker file here...
-      console.log('Generating JavaScript service worker file...');
+      console.log('🔃 Generating JavaScript service worker file...');
 
       const path = resolve(process.cwd(), dest);
       const dirPath = path.split('/').slice(0, -1).join('/');
@@ -164,9 +166,10 @@ program
       }
 
       await writeFile(resolve(process.cwd(), dirPath, fileName.replace(/\.ts$/, '.js')), outputText);
+      console.log(green('✅ Successfully generated service worker file'));
     } else {
       // Generate TypeScript service worker file here...
-      console.log('Generating TypeScript service worker file...');
+      console.log('🔃 Generating TypeScript service worker file...');
 
       const path = resolve(process.cwd(), dest);
       const dirPath = path.split('/').slice(0, -1).join('/');
@@ -180,6 +183,7 @@ program
       const templateContent = await readFile(resolve(__dirname, 'templates', 'entry.worker.ts'), 'utf-8');
 
       await writeFile(resolve(process.cwd(), dirPath, fileName.replace(/\.js$/, '.ts')), templateContent);
+      console.log(green('✅ Successfully generated service worker file'));
     }
   });
 
@@ -208,16 +212,13 @@ program
         .concat(Object.keys(devDependencies).filter(dep => dep.startsWith('@remix-pwa')));
 
       if (!allPackages.length) {
-        console.error(red(bold('No `@remix-pwa/*` packages found in dependencies')));
+        console.error(red(bold('💥 No `@remix-pwa/*` packages found in dependencies')));
         process.exit(1);
       }
 
-      console.log(
-        blue('Found the following `@remix-pwa/*` packages:'),
-        allPackages.forEach(pkg => pkg !== '|' && console.log(green(`\n- ${pkg}`))),
-        '\n\n',
-        blue(`Updating all packages to ${italic('latest')}...`)
-      );
+      console.log(blue('Found the following `@remix-pwa/*` packages:'));
+      allPackages.forEach(pkg => pkg !== '|' && console.log(green(`- ${pkg}`)));
+      console.log('\n', blue(`🚀 Updating all packages to ${italic('latest')}...`));
 
       allPackages.forEach(pkg => {
         if (pkg === '|') return;
@@ -228,31 +229,26 @@ program
           try {
             execSync(`npm i ${pkg}@latest`);
           } catch (err) {
-            console.error(`${red(`Error occured whilst installing ${pkg}:`)}\n\n${err}`);
+            console.error(`${red(`💥 Error occured whilst installing ${pkg}:`)}\n\n${err}`);
           }
         } else {
           try {
             execSync(`npm i -D ${pkg}@latest`);
           } catch (err) {
-            console.error(`${red(`Error occured whilst installing ${pkg}:`)}\n\n${err}`);
+            console.error(`${red(`💥 Error occured whilst installing ${pkg}:`)}\n\n${err}`);
           }
         }
       });
 
-      console.log(
-        green('Successfully installed all packages:'),
-        allPackages.forEach(pkg => pkg !== '|' && console.log(green(`\n- ${pkg}`)))
-      );
+      console.log(green('✅ Successfully installed all packages:'));
+      allPackages.forEach(pkg => pkg !== '|' && console.log(green(`- ${pkg}`)));
 
       process.exit(0);
     }
 
-    console.log(
-      blue('Confirmed and updating the following packages:'),
-      packagesToUpdate.forEach(pkg => console.log(green(`\n- @remix-pwa/${pkg}`))),
-      '\n\n',
-      blue(`Updating all confirmed packages to ${italic('latest')}...`)
-    );
+    console.log(blue('Confirmed and updating the following packages:'));
+    packagesToUpdate.forEach(pkg => console.log(green(`- @remix-pwa/${pkg}`)));
+    console.log('\n', blue(`🚀 Updating all confirmed packages to ${italic('latest')}...`));
 
     packagesToUpdate.forEach(dep => {
       let depType: 'dep' | 'devDep' = 'dep';
@@ -264,21 +260,19 @@ program
         try {
           execSync(`npm i ${dep}@latest`);
         } catch (err) {
-          console.error(`${red(`Error occured whilst installing ${dep}:`)}\n\n${err}`);
+          console.error(`${red(`💥 Error occured whilst installing ${dep}:`)}\n\n${err}`);
         }
       } else {
         try {
           execSync(`npm i -D ${dep}@latest`);
         } catch (err) {
-          console.error(`${red(`Error occured whilst installing ${dep}:`)}\n\n${err}`);
+          console.error(`${red(`💥 Error occured whilst installing ${dep}:`)}\n\n${err}`);
         }
       }
     });
 
-    console.log(
-      green('Successfully installed all packages:'),
-      packagesToUpdate.forEach(pkg => console.log(green(`\n- ${pkg}`)))
-    );
+    console.log(green('✅ Successfully installed all packages:'));
+    packagesToUpdate.forEach(pkg => console.log(green(`- ${pkg}`)));
   });
 
 export default program;
