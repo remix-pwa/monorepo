@@ -1,3 +1,10 @@
+## @remix-pwa/cli 1.2.1 (2024-04-16)
+
+
+### Bug Fixes
+
+* **cli:** fixed log inconsistencies and bugs c4683c5
+
 ## @remix-pwa/cli 1.2.1-dev.1 (2024-04-16)
 
 
