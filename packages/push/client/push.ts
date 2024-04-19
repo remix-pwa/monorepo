@@ -64,7 +64,7 @@ export class PushManager {
     }
   }
 
-  handlePushEvent(event: PushEvent) {
+  private handlePushEvent(event: PushEvent) {
     const func = async () => {
       let data;
 
@@ -90,7 +90,7 @@ export class PushManager {
     event.waitUntil(func());
   }
 
-  handleNotificationClick(event: NotificationEvent) {
+  private handleNotificationClick(event: NotificationEvent) {
     event.notification.close();
 
     const func = async () => {
@@ -111,9 +111,9 @@ export class PushManager {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
-  handleNotificationClose(_event: NotificationEvent) {}
+  private handleNotificationClose(_event: NotificationEvent) {}
 
-  handleNotificationError(event: Event) {
+  private handleNotificationError(event: Event) {
     console.error('Notification error:', event);
   }
 
