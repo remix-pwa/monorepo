@@ -14,8 +14,20 @@
   "type": "module",
   "exports": {
     ".": {
-      "default": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "default": "./dist/client/index.js",
+      "types": "./dist/client/index.d.ts"
+    },
+    "./client": {
+      "default": "./dist/client/index.js",
+      "types": "./dist/client/index.d.ts"
+    },
+    "./hook": {
+      "default": "./dist/client/hook/index.js",
+      "types": "./dist/client/hook/index.d.ts"
+    },
+    "./server": {
+      "default": "./dist/server/index.js",
+      "types": "./dist/server/index.d.ts"
     }
   },
   "files": [
@@ -30,10 +42,22 @@
     "prepublish": "npm run build"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@remix-pwa/client": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
-    "@remix-pwa/lint-staged-config": "^0.0.0"
+    "@remix-pwa/lint-staged-config": "^0.0.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/react": "^18.2.79",
+    "@types/web-push": "^3.6.3"
+  },
+  "dependencies": {
+    "@remix-pwa/client": "^3.0.3",
+    "bcryptjs": "^2.4.3"
   }
 }
