@@ -1,9 +1,29 @@
 declare let self: ServiceWorkerGlobalScope;
 
 export type PushManagerOptions = {
+  /**
+   * Callback to handle the `push` event
+   * @param event The `PushEvent` object
+   * @returns `void`
+   */
   handlePushEvent?: (event: PushEvent) => void;
+  /**
+   * Callback to handle the `notificationclick` event
+   * @param event The `NotificationEvent` object
+   * @returns `void`
+   */
   handleNotificationClick?: (event: NotificationEvent) => void;
+  /**
+   * Callback to handle the `notificationclose` event
+   * @param event The `NotificationEvent` object
+   * @returns `void`
+   */
   handleNotificationClose?: (event: NotificationEvent) => void;
+  /**
+   * Callback to handle the `notificationerror` event
+   * @param event `Event` object
+   * @returns `void`
+   */
   handleNotificationError?: (event: Event) => void;
 };
 
@@ -115,9 +135,5 @@ export class PushManager {
 
   private handleNotificationError(event: Event) {
     console.error('Notification error:', event);
-  }
-
-  test() {
-    console.log('Test');
   }
 }
