@@ -1,6 +1,7 @@
 /// <reference lib="WebWorker" />
 
 import { EnhancedCache, isDocumentRequest, isLoaderRequest, logger, NavigationHandler } from '@remix-pwa/sw';
+import { PushManager } from '@remix-pwa/push';
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -84,4 +85,8 @@ const msgHandler = new NavigationHandler({
 
 self.addEventListener('message', async event => {
   await msgHandler.handleMessage(event);
+})
+
+new PushManager({
+  
 })
