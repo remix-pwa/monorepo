@@ -10497,7 +10497,12 @@ const msgHandler = new NavigationHandler({
 self.addEventListener("message", async (event) => {
   await msgHandler.handleMessage(event);
 });
-new PushManager({});
+new PushManager({
+  handleNotificationClick(event) {
+    const _this = this;
+    _this.test();
+  }
+});
 const entryWorker = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   defaultFetchHandler,

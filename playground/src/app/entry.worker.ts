@@ -87,6 +87,4 @@ self.addEventListener('message', async event => {
   await msgHandler.handleMessage(event);
 })
 
-new PushManager({
-  
-})
+new PushManager()

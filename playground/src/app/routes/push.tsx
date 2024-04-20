@@ -36,6 +36,7 @@ export default function Basic() {
             Unsubscribe from Push
           </button> : <button
             className="inline-flex w-48 items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            // Private key: 8vXfjF-hDyvXEwLh1L8bEItMjon248yjpjMEJD3mPCQ
             onClick={() => subscribeToPush('BOdRhQunx1dsGYSVMuBkFquOdyVeknU4D7-LOMmzm8Jg4I-gA-K1BPGsSUic9L2ZJGJHtW3wMDRxzfdBYVKr5es', () => console.log('Subscribed to push!'))}>
             Subscribe to Push
           </button>}
