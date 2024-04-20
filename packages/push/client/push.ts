@@ -13,7 +13,7 @@ export class PushManager {
   private _handleNotificationClose: (event: NotificationEvent) => void;
   private _handleNotificationError: (event: Event) => void;
 
-  constructor(options: PushManagerOptions) {
+  constructor(options: PushManagerOptions = {}) {
     this._handlePushEvent = options.handlePushEvent || this.handlePushEvent;
     this._handleNotificationClick = options.handleNotificationClick || this.handleNotificationClick;
     this._handleNotificationClose = options.handleNotificationClose || this.handleNotificationClose;
