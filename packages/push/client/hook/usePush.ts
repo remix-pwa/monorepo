@@ -103,6 +103,8 @@ export const usePush = (): PushObject => {
         setIsSubscribed(!!subscription);
         setPushSubscription(subscription);
       });
+
+      Notification.permission === 'granted' ? setCanSendPush(true) : setCanSendPush(false);
     }
   }, [swRegistration]);
 
