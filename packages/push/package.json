@@ -38,7 +38,7 @@
   "scripts": {
     "build": "rimraf ./dist && tsc",
     "format": "prettier --write \"**/*.ts\"",
-    "lint": "TIMING=1 eslint --fix \"lib/**/*.ts\"",
+    "lint": "TIMING=1 eslint --fix \"**/*.ts\"",
     "prepublish": "npm run build"
   },
   "engines": {
