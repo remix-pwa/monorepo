@@ -1,3 +1,10 @@
+# @remix-pwa/push 1.1.0-dev.1 (2024-04-24)
+
+
+### Features
+
+* **push:** breaking 41e9d9c
+
 # @remix-pwa/push 1.0.0 (2024-04-24)
 
 
