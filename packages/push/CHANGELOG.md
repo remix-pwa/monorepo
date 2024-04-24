@@ -1,3 +1,10 @@
+# @remix-pwa/push 1.0.0-dev.2 (2024-04-24)
+
+
+### Bug Fixes
+
+* **push:** new doc comments for `usePush` functions 128f7d2
+
 # @remix-pwa/push 1.0.0-dev.1 (2024-04-24)
 
 
