@@ -21,9 +21,9 @@
     "build:remix": "remix build"
   },
   "dependencies": {
-    "@remix-pwa/client": "3.0.3",
+    "@remix-pwa/client": "3.0.4-dev.1",
     "@remix-pwa/push": "2.9.1",
-    "@remix-pwa/sw": "3.0.3-dev.1",
+    "@remix-pwa/sw": "3.0.3-dev.2",
     "@remix-pwa/sync": "2.0.2",
     "@remix-pwa/worker-runtime": "2.1.1",
     "@remix-run/node": "^2.8.1",
