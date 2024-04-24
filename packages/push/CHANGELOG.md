@@ -1,3 +1,10 @@
+# @remix-pwa/push 1.0.0-dev.5 (2024-04-24)
+
+
+### Bug Fixes
+
+* **push:** even further route updates 627d549
+
 # @remix-pwa/push 1.0.0-dev.4 (2024-04-24)
 
 
