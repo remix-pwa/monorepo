@@ -9,12 +9,27 @@ export type PushObject = {
    * The push subscription object
    */
   pushSubscription: PushSubscription | null;
+  /**
+   * Request permission for push notifications
+   * @returns The permission status of the push notifications
+   */
   requestPermission: () => NotificationPermission;
+  /**
+   * Utility to subscribe to push notifications
+   * @param publicKey the public vapid key
+   * @param callback a callback function to be called when the subscription is successful
+   * @param errorCallback a callback function to be called if the subscription fails
+   */
   subscribeToPush: (
     publicKey: string,
     callback?: (subscription: PushSubscription) => void,
     errorCallback?: (error: any) => void
   ) => void;
+  /**
+   * Utility to unsubscribe from push notifications
+   * @param callback a callback function to be called when the unsubscription is successful
+   * @param errorCallback a callback function to be called if the unsubscription fails
+   */
   unsubscribeFromPush: (callback?: () => void, errorCallback?: (error: any) => void) => void;
   /**
    * Boolean state indicating whether the user has allowed sending of push notifications or not.
