@@ -1,7 +1,7 @@
 {
   "name": "@remix-pwa/push",
   "version": "1.0.0",
-  "description": "",
+  "description": "A package to handle everything Push API in the browser and server",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/remix-pwa/monorepo.git",
@@ -14,8 +14,20 @@
   "type": "module",
   "exports": {
     ".": {
-      "default": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "default": "./dist/client/index.js",
+      "types": "./dist/client/index.d.ts"
+    },
+    "./client": {
+      "default": "./dist/client/index.js",
+      "types": "./dist/client/index.d.ts"
+    },
+    "./hook": {
+      "default": "./dist/client/hook/index.js",
+      "types": "./dist/client/hook/index.d.ts"
+    },
+    "./server": {
+      "default": "./dist/server/index.js",
+      "types": "./dist/server/index.d.ts"
     }
   },
   "files": [
@@ -26,14 +38,20 @@
   "scripts": {
     "build": "rimraf ./dist && tsc",
     "format": "prettier --write \"**/*.ts\"",
-    "lint": "TIMING=1 eslint --fix \"lib/**/*.ts\"",
+    "lint": "TIMING=1 eslint --fix \"**/*.ts\"",
     "prepublish": "npm run build"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   },
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
-    "@remix-pwa/lint-staged-config": "^0.0.0"
+    "@remix-pwa/lint-staged-config": "^0.0.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/react": "^18.2.79",
+    "@types/web-push": "^3.6.3"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3"
   }
 }
