@@ -26,6 +26,16 @@
       "types": "./dist/client/hook/index.d.ts"
     }
   },
+  "typesVersions": {
+    "*": {
+      "client": [
+        "./dist/client/index.d.ts"
+      ],
+      "use-push": [
+        "./dist/client/hook/index.d.ts"
+      ]
+    }
+  },
   "files": [
     "dist/",
     "README.md",
