@@ -29,6 +29,22 @@
       "types": "./dist/src/hooks/useSWEffect.d.ts"
     }
   },
+  "typesVersions": {
+    "*": {
+      "cache": [
+        "./dist/src/cache/index.d.ts"
+      ],
+      "logger": [
+        "./dist/src/logger/index.d.ts"
+      ],
+      "message": [
+        "./dist/src/message/index.d.ts"
+      ],
+      "use-sw-effect": [
+        "./dist/src/hooks/useSWEffect.d.ts"
+      ]
+    }
+  },
   "license": "MIT",
   "sideEffects": false,
   "type": "module",

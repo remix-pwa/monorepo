@@ -26,6 +26,16 @@
       "types": "./dist/hooks/index.d.ts"
     }
   },
+  "typesVersions": {
+    "*": {
+      "utils": [
+        "./dist/lib/user-agent.d.ts"
+      ],
+      "hooks": [
+        "./dist/hooks/index.d.ts"
+      ]
+    }
+  },
   "files": [
     "dist/",
     "README.md",
