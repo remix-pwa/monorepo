@@ -1,3 +1,10 @@
+## @remix-pwa/sw 3.0.3-dev.2 (2024-04-24)
+
+
+### Bug Fixes
+
+* **sw:** added `typesVersions` to package json f8b8d0d
+
 ## @remix-pwa/sw 3.0.3-dev.1 (2024-04-24)
 
 
