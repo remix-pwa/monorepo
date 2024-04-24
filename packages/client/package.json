@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/client",
-  "version": "3.0.3",
+  "version": "3.0.4-dev.1",
   "description": "A set of utilities for client-side development to enhance the native feel of your Remix App",
   "repository": {
     "type": "git",

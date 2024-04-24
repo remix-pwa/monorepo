@@ -1,3 +1,10 @@
+## @remix-pwa/client 3.0.4-dev.1 (2024-04-24)
+
+
+### Bug Fixes
+
+* **client:** added `typesVersions` to package json 0f52267
+
 ## @remix-pwa/client 3.0.3 (2024-04-14)
 
 
