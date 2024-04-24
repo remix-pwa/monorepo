@@ -1,7 +1,7 @@
 {
   "name": "@remix-pwa/push",
   "version": "1.0.0",
-  "description": "",
+  "description": "A package to handle everything Push API in the browser and server",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/remix-pwa/monorepo.git",
@@ -44,11 +44,6 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "peerDependenciesMeta": {
-    "@remix-pwa/client": {
-      "optional": true
-    }
-  },
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
@@ -57,7 +52,6 @@
     "@types/web-push": "^3.6.3"
   },
   "dependencies": {
-    "@remix-pwa/client": "^3.0.3",
     "bcryptjs": "^2.4.3"
   }
 }

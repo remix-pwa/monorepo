@@ -1,4 +1,3 @@
-import { usePWAManager } from '@remix-pwa/client';
 import { useEffect, useState } from 'react';
 
 export type PushObject = {
@@ -27,8 +26,7 @@ export type PushObject = {
  * Push API hook - contains all your necessities for handling push notifications in the client
  */
 export const usePush = (): PushObject => {
-  const { swRegistration } = usePWAManager();
-
+  const [swRegistration, setSWRegistration] = useState<ServiceWorkerRegistration | null>(null);
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
   const [pushSubscription, setPushSubscription] = useState<PushSubscription | null>(null);
   const [canSendPush, setCanSendPush] = useState<boolean>(false);
@@ -96,6 +94,39 @@ export const usePush = (): PushObject => {
         errorCallback && errorCallback(error);
       });
   };
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const getRegistration = async () => {
+      if ('serviceWorker' in navigator) {
+        try {
+          const _registration = await navigator.serviceWorker.getRegistration();
+          setSWRegistration(_registration ?? null);
+        } catch (err) {
+          console.error('Error getting service worker registration:', err);
+        }
+      } else {
+        console.warn('Service Workers are not supported in this browser.');
+      }
+    };
+
+    const handleControllerChange = () => {
+      getRegistration();
+    };
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
+    }
+
+    getRegistration();
+
+    return () => {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (swRegistration) {
