@@ -3,15 +3,13 @@
 > 💻 Huge thanks to [Jacob Ebey](https://github.com/jacob-ebey) for the idea and
 > [original implementation](https://github.com/jacob-ebey/remix-pwa) of PWA in Remix.
 
-This repository is the home of Remix PWA packages and their respective documentations (version 3 and above).
+Remix PWA is a collection of JavaScript libraries and utilities that make it easy to build [Progressive Web Apps (PWAs)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps) with Remix.
 
-**Docs are still a work in progress (including the docs site). Contributions are welcome.**
+*💻 Huge thanks to [Jacob Ebey](https://github.com/jacob-ebey) for the idea and [original implementation](https://github.com/jacob-ebey/remix-pwa) of PWA in Remix.*
 
-## Contributing
+## Documentation
 
-> **WIP**
+- [Overview](https://remix-pwa.run/docs/main) ([source](https://github.com/ShafSpecs/remix-pwa-docs))
+- [Contribute](https://remix-pwa.run/docs/main/contributing)
 
-To contribute to the codebase, simple clone the repository and run `npm run postclone` to install dependencies, build
-the packages and run tests.
-
-Ensure that your code passes the tests (add tests when necessary) and linting before submitting a PR.
+Thank you for your support & interest in Remix PWA! 🚀

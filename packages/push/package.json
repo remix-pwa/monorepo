@@ -8,14 +8,14 @@
     "directory": "packages/push"
   },
   "homepage": "https://remix-pwa.run",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/server/index.js",
+  "types": "dist/server/index.d.ts",
   "license": "MIT",
   "type": "module",
   "exports": {
     ".": {
-      "default": "./dist/client/index.js",
-      "types": "./dist/client/index.d.ts"
+      "default": "./dist/server/index.js",
+      "types": "./dist/server/index.d.ts"
     },
     "./client": {
       "default": "./dist/client/index.js",
