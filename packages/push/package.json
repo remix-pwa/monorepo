@@ -1,0 +1,66 @@
+{
+  "name": "@remix-pwa/push",
+  "version": "1.0.0-dev.5",
+  "description": "A package to handle everything Push API in the browser and server",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/remix-pwa/monorepo.git",
+    "directory": "packages/push"
+  },
+  "homepage": "https://remix-pwa.run",
+  "main": "dist/server/index.js",
+  "types": "dist/server/index.d.ts",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./dist/server/index.js",
+      "types": "./dist/server/index.d.ts"
+    },
+    "./client": {
+      "default": "./dist/client/index.js",
+      "types": "./dist/client/index.d.ts"
+    },
+    "./use-push": {
+      "default": "./dist/client/hook/index.js",
+      "types": "./dist/client/hook/index.d.ts"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "client": [
+        "./dist/client/index.d.ts"
+      ],
+      "use-push": [
+        "./dist/client/hook/index.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "rimraf ./dist && tsc",
+    "format": "prettier --write \"**/*.ts\"",
+    "lint": "TIMING=1 eslint --fix \"**/*.ts\"",
+    "prepublish": "npm run build"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@remix-pwa/eslint-config": "^0.0.0",
+    "@remix-pwa/lint-staged-config": "^0.0.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/react": "^18.2.79",
+    "@types/web-push": "^3.6.3"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3"
+  }
+}

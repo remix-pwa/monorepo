@@ -1,3 +1,10 @@
+## @remix-pwa/sw 3.0.3-dev.1 (2024-04-24)
+
+
+### Bug Fixes
+
+* **sw:** new `messageSW` utility 2bc93cd
+
 ## @remix-pwa/sw 3.0.2 (2024-04-14)
 
 

@@ -1,0 +1,20 @@
+{
+  "include": ["**/*.ts", "package.json"],
+  "exclude": ["dist", "**/__tests__/", "**/__test__/", "node_modules"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "lib": ["ESNext", "WebWorker", "DOM"],
+    "target": "es2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "allowImportingTsExtensions": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "declaration": true,
+    "emitDeclarationOnly": false,
+    "allowJs": true,
+    "rootDir": ".",
+    "outDir": "dist/"
+  }
+}

@@ -272,7 +272,7 @@ program
     });
 
     console.log(green('✅ Successfully installed all packages:'));
-    packagesToUpdate.forEach(pkg => console.log(green(`- ${pkg}`)));
+    packagesToUpdate.forEach(pkg => console.log(green(`- @remix-pwa/${pkg}`)));
   });
 
 export default program;
