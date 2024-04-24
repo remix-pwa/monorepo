@@ -19,6 +19,7 @@ export {
   isLoaderRequest,
   isMethod,
   json,
+  messageSW,
   redirect,
   sendSkipWaitingMessage,
   timeout,

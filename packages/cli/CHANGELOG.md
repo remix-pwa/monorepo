@@ -1,3 +1,17 @@
+## @remix-pwa/cli 1.2.2 (2024-04-24)
+
+
+### Bug Fixes
+
+* **cli:** fixed weird log when updating selected packages 200bd84
+
+## @remix-pwa/cli 1.2.2-dev.1 (2024-04-24)
+
+
+### Bug Fixes
+
+* **cli:** fixed weird log when updating selected packages 200bd84
+
 ## @remix-pwa/cli 1.2.1 (2024-04-16)
 
 
