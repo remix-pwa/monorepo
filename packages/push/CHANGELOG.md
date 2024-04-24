@@ -1,3 +1,10 @@
+# @remix-pwa/push 1.0.0-dev.3 (2024-04-24)
+
+
+### Bug Fixes
+
+* **push:** added endpoint to hash generation - better id generation 5ab35ef
+
 # @remix-pwa/push 1.0.0-dev.2 (2024-04-24)
 
 
