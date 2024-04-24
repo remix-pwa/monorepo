@@ -9,24 +9,40 @@
   },
   "exports": {
     ".": {
-      "default": "./dist/index.js",
-      "types": "./types/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./cache": {
-      "default": "./dist/src/cache/index.js",
-      "types": "./dist/src/cache/index.d.ts"
+      "types": "./dist/src/cache/index.d.ts",
+      "default": "./dist/src/cache/index.js"
     },
     "./logger": {
-      "default": "./dist/src/logger/index.js",
-      "types": "./dist/src/logger/index.d.ts"
+      "types": "./dist/src/logger/index.d.ts",
+      "default": "./dist/src/logger/index.js"
     },
     "./message": {
-      "default": "./dist/src/message/index.js",
-      "types": "./dist/src/message/index.d.ts"
+      "types": "./dist/src/message/index.d.ts",
+      "default": "./dist/src/message/index.js"
     },
     "./use-sw-effect": {
-      "default": "./dist/src/hooks/useSWEffect.js",
-      "types": "./dist/src/hooks/useSWEffect.d.ts"
+      "types": "./dist/src/hooks/useSWEffect.d.ts",
+      "default": "./dist/src/hooks/useSWEffect.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "cache": [
+        "./dist/src/cache/index.d.ts"
+      ],
+      "logger": [
+        "./dist/src/logger/index.d.ts"
+      ],
+      "message": [
+        "./dist/src/message/index.d.ts"
+      ],
+      "use-sw-effect": [
+        "./dist/src/hooks/useSWEffect.d.ts"
+      ]
     }
   },
   "license": "MIT",

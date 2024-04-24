@@ -24,6 +24,12 @@
     "prepublish": "npm run build",
     "test": "cross-env VITEST_WORKSPACE=true vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests --config ../../vitest.config.ts"
   },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "files": [
     "dist/",
     "README.md",
