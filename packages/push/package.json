@@ -21,13 +21,9 @@
       "default": "./dist/client/index.js",
       "types": "./dist/client/index.d.ts"
     },
-    "./hook": {
+    "./use-push": {
       "default": "./dist/client/hook/index.js",
       "types": "./dist/client/hook/index.d.ts"
-    },
-    "./server": {
-      "default": "./dist/server/index.js",
-      "types": "./dist/server/index.d.ts"
     }
   },
   "files": [
