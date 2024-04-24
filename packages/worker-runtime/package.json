@@ -6,6 +6,12 @@
   "sideEffects": false,
   "main": "dist/src/service-worker.internal.js",
   "types": "dist/src/service-worker.internal.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/service-worker.internal.d.ts",
+      "default": "./dist/src/service-worker.internal.js"
+    }
+  },
   "engines": {
     "node": ">=18.0.0"
   },

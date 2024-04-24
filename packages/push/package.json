@@ -14,16 +14,16 @@
   "type": "module",
   "exports": {
     ".": {
-      "default": "./dist/server/index.js",
-      "types": "./dist/server/index.d.ts"
+      "types": "./dist/server/index.d.ts",
+      "default": "./dist/server/index.js"
     },
     "./client": {
-      "default": "./dist/client/index.js",
-      "types": "./dist/client/index.d.ts"
+      "types": "./dist/client/index.d.ts",
+      "default": "./dist/client/index.js"
     },
     "./use-push": {
-      "default": "./dist/client/hook/index.js",
-      "types": "./dist/client/hook/index.d.ts"
+      "types": "./dist/client/hook/index.d.ts",
+      "default": "./dist/client/hook/index.js"
     }
   },
   "typesVersions": {
