@@ -14,16 +14,16 @@
   "type": "module",
   "exports": {
     ".": {
-      "default": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./utils": {
-      "default": "./dist/lib/user-agent.js",
-      "types": "./dist/lib/user-agent.d.ts"
+      "types": "./dist/lib/user-agent.d.ts",
+      "default": "./dist/lib/user-agent.js"
     },
     "./hooks": {
-      "default": "./dist/hooks/index.js",
-      "types": "./dist/hooks/index.d.ts"
+      "types": "./dist/hooks/index.d.ts",
+      "default": "./dist/hooks/index.js"
     }
   },
   "typesVersions": {
