@@ -1,7 +1,7 @@
 /// <reference lib="WebWorker" />
 
 import { EnhancedCache, isDocumentRequest, isLoaderRequest, logger, NavigationHandler } from '@remix-pwa/sw';
-import { PushManager } from '@remix-pwa/push';
+import { PushManager } from '@remix-pwa/push/client';
 
 declare let self: ServiceWorkerGlobalScope;
 
