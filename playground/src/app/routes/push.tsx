@@ -1,4 +1,4 @@
-import { usePush } from "@remix-pwa/push";
+import { usePush } from "@remix-pwa/push/client";
 
 export default function Basic() {
   const { canSendPush, isSubscribed, requestPermission, subscribeToPush, unsubscribeFromPush } = usePush()
