@@ -104,9 +104,35 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
   const entryId = VirtualModule.id('entry-sw');
   const assetsId = VirtualModule.id('assets-sw');
 
+  const emptyFileName = VirtualModule.resolve('remix_pwa_plugin_ignore_empty_module_placeholder');
+
   const workerRouteCache = new Map();
 
   return <Plugin[]>[
+    {
+      name: 'vite-plugin-remix-pwa:empty-modules-sw',
+      enforce: 'pre',
+      async load(id) {
+        if (
+          id === emptyFileName ||
+          id.match(/@remix-run\/(deno|cloudflare|node|react)(\/.*)/) ||
+          id.match(/react(-dom)?(\/.*)?$/) ||
+          id.match(/\.server/g) ||
+          id.match(/web-push?$/)
+        ) {
+          return 'module.exports = {};';
+        }
+      },
+      async transform(code) {
+        const regex = /\/\*\*[\s\S]*?\*\//g;
+
+        const licenseComments = code.match(regex)?.filter(predicate => /@license/.test(predicate)) ?? [];
+        return code.replaceAll(regex, match => {
+          if (licenseComments?.includes(match)) return match;
+          return '';
+        });
+      },
+    },
     {
       name: 'vite-plugin-remix-pwa:virtual-entry-sw',
       resolveId(id) {
