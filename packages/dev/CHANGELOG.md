@@ -1,3 +1,10 @@
+## @remix-pwa/dev 3.0.5-dev.1 (2024-04-26)
+
+
+### Bug Fixes
+
+* **dev:** now reduced bundle size of service worker by ~25% ec5760c
+
 ## @remix-pwa/dev 3.0.4 (2024-04-08)
 
 

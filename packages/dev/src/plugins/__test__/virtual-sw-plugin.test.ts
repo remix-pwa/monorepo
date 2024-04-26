@@ -282,48 +282,90 @@ describe('Remix PWA Vite VirtualSW Plugin', () => {
       plugin = _plugin(mockContext);
     });
 
-    describe('Virtual Entry Plugin', () => {
+    describe('Virtual Empty Modules Plugin', () => {
       test('should return a plugin object', () => {
         expect(plugin[0]).not.toBe(null);
         expect(plugin[0]).toBeTypeOf('object');
       });
 
-      test('should have the correct name', () => {
-        expect(plugin[0].name).toBe('vite-plugin-remix-pwa:virtual-entry-sw');
+      test('should resolve to the correct plugin name', () => {
+        expect(plugin[0].name).toBe('vite-plugin-remix-pwa:empty-modules-sw');
       });
 
-      test('should resolve the virtual entry id correctly', () => {
-        expect(plugin[0].resolveId('virtual:entry-sw')).toBe('\0virtual:entry-sw');
+      test('should run before vite build hooks', () => {
+        expect(plugin[0].enforce).toBe('pre');
       });
 
-      test('should load the virtual entry module', async () => {
-        expect(await plugin[0].load('\0virtual:entry-sw')).toContain('export const routes = {');
-        expect(await plugin[0].load('\0virtual:entry-sw')).toContain('export const entry = { module: entryWorker }');
+      test('should return an empty module for flagged packages', async () => {
+        expect(await plugin[0].load('react')).toBe('module.exports = {};');
+        expect(await plugin[0].load('react-dom')).toBe('module.exports = {};');
+      });
+
+      test('should remove non-license jsdoc comments from code', async () => {
+        const code = `
+        /**
+         * @example This is an example comment
+         * This is a license comment
+         */
+        const a = 1;`;
+        expect((await plugin[0].transform(code)).trim()).toBe('const a = 1;');
+
+        const code2 = `
+/**
+ * @license MIT
+ * This is a license comment
+ */
+const a = 1;`;
+        expect((await plugin[0].transform(code2)).trimStart()).toBe(`/**
+ * @license MIT
+ * This is a license comment
+ */
+const a = 1;`);
       });
     });
 
-    describe('Virtual Routes Plugin', () => {
+    describe('Virtual Entry Plugin', () => {
       test('should return a plugin object', () => {
         expect(plugin[1]).not.toBe(null);
         expect(plugin[1]).toBeTypeOf('object');
       });
 
       test('should have the correct name', () => {
-        expect(plugin[1].name).toBe('vite-plugin-remix-pwa:virtual-routes-sw');
+        expect(plugin[1].name).toBe('vite-plugin-remix-pwa:virtual-entry-sw');
+      });
+
+      test('should resolve the virtual entry id correctly', () => {
+        expect(plugin[1].resolveId('virtual:entry-sw')).toBe('\0virtual:entry-sw');
+      });
+
+      test('should load the virtual entry module', async () => {
+        expect(await plugin[1].load('\0virtual:entry-sw')).toContain('export const routes = {');
+        expect(await plugin[1].load('\0virtual:entry-sw')).toContain('export const entry = { module: entryWorker }');
+      });
+    });
+
+    describe('Virtual Routes Plugin', () => {
+      test('should return a plugin object', () => {
+        expect(plugin[2]).not.toBe(null);
+        expect(plugin[2]).toBeTypeOf('object');
+      });
+
+      test('should have the correct name', () => {
+        expect(plugin[2].name).toBe('vite-plugin-remix-pwa:virtual-routes-sw');
       });
 
       test('should resolve the virtual routes id correctly', () => {
-        expect(plugin[1].resolveId('virtual:worker:routes/home.tsx')).toBe('virtual:worker:routes/home.tsx');
+        expect(plugin[2].resolveId('virtual:worker:routes/home.tsx')).toBe('virtual:worker:routes/home.tsx');
       });
 
       test('should provide a virtual module for virtual worker files on load', async () => {
-        const result = await plugin[1].load('virtual:worker:routes/about.tsx');
+        const result = await plugin[2].load('virtual:worker:routes/about.tsx');
 
         expect(result).toContain('export const workerLoader = () => {');
       });
 
       test("should return an empty module if the route doesn't contain worker route apis", async () => {
-        const result = await plugin[1].load('virtual:worker:routes/home.tsx');
+        const result = await plugin[2].load('virtual:worker:routes/home.tsx');
 
         expect(result).toBe('module.exports = {}');
       });
@@ -331,20 +373,20 @@ describe('Remix PWA Vite VirtualSW Plugin', () => {
 
     describe('Virtual Assets Plugin', () => {
       test('should return a plugin object', () => {
-        expect(plugin[2]).not.toBe(null);
-        expect(plugin[2]).toBeTypeOf('object');
+        expect(plugin[3]).not.toBe(null);
+        expect(plugin[3]).toBeTypeOf('object');
       });
 
       test('should have the correct name', () => {
-        expect(plugin[2].name).toBe('vite-plugin-remix-pwa:virtual-assets-sw');
+        expect(plugin[3].name).toBe('vite-plugin-remix-pwa:virtual-assets-sw');
       });
 
       test('should resolve the virtual entry id correctly', () => {
-        expect(plugin[2].resolveId('virtual:assets-sw')).toBe('\0virtual:assets-sw');
+        expect(plugin[3].resolveId('virtual:assets-sw')).toBe('\0virtual:assets-sw');
       });
 
       test.skipIf(process.env.VITEST_WORKSPACE)('should return the build assets on load', async () => {
-        const assetPlugin = await plugin[2].load('\0virtual:assets-sw');
+        const assetPlugin = await plugin[3].load('\0virtual:assets-sw');
 
         expect(assetPlugin).toBeTypeOf('string');
 

@@ -4,7 +4,7 @@ import { writeFile } from 'fs';
 
 export {};
 
-const sandboxPackageJson = await import('../playground/package.json', { assert: { type: 'json' } });
+const sandboxPackageJson = await import('../playground/package.json', { with: { type: 'json' } });
 const deps = sandboxPackageJson.default.dependencies;
 const devDeps = sandboxPackageJson.default.devDependencies;
 
@@ -28,7 +28,7 @@ Object.keys(devDeps).forEach(dep => {
 await Promise.allSettled(remixPwaPackages.map(async pkg => {
   const pkgPath = pkg.replace('@remix-pwa/', '');
 
-  const pkgJson = await import(`../packages/${pkgPath}/package.json`, { assert: { type: 'json' } });
+  const pkgJson = await import(`../packages/${pkgPath}/package.json`, { with: { type: 'json' } });
 
   // @ts-ignore
   if (deps[pkg]) {
