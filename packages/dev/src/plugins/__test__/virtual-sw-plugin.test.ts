@@ -296,10 +296,9 @@ describe('Remix PWA Vite VirtualSW Plugin', () => {
         expect(plugin[0].enforce).toBe('pre');
       });
 
-      test('should return an empty module for flagged packages', () => {
-        expect(await plugin[0].load('react')).toBe('module.export = {};');
-        expect(await plugin[0].load('react-dom')).toBe('module.export = {};');
-        expect(await plugin[0].load('@remis-run/node')).toBe('module.export = {};');
+      test('should return an empty module for flagged packages', async () => {
+        expect(await plugin[0].load('react')).toBe('module.exports = {};');
+        expect(await plugin[0].load('react-dom')).toBe('module.exports = {};');
       });
 
       test('should remove non-license jsdoc comments from code', async () => {

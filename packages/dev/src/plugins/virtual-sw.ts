@@ -115,10 +115,10 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
       async load(id) {
         if (
           id === emptyFileName ||
-          id.match(/@remix-run\/(deno|cloudflare|node|react)(\/.*)/) ||
-          id.match(/react(-dom)?(\/.*)?$/) ||
+          id.match(/@remix-run\/(deno|cloudflare|node|react)(\/.*)/g) ||
+          id.match(/react(-dom)?(\/.*)?$/g) ||
           id.match(/\.server/g) ||
-          id.match(/web-push?$/)
+          id.match(/web-push?$/g)
         ) {
           return 'module.exports = {};';
         }
