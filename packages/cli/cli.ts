@@ -29,7 +29,7 @@ process.emit = function (name, data, ..._args) {
   return originalEmit.apply(process, arguments as unknown as Parameters<typeof process.emit>);
 };
 
-const packageJson = await import('./package.json', { assert: { type: 'json' } });
+const packageJson = await import('./package.json', { with: { type: 'json' } });
 
 const { blue, bold, green, italic, magenta, red } = colors;
 const { ModuleKind, ScriptTarget, transpileModule } = ts;
@@ -199,7 +199,7 @@ program
 
     const packageJSON = (
       await import('file://' + fileURLToPath(`file:///${resolve(root, 'package.json').replace(/\\/g, '/')}`), {
-        assert: { type: 'json' },
+        with: { type: 'json' },
       })
     ).default;
     const dependencies = packageJSON.dependencies;
