@@ -1,3 +1,10 @@
+## @remix-pwa/cli 1.2.3-dev.1 (2024-05-04)
+
+
+### Bug Fixes
+
+* **cli:** fixed json imports for newer node releases 945c219
+
 ## @remix-pwa/cli 1.2.2 (2024-04-24)
 
 
