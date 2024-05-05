@@ -1,3 +1,10 @@
+## @remix-pwa/sw 3.0.4 (2024-05-05)
+
+
+### Bug Fixes
+
+* **sw:** mini patches to message handler & `useSWEffect` hook 90d3a6d
+
 ## @remix-pwa/sw 3.0.4-dev.1 (2024-05-05)
 
 
