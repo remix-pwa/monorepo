@@ -35,6 +35,11 @@ export type WorkerLoaderArgs = WorkerDataFunctionArgs;
 export type WorkerActionArgs = WorkerDataFunctionArgs;
 
 /**
+ * The `defaultFetchHandler` arguments.
+ */
+export type DefaultFetchHandlerArgs = WorkerDataFunctionArgs;
+
+/**
  * A worker action function.
  */
 export interface WorkerActionFunction {

@@ -32,6 +32,7 @@ export { ManifestLink } from './src/components/ManifestLink.js';
 export type {
   DefaultErrorHandler,
   DefaultFetchHandler,
+  DefaultFetchHandlerArgs,
   GetLoadContextFunction,
   WorkerActionArgs,
   WorkerActionFunction,
