@@ -1,6 +1,9 @@
 import type { Location } from '@remix-run/react';
 import { useLocation } from '@remix-run/react';
 import { useEffect, useRef } from 'react';
+
+import { messageSW } from '../utils/utils.js';
+
 interface SWMessagePayload {
   /**
    * The current location of the application.
@@ -33,7 +36,7 @@ export function useSWEffect(options: UseSWEffectOptions = { cacheType: 'jit' }):
   useEffect(() => {
     const sendMessageToSW = (event: string, payload: SWMessagePayload) => {
       if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-        navigator.serviceWorker.controller.postMessage({ type: event, payload });
+        messageSW(navigator.serviceWorker.controller, { type: event, payload });
       }
     };
 
@@ -76,9 +79,11 @@ export function useSWEffect(options: UseSWEffectOptions = { cacheType: 'jit' }):
       if (messageDebounceRef.current) {
         clearTimeout(messageDebounceRef.current);
       }
+
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.removeEventListener('controllerchange', handleLocationChange);
       }
+
       if (isFirstRender.current) isFirstRender.current = false;
     };
   }, [location]);
