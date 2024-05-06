@@ -1,3 +1,10 @@
+## @remix-pwa/sw 3.0.5-dev.1 (2024-05-06)
+
+
+### Bug Fixes
+
+* **sw:** added `ignoreRoutes` option to strategy 7ea97c0
+
 ## @remix-pwa/sw 3.0.4 (2024-05-05)
 
 
