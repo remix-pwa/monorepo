@@ -1,16 +1,16 @@
 /*
-  Copyright 2018 Google LLC
+  Copyright 2021 Google LLC
 
-  Attribution: The bloc of this source code is derived from the
-  `workbox-background-sync` plugin, authored by Jeff Posnick and Google Workbox team.
-  We simply replicated the main logic of the plugin and built it natively with Remix PWA.
+  Attribution: The bloc of this source code is derived from:
+  `workbox-background-sync` plugin, authored by Jeff Posnick and Google Workbox team;
+  And also `serwist` by Jeff Posnick and the Serwist team.
 
   The original source code can be found at:
   https://github.com/GoogleChrome/workbox/blob/v7/packages/workbox-background-sync/src/lib/QueueStore.ts
 */
 
-import type { QueueStoreEntry, UnidentifiedQueueStoreEntry } from './db.js';
-import { QueueDb } from './db.js';
+import type { BackgroundSyncQueueStoreEntry, UnidentifiedQueueStoreEntry } from './db.js';
+import { BackgroundSyncQueueDb } from './db.js';
 
 /**
  * A class to manage storing requests from a Queue in IndexedDB,
@@ -19,31 +19,27 @@ import { QueueDb } from './db.js';
  * Most developers will not need to access this class directly;
  * it is exposed for advanced use cases.
  */
-export class QueueStore {
+export class BackgroundSyncQueueStore {
   private readonly _queueName: string;
-  private readonly _queueDb: QueueDb;
+  private readonly _queueDb: BackgroundSyncQueueDb;
 
   /**
    * Associates this instance with a Queue instance, so entries added can be
    * identified by their queue name.
    *
-   * @param {string} queueName
+   * @param queueName
    */
   constructor(queueName: string) {
     this._queueName = queueName;
-    this._queueDb = new QueueDb();
+    this._queueDb = new BackgroundSyncQueueDb();
   }
 
   /**
    * Append an entry last in the queue.
    *
-   * @param {Object} entry
-   * @param {Object} entry.requestData
-   * @param {number} [entry.timestamp]
-   * @param {Object} [entry.metadata]
+   * @param entry
    */
   async pushEntry(entry: UnidentifiedQueueStoreEntry): Promise<void> {
-    // Don't specify an ID since one is automatically generated.
     delete entry.id;
     entry.queueName = this._queueName;
 
@@ -53,10 +49,7 @@ export class QueueStore {
   /**
    * Prepend an entry first in the queue.
    *
-   * @param {Object} entry
-   * @param {Object} entry.requestData
-   * @param {number} [entry.timestamp]
-   * @param {Object} [entry.metadata]
+   * @param entry
    */
   async unshiftEntry(entry: UnidentifiedQueueStoreEntry): Promise<void> {
     const firstId = await this._queueDb.getFirstEntryId();
@@ -65,7 +58,7 @@ export class QueueStore {
       // Pick an ID one less than the lowest ID in the object store.
       entry.id = firstId - 1;
     } else {
-      // Otherwise let the auto-incrementor assign the ID.
+      // biome-ignore lint/performance/noDelete: Let the auto-incrementor assign the ID.
       delete entry.id;
     }
     entry.queueName = this._queueName;
@@ -76,36 +69,34 @@ export class QueueStore {
   /**
    * Removes and returns the last entry in the queue matching the `queueName`.
    *
-   * @return {Promise<QueueStoreEntry|undefined>}
+   * @returns
    */
-  async popEntry(): Promise<QueueStoreEntry | undefined> {
+  async popEntry(): Promise<BackgroundSyncQueueStoreEntry | undefined> {
     return this._removeEntry(await this._queueDb.getLastEntryByQueueName(this._queueName));
   }
 
   /**
    * Removes and returns the first entry in the queue matching the `queueName`.
    *
-   * @return {Promise<QueueStoreEntry|undefined>}
+   * @returns
    */
-  async shiftEntry(): Promise<QueueStoreEntry | undefined> {
+  async shiftEntry(): Promise<BackgroundSyncQueueStoreEntry | undefined> {
     return this._removeEntry(await this._queueDb.getFirstEntryByQueueName(this._queueName));
   }
 
   /**
    * Returns all entries in the store matching the `queueName`.
    *
-   * @param {Object} options See {@link workbox-background-sync.Queue~getAll}
-   * @return {Promise<Array<Object>>}
+   * @returns
    */
-  async getAll(): Promise<QueueStoreEntry[]> {
+  async getAll(): Promise<BackgroundSyncQueueStoreEntry[]> {
     return await this._queueDb.getAllEntriesByQueueName(this._queueName);
   }
 
   /**
    * Returns the number of entries in the store matching the `queueName`.
    *
-   * @param {Object} options See {@link workbox-background-sync.Queue~size}
-   * @return {Promise<number>}
+   * @returns
    */
   async size(): Promise<number> {
     return await this._queueDb.getEntryCountByQueueName(this._queueName);
@@ -119,7 +110,7 @@ export class QueueStore {
    * as this class is not publicly exposed. An additional check would make
    * this method slower than it needs to be.
    *
-   * @param {number} id
+   * @param id
    */
   async deleteEntry(id: number): Promise<void> {
     await this._queueDb.deleteEntry(id);
@@ -129,10 +120,10 @@ export class QueueStore {
    * Removes and returns the first or last entry in the queue (based on the
    * `direction` argument) matching the `queueName`.
    *
-   * @return {Promise<QueueStoreEntry|undefined>}
+   * @returns
    * @private
    */
-  async _removeEntry(entry?: QueueStoreEntry): Promise<QueueStoreEntry | undefined> {
+  async _removeEntry(entry?: BackgroundSyncQueueStoreEntry): Promise<BackgroundSyncQueueStoreEntry | undefined> {
     if (entry) {
       await this.deleteEntry(entry.id);
     }

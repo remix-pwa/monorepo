@@ -2,8 +2,8 @@
   Copyright 2018 Google LLC
 
   Attribution: The bloc of this source code is derived from the
-  `workbox-background-sync` plugin, authored by Jeff Posnick and Google Workbox team.
-  We simply replicated the main logic of the plugin and built it natively with Remix PWA.
+  `workbox-background-sync` plugin, authored by Jeff Posnick and Google Workbox team;
+  And also `serwist` by Jeff Posnick and the Serwist team.
 
   The original source code can be found at:
   https://github.com/GoogleChrome/workbox/blob/v7/packages/workbox-background-sync/src/lib/StorableRequest.ts
@@ -94,8 +94,8 @@ class StorableRequest {
    * `Request` but can also be stored in IndexedDB.
    *
    * @param {Object} requestData An object of request data that includes the
-   *     `url` plus any relevant properties of
-   *     [requestInit]{@link https://fetch.spec.whatwg.org/#requestinit}.
+   * `url` plus any relevant properties of
+   * [`requestInit`](https://fetch.spec.whatwg.org/#requestinit).
    */
   constructor(requestData: RequestData) {
     // If the request's mode is `navigate`, convert it to `same-origin` since

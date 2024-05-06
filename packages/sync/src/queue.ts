@@ -2,21 +2,19 @@
   Copyright 2018 Google LLC
 
   Attribution: The bloc of this source code is derived from the
-  `workbox-background-sync` plugin, authored by Jeff Posnick and Google Workbox team.
-  We simply replicated the main logic of the plugin and built it natively with Remix PWA.
+  `workbox-background-sync` plugin, authored by Jeff Posnick and Google Workbox team;
+  And also `serwist` by Jeff Posnick and the Serwist team.
 
   The original source code can be found at:
   https://github.com/GoogleChrome/workbox/blob/v7/packages/workbox-background-sync/src/Queue.ts
 */
 
-import type { QueueStoreEntry, UnidentifiedQueueStoreEntry } from './db.js';
-import { StorableRequest } from './request.js';
-import { QueueStore } from './store.js';
+import type { Logger } from '@remix-pwa/sw';
+import { logger } from '@remix-pwa/sw';
 
-// const getFriendlyURL = (url: URL | string): string => {
-//   const urlObj = new URL(String(url), location.href);
-//   return urlObj.href.replace(new RegExp(`^${location.origin}`), '');
-// };
+import type { BackgroundSyncQueueStoreEntry, UnidentifiedQueueStoreEntry } from './db.js';
+import { StorableRequest } from './request.js';
+import { BackgroundSyncQueueStore } from './store.js';
 
 // See https://github.com/GoogleChrome/workbox/issues/2946
 interface SyncManager {
@@ -39,45 +37,86 @@ declare global {
   }
 }
 
-declare let self: ServiceWorkerGlobalScope;
+// Give TypeScript the correct global.
+declare const self: ServiceWorkerGlobalScope;
 
 interface OnSyncCallbackOptions {
   // eslint-disable-next-line no-use-before-define
-  queue: Queue;
+  queue: BackgroundSyncQueue;
 }
 
-interface OnSyncCallback {
-  (options: OnSyncCallbackOptions): void | Promise<void>;
-}
+type OnSyncCallback = (options: OnSyncCallbackOptions) => void | Promise<void>;
 
-export interface QueueOptions {
-  forceSyncFallback?: boolean;
+export interface BackgroundSyncQueueOptions {
+  /**
+   * The amount of time (in minutes) a request may be retried. After this amount
+   * of time has passed, the request will be deleted from the queue.
+   *
+   * @default 60 * 24 * 7
+   */
   maxRetentionTime?: number;
+  /**
+   * A function that gets invoked whenever the 'sync' event fires. The function
+   * is invoked with an object containing the `queue` property (referencing this
+   * instance), and you can use the callback to customize the replay behavior of
+   * the queue. When not set, the `replayRequests()` method is called.
+   *
+   * Note: if the replay fails after a sync event, make sure you throw an error,
+   * so the browser knows to retry the sync event later.
+   */
   onSync?: OnSyncCallback;
+  /**
+   * Custom this._logger to use for logging background sync events.
+   *
+   * Defaults to `@remix-pwa/sw` default this._logger.
+   */
+  logger?: Logger;
 }
 
-interface QueueEntry {
+export interface BackgroundSyncQueueEntry {
+  /**
+   * The request to store in the queue.
+   */
   request: Request;
+  /**
+   * The timestamp (Epoch time in milliseconds) when the request was first added
+   * to the queue. This is used along with `maxRetentionTime` to remove outdated
+   * requests. In general you don't need to set this value, as it's automatically
+   * set for you (defaulting to `Date.now()`), but you can update it if you don't
+   * want particular requests to expire.
+   */
   timestamp?: number;
+  /**
+   * Any metadata you want associated with the stored request. When requests are
+   * replayed you'll have access to this metadata object in case you need to modify
+   * the request beforehand.
+   */
   metadata?: Record<string, unknown>;
 }
 
-const TAG_PREFIX = 'rp-sync';
+const TAG_PREFIX = 'remix-pwa-bg-sync';
 const MAX_RETENTION_TIME = 60 * 24 * 7; // 7 days
 
 const queueNames = new Set<string>();
+
+const getFriendlyURL = (url: URL | string): string => {
+  const urlObj = new URL(String(url), location.href);
+  // See https://github.com/GoogleChrome/workbox/issues/2323
+  // We want to include everything, except for the origin if it's same-origin.
+  return urlObj.href.replace(new RegExp(`^${location.origin}`), '');
+};
 
 /**
  * Converts a QueueStore entry into the format exposed by Queue. This entails
  * converting the request data into a real request and omitting the `id` and
  * `queueName` properties.
  *
- * @param {UnidentifiedQueueStoreEntry} queueStoreEntry
- * @return {Queue}
+ * @param queueStoreEntry
+ * @returns
  * @private
  */
-const convertEntry = (queueStoreEntry: UnidentifiedQueueStoreEntry): QueueEntry => {
-  const queueEntry: QueueEntry = {
+const convertEntry = (queueStoreEntry: UnidentifiedQueueStoreEntry): BackgroundSyncQueueEntry => {
+  const queueEntry: BackgroundSyncQueueEntry = {
     request: new StorableRequest(queueStoreEntry.requestData).toRequest(),
     timestamp: queueStoreEntry.timestamp,
   };
@@ -91,47 +130,44 @@ const convertEntry = (queueStoreEntry: UnidentifiedQueueStoreEntry): QueueEntry 
  * A class to manage storing failed requests in IndexedDB and retrying them
  * later. All parts of the storing and replaying process are observable via
  * callbacks.
- *
- * @memberof workbox-background-sync
  */
-class Queue {
+export class BackgroundSyncQueue {
   private readonly _name: string;
+  private readonly _logger: Logger;
   private readonly _onSync: OnSyncCallback;
   private readonly _maxRetentionTime: number;
-  private readonly _queueStore: QueueStore;
+  private readonly _queueStore: BackgroundSyncQueueStore;
   private _syncInProgress = false;
   private _requestsAddedDuringSync = false;
 
   /**
    * Creates an instance of Queue with the given options
    *
-   * @param {string} name The unique name for this queue. This name must be
-   *     unique as it's used to register sync events and store requests
-   *     in IndexedDB specific to this instance. An error will be thrown if
-   *     a duplicate name is detected.
-   * @param {Object} [options]
-   * @param {Function} [options.onSync] A function that gets invoked whenever
-   *     the 'sync' event fires. The function is invoked with an object
-   *     containing the `queue` property (referencing this instance), and you
-   *     can use the callback to customize the replay behavior of the queue.
-   *     When not set the `replayRequests()` method is called.
-   *     Note: if the replay fails after a sync event, make sure you throw an
-   *     error, so the browser knows to retry the sync event later.
-   * @param {number} [options.maxRetentionTime=7 days] The amount of time (in
-   *     minutes) a request may be retried. After this amount of time has
-   *     passed, the request will be deleted from the queue.
+   * @param name The unique name for this queue. This name must be
+   * unique as it's used to register sync events and store requests
+   * in IndexedDB specific to this instance. An error will be thrown if
+   * a duplicate name is detected.
+   * @param options
    */
-  constructor(name: string, { maxRetentionTime, onSync }: QueueOptions = {}) {
+  constructor(name: string, { logger: customLogger, maxRetentionTime, onSync }: BackgroundSyncQueueOptions = {}) {
+    // Ensure the store name is not already being used
+    if (queueNames.has(name)) {
+      throw new Error(`A queue with name '${name}' already exists. All queues must have unique names`);
+    }
+
+    queueNames.add(name);
+
     this._name = name;
+    this._logger = customLogger || logger;
     this._onSync = onSync || this.replayRequests;
     this._maxRetentionTime = maxRetentionTime || MAX_RETENTION_TIME;
-    this._queueStore = new QueueStore(this._name);
+    this._queueStore = new BackgroundSyncQueueStore(this._name);
 
     this._addSyncListener();
   }
 
   /**
-   * @return {string}
+   * @returns
    */
   get name(): string {
     return this._name;
@@ -141,19 +177,9 @@ class Queue {
    * Stores the passed request in IndexedDB (with its timestamp and any
    * metadata) at the end of the queue.
    *
-   * @param {QueueEntry} entry
-   * @param {Request} entry.request The request to store in the queue.
-   * @param {Object} [entry.metadata] Any metadata you want associated with the
-   *     stored request. When requests are replayed you'll have access to this
-   *     metadata object in case you need to modify the request beforehand.
-   * @param {number} [entry.timestamp] The timestamp (Epoch time in
-   *     milliseconds) when the request was first added to the queue. This is
-   *     used along with `maxRetentionTime` to remove outdated requests. In
-   *     general you don't need to set this value, as it's automatically set
-   *     for you (defaulting to `Date.now()`), but you can update it if you
-   *     don't want particular requests to expire.
+   * @param entry
    */
-  async pushRequest(entry: QueueEntry): Promise<void> {
+  async pushRequest(entry: BackgroundSyncQueueEntry): Promise<void> {
     await this._addRequest(entry, 'push');
   }
 
@@ -161,41 +187,29 @@ class Queue {
    * Stores the passed request in IndexedDB (with its timestamp and any
    * metadata) at the beginning of the queue.
    *
-   * @param {QueueEntry} entry
-   * @param {Request} entry.request The request to store in the queue.
-   * @param {Object} [entry.metadata] Any metadata you want associated with the
-   *     stored request. When requests are replayed you'll have access to this
-   *     metadata object in case you need to modify the request beforehand.
-   * @param {number} [entry.timestamp] The timestamp (Epoch time in
-   *     milliseconds) when the request was first added to the queue. This is
-   *     used along with `maxRetentionTime` to remove outdated requests. In
-   *     general you don't need to set this value, as it's automatically set
-   *     for you (defaulting to `Date.now()`), but you can update it if you
-   *     don't want particular requests to expire.
+   * @param entry
    */
-  async unshiftRequest(entry: QueueEntry): Promise<void> {
+  async unshiftRequest(entry: BackgroundSyncQueueEntry): Promise<void> {
     await this._addRequest(entry, 'unshift');
   }
 
   /**
    * Removes and returns the last request in the queue (along with its
-   * timestamp and any metadata). The returned object takes the form:
-   * `{request, timestamp, metadata}`.
+   * timestamp and any metadata).
    *
-   * @return {Promise<QueueEntry | undefined>}
+   * @returns
    */
-  async popRequest(): Promise<QueueEntry | undefined> {
+  async popRequest(): Promise<BackgroundSyncQueueEntry | undefined> {
     return this._removeRequest('pop');
   }
 
   /**
    * Removes and returns the first request in the queue (along with its
-   * timestamp and any metadata). The returned object takes the form:
-   * `{request, timestamp, metadata}`.
+   * timestamp and any metadata).
    *
-   * @return {Promise<QueueEntry | undefined>}
+   * @returns
    */
-  async shiftRequest(): Promise<QueueEntry | undefined> {
+  async shiftRequest(): Promise<BackgroundSyncQueueEntry | undefined> {
     return this._removeRequest('shift');
   }
 
@@ -203,9 +217,9 @@ class Queue {
    * Returns all the entries that have not expired (per `maxRetentionTime`).
    * Any expired entries are removed from the queue.
    *
-   * @return {Promise<Array<QueueEntry>>}
+   * @returns
    */
-  async getAll(): Promise<Array<QueueEntry>> {
+  async getAll(): Promise<BackgroundSyncQueueEntry[]> {
     const allEntries = await this._queueStore.getAll();
     const now = Date.now();
 
@@ -228,7 +242,7 @@ class Queue {
    * Returns the number of entries present in the queue.
    * Note that expired entries (per `maxRetentionTime`) are also included in this count.
    *
-   * @return {Promise<number>}
+   * @returns
    */
   async size(): Promise<number> {
     return await this._queueStore.size();
@@ -237,15 +251,12 @@ class Queue {
   /**
    * Adds the entry to the QueueStore and registers for a sync event.
    *
-   * @param {Object} entry
-   * @param {Request} entry.request
-   * @param {Object} [entry.metadata]
-   * @param {number} [entry.timestamp=Date.now()]
-   * @param {string} operation ('push' or 'unshift')
+   * @param entry
+   * @param operation
    * @private
    */
   async _addRequest(
-    { metadata, request, timestamp = Date.now() }: QueueEntry,
+    { metadata, request, timestamp = Date.now() }: BackgroundSyncQueueEntry,
     operation: 'push' | 'unshift'
   ): Promise<void> {
     const storableRequest = await StorableRequest.fromRequest(request.clone());
@@ -268,11 +279,9 @@ class Queue {
         break;
     }
 
-    if (process.env.NODE_ENV !== 'production') {
-      // logger.log(
-      //   `Request for '${getFriendlyURL(request.url)}' has ` + `been added to background sync queue '${this._name}'.`
-      // );
-    }
+    this._logger.log(
+      `Request for '${getFriendlyURL(request.url)}' has ` + `been added to background sync queue '${this._name}'.`
+    );
 
     // Don't register for a sync if we're in the middle of a sync. Instead,
     // we wait until the sync is complete and call register if
@@ -288,13 +297,13 @@ class Queue {
    * Removes and returns the first or last (depending on `operation`) entry
    * from the QueueStore that's not older than the `maxRetentionTime`.
    *
-   * @param {string} operation ('pop' or 'shift')
-   * @return {Object|undefined}
+   * @param operation
+   * @returns
    * @private
    */
-  async _removeRequest(operation: 'pop' | 'shift'): Promise<QueueEntry | undefined> {
+  async _removeRequest(operation: 'pop' | 'shift'): Promise<BackgroundSyncQueueEntry | undefined> {
     const now = Date.now();
-    let entry: QueueStoreEntry | undefined;
+    let entry: BackgroundSyncQueueStoreEntry | undefined;
     switch (operation) {
       case 'pop':
         entry = await this._queueStore.popEntry();
@@ -313,9 +322,9 @@ class Queue {
       }
 
       return convertEntry(entry);
-    } else {
-      return undefined;
     }
+
+    return undefined;
   }
 
   /**
@@ -324,31 +333,26 @@ class Queue {
    * the queue (which registers a retry for the next sync event).
    */
   async replayRequests(): Promise<void> {
-    let entry;
+    let entry: BackgroundSyncQueueEntry | undefined;
     while ((entry = await this.shiftRequest())) {
       try {
         await fetch(entry.request.clone());
 
-        if (process.env.NODE_ENV !== 'production') {
-          // logger.log(
-          //   `Request for '${getFriendlyURL(entry.request.url)}' ` + `has been replayed in queue '${this._name}'`
-          // );
-        }
+        this._logger.log(
+          `Request for '${getFriendlyURL(entry.request.url)}' ` + `has been replayed in queue '${this._name}'`
+        );
       } catch (error) {
         await this.unshiftRequest(entry);
 
-        if (process.env.NODE_ENV !== 'production') {
-          // logger.log(
-          //   `Request for '${getFriendlyURL(entry.request.url)}' ` +
-          //     `failed to replay, putting it back in queue '${this._name}'`
-          // );
-        }
-        // throw new Error('queue-replay-failed', { name: this._name });
+        this._logger.log(
+          `Request for '${getFriendlyURL(entry.request.url)}' ` +
+            `failed to replay, putting it back in queue '${this._name}'`
+        );
+        throw new Error(`Replaying the background sync queue '${this._name}' failed.`);
       }
     }
-    if (process.env.NODE_ENV !== 'production') {
-      // logger.log(`All requests in queue '${this.name}' have successfully ` + `replayed; the queue is now empty!`);
-    }
+
+    this._logger.log(`All requests in queue '${this.name}' have successfully replayed; the queue is now empty!`);
   }
 
   /**
@@ -362,9 +366,7 @@ class Queue {
       } catch (err) {
         // This means the registration failed for some reason, possibly due to
         // the user disabling it.
-        // if (process.env.NODE_ENV !== 'production') {
-        //   logger.warn(`Unable to register sync event for '${this._name}'.`, err);
-        // }
+        this._logger.warn(`Unable to register sync event for '${this._name}'.`, err);
       }
     }
   }
@@ -377,18 +379,15 @@ class Queue {
    * @private
    */
   private _addSyncListener() {
-    // See https://github.com/GoogleChrome/workbox/issues/2393
     if ('sync' in self.registration) {
       self.addEventListener('sync', (event: SyncEvent) => {
         if (event.tag === `${TAG_PREFIX}:${this._name}`) {
-          // if (process.env.NODE_ENV !== 'production') {
-          //   logger.log(`Background sync for tag '${event.tag}' ` + `has been received`);
-          // }
+          this._logger.log(`Background sync for tag '${event.tag}' has been received`);
 
           const syncComplete = async () => {
             this._syncInProgress = true;
 
-            let syncError;
+            let syncError: Error | undefined;
             try {
               await this._onSync({ queue: this });
             } catch (error) {
@@ -417,12 +416,8 @@ class Queue {
         }
       });
     } else {
-      // if (process.env.NODE_ENV !== 'production') {
-      //   logger.log(`Background sync replaying without background sync event`);
-      // }
-      // If the browser doesn't support background sync, or the developer has
-      // opted-in to not using it, retry every time the service worker starts up
-      // as a fallback.
+      this._logger.log('Background sync not supported in this browser. Would retry on service worker startup.');
+
       // eslint-disable-next-line no-void
       void this._onSync({ queue: this });
     }
@@ -432,13 +427,10 @@ class Queue {
    * Returns the set of queue names. This is primarily used to reset the list
    * of queue names in tests.
    *
-   * @return {Set<string>}
-   *
+   * @returns
    * @private
    */
   static get _queueNames(): Set<string> {
     return queueNames;
   }
 }
-
-export { Queue };

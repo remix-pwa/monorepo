@@ -15,7 +15,8 @@
     },
     "build": {
       "inputs": [],
-      "outputs": []
+      "outputs": [],
+      "dependsOn": ["^build"]
     }
   }
 }
