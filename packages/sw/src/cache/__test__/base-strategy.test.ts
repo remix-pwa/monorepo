@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 import { afterAll, afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { BaseStrategy } from '../BaseStrategy.js';
@@ -73,6 +74,15 @@ describe('BaseStrategy Testing Suite', () => {
     expect(strategy._ensureRequest(request)).toBe(request);
     expect(strategy._ensureRequest(stringRequest)).toBeInstanceOf(Request);
     expect(strategy._ensureRequest(urlRequest)).toBeInstanceOf(Request);
+  });
+
+  test('checks if the route is supported by the strategy', () => {
+    const strategy = new MockStrategy('test-cache', { ignoreRoutes: [/\/api\//] });
+    const request = new Request('https://example.com/assets/image.jpg');
+    const unsupportedRequest = new Request('https://example.com/api/data');
+
+    expect(strategy['isRouteSupported'](request)).toBe(true);
+    expect(strategy['isRouteSupported'](unsupportedRequest)).toBe(false);
   });
 
   test('cleans up the cache based on maxAgeSeconds option', async () => {

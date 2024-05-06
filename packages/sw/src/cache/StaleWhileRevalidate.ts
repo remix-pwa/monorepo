@@ -26,7 +26,7 @@ export class StaleWhileRevalidate extends BaseStrategy {
   async handleRequest(req: Request | string): Promise<Response> {
     const request = this.ensureRequest(req);
 
-    if (!isHttpRequest(request)) {
+    if (!isHttpRequest(request) || !this.isRouteSupported(request)) {
       return fetch(request);
     }
 

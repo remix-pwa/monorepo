@@ -42,6 +42,22 @@ export abstract class BaseStrategy implements CacheStrategy {
   }
 
   /**
+   * A utility method to ensure the route is supported by the strategy.
+   *
+   * @param request - The request to check.
+   * @returns {boolean} `true` if the route is supported, `false` otherwise.
+   */
+  protected isRouteSupported(request: Request): boolean {
+    const url = new URL(request.url);
+
+    if (this.options.ignoreRoutes && this.options.ignoreRoutes.length) {
+      return !this.options.ignoreRoutes.some(pattern => url.pathname.match(pattern));
+    }
+
+    return true;
+  }
+
+  /**
    * Abstract method to handle requests.
    * Must be implemented by subclasses.
    * @param {Request} request - The request to handle.
