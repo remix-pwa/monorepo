@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/sync",
-  "version": "2.0.2",
+  "version": "3.0.0-dev.1",
   "description": "A Background Sync addon for Remix PWA",
   "repository": {
     "type": "git",
@@ -12,7 +12,7 @@
   "sideEffects": false,
   "type": "module",
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   },
   "scripts": {
     "build": "rimraf ./dist && tsc",
@@ -31,10 +31,10 @@
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
-    "path-scurry": "^1.10.1",
     "rimraf": "^5.0.5"
   },
   "dependencies": {
-    "idb": "^7.1.1"
+    "@remix-pwa/sw": "^3.0.5",
+    "idb": "^8.0.0"
   }
 }
