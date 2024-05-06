@@ -2,8 +2,18 @@
  * Defines the options for cache strategies.
  */
 export interface CacheOptions {
+  /**
+   * The maximum age of a cached item in seconds.
+   */
   maxAgeSeconds?: number;
+  /**
+   * The maximum number of items to store in the cache.
+   */
   maxEntries?: number;
+  /**
+   * A list of routes to ignore when caching.
+   */
+  ignoreRoutes?: string[] | RegExp[];
 }
 
 export type CacheableResponseOptions = {
