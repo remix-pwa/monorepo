@@ -1,12 +1,11 @@
 /*
-  Copyright 2018 Google LLC
+  Copyright 2021 Google LLC
 
-  Attribution: The bloc of this source code is derived from the
-  `workbox-background-sync` plugin, authored by Jeff Posnick and Google Workbox team.
-  We simply replicated the main logic of the plugin and built it natively with Remix PWA.
+  Attribution: The bloc of this source code is derived from:
+  `workbox-background-sync` plugin, authored by Jeff Posnick and Google Workbox team;
+  And also `serwist` by Jeff Posnick and the Serwist team.
 
-  The original source code can be found at:
-  https://github.com/GoogleChrome/workbox/blob/v7/packages/workbox-background-sync/src/lib/QueueDb.ts
+  We simply replicated the main logic and built it natively with Remix PWA.
 */
 
 import type { DBSchema, IDBPDatabase } from 'idb';
@@ -22,44 +21,51 @@ export interface UnidentifiedQueueStoreEntry {
   metadata?: Record<string, unknown>;
 }
 
-export interface QueueStoreEntry extends UnidentifiedQueueStoreEntry {
+export interface BackgroundSyncQueueStoreEntry extends UnidentifiedQueueStoreEntry {
   id: number;
 }
 
-interface QueueDBSchema extends DBSchema {
-  'failed-requests': {
+interface BackgroundSyncQueueDBSchema extends DBSchema {
+  requests: {
     key: number;
-    value: QueueStoreEntry;
+    value: BackgroundSyncQueueStoreEntry;
     indexes: { queueName: string };
   };
 }
 
-const DB_VERSION = 3;
-const DB_NAME = 'remix-pwa-sync';
-const REQUEST_OBJECT_STORE_NAME = 'failed-requests';
+const BACKGROUND_SYNC_DB_VERSION = 3;
+const BACKGROUND_SYNC_DB_NAME = 'remix-pwa-sync';
+const REQUEST_OBJECT_STORE_NAME = 'requests';
 const QUEUE_NAME_INDEX = 'queueName';
 
-export class QueueDb {
-  private _db: IDBPDatabase<QueueDBSchema> | null = null;
+/**
+ * A class to interact directly an IndexedDB created specifically to save and
+ * retrieve QueueStoreEntries. This class encapsulates all the schema details
+ * to store the representation of a Queue.
+ *
+ * @private
+ */
+export class BackgroundSyncQueueDb {
+  private _db: IDBPDatabase<BackgroundSyncQueueDBSchema> | null = null;
 
   /**
    * Add QueueStoreEntry to underlying db.
    *
-   * @param {UnidentifiedQueueStoreEntry} entry
+   * @param entry
    */
   async addEntry(entry: UnidentifiedQueueStoreEntry): Promise<void> {
     const db = await this.getDb();
     const tx = db.transaction(REQUEST_OBJECT_STORE_NAME, 'readwrite', {
       durability: 'relaxed',
     });
-    await tx.store.add(entry as QueueStoreEntry);
+    await tx.store.add(entry as BackgroundSyncQueueStoreEntry);
     await tx.done;
   }
 
   /**
    * Returns the first entry id in the ObjectStore.
    *
-   * @return {number | undefined}
+   * @returns
    */
   async getFirstEntryId(): Promise<number | undefined> {
     const db = await this.getDb();
@@ -71,19 +77,19 @@ export class QueueDb {
    * Get all the entries filtered by index
    *
    * @param queueName
-   * @return {Promise<QueueStoreEntry[]>}
+   * @returns
    */
-  async getAllEntriesByQueueName(queueName: string): Promise<QueueStoreEntry[]> {
+  async getAllEntriesByQueueName(queueName: string): Promise<BackgroundSyncQueueStoreEntry[]> {
     const db = await this.getDb();
     const results = await db.getAllFromIndex(REQUEST_OBJECT_STORE_NAME, QUEUE_NAME_INDEX, IDBKeyRange.only(queueName));
-    return results || new Array<QueueStoreEntry>();
+    return results || new Array<BackgroundSyncQueueStoreEntry>();
   }
 
   /**
    * Returns the number of entries filtered by index
    *
    * @param queueName
-   * @return {Promise<number>}
+   * @returns
    */
   async getEntryCountByQueueName(queueName: string): Promise<number> {
     const db = await this.getDb();
@@ -93,7 +99,7 @@ export class QueueDb {
   /**
    * Deletes a single entry by id.
    *
-   * @param {number} id the id of the entry to be deleted
+   * @param id the id of the entry to be deleted
    */
   async deleteEntry(id: number): Promise<void> {
     const db = await this.getDb();
@@ -103,18 +109,18 @@ export class QueueDb {
   /**
    *
    * @param queueName
-   * @returns {Promise<QueueStoreEntry | undefined>}
+   * @returns
    */
-  async getFirstEntryByQueueName(queueName: string): Promise<QueueStoreEntry | undefined> {
+  async getFirstEntryByQueueName(queueName: string): Promise<BackgroundSyncQueueStoreEntry | undefined> {
     return await this.getEndEntryFromIndex(IDBKeyRange.only(queueName), 'next');
   }
 
   /**
    *
    * @param queueName
-   * @returns {Promise<QueueStoreEntry | undefined>}
+   * @returns
    */
-  async getLastEntryByQueueName(queueName: string): Promise<QueueStoreEntry | undefined> {
+  async getLastEntryByQueueName(queueName: string): Promise<BackgroundSyncQueueStoreEntry | undefined> {
     return await this.getEndEntryFromIndex(IDBKeyRange.only(queueName), 'prev');
   }
 
@@ -122,12 +128,15 @@ export class QueueDb {
    * Returns either the first or the last entries, depending on direction.
    * Filtered by index.
    *
-   * @param {IDBCursorDirection} direction
-   * @param {IDBKeyRange} query
-   * @return {Promise<QueueStoreEntry | undefined>}
+   * @param direction
+   * @param query
+   * @returns
    * @private
    */
-  async getEndEntryFromIndex(query: IDBKeyRange, direction: IDBCursorDirection): Promise<QueueStoreEntry | undefined> {
+  async getEndEntryFromIndex(
+    query: IDBKeyRange,
+    direction: IDBCursorDirection
+  ): Promise<BackgroundSyncQueueStoreEntry | undefined> {
     const db = await this.getDb();
 
     const cursor = await db
@@ -144,7 +153,7 @@ export class QueueDb {
    */
   private async getDb() {
     if (!this._db) {
-      this._db = await openDB(DB_NAME, DB_VERSION, {
+      this._db = await openDB(BACKGROUND_SYNC_DB_NAME, BACKGROUND_SYNC_DB_VERSION, {
         upgrade: this._upgradeDb,
       });
     }
@@ -154,12 +163,12 @@ export class QueueDb {
   /**
    * Upgrades QueueDB
    *
-   * @param {IDBPDatabase<QueueDBSchema>} db
-   * @param {number} oldVersion
+   * @param db
+   * @param oldVersion
    * @private
    */
-  private _upgradeDb(db: IDBPDatabase<QueueDBSchema>, oldVersion: number) {
-    if (oldVersion > 0 && oldVersion < DB_VERSION) {
+  private _upgradeDb(db: IDBPDatabase<BackgroundSyncQueueDBSchema>, oldVersion: number) {
+    if (oldVersion > 0 && oldVersion < BACKGROUND_SYNC_DB_VERSION) {
       if (db.objectStoreNames.contains(REQUEST_OBJECT_STORE_NAME)) {
         db.deleteObjectStore(REQUEST_OBJECT_STORE_NAME);
       }

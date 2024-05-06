@@ -1,1 +1,1 @@
-export { queueToServer, registerAllQueues, registerAllSyncs, registerQueue, registerSync } from './src/export.js';
+export { BackgroundSyncQueue, BackgroundSyncQueueEntry, BackgroundSyncQueueOptions } from './src/queue.js';
