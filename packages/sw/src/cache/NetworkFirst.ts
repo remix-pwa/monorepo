@@ -1,5 +1,5 @@
 import { isHttpRequest } from '../utils/utils.js';
-import { BaseStrategy, CACHE_TIMESTAMP_HEADER } from './BaseStrategy.js';
+import { BaseStrategy } from './BaseStrategy.js';
 import type { CacheOptions, CacheableResponseOptions, NetworkFriendlyOptions } from './types.js';
 import { mergeHeaders } from './utils.js';
 
@@ -25,7 +25,7 @@ export class NetworkFirst extends BaseStrategy {
   async handleRequest(req: Request | string): Promise<Response> {
     const request = this.ensureRequest(req);
 
-    if (!isHttpRequest(request)) {
+    if (!isHttpRequest(request) || !this.isRouteSupported(request)) {
       return fetch(request);
     }
 

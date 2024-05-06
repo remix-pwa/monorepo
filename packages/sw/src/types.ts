@@ -3,8 +3,6 @@ import type { ActionFunction, AppLoadContext, DataFunctionArgs, LoaderFunction }
 import type { ServerRouteModule } from '@remix-run/server-runtime/dist/routeModules.js';
 import type { ServerRoute } from '@remix-run/server-runtime/dist/routes.js';
 
-import type { Logger } from './logger/logger.js';
-
 /**
  * An object of unknown type for routes worker actions and loaders provided
  * by the worker's `getLoadContext` function.
@@ -97,7 +95,7 @@ export type DefaultErrorHandler = (error: Error, args: WorkerDataFunctionArgs) =
  * The `getLoadContext` function used to create a globally accessible
  * `context` object for worker actions and loaders.
  */
-export type GetLoadContextFunction = (event: FetchEvent) => WorkerLoadContext;
+export type GetLoadContextFunction = (event: FetchEvent) => AppLoadContext;
 
 declare global {
   interface ServiceWorkerGlobalScope {
