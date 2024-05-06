@@ -56,7 +56,7 @@ export class NavigationHandler extends MessageHandler {
   private async handleNavigation(event: any) {
     const { data } = event;
     const { isSsr, location } = data.payload;
-    const documentUrl = location.pathname + location.search + location.hash;
+    const documentUrl: string = location.pathname + location.search + location.hash;
 
     if (
       (this.allowList.length > 0 && !this.allowList.some(pattern => documentUrl.match(pattern))) ||
