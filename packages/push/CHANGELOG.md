@@ -1,3 +1,10 @@
+## @remix-pwa/push 2.10.1-dev.1 (2024-05-11)
+
+
+### Bug Fixes
+
+* **push:** fixed `bcrypt` errors f0e5361
+
 # @remix-pwa/push 2.10.0 (2024-04-24)
 
 
