@@ -1,3 +1,9 @@
+var __defProp = Object.defineProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => {
+  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
 function _mergeNamespaces(n, m) {
   for (var i = 0; i < m.length; i++) {
     const e = m[i];
@@ -17,17 +23,11 @@ function _mergeNamespaces(n, m) {
   }
   return Object.freeze(Object.defineProperty(n, Symbol.toStringTag, { value: "Module" }));
 }
-var __defProp$d = Object.defineProperty;
-var __defNormalProp$d = (obj, key, value) => key in obj ? __defProp$d(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$d = (obj, key, value) => {
-  __defNormalProp$d(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
-const _Logger = class _Logger2 {
+const _Logger = class _Logger {
   constructor(o) {
-    __publicField$d(this, "options");
-    __publicField$d(this, "inGroup", false);
-    this.options = { ..._Logger2.defaultOptions, ...o };
+    __publicField(this, "options");
+    __publicField(this, "inGroup", false);
+    this.options = { ..._Logger.defaultOptions, ...o };
   }
   setLogLevel(o) {
     this.options.logLevel = o;
@@ -71,7 +71,7 @@ const _Logger = class _Logger2 {
     return i.indexOf(o) >= i.indexOf(r);
   }
 };
-__publicField$d(_Logger, "defaultOptions", { prefix: "remix-pwa", styles: { debug: { background: "#7f8c8d", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, info: { background: "#3498db", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, log: { background: "#2ecc71", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, warn: { background: "#f39c12", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, error: { background: "#c0392b", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, groupCollapsed: { background: "#3498db", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, groupEnd: { background: null, color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" } }, logLevel: "debug", isProductionEnv: false });
+__publicField(_Logger, "defaultOptions", { prefix: "remix-pwa", styles: { debug: { background: "#7f8c8d", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, info: { background: "#3498db", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, log: { background: "#2ecc71", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, warn: { background: "#f39c12", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, error: { background: "#c0392b", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, groupCollapsed: { background: "#3498db", color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" }, groupEnd: { background: null, color: "white", "border-radius": "0.5em", "font-weight": "bold", padding: "2px 0.5em" } }, logLevel: "debug", isProductionEnv: false });
 let Logger = _Logger;
 const logger = new Logger();
 function getAugmentedNamespace(n) {
@@ -100,44 +100,32 @@ function getAugmentedNamespace(n) {
   });
   return a;
 }
-var __defProp$c = Object.defineProperty;
-var __defNormalProp$c = (obj, key, value) => key in obj ? __defProp$c(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$c = (obj, key, value) => {
-  __defNormalProp$c(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
-const _MessageHandler = class _MessageHandler2 {
+const _MessageHandler = class _MessageHandler {
   constructor(e) {
-    __publicField$c(this, "eventName");
+    __publicField(this, "eventName");
     this.eventName = e;
   }
   bind(e) {
-    _MessageHandler2.messageHandlers[this.eventName] = e;
+    _MessageHandler.messageHandlers[this.eventName] = e;
   }
   async handleMessage(e) {
     const { data: s } = e;
-    if ("object" == typeof s && s.type && _MessageHandler2.messageHandlers[s.type])
+    if ("object" == typeof s && s.type && _MessageHandler.messageHandlers[s.type])
       try {
-        await _MessageHandler2.messageHandlers[s.type](e);
+        await _MessageHandler.messageHandlers[s.type](e);
       } catch (e2) {
         logger.error(`Error handling message of type ${s.type}:`, e2);
       }
   }
 };
-__publicField$c(_MessageHandler, "messageHandlers", {});
+__publicField(_MessageHandler, "messageHandlers", {});
 let MessageHandler = _MessageHandler;
-var __defProp$b = Object.defineProperty;
-var __defNormalProp$b = (obj, key, value) => key in obj ? __defProp$b(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$b = (obj, key, value) => {
-  __defNormalProp$b(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
 class NavigationHandler extends MessageHandler {
   constructor(e) {
     super("REMIX_NAVIGATION");
-    __publicField$b(this, "allowList");
-    __publicField$b(this, "denyList");
-    __publicField$b(this, "documentCache");
+    __publicField(this, "allowList");
+    __publicField(this, "denyList");
+    __publicField(this, "documentCache");
     this.allowList = e.allowList || [], this.denyList = e.denyList || [], this.documentCache = e.cache, this.bind(this.handleNavigation.bind(this));
   }
   async handleNavigation(e) {
@@ -170,17 +158,11 @@ function isDocumentRequest(e) {
   return isMethod$1(e, ["get"]) && "navigate" === e.mode;
 }
 const isHttpRequest = (e) => e instanceof Request ? e.url.startsWith("http") : e.toString().startsWith("http");
-var __defProp$a = Object.defineProperty;
-var __defNormalProp$a = (obj, key, value) => key in obj ? __defProp$a(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$a = (obj, key, value) => {
-  __defNormalProp$a(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
 const CACHE_TIMESTAMP_HEADER = "sw-cache-timestamp";
 class BaseStrategy {
   constructor(e, t = { maxEntries: 50 }) {
-    __publicField$a(this, "cacheName");
-    __publicField$a(this, "options");
+    __publicField(this, "cacheName");
+    __publicField(this, "options");
     this.cacheName = e, this.options = t;
   }
   async openCache() {
@@ -212,16 +194,10 @@ function mergeHeaders(...e) {
         r.set(e2, o);
   return r;
 }
-var __defProp$9 = Object.defineProperty;
-var __defNormalProp$9 = (obj, key, value) => key in obj ? __defProp$9(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$9 = (obj, key, value) => {
-  __defNormalProp$9(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
 class CacheFirst extends BaseStrategy {
   constructor(e, t = {}) {
     super(e, t);
-    __publicField$9(this, "cacheableResponse");
+    __publicField(this, "cacheableResponse");
     this.cacheableResponse = t.cacheableResponse ?? false;
   }
   async handleRequest(e) {
@@ -4674,17 +4650,11 @@ const { Deflate, deflate, deflateRaw, gzip } = deflate_1$1;
 const { Inflate, inflate, inflateRaw, ungzip } = inflate_1$1;
 var gzip_1 = gzip;
 var ungzip_1 = ungzip;
-var __defProp$8 = Object.defineProperty;
-var __defNormalProp$8 = (obj, key, value) => key in obj ? __defProp$8(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$8 = (obj, key, value) => {
-  __defNormalProp$8(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
 class NetworkFirst extends BaseStrategy {
   constructor(e, t = {}) {
     super(e, t);
-    __publicField$8(this, "networkTimeoutSeconds");
-    __publicField$8(this, "cacheableResponse");
+    __publicField(this, "networkTimeoutSeconds");
+    __publicField(this, "cacheableResponse");
     this.networkTimeoutSeconds = t.networkTimeoutInSeconds ?? 10, this.cacheableResponse = t.cacheableResponse ?? false;
   }
   async handleRequest(e) {
@@ -4716,16 +4686,10 @@ class NetworkFirst extends BaseStrategy {
     return s ? Promise.race([fetch(e), s]) : fetch(e);
   }
 }
-var __defProp$7 = Object.defineProperty;
-var __defNormalProp$7 = (obj, key, value) => key in obj ? __defProp$7(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$7 = (obj, key, value) => {
-  __defNormalProp$7(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
 class StaleWhileRevalidate extends BaseStrategy {
   constructor(e, t = {}) {
     super(e, t);
-    __publicField$7(this, "inProgressRequests", /* @__PURE__ */ new Map());
+    __publicField(this, "inProgressRequests", /* @__PURE__ */ new Map());
   }
   async handleRequest(e) {
     const t = this.ensureRequest(e);
@@ -4750,18 +4714,12 @@ class StaleWhileRevalidate extends BaseStrategy {
     return s.put(e, a.clone()), await this.cleanupCache(), a;
   }
 }
-var __defProp$6 = Object.defineProperty;
-var __defNormalProp$6 = (obj, key, value) => key in obj ? __defProp$6(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$6 = (obj, key, value) => {
-  __defNormalProp$6(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
 class EnhancedCache {
   constructor(e, t = {}) {
-    __publicField$6(this, "cacheName");
-    __publicField$6(this, "strategy");
-    __publicField$6(this, "cacheHits", 0);
-    __publicField$6(this, "totalRequests", 0);
+    __publicField(this, "cacheName");
+    __publicField(this, "strategy");
+    __publicField(this, "cacheHits", 0);
+    __publicField(this, "totalRequests", 0);
     this.cacheName = `${e}-${t.version || "v1"}`, this.strategy = this.selectStrategy(t.strategy, t.strategyOptions);
   }
   selectStrategy(e, t) {
@@ -9253,10 +9211,10 @@ class Queue {
     return queueNames;
   }
 }
-var __defProp = Object.defineProperty;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => {
-  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+var __defProp2 = Object.defineProperty;
+var __defNormalProp2 = (obj, key, value) => key in obj ? __defProp2(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField2 = (obj, key, value) => {
+  __defNormalProp2(obj, typeof key !== "symbol" ? key + "" : key, value);
   return value;
 };
 class SyncQueue {
@@ -9294,7 +9252,7 @@ class SyncQueue {
     return void 0;
   }
 }
-__publicField(SyncQueue, "queues", /* @__PURE__ */ new Map());
+__publicField2(SyncQueue, "queues", /* @__PURE__ */ new Map());
 const queueToServer = ({ name, request }) => {
   let queue;
   try {
