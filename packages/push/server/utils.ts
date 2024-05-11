@@ -1,6 +1,8 @@
-import { compare, genSalt, hash } from 'bcryptjs';
+import * as bcrypt from 'bcryptjs';
 
 import type { PushSubscription } from './types.js';
+
+const { compare, genSalt, hash } = bcrypt;
 
 /**
  * Utility to generate a subscription id on the fly.

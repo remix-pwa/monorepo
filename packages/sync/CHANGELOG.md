@@ -1,3 +1,10 @@
+# @remix-pwa/sync 3.0.0 (2024-05-06)
+
+
+### Features
+
+* **sync:** new `sync` major release e974523
+
 # @remix-pwa/sync 3.0.0-dev.1 (2024-05-06)
 
 
