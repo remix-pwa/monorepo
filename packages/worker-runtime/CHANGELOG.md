@@ -1,3 +1,10 @@
+## @remix-pwa/worker-runtime 2.1.2-dev.1 (2024-05-13)
+
+
+### Bug Fixes
+
+* **worker-runtime:** fixed handling of successful non-remix responses 1ea232d
+
 ## @remix-pwa/worker-runtime 2.1.1 (2024-04-08)
 
 
