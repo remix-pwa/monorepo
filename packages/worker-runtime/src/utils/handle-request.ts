@@ -197,6 +197,17 @@ function responseHandler(response: Response): Response {
 
   // Mark all successful responses with a header so we can identify in-flight
   // network errors that are missing this header
-  !isRemixResponse(response) && response.headers.set('X-Remix-Response', 'yes');
+  const isNotRemixResponse = !isRemixResponse(response);
+  const headers = isNotRemixResponse ? new Headers(response.headers) : response.headers;
+  if (isNotRemixResponse) {
+    headers.set('X-Remix-Response', 'yes');
+
+    if (response.status < 200) {
+      return new Response(response.body, { headers });
+    }
+
+    return new Response(response.body, { headers, status: response.status, statusText: response.statusText });
+  }
+
   return response;
 }
