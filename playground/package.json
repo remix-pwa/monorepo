@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@remix-pwa/client": "3.0.4",
-    "@remix-pwa/push": "2.10.0",
+    "@remix-pwa/push": "2.10.1",
     "@remix-pwa/sw": "3.0.5",
     "@remix-pwa/sync": "3.0.0",
     "@remix-pwa/worker-runtime": "2.1.1",
