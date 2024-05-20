@@ -1,5 +1,5 @@
 import { isHttpRequest } from '../utils/utils.js';
-import { BaseStrategy, CACHE_TIMESTAMP_HEADER } from './BaseStrategy.js';
+import { BaseStrategy } from './BaseStrategy.js';
 import type { CacheFriendlyOptions, CacheOptions } from './types.js';
 import { mergeHeaders } from './utils.js';
 
