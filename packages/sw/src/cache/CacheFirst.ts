@@ -61,13 +61,9 @@ export class CacheFirst extends BaseStrategy {
   }
 
   private async validateResponse(response: Response): Promise<boolean> {
-    if (!this.cacheableResponse) {
-      return true;
-    }
+    if (this.isOpaqueResponse(response)) return false;
 
-    if (this.isOpaqueResponse(response)) {
-      return false;
-    }
+    if (!this.cacheableResponse) return true;
 
     const { headers = {}, statuses = [] } = this.cacheableResponse;
 
