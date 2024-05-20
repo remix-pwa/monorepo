@@ -1,3 +1,10 @@
+## @remix-pwa/sw 3.0.6-dev.1 (2024-05-20)
+
+
+### Bug Fixes
+
+* **sw:** added a "No Cache" policy to cache strategies 740b258
+
 ## @remix-pwa/sw 3.0.5 (2024-05-06)
 
 

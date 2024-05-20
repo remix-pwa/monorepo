@@ -58,6 +58,16 @@ export abstract class BaseStrategy implements CacheStrategy {
   }
 
   /**
+   * A utility method to check if a response is opaque.
+   *
+   * @param response - The response to check.
+   * @returns {boolean} `true` if the response is opaque, `false` otherwise.
+   */
+  protected isOpaqueResponse(response: Response): boolean {
+    return response.status === 0 || response.type === 'opaque';
+  }
+
+  /**
    * Abstract method to handle requests.
    * Must be implemented by subclasses.
    * @param {Request} request - The request to handle.
