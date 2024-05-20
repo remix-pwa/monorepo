@@ -65,6 +65,10 @@ export class CacheFirst extends BaseStrategy {
       return true;
     }
 
+    if (this.isOpaqueResponse(response)) {
+      return false;
+    }
+
     const { headers = {}, statuses = [] } = this.cacheableResponse;
 
     const isStatusValid = statuses.length > 0 ? statuses.includes(response.status) : true;

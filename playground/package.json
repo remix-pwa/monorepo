@@ -25,7 +25,7 @@
     "@remix-pwa/push": "2.10.1",
     "@remix-pwa/sw": "3.0.5",
     "@remix-pwa/sync": "3.0.0",
-    "@remix-pwa/worker-runtime": "2.1.1",
+    "@remix-pwa/worker-runtime": "2.1.2",
     "@remix-run/node": "^2.8.1",
     "@remix-run/react": "^2.8.1",
     "@remix-run/serve": "^2.8.1",

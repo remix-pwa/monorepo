@@ -50,6 +50,8 @@ export class StaleWhileRevalidate extends BaseStrategy {
     }
 
     const networkFetch = fetch(request).then(async response => {
+      if (this.isOpaqueResponse(response)) return response;
+
       // Do a more grandiose, customisable validation
       // if (response.ok) await this.updateCache(request, response.clone());
       const res = await this.updateCache(request, response.clone());
