@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/sync",
-  "version": "3.0.2-dev.1",
+  "version": "3.0.2",
   "description": "A Background Sync addon for Remix PWA",
   "repository": {
     "type": "git",
@@ -34,7 +34,7 @@
     "rimraf": "^5.0.5"
   },
   "dependencies": {
-    "@remix-pwa/sw": "^3.0.7-dev.1",
+    "@remix-pwa/sw": "^3.0.7",
     "idb": "^8.0.0"
   }
 }
