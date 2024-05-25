@@ -61,6 +61,7 @@
     "@types/web-push": "^3.6.3"
   },
   "dependencies": {
-    "bcryptjs": "^2.4.3"
+    "bcryptjs": "^2.4.3",
+    "web-push": "^3.6.7"
   }
 }

@@ -1,4 +1,4 @@
-import * as webpush from 'web-push';
+import webpush from 'web-push';
 
 import type { SendNotificationParams } from './types.js';
 
