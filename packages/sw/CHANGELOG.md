@@ -1,3 +1,10 @@
+## @remix-pwa/sw 3.0.7 (2024-05-20)
+
+
+### Bug Fixes
+
+* **sw:** re-fixing opaque response patch f0530fc
+
 ## @remix-pwa/sw 3.0.7-dev.1 (2024-05-20)
 
 

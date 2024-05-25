@@ -23,8 +23,8 @@
   "dependencies": {
     "@remix-pwa/client": "3.0.4",
     "@remix-pwa/push": "2.10.1",
-    "@remix-pwa/sw": "3.0.6",
-    "@remix-pwa/sync": "3.0.1",
+    "@remix-pwa/sw": "3.0.7",
+    "@remix-pwa/sync": "3.0.2",
     "@remix-pwa/worker-runtime": "2.1.2",
     "@remix-run/node": "^2.8.1",
     "@remix-run/react": "^2.8.1",
