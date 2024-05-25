@@ -1,3 +1,10 @@
+## @remix-pwa/push 2.10.2-dev.1 (2024-05-25)
+
+
+### Bug Fixes
+
+* **push:** fixed missing `web-push` error deb27b8
+
 ## @remix-pwa/push 2.10.1 (2024-05-11)
 
 
