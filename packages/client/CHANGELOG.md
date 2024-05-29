@@ -1,3 +1,10 @@
+## @remix-pwa/client 3.0.5-dev.1 (2024-05-29)
+
+
+### Bug Fixes
+
+* **client:** added callback feature to installation prompt b17500a
+
 ## @remix-pwa/client 3.0.4 (2024-04-24)
 
 
