@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { useEffect, useState } from 'react';
 
 import { isWindowAvailable } from '../lib/user-agent.js';
@@ -7,7 +8,46 @@ type UpdateAvailable = {
   newWorker: ServiceWorker | null;
 };
 
-export const usePWAManager = () => {
+export type PWAManager = {
+  /**
+   * Whether an update is available or not.
+   */
+  updateAvailable: boolean;
+  swUpdate: UpdateAvailable;
+  /**
+   * An asynchronous function that prompts the user to install the PWA.
+   *
+   * Takes in an optional callback that runs if the user accepts the install prompt.
+   *
+   * ## Example
+   *
+   * ```tsx
+   * const { promptInstall } = usePWAManager();
+   *
+   * return (
+   *  <>
+   *    <button onClick={promptInstall}>Install PWA</button>
+   *    <button onClick={async() => await promptInstall(doSmthg)}>Install PWA with callback</button>
+   *  </>
+   * );
+   * ```
+   */
+  promptInstall: (cb?: () => void) => void;
+  /**
+   * Retrieves the current service worker registration.
+   *
+   * Returns `null` if service worker is not supported/registered.
+   */
+  swRegistration: ServiceWorkerRegistration | null;
+  /**
+   * The user's choice on whether to install the PWA or not.
+   *
+   * Defaults to `null`.
+   */
+  userInstallChoice: 'accepted' | 'dismissed' | null;
+};
+
+export const usePWAManager = (): PWAManager => {
   const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
   const [swUpdate, setSwUpdate] = useState<UpdateAvailable>({
     isUpdateAvailable: false,
@@ -17,9 +57,19 @@ export const usePWAManager = () => {
   const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
   const [userChoice, setUserChoice] = useState<'accepted' | 'dismissed' | null>(null);
 
-  const promptInstall = () => {
+  const promptInstall = async (cb: () => void = () => {}) => {
     if (installPromptEvent) {
       (installPromptEvent as any).prompt();
+
+      const { outcome: choice } = await (installPromptEvent as any).userChoice;
+
+      if (choice === 'accepted') {
+        cb();
+        setUserChoice('accepted');
+      } else {
+        setUserChoice(choice);
+      }
+
       setInstallPromptEvent(null);
     }
   };
