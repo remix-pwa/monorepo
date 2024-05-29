@@ -1,5 +1,5 @@
 import type { WorkerActionArgs } from "@remix-pwa/sw";
-import { queueToServer } from "@remix-pwa/sync";
+import {  } from "@remix-pwa/sync";
 import { redirect } from "@remix-run/node";
 import type { ActionFunction } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
@@ -28,10 +28,10 @@ export const workerAction = async ({ context }: WorkerActionArgs) => {
     await fetchFromServer() as unknown as Response;
   } catch (error) {
     console.error(error);
-    queueToServer({
-      name: 'offline-action',
-      request: event.request.clone(),
-    })
+    // queueToServer({
+    //   name: 'offline-action',
+    //   request: event.request.clone(),
+    // })
   }
 
   return new Response(JSON.stringify({

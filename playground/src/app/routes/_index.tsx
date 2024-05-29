@@ -29,9 +29,10 @@ export default function Index() {
         <h1 className="text-2xl font-bold">Remix PWA - Worker Actions & Loaders</h1>
         <button
           type="submit"
-          onClick={() => {
+          onClick={async () => {
             // alert("You're logged in!\n\nActually nothing happened 😅. Yet.");
-            promptInstall();
+            const doSMthg = () => console.log('Hehehe')
+            await promptInstall(doSMthg);
           }}
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
         >
