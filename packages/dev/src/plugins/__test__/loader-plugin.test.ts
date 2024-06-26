@@ -71,7 +71,7 @@ describe('Remix PWA Vite Loader Plugin', () => {
 
       const transformed = plugin.transform(code, id);
 
-      expect(transformed).toBe(code);
+      expect(transformed).toBe(undefined);
     });
 
     test('should not transform target code when id does not match', () => {
@@ -80,7 +80,7 @@ describe('Remix PWA Vite Loader Plugin', () => {
 
       const transformed = plugin.transform(code, id);
 
-      expect(transformed).toBe(code);
+      expect(transformed).toBe(undefined);
     });
   });
 
