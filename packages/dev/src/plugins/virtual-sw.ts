@@ -127,10 +127,14 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
         const regex = /\/\*\*[\s\S]*?\*\//g;
 
         const licenseComments = code.match(regex)?.filter(predicate => /@license/.test(predicate)) ?? [];
-        return code.replaceAll(regex, match => {
+        code = code.replaceAll(regex, match => {
           if (licenseComments?.includes(match)) return match;
           return '';
         });
+        return {
+          code,
+          map: { mappings: '' },
+        };
       },
     },
     {

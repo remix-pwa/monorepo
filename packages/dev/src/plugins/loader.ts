@@ -40,7 +40,7 @@ export function LoaderPlugin(ctx: PWAPluginContext): Plugin {
             .trim()
         );
       } else {
-        return code;
+        return;
       }
     },
   };

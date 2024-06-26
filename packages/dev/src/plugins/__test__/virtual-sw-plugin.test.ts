@@ -308,7 +308,9 @@ describe('Remix PWA Vite VirtualSW Plugin', () => {
          * This is a license comment
          */
         const a = 1;`;
-        expect((await plugin[0].transform(code)).trim()).toBe('const a = 1;');
+        const result = await plugin[0].transform(code);
+        expect(result.code.trim()).toBe('const a = 1;');
+        expect(result.map).toEqual({ mappings: '' });
 
         const code2 = `
 /**
@@ -316,7 +318,7 @@ describe('Remix PWA Vite VirtualSW Plugin', () => {
  * This is a license comment
  */
 const a = 1;`;
-        expect((await plugin[0].transform(code2)).trimStart()).toBe(`/**
+        expect((await plugin[0].transform(code2)).code.trimStart()).toBe(`/**
  * @license MIT
  * This is a license comment
  */
