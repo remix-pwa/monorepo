@@ -39,8 +39,6 @@ export function LoaderPlugin(ctx: PWAPluginContext): Plugin {
             .join('\n')
             .trim()
         );
-      } else {
-        return;
       }
     },
   };
