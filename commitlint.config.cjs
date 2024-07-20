@@ -6,8 +6,8 @@ module.exports = { extends: ['@commitlint/config-conventional'] }
  * chore
  * ci
  * docs
- * feat
- * fix
+ * feat  // triggers a major release
+ * fix  // triggers a patch release
  * perf
  * refactor
  * revert

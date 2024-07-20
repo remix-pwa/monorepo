@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/cli",
-  "version": "1.2.3",
+  "version": "1.2.4-dev.1",
   "description": "An elegant CLI for everything Remix PWA 💖",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
     "build": "tsc",
     "prepublishOnly": "npm run build",
     "format": "prettier --write \"cli.ts\"",
-    "lint": "TIMING=1 eslint --fix \"cli.ts\"",
+    "lint": "eslint --fix \"cli.ts\"",
     "prepublish": "npm run build",
     "test": "vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests --config ../../vitest.config.ts"
   },
@@ -41,14 +41,14 @@
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
-    "@remix-run/dev": "^2.8.1"
+    "@remix-run/dev": "^2.10.3"
   },
   "dependencies": {
     "@commander-js/extra-typings": "^12.0.1",
     "commander": "^12.0.0",
     "pathe": "^1.1.2",
-    "picocolors": "^1.0.0",
-    "typescript": "^5.4.2"
+    "picocolors": "^1.0.1",
+    "typescript": "^5.5.3"
   },
   "publishConfig": {
     "access": "public"

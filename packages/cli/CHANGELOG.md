@@ -1,3 +1,10 @@
+## @remix-pwa/cli 1.2.4-dev.1 (2024-07-20)
+
+
+### Bug Fixes
+
+* **cli:** upgraded dependencies 0a7470a
+
 ## @remix-pwa/cli 1.2.3 (2024-05-04)
 
 

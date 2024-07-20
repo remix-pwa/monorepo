@@ -153,7 +153,7 @@ describe('NetworkFirst Strategy Testing Suite', () => {
     spiedOnCache.mockRestore();
   });
 
-  test('should have a default network timeout of 10 seconds', async () => {
+  test('should have a default network timeout of 10 seconds', { timeout: 15_000 }, async () => {
     const strategy = new NetworkFirst('test-cache');
     const cache = await caches.open('test-cache');
     const spiedOnCache = vi.spyOn(cache, 'match');

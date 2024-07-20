@@ -387,6 +387,7 @@ const a = 1;`);
         expect(plugin[3].resolveId('virtual:assets-sw')).toBe('\0virtual:assets-sw');
       });
 
+      // Why did we skip again??
       test.skipIf(process.env.VITEST_WORKSPACE)('should return the build assets on load', async () => {
         const assetPlugin = await plugin[3].load('\0virtual:assets-sw');
 
