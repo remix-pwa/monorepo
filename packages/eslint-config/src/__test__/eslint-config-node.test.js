@@ -22,7 +22,5 @@ test('should be able to lint source code using the eslint config', async () => {
 
   console.log(result[0].messages);
 
-  // enough of this shit - ESLint throws an error
-  // and I want to remove this package anyway
-  expect(result[0].errorCount).toBe(1);
+  expect(result[0].errorCount).toBe(0);
 });
