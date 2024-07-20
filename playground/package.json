@@ -21,7 +21,7 @@
     "build:remix": "remix build"
   },
   "dependencies": {
-    "@remix-pwa/client": "3.0.4",
+    "@remix-pwa/client": "3.0.5",
     "@remix-pwa/push": "2.10.2",
     "@remix-pwa/sw": "3.0.7",
     "@remix-pwa/sync": "3.0.2",
