@@ -20,7 +20,7 @@
     "build": "tsc",
     "prepublishOnly": "npm run build",
     "format": "prettier --write \"cli.ts\"",
-    "lint": "TIMING=1 eslint --fix \"cli.ts\"",
+    "lint": "eslint --fix \"cli.ts\"",
     "prepublish": "npm run build",
     "test": "vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests --config ../../vitest.config.ts"
   },
