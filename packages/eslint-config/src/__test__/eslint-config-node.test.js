@@ -19,5 +19,7 @@ test('should be able to lint source code using the eslint config', async () => {
   const code = 'const foo = 1;\nconst bar = () => {};\nbar(foo);\n';
   const result = await cli.lintText(code);
 
+  console.log(result[0].messages);
+
   expect(result[0].errorCount).toBe(0);
 });

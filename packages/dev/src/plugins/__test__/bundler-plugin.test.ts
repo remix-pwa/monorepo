@@ -42,7 +42,10 @@ describe('Remix PWA Vite Bundler Plugin', () => {
 
       await plugin.configureServer({ hot: { invalidate: vi.fn() } });
 
-      expect(configureServerSpy).toHaveReturnedWith(undefined);
+      expect(configureServerSpy).toHaveBeenCalled();
+      const returnedPromise = configureServerSpy.mock.results[0].value;
+      expect(returnedPromise).toBeInstanceOf(Promise);
+      expect(await returnedPromise).toBeUndefined();
     });
   });
 
@@ -53,7 +56,10 @@ describe('Remix PWA Vite Bundler Plugin', () => {
 
       await plugin.buildStart();
 
-      expect(buildStartSpy).toHaveReturnedWith(undefined);
+      expect(buildStartSpy).toHaveBeenCalled();
+      const returnedPromise = buildStartSpy.mock.results[0].value;
+      expect(returnedPromise).toBeInstanceOf(Promise);
+      expect(await returnedPromise).toBeUndefined();
     });
 
     test.skip('should build the worker and log the time', () => {
