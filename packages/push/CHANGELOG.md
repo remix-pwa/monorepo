@@ -1,3 +1,10 @@
+## @remix-pwa/push 2.10.3-dev.1 (2024-07-20)
+
+
+### Bug Fixes
+
+* **push:** upgraded dependencies 9fa3ef9
+
 ## @remix-pwa/push 2.10.2 (2024-05-25)
 
 
