@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/cli",
-  "version": "1.2.3",
+  "version": "1.2.4-dev.1",
   "description": "An elegant CLI for everything Remix PWA 💖",
   "repository": {
     "type": "git",
