@@ -1,3 +1,10 @@
+## @remix-pwa/dev 3.0.6-dev.1 (2024-07-20)
+
+
+### Bug Fixes
+
+* **dev:** Preserve source maps in transformations 141e7ef
+
 ## @remix-pwa/dev 3.0.5 (2024-04-26)
 
 
