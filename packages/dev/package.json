@@ -38,29 +38,29 @@
     }
   },
   "dependencies": {
-    "@babel/core": "^7.23.6",
-    "@babel/generator": "^7.23.6",
-    "@babel/traverse": "^7.23.6",
-    "@rollup/plugin-commonjs": "^25.0.7",
+    "@babel/core": "^7.24.9",
+    "@babel/generator": "^7.24.10",
+    "@babel/traverse": "^7.24.8",
+    "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "chokidar": "^3.6.0",
     "fast-glob": "^3.3.2",
     "fs-extra": "^11.2.0",
     "lodash": "^4.17.21",
-    "magic-string": "^0.30.9",
+    "magic-string": "^0.30.10",
     "pathe": "^1.1.2",
     "rollup-plugin-esbuild": "^6.1.1"
   },
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
-    "@remix-run/dev": "^2.8.1",
+    "@remix-run/dev": "^2.10.3",
     "@types/babel__core": "^7.20.5",
-    "@types/babel__generator": "^7.6.7",
-    "@types/babel__traverse": "^7.20.4",
+    "@types/babel__generator": "^7.6.8",
+    "@types/babel__traverse": "^7.20.6",
     "@types/fs-extra": "^11.0.4",
     "@types/lodash": "^4.17.0",
-    "rimraf": "^5.0.5",
-    "vite": "^5.2.2"
+    "rimraf": "^6.0.1",
+    "vite": "^5.3.4"
   }
 }
