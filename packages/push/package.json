@@ -57,7 +57,7 @@
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
     "@types/bcryptjs": "^2.4.6",
-    "@types/react": "^18.2.79",
+    "@types/react": "^18.3.3",
     "@types/web-push": "^3.6.3"
   },
   "dependencies": {

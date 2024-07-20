@@ -75,19 +75,19 @@
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
-    "@remix-run/dev": "^2.8.1",
-    "@remix-run/react": "^2.8.1",
+    "@remix-run/dev": "^2.10.3",
+    "@remix-run/react": "^2.10.3",
     "@types/pako": "^2.0.3",
-    "@types/react": "^18.2.23",
-    "react": "^18.2.0",
-    "rimraf": "^5.0.5",
-    "terser": "^5.26.0",
-    "vitest-fetch-mock": "^0.2.2"
+    "@types/react": "^18.3.3",
+    "react": "^18.3.1",
+    "rimraf": "^6.0.1",
+    "terser": "^5.31.3",
+    "vitest-fetch-mock": "^0.3.0"
   },
   "dependencies": {
-    "@remix-run/server-runtime": "^2.8.1",
+    "@remix-run/server-runtime": "^2.10.3",
     "idb": "^8.0.0",
     "pako": "^2.1.0",
-    "tiny-invariant": "^1.3.1"
+    "tiny-invariant": "^1.3.3"
   }
 }

@@ -32,10 +32,10 @@
     }
   },
   "dependencies": {
-    "@remix-run/router": "^1.15.3"
+    "@remix-run/router": "^1.18.0"
   },
   "devDependencies": {
-    "@remix-run/server-runtime": "^2.8.1",
+    "@remix-run/server-runtime": "^2.10.3",
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
     "eslint": "^8.57.0",

@@ -146,8 +146,12 @@ describe('EnhancedCache Testing Suite', () => {
     expect(undefinedResponse).toBeUndefined();
 
     expect(cacheSpy).toHaveBeenCalled();
-    expect(cacheSpy).toHaveReturnedWith(response);
-    expect(cacheSpy).toHaveLastReturnedWith(undefinedResponse);
+
+    expect(cacheSpy).toHaveReturnedWith(expect.any(Promise)); // why tf the next 4 lines?
+    await expect(cacheSpy.mock.results[0].value).resolves.toBe(response);
+
+    expect(cacheSpy).toHaveLastReturnedWith(expect.any(Promise));
+    await expect(cacheSpy.mock.results[1].value).resolves.toBeUndefined();
 
     cacheSpy.mockRestore();
   });

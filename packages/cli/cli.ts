@@ -1,5 +1,4 @@
 /* eslint-disable prefer-rest-params */
-
 import { Command } from '@commander-js/extra-typings';
 import { execSync } from 'child_process';
 import { existsSync } from 'fs';
