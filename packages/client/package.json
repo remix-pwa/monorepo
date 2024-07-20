@@ -54,6 +54,6 @@
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
-    "@types/react": "^18.2.67"
+    "@types/react": "^18.3.3"
   }
 }
