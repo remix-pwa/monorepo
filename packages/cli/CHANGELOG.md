@@ -1,3 +1,10 @@
+## @remix-pwa/cli 1.2.4-dev.2 (2024-07-21)
+
+
+### Bug Fixes
+
+* **cli:** added cross-support for Node pre-21 & Node 21.0.7+ b5f1c1b
+
 ## @remix-pwa/cli 1.2.4-dev.1 (2024-07-20)
 
 
