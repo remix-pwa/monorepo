@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: 'Geist';
+    font-weight: 100 900;
+    font-display: block;
+    font-style: normal;
+    src: url('/Geist/GeistVF.woff2');
+  }
+
+  @font-face {
+    font-family: 'Geist Mono';
+    font-weight: 100 900;
+    font-display: block;
+    font-style: normal;
+    src: url('/GeistMono/GeistMonoVF.woff2');
+  }
+}

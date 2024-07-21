@@ -11,7 +11,6 @@ export default defineConfig({
   plugins: [
     remix({
       ignoredRouteFiles: ["**/.*"],
-      appDirectory: './src/app',
       // ssr: false,
     }),
     tsconfigPaths(),

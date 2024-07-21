@@ -21,36 +21,42 @@
     "build:remix": "remix build"
   },
   "dependencies": {
-    "@remix-pwa/client": "3.0.5",
-    "@remix-pwa/push": "2.10.2",
-    "@remix-pwa/sw": "3.0.7",
+    "@headlessui/react": "^2.1.2",
+    "@remix-pwa/client": "3.0.6-dev.1",
+    "@remix-pwa/push": "2.10.3-dev.1",
+    "@remix-pwa/sw": "3.0.8-dev.1",
     "@remix-pwa/sync": "3.0.2",
-    "@remix-pwa/worker-runtime": "2.1.2",
-    "@remix-run/node": "^2.8.1",
-    "@remix-run/react": "^2.8.1",
-    "@remix-run/serve": "^2.8.1",
-    "chokidar": "^3.5.3",
-    "dexie": "^3.2.4",
-    "dotenv": "^16.3.1",
-    "isbot": "^3.7.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "@remix-pwa/worker-runtime": "2.1.3-dev.1",
+    "@remix-run/node": "^2.10.3",
+    "@remix-run/react": "^2.10.3",
+    "@remix-run/serve": "^2.10.3",
+    "chokidar": "^3.6.0",
+    "clsx": "^2.1.1",
+    "dexie": "^4.0.8",
+    "dotenv": "^16.4.5",
+    "isbot": "^5.1.13",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-markdown": "^9.0.1",
+    "remark-gfm": "^4.0.0",
+    "remix-utils": "^7.6.0",
+    "tailwind-merge": "^2.4.0"
   },
   "devDependencies": {
-    "@remix-pwa/dev": "3.0.6",
-    "@remix-run/dev": "^2.8.1",
-    "@remix-run/eslint-config": "^2.8.1",
-    "@types/react": "^18.2.22",
-    "@types/react-dom": "^18.2.7",
-    "autoprefixer": "^10.4.16",
-    "eslint": "^8.49.0",
-    "tailwindcss": "^3.3.3",
-    "tsx": "^3.14.0",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.2",
-    "vite-tsconfig-paths": "^4.2.1"
+    "@remix-pwa/dev": "3.0.7-dev.1",
+    "@remix-run/dev": "^2.10.3",
+    "@remix-run/eslint-config": "^2.10.3",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^9.7.0",
+    "tailwindcss": "^3.4.6",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.4",
+    "vite-tsconfig-paths": "^4.3.2"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   }
 }
