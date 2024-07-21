@@ -1,10 +1,13 @@
 /// <reference lib="WebWorker" />
 
-import { Logger, logger } from '@remix-pwa/sw';
+import { Logger } from '@remix-pwa/sw';
+
+const logger = new Logger({
+  prefix: 'remix-pwa'
+});
 
 declare let self: ServiceWorkerGlobalScope & { logger: Logger };
-
-self.logger = logger;
+self.logger = logger
 
 self.addEventListener('install', (event: ExtendableEvent) => {
   logger.log('installing service worker');
@@ -23,6 +26,6 @@ self.addEventListener('activate', event => {
  */
 export const getLoadContext = () => {
   return {
-    logger,
+    logger: self.logger,
   };
 };
