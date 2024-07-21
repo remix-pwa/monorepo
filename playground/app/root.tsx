@@ -1,12 +1,27 @@
 import {
+  json,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import { getTheme } from './.server/theme';
+import { LoaderFunctionArgs } from "@remix-run/node";
+import { ClientHints, getHints } from "./components/ClientHint";
 
 import './tailwind.css';
+import { useTheme } from './useTheme';
+import { cn } from './utils';
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  return json({
+    requestInfo: {
+      hints: getHints(request),
+      userPrefs: { theme: getTheme(request) },
+    },
+  })
+}
 
 // const usePWAHMR = () => {
 //   const [currentHash, setCurrentHash] = useState<string | null>(null);
@@ -44,15 +59,18 @@ import './tailwind.css';
 
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const theme = useTheme()
+
   return (
-    <html lang="en">
+    <html lang="en" className={cn('h-full overflow-x-hidden antialiased', theme)} data-theme={theme}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
+        <ClientHints />
         <Links />
       </head>
-      <body>
+      <body className="size-full">
         {children}
         <ScrollRestoration />
         <Scripts />
