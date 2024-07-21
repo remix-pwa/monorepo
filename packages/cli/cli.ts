@@ -28,7 +28,17 @@ process.emit = function (name, data, ..._args) {
   return originalEmit.apply(process, arguments as unknown as Parameters<typeof process.emit>);
 };
 
-const packageJson = await import('./package.json', { with: { type: 'json' } });
+let packageJson: any;
+try {
+  packageJson = await import('./package.json', { assert: { type: 'json' } });
+} catch (err) {
+  if ((err as any).code === 'ERR_IMPORT_ATTRIBUTE_MISSING') {
+    packageJson = await import('./package.json', { with: { type: 'json' } });
+  } else {
+    console.error('💥 Error occured:', '\n\n', err);
+    process.exit(1);
+  }
+}
 
 const { blue, bold, green, italic, magenta, red } = colors;
 const { ModuleKind, ScriptTarget, transpileModule } = ts;
@@ -196,11 +206,28 @@ program
     const root = resolve(process.cwd(), options.root);
     const packagesToUpdate = options.packages ?? [];
 
-    const packageJSON = (
-      await import('file://' + fileURLToPath(`file:///${resolve(root, 'package.json').replace(/\\/g, '/')}`), {
-        with: { type: 'json' },
-      })
-    ).default;
+    let packageJSON: any;
+    console.log(blue('🔃 Reading package.json file...'));
+
+    try {
+      packageJSON = (
+        await import('file://' + fileURLToPath(`file:///${resolve(root, 'package.json').replace(/\\/g, '/')}`), {
+          assert: { type: 'json' },
+        })
+      ).default;
+    } catch (err) {
+      if ((err as any).code === 'ERR_IMPORT_ATTRIBUTE_MISSING') {
+        packageJSON = (
+          await import('file://' + fileURLToPath(`file:///${resolve(root, 'package.json').replace(/\\/g, '/')}`), {
+            with: { type: 'json' },
+          })
+        ).default;
+      } else {
+        console.error(red(bold('💥 Error occured whilst reading package.json file:')), '\n\n', err);
+        process.exit(1);
+      }
+    }
+
     const dependencies = packageJSON.dependencies;
     const devDependencies = packageJSON.devDependencies;
 
