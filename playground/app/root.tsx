@@ -13,6 +13,7 @@ import { ClientHints, getHints } from "./components/ClientHint";
 import './tailwind.css';
 import { useTheme } from './useTheme';
 import { cn } from './utils';
+import { useEffect } from "react";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   return json({
@@ -61,6 +62,26 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export function Layout({ children }: { children: React.ReactNode }) {
   const theme = useTheme()
 
+  useEffect(() => {
+    const storeScrollValue = (window: Window) => {
+      window.document.documentElement.dataset.scroll = window.screenY.toString()
+    }
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', () => {
+        storeScrollValue(window)
+      })
+    }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+      window.removeEventListener('scroll', () => {
+        storeScrollValue(window)
+      })
+    }
+    }
+  }, [])
+
   return (
     <html lang="en" className={cn('h-full overflow-x-hidden antialiased', theme)} data-theme={theme}>
       <head>
@@ -70,7 +91,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <ClientHints />
         <Links />
       </head>
-      <body className="size-full scroll-smooth text-slate-950 dark:text-white">
+      <body className="size-full scroll-smooth text-slate-950 dark:text-white dark:bg-dark">
         {children}
         <ScrollRestoration />
         <Scripts />

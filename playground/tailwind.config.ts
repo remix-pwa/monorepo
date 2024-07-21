@@ -15,6 +15,9 @@ export default {
         '4xl': '32px',
         '5xl': '40px',
       },
+      colors: {
+        dark: "#1a1b1e"
+      }
     },
   },
   plugins: [],
