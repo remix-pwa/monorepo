@@ -63,8 +63,6 @@
 }
 
 
-
-
 .background-color {
   background-color: #f1f1f1;
   background-image: 
@@ -115,7 +113,19 @@
     );
 }
 
+.showcase-background {
+  background-color: #f1f1f1;
+  background-image: 
+    linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 100%),
+    radial-gradient(at top right, rgba(30,144,255,0.12) 0%, rgba(30,144,255,0) 70%);
+}
 
+.dark .showcase-background {
+  background-color: #1a1b1e;
+  background-image: 
+    linear-gradient(to bottom, rgba(26, 27, 30,0) 0%, rgba(26, 27, 30,0.3) 100%),
+    radial-gradient(at top right, rgba(30,144,255,0.125) 0%, rgba(30,144,255,0) 60%);
+}
 
 /* Blue variant */
 /* .background {
