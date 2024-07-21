@@ -70,7 +70,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <ClientHints />
         <Links />
       </head>
-      <body className="size-full">
+      <body className="size-full scroll-smooth background">
         {children}
         <ScrollRestoration />
         <Scripts />

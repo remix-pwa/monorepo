@@ -19,3 +19,123 @@
     src: url('/GeistMono/GeistMonoVF.woff2');
   }
 }
+
+.background {
+  background-color: #f1f1f1;
+  background-image: 
+    radial-gradient(circle at 80% 10%, rgba(138, 43, 226, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 15% 75%, rgba(30, 144, 255, 0.1) 0%, transparent 50%),
+    repeating-linear-gradient(
+      rgba(0,0,0,0.03) 0,
+      rgba(0,0,0,0.03) 1px,
+      transparent 1px,
+      transparent 30px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(0,0,0,0.03) 0,
+      rgba(0,0,0,0.03) 1px,
+      transparent 1px,
+      transparent 30px
+    );
+  background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+  background-position: 0 0, 0 0, -1px -1px, -1px -1px;
+}
+
+.dark .background {
+  background-color: #1e1b20;
+  background-image: 
+    radial-gradient(circle at 80% 10%, rgba(138, 43, 226, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 15% 75%, rgba(30, 144, 255, 0.2) 0%, transparent 50%),
+    repeating-linear-gradient(
+      rgba(255,255,255,0.05) 0,
+      rgba(255,255,255,0.05) 1px,
+      transparent 1px,
+      transparent 30px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.05) 0,
+      rgba(255,255,255,0.05) 1px,
+      transparent 1px,
+      transparent 30px
+    );
+}
+
+
+
+
+.background-color {
+  background-color: #f1f1f1;
+  background-image: 
+    radial-gradient(circle at 80% 10%, rgba(138, 43, 226, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 15% 75%, rgba(30, 144, 255, 0.1) 0%, transparent 50%);
+}
+
+.background-lines {
+  background-image: 
+    repeating-linear-gradient(
+      rgba(0,0,0,0.03) 0,
+      rgba(0,0,0,0.03) 1px,
+      transparent 1px,
+      transparent 30px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(0,0,0,0.03) 0,
+      rgba(0,0,0,0.03) 1px,
+      transparent 1px,
+      transparent 30px
+    );
+  background-size: 30px 30px, 30px 30px;
+  background-position: -1px -1px, -1px -1px;
+}
+
+.dark .background-color {
+  background-color: #1e1b20;
+  background-image: 
+    radial-gradient(circle at 80% 10%, rgba(138, 43, 226, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 15% 75%, rgba(30, 144, 255, 0.2) 0%, transparent 50%);
+}
+
+.dark .background-lines {
+  background-image: 
+    repeating-linear-gradient(
+      rgba(255,255,255,0.05) 0,
+      rgba(255,255,255,0.05) 1px,
+      transparent 1px,
+      transparent 30px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.05) 0,
+      rgba(255,255,255,0.05) 1px,
+      transparent 1px,
+      transparent 30px
+    );
+}
+
+
+
+/* Blue variant */
+/* .background {
+  background-color: #1a1b1e; /* Dark base color /
+  background-image: 
+    linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 100%),
+    radial-gradient(at top center, rgba(30,144,255,0.2) 0%, rgba(30,144,255,0) 70%),
+    repeating-linear-gradient(
+      rgba(255,255,255,0.05) 0,
+      rgba(255,255,255,0.05) 1px,
+      transparent 1px,
+      transparent 40px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.05) 0,
+      rgba(255,255,255,0.05) 1px,
+      transparent 1px,
+      transparent 40px
+    );
+  background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+  background-position: 0 0, 0 0, -1px -1px, -1px -1px;
+} */
