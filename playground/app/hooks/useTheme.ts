@@ -2,7 +2,7 @@ import { useFetchers } from '@remix-run/react'
 import { z } from 'zod'
 import { useRouteLoaderData } from '@remix-run/react'
 
-import type { loader as rootLoader } from './root'
+import type { loader as rootLoader } from '../root'
 
 export const THEME_COOKIE_KEY = 'theme'
 export type Theme = 'light' | 'dark' | undefined

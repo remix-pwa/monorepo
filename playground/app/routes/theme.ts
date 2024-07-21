@@ -1,6 +1,6 @@
 import { type ActionFunctionArgs, json, redirect } from '@remix-run/node'
 
-import { ThemeFormSchema } from '../useTheme';
+import { ThemeFormSchema } from '../hooks/useTheme';
 import { setTheme } from '../.server/theme';
 
 export async function action({ request }: ActionFunctionArgs) {

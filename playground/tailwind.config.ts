@@ -17,7 +17,10 @@ export default {
       },
       colors: {
         dark: "#1a1b1e"
-      }
+      },
+      maxWidth: {
+        '8xl': '90rem',
+      },
     },
   },
   plugins: [],

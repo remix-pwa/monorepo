@@ -11,7 +11,7 @@ import { LoaderFunctionArgs } from "@remix-run/node";
 import { ClientHints, getHints } from "./components/ClientHint";
 
 import './tailwind.css';
-import { useTheme } from './useTheme';
+import { useTheme } from './hooks/useTheme';
 import { cn } from './utils';
 import { useEffect } from "react";
 

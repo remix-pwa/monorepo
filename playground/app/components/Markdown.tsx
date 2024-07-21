@@ -1,6 +1,7 @@
-import { ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import slug from 'rehype-slug'
+import toc from '~/remark/toc'
 
 const Markdown = ({ children }: { children: string }) => {
   const formatted = children
@@ -11,9 +12,12 @@ const Markdown = ({ children }: { children: string }) => {
 
   return (
     <ReactMarkdown 
-      remarkPlugins={[remarkGfm]}
+      remarkPlugins={[remarkGfm, toc]}
+      rehypePlugins={[slug]}
       components={{
-        p: ({ node, ...props }) => <p style={{ whiteSpace: 'pre-line' }} {...props} />
+        p: ({ node, ...props }) => <p style={{ whiteSpace: 'pre-line' }} {...props} />,
+        // h1: 'h2',
+        // h2: ({ node, ...props }) => <p style={{ whiteSpace: 'pre-line' }} {...props} />
       }}
     >
       {formatted}
