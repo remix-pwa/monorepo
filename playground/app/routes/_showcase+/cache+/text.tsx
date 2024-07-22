@@ -97,7 +97,7 @@ export default function Component() {
 const CacheFirstDemo = () => {
   return (
     <Iframe>
-      <div className="overflow-auto">
+      <div className="">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laboriosam tenetur vitae delectus vel perferendis. Cum autem, tempora ad temporibus facere eum quis laboriosam debitis quibusdam. Numquam inventore labore iure eveniet?
         Voluptate libero cupiditate aspernatur velit. Cum recusandae harum nostrum magnam praesentium! Natus dolor quia eius iusto accusantium, alias at voluptatum aliquid laudantium, dolore corporis animi quis minus autem, exercitationem ex.
         Accusantium inventore beatae corporis at perferendis aliquid quam quae doloribus pariatur porro laboriosam, distinctio repudiandae voluptates optio maxime aspernatur ratione id veniam? Ipsam provident ipsum et quam, quae dolore qui.

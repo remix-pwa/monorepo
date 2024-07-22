@@ -1,5 +1,6 @@
 import { ReactNode, useState } from "react";
 import { ResizableBox } from "react-resizable";
+import { cn } from "~/utils";
 
 export const Iframe = ({
   children,
@@ -12,8 +13,8 @@ export const Iframe = ({
   const [configWidth, setConfigWidth] = useState(0);
 
   return (
-    <div className="border h-96 max-h-96 flex flex-col border-gray-200 overflow-hidden dark:border-gray-800 dark:shadow-gray-900 rounded-lg shadow-lg bg-white text-gray-900 dark:bg-dark dark:text-white">
-      <div className="px-3 py-2.5 flex items-center text-sm sm:text-base dark:bg-gray-800 bg-gray-100">
+    <div className="border h-96 max-h-96 flex flex-col border-gray-200 dark:border-gray-800 dark:shadow-gray-900 rounded-lg shadow-lg bg-white text-gray-900 dark:bg-dark dark:text-white">
+      <div className={cn("px-3 py-2.5 flex items-center text-sm sm:text-base dark:bg-gray-800 bg-gray-100 rounded-t-lg", !title && 'py-3')}>
         <div className="flex space-x-2">
           <div className="w-3 h-3 rounded-full bg-red-500"></div>
           <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
@@ -31,7 +32,7 @@ export const Iframe = ({
           </button>
         </div>
       </div>
-      <div className="flex flex-col lg:flex-row relative w-full flex-1">
+      <div className="flex flex-col lg:flex-row relative w-full flex-1 overflow-hidden rounded-b-lg">
         {isConfigVisible && <div className="block lg:hidden lg:w-60 lg:bg-gray-50 dark:bg-gray-900">
           <div className="lg:hidden px-4 py-2.5 bg-gray-50 dark:bg-gray-900">
             <h2 className="text-lg font-semibold">Configuration</h2>
@@ -39,7 +40,7 @@ export const Iframe = ({
           </div>
         </div>}
         <div className="flex-grow overflow-auto">{children}</div>
-        <div className={'lg:top-0 lg:right-0 lg:h-full hidden absolute lg:block'}>
+        <div className={'hidden lg:block relative'}>
           <ResizableBox
             width={configWidth}
             height={Infinity}
