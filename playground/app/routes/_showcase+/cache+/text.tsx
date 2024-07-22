@@ -6,14 +6,38 @@ export default function Component() {
   return (
     <Page>
       <PageTitle>
-        Cache + Text
+        {/* Text in a Flash: Content Caching */}
+        Caching Text Content
       </PageTitle>
       <PageContent>
         <Markdown>
+        {/* <!-- Think of caching as your app's personal assistant, always one step ahead, anticipating what you need before you even ask. It's not just about speed (though that's a big part of it); it's about creating smooth, responsive experiences for your users, even when the network decides to take a coffee break. --> */}
           {`
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea, debitis illo minima aspernatur perferendis harum eaque id facere iure cum!
+            Welcome to our first showcase on caching strategies with text! 🎉 Let's dive into the world of caching and see how it can make our web apps faster and more reliable.
 
-            ## Start
+            Caching is like having a secret stash of your favorite snacks. When you need a quick bite, you grab from your stash instead of running to the store. Similarly, caching stores data locally so that we can quickly access it without making a round trip to the server. This is super handy for improving performance and making our apps feel snappy. It's not just about speed (though that's a big part of it); it's about creating smooth, responsive experiences for your users, even when the network decides to take a coffee break.
+
+            // Disclamer: This showcase site isn't a guide but rather a showy way to demonstrate the concept of caching.
+
+            Caching can be summed up as storing data in a temporary location so that it can be retrieved quickly when needed. This can be anything from images and videos to JSON responses and HTML pages. The location could also be in a variety of places, such as the browser, a CDN, or a server.
+
+            This showcase is all Remix PWA though 💫, so we'll be focusing on caching content in the browser with Remix PWA! Remix PWA provides four strategies for caching text content: *Cache First*, *Network First*, *Stale While Revalidate*, and *Cache Only*.
+
+            A strategy is a set of rules that determine how the browser should cache and retrieve content. Each strategy has its own use case, and you can choose the one that best fits your app's needs. You can even use multiple in one app!
+
+            ### Cache First
+
+            Imagine you get your morning coffee from your favorite cafe every day. One day, the barista sees you coming and already has your coffee ready before you even ask. That's cache-first for you! We check our local stash first, and if it's there, we use it.
+
+            In web terms, this strategy checks the cache first and only goes to the network if it can't find what it needs locally. It's perfect for content that doesn't change often, like your app's logo or base CSS.
+
+            // Demo here and explain below
+
+            ### Network First
+
+            ### Cache Only
+            
+            ### Stale While Revalidate
 
             ### Another section
 
