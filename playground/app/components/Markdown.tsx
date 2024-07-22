@@ -1,7 +1,6 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import slug from 'rehype-slug'
-import toc from '~/remark/toc'
+import slug from 'rehype-slug';
 import slugify from '@sindresorhus/slugify'
 import { cn } from '~/utils';
 
