@@ -10,7 +10,7 @@ export const Page = ({ children }: { children: ReactNode }) => {
 
 export const PageTitle = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="text-4xl font-bold mb-6 space-y-3">
+    <div className="text-4xl font-bold mb-7 space-y-3">
       {children}
     </div>
   )

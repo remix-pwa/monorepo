@@ -23,6 +23,8 @@ export default function Component() {
             - List item 2
             - List item 3
 
+            *Italics*, **bold** and ~~strikethrough~~.
+
             Wut?
 
             ### Last section

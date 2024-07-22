@@ -21,10 +21,10 @@ const Markdown = ({ children }: { children: string }) => {
         h2: ({ node, children, ...props }) => {
           const id = slugify(children?.toString() || '');
           return (
-            <h2 id={id} className='text-3xl font-semibold group relative flex items-center'>
+            <h2 id={id} className='text-3xl font-semibold group relative flex items-center' {...props}>
               <a
                 href={`#${id}`}
-                className="absolute -left-6 flex items-center justify-center w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity mt-[.75em]"
+                className="absolute -left-6 flex items-center justify-center w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity mt-[.875em]"
                 aria-hidden="true"
               >
                 <svg
@@ -40,7 +40,7 @@ const Markdown = ({ children }: { children: string }) => {
                   <path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18"></path>
                 </svg>
               </a>
-              <div className='mt-[.75em]'>
+              <div className='mt-[.875em]'>
                 {children}
               </div>
             </h2>
@@ -49,10 +49,10 @@ const Markdown = ({ children }: { children: string }) => {
         h3: ({ node, children, ...props }) => {
           const id = slugify(children?.toString() || '');
           return (
-            <h3 id={id} className='text-2xl font-semibold group relative flex items-center'>
+            <h3 id={id} className='text-2xl font-semibold group relative flex items-center' {...props}>
               <a
                 href={`#${id}`}
-                className="absolute -left-6 flex items-center justify-center w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity mt-[0.5em]"
+                className="absolute -left-6 flex items-center justify-center w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity mt-[0.625em]"
                 aria-hidden="true"
               >
                 <svg
@@ -68,7 +68,7 @@ const Markdown = ({ children }: { children: string }) => {
                   <path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18"></path>
                 </svg>
               </a>
-              <div className='mt-[0.5em]'>
+              <div className='mt-[0.625em]'>
                 {children}
               </div>
             </h3>
