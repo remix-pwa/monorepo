@@ -18,7 +18,7 @@ export const PageTitle = ({ children }: { children: ReactNode }) => {
 
 export const PageContent = ({ children }: { children: ReactNode }) => {
   return (
-    <main className="[&>*+*]:mt-5 grid whitespace-pre-wrap">
+    <main className="[&>*+*]:mt-4 grid whitespace-pre-wrap">
       {children}
     </main>
   )

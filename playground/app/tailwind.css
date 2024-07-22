@@ -21,7 +21,7 @@
 }
 
 .background {
-  background-color: #f1f1f1;
+  background-color: #fff;
   background-image: 
     radial-gradient(circle at 80% 10%, rgba(93, 14, 167, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 15% 75%, rgba(30, 144, 255, 0.1) 0%, transparent 50%),
@@ -64,7 +64,7 @@
 
 
 .background-color {
-  background-color: #f1f1f1;
+  background-color: #fff;
   background-image: 
     radial-gradient(circle at 80% 10%, rgba(138, 43, 226, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 15% 75%, rgba(30, 144, 255, 0.1) 0%, transparent 50%);
@@ -114,10 +114,10 @@
 }
 
 .showcase-background {
-  background-color: #f1f1f1;
-  background-image: 
+  background-color: #fff;
+  /* background-image: 
     linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 100%),
-    radial-gradient(at top right, rgba(30,144,255,0.12) 0%, rgba(30,144,255,0) 70%);
+    radial-gradient(at top right, rgba(30,144,255,0.12) 0%, rgba(30,144,255,0) 70%); */
 }
 
 .dark .showcase-background {
@@ -127,3 +127,22 @@
     radial-gradient(at top right, rgba(30,144,255,0.125) 0%, rgba(30,144,255,0) 60%);
 }
 
+/* Custom scrollbar */
+/* For now */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #2c2c2c;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

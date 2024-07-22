@@ -10,10 +10,12 @@ export function useTableOfContents(tableOfContents: any) {
   const [headings, setHeadings] = useState<{ id: string; top: number }[]>([])
 
   const registerHeading = useCallback((id: string) => {
+    console.log('registerHeading', id, headings)
     setHeadings(headings => [...headings.filter(h => id !== h.id), { id, top: getTop(id) }])
   }, [])
 
   const unregisterHeading = useCallback((id: string) => {
+    console.log('unregisterHeading', id, headings)
     setHeadings(headings => headings.filter(h => id !== h.id))
   }, [])
 
