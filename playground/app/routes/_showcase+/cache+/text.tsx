@@ -1,6 +1,18 @@
-import Heading from "~/components/Heading";
+import { Iframe } from "~/components/Iframe";
 import Markdown from "~/components/Markdown";
 import { Page, PageContent, PageTitle } from "~/components/Page";
+
+// {/* <ResizableBox
+//    width={300}
+//    height={Infinity}
+//    minConstraints={[200, Infinity]}
+//    maxConstraints={[500, Infinity]}
+//    axis="x"
+//    handle={<div className="w-1 bg-gray-300 dark:bg-gray-700 cursor-col-resize" />}
+//    className="flex-shrink-0"
+//  > */}
+//  <div className="p-4">{children}</div>
+//  {/* </ResizableBox> */}
 
 export default function Component() {
   return (
@@ -10,8 +22,11 @@ export default function Component() {
         Caching Text Content
       </PageTitle>
       <PageContent>
+        <Iframe title="Caching Text Content">
+          Play
+        </Iframe>
         <Markdown>
-        {/* <!-- Think of caching as your app's personal assistant, always one step ahead, anticipating what you need before you even ask. It's not just about speed (though that's a big part of it); it's about creating smooth, responsive experiences for your users, even when the network decides to take a coffee break. --> */}
+          {/* <!-- Think of caching as your app's personal assistant, always one step ahead, anticipating what you need before you even ask. It's not just about speed (though that's a big part of it); it's about creating smooth, responsive experiences for your users, even when the network decides to take a coffee break. --> */}
           {`
             Welcome to our first showcase on caching strategies with text! 🎉 Let's dive into the world of caching and see how it can make our web apps faster and more reliable.
 
