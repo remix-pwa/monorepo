@@ -1,17 +1,9 @@
 import { Iframe } from "~/components/Iframe";
 import Markdown from "~/components/Markdown";
 import { Page, PageContent, PageTitle } from "~/components/Page";
-import { CacheFirst, json, WorkerLoaderArgs } from '@remix-pwa/sw';
-import { useLoaderData, useRevalidator, useRouteLoaderData, ClientLoaderFunctionArgs, useFetcher } from "@remix-run/react";
-import { useEffect, useState } from "react";
-
-export const loader = () => {
-  console.log('Wut')
-  return new Response(
-    'Raw text sent by the server 🎉!\nCurrent time is: '
-    + new Date().toLocaleTimeString().replace(/:\d+ /, ' '),
-  )
-}
+import { CacheFirst, WorkerLoaderArgs } from '@remix-pwa/sw';
+import { useCallback, useEffect, useRef, useState } from "react";
+import { createMockFetchWrapper } from "~/utils";
 
 export const workerLoader = async ({ context }: WorkerLoaderArgs) => {
   const { event } = context
@@ -117,33 +109,103 @@ export default function Component() {
 }
 
 const CacheFirstDemo = () => {
-  const fetcher = useFetcher()
-  const loaderData = useRouteLoaderData('routes/_showcase+/cache+/text')
-  const [data, setData] = useState<string | null>(null)
+  const refreshCounter = useRef(0);
+  const [data, setData] = useState({
+    data: undefined as unknown as string, // don't repeat this at home 😂!
+    cacheHit: false,
+  })
   const [config, setConfig] = useState({ isOffline: false, expiration: 60 })
 
+  // This mocks the server response for this demo
+  const SERVER_DATA = 'Raw data from server.\nCurrent time is: ' + new Date().toLocaleTimeString().replace(/:\d+ /, ' ')
+  // Endpoint mock
+  const URL = '/api/text';
+
+  // Simulates fetching data from a server with configurable behavior.
+  //
+  // For some reason, explicitly fetching loader (via the `_data`) param
+  // is forbidden (403). And I did not want to create separate endpoints for
+  // *every* single demo.
+  const fetchFromLoader = async () => {
+    await new Promise(res => setTimeout(res, 750)) /* Server stuffs */
+
+    if (config.isOffline) {
+      throw new Error('Failed to fetch')
+    }
+
+    return new Response(SERVER_DATA)
+  }
+
+  /**
+   * Fetches data using a cache-first strategy with mocked fetch.
+   */
+  const fetchData = useCallback(async () => {
+    const cache = new CacheFirst('cache-text-demo', { maxAgeSeconds: config.expiration });
+    const response = await cache.handleRequest(URL);
+    const text = await response.text();
+    const wasCacheHit = response.headers.get('x-cache-hit') === 'true';
+    setData({
+      data: wasCacheHit
+        ? text
+          .replace('Current', 'Cached')
+          .replace('Raw data from server', 'Cached content')
+        : text,
+      cacheHit: wasCacheHit,
+    });
+  }, []);
+
+  // This useEffect mocks our worker thread :)
   useEffect(() => {
-    // fetch('/cache/text?_data=routes/_showcase+/cache+/text', {
-    //   mode: 'cors',
-    //   headers: {
-    //     'cookie': JSON.stringify({ config }).replace(/"/g, ''),
-    //   }
-    // })
-  }, [])
-  console.log('Loader data:', loaderData)
+    // Create a wrapped version of fetchData that uses mocked fetch for the specified URL.
+    //
+    // Instead of hitting a non-existent endpoint, mock the fetch
+    // on the client.
+    const fetchDataWithMockedFetch = createMockFetchWrapper(URL, fetchFromLoader)(fetchData);
+
+    fetchDataWithMockedFetch();
+  }, [refreshCounter.current, fetchData])
+
+  // Mock a refresh in just this component
+  const refresh = () => {
+    refreshCounter.current += 1;
+    // Force a re-render
+    setData({
+      data: undefined as unknown as string,
+      cacheHit: false,
+    });
+  };
 
   return (
-    <Iframe>
-      <div className="">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laboriosam tenetur vitae delectus vel perferendis. Cum autem, tempora ad temporibus facere eum quis laboriosam debitis quibusdam. Numquam inventore labore iure eveniet?
-        Voluptate libero cupiditate aspernatur velit. Cum recusandae harum nostrum magnam praesentium! Natus dolor quia eius iusto accusantium, alias at voluptatum aliquid laudantium, dolore corporis animi quis minus autem, exercitationem ex.
-        Accusantium inventore beatae corporis at perferendis aliquid quam quae doloribus pariatur porro laboriosam, distinctio repudiandae voluptates optio maxime aspernatur ratione id veniam? Ipsam provident ipsum et quam, quae dolore qui.
-        Esse, neque magni reprehenderit sequi modi maiores optio molestias atque ab, illo quasi eum voluptates nulla vero suscipit voluptas? Magni dicta id soluta porro mollitia laboriosam at hic, laudantium animi.
-        At cumque porro possimus assumenda, ut nihil dolores voluptates, est a eveniet tenetur sint quam numquam voluptatem quo iure fugiat aspernatur perferendis eum cupiditate ullam! Necessitatibus minima amet enim aspernatur?
-        Corporis facilis, delectus quae labore, doloribus nihil maxime dicta, incidunt quibusdam corrupti ad saepe? Expedita officia culpa eligendi soluta ipsa mollitia assumenda numquam. Inventore adipisci dignissimos, sed ullam sit deserunt?
-        Tempora molestiae voluptatem odio ab vel quis quam, quaerat officiis? Eius quis, placeat ad molestiae ex debitis itaque facere quia autem ipsa harum recusandae aliquid assumenda odit quos fuga excepturi.
-        Ab, voluptatum? Corrupti temporibus, repellendus magni ratione voluptas omnis debitis quasi eius numquam fuga. Dolorem dicta minima eius temporibus, quaerat magni maiores ex totam eligendi nisi reprehenderit fugiat repellendus sit.
+    <Iframe handleRefresh={refresh}>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4" key={refreshCounter.current}>
+      <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Cache First Strategy</h2>
+      <p className="text-gray-600 dark:text-gray-300 mb-6">
+        This strategy checks the cache first and only goes to the network if it can't find what it needs locally.
+      </p>
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <button
+          onClick={() => setConfig(c => ({ ...c, isOffline: !c.isOffline }))}
+          className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
+        >
+          {config.isOffline ? 'Go Online' : 'Go Offline'}
+        </button>
+        <button
+          onClick={() => setConfig(c => ({ ...c, expiration: c.expiration === 60 ? 120 : 60 }))}
+          className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
+        >
+          Set Expiration: {config.expiration === 60 ? '120s' : '60s'}
+        </button>
       </div>
+      <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 mb-6">
+        <pre className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
+          <code>{data.data}</code>
+        </pre>
+      </div>
+      <div className="text-sm text-gray-600 dark:text-gray-400">
+        <p className="mb-2">Cache Hit: <span className="font-semibold">{data.cacheHit ? 'Yes' : 'No'}</span></p>
+        <p>Network Status: <span className="font-semibold">{config.isOffline ? 'Offline' : 'Online'}</span></p>
+      </div>
+    </div>
     </Iframe>
   )
 }
