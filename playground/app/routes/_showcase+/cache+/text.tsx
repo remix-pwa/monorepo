@@ -1,6 +1,28 @@
 import { Iframe } from "~/components/Iframe";
 import Markdown from "~/components/Markdown";
 import { Page, PageContent, PageTitle } from "~/components/Page";
+import { CacheFirst, json, WorkerLoaderArgs } from '@remix-pwa/sw';
+import { useLoaderData, useRevalidator, useRouteLoaderData, ClientLoaderFunctionArgs, useFetcher } from "@remix-run/react";
+import { useEffect, useState } from "react";
+
+export const loader = () => {
+  console.log('Wut')
+  return new Response(
+    'Raw text sent by the server 🎉!\nCurrent time is: '
+    + new Date().toLocaleTimeString().replace(/:\d+ /, ' '),
+  )
+}
+
+export const workerLoader = async ({ context }: WorkerLoaderArgs) => {
+  const { event } = context
+  const request = event.request;
+
+  const strategy = new URL(request.url).searchParams.get('strategy')
+  console.log('Strategy:', strategy)
+  const cookie = JSON.parse(request.headers.get('cookie') || '{}')
+  console.log('Cookie:', cookie)
+  return null
+}
 
 export default function Component() {
   return (
@@ -95,6 +117,21 @@ export default function Component() {
 }
 
 const CacheFirstDemo = () => {
+  const fetcher = useFetcher()
+  const loaderData = useRouteLoaderData('routes/_showcase+/cache+/text')
+  const [data, setData] = useState<string | null>(null)
+  const [config, setConfig] = useState({ isOffline: false, expiration: 60 })
+
+  useEffect(() => {
+    // fetch('/cache/text?_data=routes/_showcase+/cache+/text', {
+    //   mode: 'cors',
+    //   headers: {
+    //     'cookie': JSON.stringify({ config }).replace(/"/g, ''),
+    //   }
+    // })
+  }, [])
+  console.log('Loader data:', loaderData)
+
   return (
     <Iframe>
       <div className="">

@@ -14,6 +14,7 @@ import './tailwind.css';
 import { useTheme } from './hooks/useTheme';
 import { cn } from './utils';
 import { useEffect } from "react";
+import { useSWEffect } from "@remix-pwa/sw";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   return json({
@@ -60,6 +61,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  useSWEffect()
   const theme = useTheme()
 
   useEffect(() => {

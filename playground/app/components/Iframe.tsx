@@ -1,13 +1,15 @@
-import { ReactNode, useState } from "react";
+import { Fragment, ReactNode, useState } from "react";
 import { ResizableBox } from "react-resizable";
 import { cn } from "~/utils";
 
 export const Iframe = ({
   children,
-  title
+  title,
+  config = null,
 }: {
   children: ReactNode;
   title?: string;
+  config?: ReactNode | null;
 }) => {
   const [isConfigVisible, setIsConfigVisible] = useState(false);
   const [configWidth, setConfigWidth] = useState(0);
@@ -23,14 +25,14 @@ export const Iframe = ({
         {title && <div className="hidden md:block mx-auto px-4 py-1 bg-white bg-opacity-80 dark:bg-opacity-10 rounded-md text-gray-900/50 dark:text-white/75">
           {title}
         </div>}
-        <div className="ml-auto space-x-3 flex items-center lg:hidden">
+        {config && <div className="ml-auto space-x-3 flex items-center lg:hidden">
           <button
             onClick={() => setIsConfigVisible(!isConfigVisible)}
             className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
           >
             Config Icon
           </button>
-        </div>
+        </div>}
       </div>
       <div className="flex flex-col lg:flex-row relative w-full flex-1 overflow-hidden rounded-b-lg">
         {isConfigVisible && <div className="block lg:hidden lg:w-60 lg:bg-gray-50 dark:bg-gray-900">
@@ -40,7 +42,7 @@ export const Iframe = ({
           </div>
         </div>}
         <div className="flex-grow overflow-auto">{children}</div>
-        <div className={'hidden lg:block relative'}>
+        {config && <div className={'hidden lg:block relative'}>
           <ResizableBox
             width={configWidth}
             height={Infinity}
@@ -57,13 +59,16 @@ export const Iframe = ({
             className="h-full min-w-[14px]"
           >
             {configWidth > 0 && (
-              <div className="px-4 h-full bg-gray-50 dark:bg-gray-900">
-                <h2 className="text-lg font-semibold">Configuration</h2>
-                {/* Add your config options here */}
-              </div>
+              // <div className="px-4 h-full bg-gray-50 dark:bg-gray-900">
+              //   <h2 className="text-lg font-semibold">Configuration</h2>
+              //   {/* Add your config options here */}
+              // </div>
+              <Fragment>
+                {config}
+              </Fragment>
             )}
           </ResizableBox>
-        </div>
+        </div>}
       </div>
     </div>
   );
