@@ -328,7 +328,7 @@ const NetworkFirstDemo = () => {
   const [data, setData] = useState<string | undefined>(undefined)
   const [config, setConfig] = useState({
     isOffline: false,
-    networkTimeout: 5,
+    networkTimeout: 2,
     throttleNetwork: '3g' as '2g' | '3g' | '4g'
   })
 
@@ -345,7 +345,7 @@ const NetworkFirstDemo = () => {
   }, []);
 
   const fetchLoader = async () => {
-    const timeout = config.throttleNetwork === '2g' ? 6_000 : config.throttleNetwork === '3g' ? 1_500 : 700;
+    const timeout = config.throttleNetwork === '2g' ? 3_100 : config.throttleNetwork === '3g' ? 1_900 : 700;
 
     if (config.isOffline) {
       throw new Error('Failed to fetch')
@@ -391,10 +391,10 @@ const NetworkFirstDemo = () => {
             Clear Cache
           </button>
           <button
-            onClick={() => setConfig(c => ({ ...c, networkTimeout: c.networkTimeout === 2 ? 5 : c.networkTimeout === 5 ? 10 : 5 }))}
+            onClick={() => setConfig(c => ({ ...c, networkTimeout: c.networkTimeout === 2 ? 3 : 2 }))}
             className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
           >
-            Set Network Timeout: {config.networkTimeout === 2 ? '5s' : config.networkTimeout === 5 ? '10s' : '5s'}
+            Set Network Timeout: {config.networkTimeout === 2 ? '3s' : '2s'}
           </button>
           <button
             onClick={() => setConfig(c => ({ ...c, throttleNetwork: c.throttleNetwork === '2g' ? '3g' : c.throttleNetwork === '3g' ? '4g' : '2g' }))}

@@ -47,13 +47,9 @@ export function createMockFetchWrapper(requestUrl: string, mockedLoader: () => P
           const pathname = new URL(request.url).pathname;
 
           if (window.__mockFetchHandlers.has(pathname)) {
-            console.log(`Mocking fetch for ${pathname}`);
             return window.__mockFetchHandlers.get(pathname)!();
           }
 
-          if (pathname.startsWith('/api')) {
-            console.log(`Not mocking fetch for ${pathname}`);
-          }
           return originalFetch(input, init);
         };
       }
