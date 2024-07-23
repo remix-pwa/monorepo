@@ -4,6 +4,7 @@ import { installGlobals } from '@remix-run/node';
 import { flatRoutes } from 'remix-flat-routes';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { iconsSpritesheet } from 'vite-plugin-icons-spritesheet';
 
 installGlobals();
 
@@ -20,6 +21,13 @@ export default defineConfig({
     tsconfigPaths(),
     remixPWA(<Partial<PWAViteOptions>>{
       // workerEntryPoint: './runtime.js'
+    }),
+    iconsSpritesheet({
+      withTypes: true,
+      inputDir: "icons",
+      outputDir: "public/icons",
+      typesOutputFile: "app/icons.ts",
+      iconNameTransformer: (iconName) => iconName,
     }),
   ],
   server: {
