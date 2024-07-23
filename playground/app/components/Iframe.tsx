@@ -1,38 +1,45 @@
 import { Fragment, ReactNode, useState } from "react";
 import { ResizableBox } from "react-resizable";
 import { cn } from "~/utils";
+import { Icon } from "./Icon";
 
 export const Iframe = ({
   children,
   title,
   config = null,
+  handleRefresh = null,
+  // codeSandboxUrl = null,
 }: {
   children: ReactNode;
   title?: string;
   config?: ReactNode | null;
+  handleRefresh?: (() => void) | null;
+  codeSandboxUrl?: string | null;
 }) => {
   const [isConfigVisible, setIsConfigVisible] = useState(false);
   const [configWidth, setConfigWidth] = useState(0);
 
   return (
-    <div className="border h-96 max-h-96 flex flex-col border-gray-200 dark:border-gray-800 dark:shadow-gray-900 rounded-lg shadow-lg bg-white text-gray-900 dark:bg-dark dark:text-white">
-      <div className={cn("px-3 py-2.5 flex items-center text-sm sm:text-base dark:bg-gray-800 bg-gray-100 rounded-t-lg", !title && 'py-3')}>
+    <div className="border h-[400px] max-h-[400px] flex flex-col border-gray-200 dark:border-gray-800 dark:shadow-gray-900 rounded-lg shadow-lg bg-white text-dark dark:bg-dark dark:text-white">
+      <div className={cn("px-3 py-2.5 flex items-center justify-between text-sm sm:text-base dark:bg-gray-800 bg-gray-100 rounded-t-lg", !title && 'py-3')}>
         <div className="flex space-x-2">
           <div className="w-3 h-3 rounded-full bg-red-500"></div>
           <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
           <div className="w-3 h-3 rounded-full bg-green-500"></div>
         </div>
-        {title && <div className="hidden md:block mx-auto px-4 py-1 bg-white bg-opacity-80 dark:bg-opacity-10 rounded-md text-gray-900/50 dark:text-white/75">
+        {title && <div className="hidden min-w-64 text-center relative md:block mx-auto px-12 py-1 bg-white cursor-default bg-opacity-80 dark:bg-opacity-10 rounded-md text-dark/50 dark:text-white/75">
+          <Icon name="search" className="absolute left-2 size-4 top-1/2 -translate-y-1/2" />
           {title}
         </div>}
-        {config && <div className="ml-auto space-x-3 flex items-center lg:hidden">
-          <button
+        <div className="space-x-3 flex items-center text-dark dark:text-white">
+          {handleRefresh && <Icon onClick={handleRefresh} name="refresh" className="size-4 md:size-5 lg:size-6 cursor-pointer" />}
+          {config && <button
             onClick={() => setIsConfigVisible(!isConfigVisible)}
             className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
           >
             Config Icon
-          </button>
-        </div>}
+          </button>}
+        </div>
       </div>
       <div className="flex flex-col lg:flex-row relative w-full flex-1 overflow-hidden rounded-b-lg">
         {isConfigVisible && <div className="block lg:hidden lg:w-60 lg:bg-gray-50 dark:bg-gray-900">

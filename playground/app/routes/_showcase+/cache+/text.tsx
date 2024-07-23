@@ -1,8 +1,8 @@
 import { Iframe } from "~/components/Iframe";
 import Markdown from "~/components/Markdown";
 import { Page, PageContent, PageTitle } from "~/components/Page";
-import { CacheFirst, CacheOnly } from '@remix-pwa/sw';
-import { useCallback, useEffect, useRef, useState } from "react";
+import { CacheFirst, CacheOnly, NetworkFirst, StaleWhileRevalidate } from '@remix-pwa/sw';
+import { useCallback, useEffect, useState } from "react";
 import { createMockFetchWrapper } from "~/utils";
 import { useRefresh } from '../../../hooks/useRefresh';
 
@@ -55,10 +55,14 @@ export default function Component() {
             This strategy tries to fetch fresh data from the network first, falling back to the cache if the network is unavailable. It's ideal for content that updates frequently but where having slightly outdated information is better than having none at all.
           `}
         </Markdown>
-        <Iframe title="Caching Text Content">
-          Network first demo with more markdown explanation below
-          lorem*150
-        </Iframe>
+        <NetworkFirstDemo />
+        <Markdown>
+          {`
+            With network first strategy, we always try to get the freshest content from the network. If the network is down, we fall back to the cache.
+
+            This is one of the most common strategies for dynamic content like news articles, social media feeds, or weather updates. It ensures that users always get the latest information, with something to show even when the network has gone for a snooze. 🛰️
+          `}
+        </Markdown>
         <Markdown>
           {`
             ### Cache Only
@@ -70,9 +74,14 @@ export default function Component() {
             In our world, this means the app only looks at what's stored locally, never reaching out to the network. It's great for offline-first apps or when you want to guarantee lightning-fast responses. Just remember to actually store something in the cache first 💥!
             `}
         </Markdown>
-        <Iframe title="Caching Text Content">
-          Cache only demo with more markdown explanation below
-        </Iframe>
+        <CacheOnlyDemo />
+        <Markdown>
+          {`
+            In this strategy, we relied solely on what's local. If the content isn't in the cache, boom! We get nothing, it simply won't be available. We also have the option to expire entries with this strategy, handy for ensuring periodic updates once in a while (like 365 days)
+
+            This is a strategy that's great for offline-first apps or dormant (that should live forever) assets like favicon, other than that, tread carefully with this one 🤫.
+          `}
+        </Markdown>
         <Markdown>
           {`
             ### Stale While Revalidate
@@ -80,12 +89,9 @@ export default function Component() {
             Stale-while-revalidate is like eating leftovers while you wait for your delivery to arrive. You get quick access to something that might be a bit old, but you're also getting the freshest content in the background.
 
             In caching terms, this serves cached content immediately while fetching updates in the background. It's perfect for balancing speed and freshness. Your users get a quick response while the app ensures the content is up to date.
-
           `}
         </Markdown>
-        <Iframe title="Caching Text Content">
-          Stale while revalidate demo with more markdown explanation below
-        </Iframe>
+        <StaleWhileRevalidateDemo />
         <Markdown>
           {`
             ### Conclusion
@@ -99,8 +105,6 @@ export default function Component() {
             Next up, we'll see how we can apply similar principles to images. Ever wondered how some sites load images so fast you'd swear they were psychic? That's our next stop on this caching journey. Stay tuned, and keep your snack stash ready! 🥳
           `}
         </Markdown>
-        {/* Custom components */}
-        {/* More markdown */}
       </PageContent>
       {/* Page Footer */}
     </Page>
@@ -113,10 +117,10 @@ const CacheFirstDemo = () => {
     data: undefined as unknown as string, // don't repeat this at home 😂!
     cacheHit: false,
   })
-  const [config, setConfig] = useState({ isOffline: false, expiration: 10 })
+  const [config, setConfig] = useState({ isOffline: false, expiration: 20 })
 
   // This mocks the server response for this demo
-  const SERVER_DATA = 'Raw data from server.\nCurrent time is: ' + new Date().toLocaleTimeString().replace(/:\d+ /, ' ')
+  const SERVER_DATA = 'Raw data from server.\nCurrent time is: ' + new Date().toLocaleTimeString()
   // Endpoint mock
   const URL = '/api/cache-first';
 
@@ -145,10 +149,10 @@ const CacheFirstDemo = () => {
     const wasCacheHit = response.headers.get('x-cache-hit') === 'true';
     setData({
       data: wasCacheHit
-        ? text
+        ? text + '\nActual time is: ' + new Date().toLocaleTimeString()
           .replace('Current', 'Cached')
           .replace('Raw data from server', 'Cached content')
-        : text,
+        : text + '\nActual time is: ' + new Date().toLocaleTimeString(),
       cacheHit: wasCacheHit,
     });
   }, []);
@@ -168,16 +172,6 @@ const CacheFirstDemo = () => {
     caches.open('cache-text-demo').then(cache => cache.delete(URL));
   }
 
-  // Mock a refresh in just this component
-  // const refresh = () => {
-  //   refreshCounter.current += 1;
-  //   // Force a re-render
-  //   setData({
-  //     data: undefined as unknown as string,
-  //     cacheHit: false,
-  //   });
-  // };
-
   return (
     <Iframe
       handleRefresh={() =>
@@ -188,7 +182,7 @@ const CacheFirstDemo = () => {
       }
       title="Cache First"
     >
-      <div className="px-4 py-2.5 overflow-hidden" key={refreshCounter}>
+      <div className="px-4 py-2.5" key={refreshCounter}>
         <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Cache First Strategy</h2>
         <p className="text-gray-600 dark:text-gray-300 mb-6">
           This strategy checks the cache first and only goes to the network if it can't find what it needs locally.
@@ -207,15 +201,17 @@ const CacheFirstDemo = () => {
             Clear Cache
           </button>
           <button
-            onClick={() => setConfig(c => ({ ...c, expiration: c.expiration === 10 ? 20 : c.expiration === 20 ? 30 : 10 }))}
+            onClick={() => setConfig(c => ({ ...c, expiration: c.expiration === 20 ? 30 : c.expiration === 30 ? 60 : 20 }))}
             className="bg-green-500 hover:bg-green-600 text-white font-semibold py-1.5 px-4 rounded-lg transition duration-300 ease-in-out"
           >
-            Set Expiration: {config.expiration === 10 ? '20s' : config.expiration === 20 ? '30s' : '10s'}
+            Set Expiration: {config.expiration === 20 ? '30s' : config.expiration === 30 ? '60s' : '20s'}
           </button>
         </div>
         <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-3 mb-6">
           <pre className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
-            <code>{data.data}</code>
+            <code>
+              {data.data}
+            </code>
           </pre>
         </div>
         <div className="text-sm text-gray-600 dark:text-gray-400">
@@ -229,10 +225,268 @@ const CacheFirstDemo = () => {
 }
 
 const CacheOnlyDemo = () => {
+  const { refreshCounter, refresh } = useRefresh()
+  const [data, setData] = useState<string | undefined>(undefined)
+  const [config, setConfig] = useState({ isOffline: false, expiration: 10 })
+  const [dataToCache, setDataToCache] = useState('')
+
+  const URL = '/api/cache-only';
+
+  const fetchData = useCallback(async () => {
+    const cache = new CacheOnly('cache-text-demo', { maxAgeSeconds: config.expiration });
+
+    try {
+      const response = await cache.handleRequest(URL);
+      const text = await response.text();
+      setData(text);
+    } catch (e) {
+      setData('Error! No response found in cache.\nMake sure to always have a fallback, else things get ugly pretty fast 💥');
+    }
+  }, []);
+
+  // This useEffect mocks our worker thread :)
+  useEffect(() => {
+    // We use an empty loader here cause cache only never reaches
+    // the server.
+    const fetchDataWithMockedFetch = createMockFetchWrapper(URL, async () => new Response())(fetchData);
+    fetchDataWithMockedFetch();
+  }, [refreshCounter, fetchData])
+
+  const clearCache = () => {
+    caches.open('cache-text-demo').then(cache => cache.delete(URL));
+  }
+
+  const putInCache = () => {
+    const cache = new CacheOnly('cache-text-demo', { maxAgeSeconds: config.expiration });
+    dataToCache.length && cache.addToCache(new Request(URL), new Response(dataToCache));
+  }
 
   return (
-    <Iframe title="Cache Only">
-      Cache only demo with more markdown explanation below
+    <Iframe
+      title="Cache Only"
+      handleRefresh={() =>
+        refresh(() => setData(undefined))
+      }
+    >
+      <div className="px-4 py-2.5 overflow-hidden" key={refreshCounter}>
+        <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Cache Only Strategy</h2>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">
+          This strategy checks the cache first and only goes to the network if it can't find what it needs locally.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <button
+            onClick={() => setConfig(c => ({ ...c, isOffline: !c.isOffline }))}
+            className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
+          >
+            {config.isOffline ? 'Come Online' : 'Go Offline'}
+          </button>
+          <button
+            onClick={clearCache}
+            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
+          >
+            Clear Cache
+          </button>
+          <button
+            onClick={() => setConfig(c => ({ ...c, expiration: c.expiration === 10 ? 30 : c.expiration === 30 ? 60 : 10 }))}
+            className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
+          >
+            Set Expiration: {config.expiration === 10 ? '30s' : config.expiration === 30 ? '60s' : '10s'}
+          </button>
+        </div>
+        <div className="flex gap-3 mb-6">
+          {/* Input for putting in cache */}
+          <input
+            type="text"
+            value={dataToCache}
+            onChange={e => setDataToCache(e.target.value)}
+            placeholder="Enter data to cache"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent text-dark dark:text-white"
+          />
+          <button
+            onClick={putInCache}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 rounded-lg transition duration-300 ease-in-out"
+          >
+            Cache
+          </button>
+        </div>
+        <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-3 mb-6">
+          <pre className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
+            <code>{data}</code>
+          </pre>
+        </div>
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="mb-2">Network Status: <span className="font-semibold">{config.isOffline ? 'Offline' : 'Online'}</span></p>
+          <p>Current Cache Expiration: <span className="font-semibold">{config.expiration}s</span></p>
+        </div>
+      </div>
+    </Iframe>
+  )
+}
+
+const NetworkFirstDemo = () => {
+  const { refreshCounter, refresh } = useRefresh()
+  const [data, setData] = useState<string | undefined>(undefined)
+  const [config, setConfig] = useState({
+    isOffline: false,
+    networkTimeout: 5,
+    throttleNetwork: '3g' as '2g' | '3g' | '4g'
+  })
+
+  const SERVER_DATA = 'Raw data from server.\nCurrent time is: ' + new Date().toLocaleTimeString()
+  const URL = '/api/network-first';
+
+  const fetchData = useCallback(async () => {
+    const cache = new NetworkFirst('cache-text-demo', {
+      networkTimeoutInSeconds: config.networkTimeout
+    });
+    const response = await cache.handleRequest(URL);
+    const text = await response.text();
+    setData(text + '\nActual time is: ' + new Date().toLocaleTimeString());
+  }, []);
+
+  const fetchLoader = async () => {
+    const timeout = config.throttleNetwork === '2g' ? 6_000 : config.throttleNetwork === '3g' ? 1_500 : 700;
+
+    if (config.isOffline) {
+      throw new Error('Failed to fetch')
+    }
+
+    await new Promise(res => setTimeout(res, timeout)) /* Server stuffs */
+
+    return new Response(SERVER_DATA)
+  }
+
+  useEffect(() => {
+    const fetchDataWithMockedFetch = createMockFetchWrapper(URL, fetchLoader)(fetchData);
+    fetchDataWithMockedFetch();
+  }, [refreshCounter, fetchData])
+
+  const clearCache = () => {
+    caches.open('cache-text-demo').then(cache => cache.delete(URL));
+  }
+
+  return (
+    <Iframe
+      title="Network First"
+      handleRefresh={() =>
+        refresh(() => setData(undefined))
+      }
+    >
+      <div className="px-4 py-2.5 overflow-hidden" key={refreshCounter}>
+        <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Network First Strategy</h2>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">
+          This strategy tries to fetch fresh data from the network first, falling back to the cache if the network is unavailable.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <button
+            onClick={() => setConfig(c => ({ ...c, isOffline: !c.isOffline }))}
+            className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
+          >
+            {config.isOffline ? 'Come Online' : 'Go Offline'}
+          </button>
+          <button
+            onClick={clearCache}
+            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
+          >
+            Clear Cache
+          </button>
+          <button
+            onClick={() => setConfig(c => ({ ...c, networkTimeout: c.networkTimeout === 2 ? 5 : c.networkTimeout === 5 ? 10 : 5 }))}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
+          >
+            Set Network Timeout: {config.networkTimeout === 2 ? '5s' : config.networkTimeout === 5 ? '10s' : '5s'}
+          </button>
+          <button
+            onClick={() => setConfig(c => ({ ...c, throttleNetwork: c.throttleNetwork === '2g' ? '3g' : c.throttleNetwork === '3g' ? '4g' : '2g' }))}
+            className="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
+          >
+            Throttle Network: {config.throttleNetwork === '2g' ? '3g' : config.throttleNetwork === '3g' ? '4g' : '2g'}
+          </button>
+        </div>
+        <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-3 mb-6">
+          <pre className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
+            <code>{data}</code>
+          </pre>
+        </div>
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="mb-2">Network Status: <span className="font-semibold">{config.isOffline ? 'Offline' : 'Online'}</span></p>
+          <p className="mb-2">Current Network Timeout: <span className="font-semibold">{config.networkTimeout}s</span></p>
+          <p>Current Network Speed: <span className="font-semibold">{config.throttleNetwork}</span></p>
+        </div>
+      </div>
+    </Iframe>
+  )
+}
+
+const StaleWhileRevalidateDemo = () => {
+  const { refreshCounter, refresh } = useRefresh()
+  const [data, setData] = useState<string | undefined>(undefined)
+  const [config, setConfig] = useState({ isOffline: false })
+
+  const SERVER_DATA = 'Raw data from server.\nCurrent time is: ' + new Date().toLocaleTimeString()
+  const URL = '/api/stale-while-revalidate';
+
+  const fetchData = useCallback(async () => {
+    const cache = new StaleWhileRevalidate('cache-text-demo');
+    const response = await cache.handleRequest(URL);
+    const text = await response.text();
+    setData(text + '\nActual time is: ' + new Date().toLocaleTimeString());
+  }, []);
+
+  const fetchLoader = async () => {
+    if (config.isOffline) {
+      throw new Error('Failed to fetch')
+    }
+
+    await new Promise(res => setTimeout(res, 800)) /* Server stuffs */
+
+    return new Response(SERVER_DATA, { status: 200 })
+  }
+
+  useEffect(() => {
+    const fetchDataWithMockedFetch = createMockFetchWrapper(URL, fetchLoader)(fetchData);
+    fetchDataWithMockedFetch();
+  }, [refreshCounter, fetchData])
+
+  const clearCache = () => {
+    caches.open('cache-text-demo').then(cache => cache.delete(URL));
+  }
+
+  return (
+    <Iframe
+      title="Stale While Revalidate"
+      handleRefresh={() =>
+        refresh(() => setData(undefined))
+      }
+    >
+      <div className="px-4 py-2.5 overflow-hidden" key={refreshCounter}>
+        <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Stale While Revalidate Strategy</h2>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">
+          This serves cached content immediately while fetching updates in the background. It's perfect for balancing speed and freshness.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <button
+            onClick={() => setConfig(c => ({ ...c, isOffline: !c.isOffline }))}
+            className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
+          >
+            {config.isOffline ? 'Come Online' : 'Go Offline'}
+          </button>
+          <button
+            onClick={clearCache}
+            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
+          >
+            Clear Cache
+          </button>
+        </div>
+        <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-3 mb-6">
+          <pre className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
+            <code>{data}</code>
+          </pre>
+        </div>
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="mb-0">Network Status: <span className="font-semibold">{config.isOffline ? 'Offline' : 'Online'}</span></p>
+        </div>
+      </div>
     </Iframe>
   )
 }
