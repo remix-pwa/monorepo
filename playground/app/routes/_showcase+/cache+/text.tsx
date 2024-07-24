@@ -1,6 +1,6 @@
 import { Iframe } from "~/components/Iframe";
 import Markdown from "~/components/Markdown";
-import { Page, PageContent, PageTitle } from "~/components/Page";
+import { Page, PageContent, PageFooter, PageTitle } from "~/components/Page";
 import { CacheFirst, CacheOnly, NetworkFirst, StaleWhileRevalidate } from '@remix-pwa/sw';
 import { useCallback, useEffect, useState } from "react";
 import { createMockFetchWrapper } from "~/utils";
@@ -106,7 +106,7 @@ export default function Component() {
           `}
         </Markdown>
       </PageContent>
-      {/* Page Footer */}
+      <PageFooter />
     </Page>
   )
 }
