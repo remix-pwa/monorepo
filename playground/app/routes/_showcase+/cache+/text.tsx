@@ -4,7 +4,30 @@ import { Page, PageContent, PageFooter, PageTitle } from "~/components/Page";
 import { CacheFirst, CacheOnly, NetworkFirst, StaleWhileRevalidate } from '@remix-pwa/sw';
 import { useCallback, useEffect, useState } from "react";
 import { createMockFetchWrapper } from "~/utils";
-import { useRefresh } from '../../../hooks/useRefresh';
+import { useRefresh } from '~/hooks/useRefresh';
+import { Codeblock } from "~/components/Codeblock";
+import { TableOfContents } from '~/types';
+
+export const handle = {
+  tableOfContents: [
+    {
+      title: 'Caching First',
+      id: 'cache-first',
+    },
+    {
+      title: 'Network First',
+      id: 'network-first',
+    },
+    {
+      title: 'Cache Only',
+      id: 'cache-only',
+    },
+    {
+      title: 'Stale While Revalidate',
+      id: 'stale-while-revalidate',
+    }
+  ]
+} as { tableOfContents: TableOfContents };
 
 export default function Component() {
   return (
@@ -14,9 +37,21 @@ export default function Component() {
         Caching Text Content
       </PageTitle>
       <PageContent>
+        <Codeblock>
+          {`
+        \`\`\`js
+        const cache = new CacheFirst(\'cache-text-demo\', {maxAgeSeconds: 20 });
+        const response = await cache.handleRequest(\'/api/cache-first\');
+        const text = await response.text();
+        setData(text);
+        \`\`\`
+        `}
+        </Codeblock>
         <Markdown>
           {/* <!-- Think of caching as your app's personal assistant, always one step ahead, anticipating what you need before you even ask. It's not just about speed (though that's a big part of it); it's about creating smooth, responsive experiences for your users, even when the network decides to take a coffee break. --> */}
           {`
+            // Start out with smthg like: Aren't you just curious about - smthg, smthg, remix, smthg, pwa -? blah, blah
+
             Welcome to our first showcase on caching strategies with text! 🎉 Let's dive into the world of caching and see how it can make our web apps faster and more reliable.
 
             Caching is like having a secret stash of your favorite snacks. When you need a quick bite, you grab from your stash instead of running to the store. Similarly, caching stores data locally so that we can quickly access it without making a round trip to the server. This is super handy for improving performance and making our apps feel snappy. It's not just about speed (though that's a big part of it); it's about creating smooth, responsive experiences for your users, even when the network decides to take a coffee break.

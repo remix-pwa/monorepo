@@ -34,17 +34,7 @@ export default function Component() {
       <Header />
       <MainWrapper
         sidebar={<Sidebar />}
-        toc={
-          <ToC
-            headings={[
-              { id: '1', title: 'Heading 1' },
-              { id: '2', title: 'Heading 2' },
-              { id: '3', title: 'Heading 3' },
-              { id: '4', title: 'Heading 4' },
-              { id: '5', title: 'Heading 5' },
-            ]}
-          />
-        }
+        toc={<ToC />}
       >
         <Outlet />
       </MainWrapper>
