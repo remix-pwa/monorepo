@@ -3,7 +3,7 @@ import { Icon } from "./Icon";
 
 export const Page = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="flex-1 relative py-8 lg:px-12 break-anywhere">
+    <div className="flex-1 relative py-8 lg:px-12 break-anywhere" id="page-document">
       {children}
     </div>
   )

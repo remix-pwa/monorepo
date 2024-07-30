@@ -3,6 +3,7 @@ import remarkGfm from 'remark-gfm';
 import slug from 'rehype-slug';
 import slugify from '@sindresorhus/slugify'
 import { cn } from '~/utils';
+import { MouseEvent, useCallback, useEffect } from 'react';
 
 const Markdown = ({ children }: { children: string }) => {
   const formatted = children
@@ -10,6 +11,22 @@ const Markdown = ({ children }: { children: string }) => {
     .map(line => line.trim())
     .join('\n')
     .trim();
+
+    const scrollIntoView = useCallback((e: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>, id: string) => {
+      if (e.currentTarget.parentNode?.nodeName.toUpperCase().includes('H')) {
+        e.preventDefault()
+  
+        const scrollToTargetBounds = e.currentTarget.getBoundingClientRect()
+        const offset = scrollToTargetBounds.top + window.scrollY - 64
+  
+        window.scrollTo({
+          top: offset,
+          behavior: 'smooth',
+        })
+  
+        window.history.pushState(null, '', `${window.location.pathname}#${id}`)
+      }
+    }, [])
 
   return (
     <ReactMarkdown
@@ -19,9 +36,24 @@ const Markdown = ({ children }: { children: string }) => {
         p: ({ node, ...props }) => <p style={{ whiteSpace: 'pre-line' }} {...props} />,
         h2: ({ node, children, ...props }) => {
           const id = slugify(children?.toString() || '');
+
+          useEffect(() => {
+            const x = setTimeout(() => {
+              // @ts-ignore
+              if (typeof window !== 'undefined' && window.registerHeading) window.registerHeading(id);
+            }, 200)
+
+            return () => {
+              clearTimeout(x);
+              // @ts-ignore
+              if (typeof window !== 'undefined' && window.unregisterHeading) window.unregisterHeading(id);
+            }
+          }, []);
+
           return (
             <h2 id={id} className='text-3xl font-semibold group relative flex items-center' {...props}>
               <a
+                onClick={(e) => scrollIntoView(e, id)}
                 href={`#${id}`}
                 className="absolute -left-6 flex items-center justify-center w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity mt-[.875em]"
                 aria-hidden="true"
@@ -47,9 +79,24 @@ const Markdown = ({ children }: { children: string }) => {
         },
         h3: ({ node, children, ...props }) => {
           const id = slugify(children?.toString() || '');
+
+          useEffect(() => {
+            const x = setTimeout(() => {
+              // @ts-ignore
+              if (typeof window !== 'undefined' && window.registerHeading) window.registerHeading(id);
+            }, 200)
+
+            return () => {
+              clearTimeout(x);
+              // @ts-ignore
+              if (typeof window !== 'undefined' && window.unregisterHeading) window.unregisterHeading(id);
+            }
+          }, []);
+
           return (
             <h3 id={id} className='text-2xl font-semibold group relative flex items-center' {...props}>
               <a
+                onClick={(e) => scrollIntoView(e, id)}
                 href={`#${id}`}
                 className="absolute -left-6 flex items-center justify-center w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity mt-[0.625em]"
                 aria-hidden="true"
