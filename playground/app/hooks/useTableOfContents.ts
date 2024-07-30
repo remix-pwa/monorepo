@@ -10,16 +10,15 @@ export function useTableOfContents(tableOfContents: any) {
   const [headings, setHeadings] = useState<{ id: string; top: number }[]>([])
 
   const registerHeading = useCallback((id: string) => {
-    console.log('registerHeading', id, headings)
     setHeadings(headings => [...headings.filter(h => id !== h.id), { id, top: getTop(id) }])
   }, [])
 
   const unregisterHeading = useCallback((id: string) => {
-    console.log('unregisterHeading', id, headings)
     setHeadings(headings => headings.filter(h => id !== h.id))
   }, [])
 
   useEffect(() => {
+    console.log(tableOfContents, headings)
     if (tableOfContents.length === 0 || headings.length === 0) return
 
     function onScroll() {
@@ -29,7 +28,7 @@ export function useTableOfContents(tableOfContents: any) {
       scrollMt = scrollMt * fontSize
 
       const sortedHeadings = headings.concat([]).sort((a, b) => a.top - b.top)
-      const top = window.pageYOffset + scrollMt + 106
+      const top = window.pageYOffset + scrollMt + 64
       let current = sortedHeadings[0].id
 
       for (let i = 0; i < sortedHeadings.length; i++) {
@@ -55,7 +54,6 @@ export function useTableOfContents(tableOfContents: any) {
     })
 
     resizeObserver.observe(document.body)
-
     return () => {
       resizeObserver.disconnect()
       window.removeEventListener('scroll', onScroll, {
@@ -70,15 +68,6 @@ export function useTableOfContents(tableOfContents: any) {
       window.registerHeading = registerHeading
       // @ts-expect-error
       window.unregisterHeading = unregisterHeading
-    }
-
-    return () => {
-      if (typeof window !== 'undefined') {
-        // @ts-expect-error
-        delete window.registerHeading
-        // @ts-expect-error
-        delete window.unregisterHeading
-      }
     }
   }, [registerHeading, unregisterHeading])
 
