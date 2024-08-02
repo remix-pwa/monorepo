@@ -384,13 +384,19 @@ const NetworkFirstDemo = () => {
     const cache = new NetworkFirst('cache-text-demo', {
       networkTimeoutInSeconds: config.networkTimeout
     });
-    const response = await cache.handleRequest(URL);
-    const text = await response.text();
-    set(text + '\nActual time is: ' + new Date().toLocaleTimeString());
+
+    try {
+      const response = await cache.handleRequest(URL);
+      const text = await response.text();
+      const wasCacheHit = response.headers.get('x-cache-hit') === 'true';
+      set((wasCacheHit ? text.replace('Current', 'Cached').replace('Raw data from server', 'Cached content') : text) + '\nActual time is: ' + new Date().toLocaleTimeString());
+    } catch (e) {
+      set('Error! Network timeout and no response found in cache either.');
+    }
   }, []);
 
   const fetchLoader = async () => {
-    const timeout = config.throttleNetwork === '2g' ? 3_100 : config.throttleNetwork === '3g' ? 1_900 : 700;
+    const timeout = config.throttleNetwork === '2g' ? 3_150 : config.throttleNetwork === '3g' ? 1_900 : 700;
 
     if (config.isOffline) {
       throw new Error('Failed to fetch')
@@ -422,44 +428,38 @@ const NetworkFirstDemo = () => {
         <p className="text-gray-600 dark:text-gray-300 mb-6">
           This strategy tries to fetch fresh data from the network first, falling back to the cache if the network is unavailable.
         </p>
-        {/* className="flex flex-col sm:flex-row gap-4 mb-6" */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6 md:text-sm">
+        <div className="flex flex-col sm:flex-row gap-4 mb-6 md:text-sm font-semibold">
           <Button
             variant="outline"
-            className="bg-transparent hover:bg-red-50 text-red-600 border-2 outline-none border-red-500 dark:text-red-400 dark:hover:bg-red-900/25 focus:ring-red-500"
+            color="red"
+            className="dark:hover:bg-red-900/25 md:text-sm"
             onClick={() => setConfig(c => ({ ...c, isOffline: !c.isOffline }))}
           >
             {config.isOffline ? 'Come Online' : 'Go Offline'}
           </Button>
-          <button
+          <Button
             onClick={clearCache}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
+            variant="ghost"
+            color="yellow"
+            className="md:text-sm"
           >
             Clear Cache
-          </button>
+          </Button>
         </div>
         <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-3 mb-6">
           <pre className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
             <Suspense fallback={<div>Page Loading...</div>}>
               <Await resolve={promise}>
-                {(resolvedData) => (
-                  // <div>
-                  //   <p>{resolvedData}</p>
-                  //   <button onClick={() => set("New data")}>Update Data</button>
-                  //   <button onClick={reset}>Reset Data</button>
-                  // </div>
-                  <code>{resolvedData}</code>
-                )}
+                {(resolvedData) => <code>{resolvedData}</code>}
               </Await>
             </Suspense>
           </pre>
         </div>
         <div className="text-sm text-gray-600 dark:text-gray-400">
-          <p className="mb-2">Network Status: <span className="font-semibold">{config.isOffline ? 'Offline' : 'Online'}</span></p>
-          {/* <p className="mb-2">Current Network Timeout: <span className="font-semibold">{config.networkTimeout}s</span></p> */}
+          <p className="mb-2">Network Status: <span className="font-semibold text-gray-700 dark:text-gray-300">{config.isOffline ? 'Offline' : 'Online'}</span></p>
           <div className="mb-2 flex items-center gap-2">
             <span className="whitespace-nowrap max-w-min">Current Network Timeout:</span>
-            <ButtonGroup join className="inline-flex border-collapse">
+            <ButtonGroup join className="inline-flex border-collapse flex-row">
               {[2, 3].map(timeout => (
                 <Button
                   key={timeout}
@@ -477,10 +477,9 @@ const NetworkFirstDemo = () => {
               ))}
             </ButtonGroup>
           </div>
-          {/* <p>Current Network Speed: <span className="font-semibold">{config.throttleNetwork}</span></p> */}
           <div className="mb-2 flex items-center gap-2">
             <span className="whitespace-nowrap max-w-min">Current Network Speed:</span>
-            <ButtonGroup join className="inline-flex border-collapse">
+            <ButtonGroup join className="inline-flex border-collapse flex-row">
               {(['2g', '3g', '4g'] as const).map(speed => (
                 <Button
                   key={speed}

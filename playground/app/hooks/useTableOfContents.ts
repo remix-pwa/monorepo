@@ -18,7 +18,6 @@ export function useTableOfContents(tableOfContents: any) {
   }, [])
 
   useEffect(() => {
-    console.log(tableOfContents, headings)
     if (tableOfContents.length === 0 || headings.length === 0) return
 
     function onScroll() {
