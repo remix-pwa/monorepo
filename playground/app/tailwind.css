@@ -22,79 +22,83 @@
 
 .background {
   background-color: #fff;
-  background-image:
-    radial-gradient(circle at 80% 10%, rgba(93, 14, 167, 0.1) 0%, transparent 50%),
+  background-image: radial-gradient(circle at 80% 10%, rgba(93, 14, 167, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 15% 75%, rgba(30, 144, 255, 0.1) 0%, transparent 50%),
-    repeating-linear-gradient(rgba(0, 0, 0, 0.03) 0,
-      rgba(0, 0, 0, 0.03) 1px,
-      transparent 1px,
-      transparent 30px),
-    repeating-linear-gradient(90deg,
-      rgba(0, 0, 0, 0.03) 0,
-      rgba(0, 0, 0, 0.03) 1px,
-      transparent 1px,
-      transparent 30px);
-  background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
-  background-position: 0 0, 0 0, -1px -1px, -1px -1px;
+    repeating-linear-gradient(rgba(0, 0, 0, 0.03) 0, rgba(0, 0, 0, 0.03) 1px, transparent 1px, transparent 30px),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.03) 0, rgba(0, 0, 0, 0.03) 1px, transparent 1px, transparent 30px);
+  background-size:
+    100% 100%,
+    100% 100%,
+    30px 30px,
+    30px 30px;
+  background-position:
+    0 0,
+    0 0,
+    -1px -1px,
+    -1px -1px;
 }
 
 .dark .background {
   background-color: #1e1b20;
-  background-image:
-    radial-gradient(circle at 80% 10%, rgba(138, 43, 226, 0.2) 0%, transparent 50%),
+  background-image: radial-gradient(circle at 80% 10%, rgba(138, 43, 226, 0.2) 0%, transparent 50%),
     radial-gradient(circle at 15% 75%, rgba(30, 144, 255, 0.2) 0%, transparent 50%),
-    repeating-linear-gradient(rgba(255, 255, 255, 0.05) 0,
-      rgba(255, 255, 255, 0.05) 1px,
-      transparent 1px,
-      transparent 30px),
-    repeating-linear-gradient(90deg,
+    repeating-linear-gradient(
       rgba(255, 255, 255, 0.05) 0,
       rgba(255, 255, 255, 0.05) 1px,
       transparent 1px,
-      transparent 30px);
+      transparent 30px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05) 0,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px,
+      transparent 30px
+    );
 }
-
 
 .background-color {
   background-color: #fff;
-  background-image:
-    radial-gradient(circle at 80% 10%, rgba(138, 43, 226, 0.1) 0%, transparent 50%),
+  background-image: radial-gradient(circle at 80% 10%, rgba(138, 43, 226, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 15% 75%, rgba(30, 144, 255, 0.1) 0%, transparent 50%);
 }
 
 .background-lines {
-  background-image:
-    repeating-linear-gradient(rgba(0, 0, 0, 0.03) 0,
-      rgba(0, 0, 0, 0.03) 1px,
-      transparent 1px,
-      transparent 30px),
-    repeating-linear-gradient(90deg,
+  background-image: repeating-linear-gradient(
       rgba(0, 0, 0, 0.03) 0,
       rgba(0, 0, 0, 0.03) 1px,
       transparent 1px,
-      transparent 30px);
-  background-size: 30px 30px, 30px 30px;
-  background-position: -1px -1px, -1px -1px;
+      transparent 30px
+    ),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.03) 0, rgba(0, 0, 0, 0.03) 1px, transparent 1px, transparent 30px);
+  background-size:
+    30px 30px,
+    30px 30px;
+  background-position:
+    -1px -1px,
+    -1px -1px;
 }
 
 .dark .background-color {
   background-color: #1e1b20;
-  background-image:
-    radial-gradient(circle at 80% 10%, rgba(138, 43, 226, 0.2) 0%, transparent 50%),
+  background-image: radial-gradient(circle at 80% 10%, rgba(138, 43, 226, 0.2) 0%, transparent 50%),
     radial-gradient(circle at 15% 75%, rgba(30, 144, 255, 0.2) 0%, transparent 50%);
 }
 
 .dark .background-lines {
-  background-image:
-    repeating-linear-gradient(rgba(255, 255, 255, 0.05) 0,
-      rgba(255, 255, 255, 0.05) 1px,
-      transparent 1px,
-      transparent 30px),
-    repeating-linear-gradient(90deg,
+  background-image: repeating-linear-gradient(
       rgba(255, 255, 255, 0.05) 0,
       rgba(255, 255, 255, 0.05) 1px,
       transparent 1px,
-      transparent 30px);
+      transparent 30px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05) 0,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px,
+      transparent 30px
+    );
 }
 
 .showcase-background {
@@ -107,8 +111,7 @@
 
 .dark .showcase-background {
   background-color: #1a1b1e;
-  background-image:
-    linear-gradient(to bottom, rgba(26, 27, 30, 0) 0%, rgba(26, 27, 30, 0.3) 100%),
+  background-image: linear-gradient(to bottom, rgba(26, 27, 30, 0) 0%, rgba(26, 27, 30, 0.3) 100%),
     radial-gradient(at top right, rgba(30, 144, 255, 0.125) 0%, rgba(30, 144, 255, 0) 60%);
 }
 
@@ -130,4 +133,231 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+/* Light Mode Theme */
+code[class*="language-"],
+pre[class*="language-"] {
+  background: #fff;
+  /* background: #f5f5f5; */
+  height: 100%;
+  width: 100%;
+  color: #2a2a2a;
+  font-family: 'Geist Mono', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  font-size: 1em;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+pre[class*="language-"] {
+  padding: 1.125em 1em;
+  overflow: auto;
+  border-radius: 8px;
+  border: 1px none #e0e0e0;
+}
+
+:not(pre) > code[class*="language-"] {
+  padding: 0.1em 0.3em;
+  border-radius: 8px;
+  white-space: normal;
+  background: #e8e8e8;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #637777;
+}
+
+.token.punctuation {
+  color: #2a2a2a;
+}
+
+.token.namespace {
+  opacity: 0.7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #c92c2c;
+}
+
+.token.boolean,
+.token.number {
+  color: #7c4dff;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: #2e7d32;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+  color: #37474f;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+  color: #d32f2f;
+}
+
+.token.keyword {
+  color: #1976d2;
+}
+
+.token.regex,
+.token.important {
+  color: #e64a19;
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.dark {
+  /* Dark Mode Theme */
+  code[class*='language-'],
+  pre[class*='language-'] {
+    background: #1a1b1e;
+    color: #f8f8f2;
+    height: 100%;
+    width: 100%;
+    font-family: 'Geist Mono', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    font-size: 1em;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+  }
+
+  pre[class*='language-'] {
+    padding: 1.125em 1em;
+    overflow: auto;
+    border-radius: 8px;
+  }
+
+  :not(pre) > code[class*='language-'] {
+    padding: 0.1em 0.3em;
+    border-radius: 8px;
+    white-space: normal;
+  }
+
+  .token.comment,
+  .token.prolog,
+  .token.doctype,
+  .token.cdata {
+    color: #8292a2;
+  }
+
+  .token.punctuation {
+    color: #f8f8f2;
+  }
+
+  .token.namespace {
+    opacity: 0.7;
+  }
+
+  .token.property,
+  .token.tag,
+  .token.constant,
+  .token.symbol,
+  .token.deleted {
+    color: #f92672;
+  }
+
+  .token.boolean,
+  .token.number {
+    color: #ae81ff;
+  }
+
+  .token.selector,
+  .token.attr-name,
+  .token.string,
+  .token.char,
+  .token.builtin,
+  .token.inserted {
+    color: #a6e22e;
+  }
+
+  .token.operator,
+  .token.entity,
+  .token.url,
+  .language-css .token.string,
+  .style .token.string,
+  .token.variable {
+    color: #f8f8f2;
+  }
+
+  .token.atrule,
+  .token.attr-value,
+  .token.function,
+  .token.class-name {
+    color: #e6db74;
+  }
+
+  .token.keyword {
+    color: #66d9ef;
+  }
+
+  .token.regex,
+  .token.important {
+    color: #fd971f;
+  }
+
+  .token.important,
+  .token.bold {
+    font-weight: bold;
+  }
+
+  .token.italic {
+    font-style: italic;
+  }
+
+  .token.entity {
+    cursor: help;
+  }
 }
