@@ -18,7 +18,7 @@ const MainWrapper = ({
       className={'relative top-12 mx-auto max-w-8xl px-4 sm:px-6 md:px-8 overflow-hidden flex'}
     >
       {sidebar}
-      <div className="lg:pl-[19.5rem]">
+      <div className="lg:pl-[15rem] xl:pl-[19rem] min-w-12">
         <div className="mx-auto max-w-5xl xl:max-w-none xl:ml-0 xl:mr-[15.5rem]">
           {children}
           {toc}

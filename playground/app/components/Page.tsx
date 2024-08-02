@@ -3,7 +3,7 @@ import { Icon } from "./Icon";
 
 export const Page = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="flex-1 relative py-8 lg:px-12 break-anywhere" id="page-document">
+    <div className="flex-1 relative py-8 xl:px-12 break-anywhere" id="page-document">
       {children}
     </div>
   )
@@ -19,7 +19,7 @@ export const PageTitle = ({ children }: { children: ReactNode }) => {
 
 export const PageContent = ({ children }: { children: ReactNode }) => {
   return (
-    <main className="[&>*+*]:mt-5 grid whitespace-pre-wrap">
+    <main className="[&>*+*]:mt-5 [&>*+*]:min-w-12 grid whitespace-pre-wrap">
       {children}
     </main>
   )

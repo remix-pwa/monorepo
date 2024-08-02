@@ -26,7 +26,7 @@ export const Sidebar = () => {
     },
   ]
   return (
-    <div className="fixed inset-0 left-[max(0px,calc(50%-45rem))] right-auto top-[48px] z-20 hidden w-[19rem] overflow-y-auto pb-10 pl-8 pr-6 lg:block">
+    <div className="fixed inset-0 left-[max(0px,calc(50%-45rem))] right-auto top-[48px] z-20 hidden w-[15rem] xl:w-[19rem] overflow-y-auto pb-10 pl-8 pr-6 lg:block">
       <div className="flex flex-col items-start justify-start w-full h-full py-8">
         {sections.map(section => (
           <div key={section} className="mb-6">
