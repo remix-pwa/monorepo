@@ -377,7 +377,7 @@ const NetworkFirstDemo = () => {
     throttleNetwork: '3g' as '2g' | '3g' | '4g'
   })
 
-  const SERVER_DATA = 'Raw data from server.\nCurrent time is: ' + new Date().toLocaleTimeString()
+  const SERVER_DATA = 'Raw data from server.\nCurrent time is: ';
   const URL = '/api/network-first';
 
   const fetchData = useCallback(async () => {
@@ -387,7 +387,7 @@ const NetworkFirstDemo = () => {
 
     try {
       const response = await cache.handleRequest(URL);
-      const text = await response.text();
+      const text = (await response.text()) + new Date().toLocaleTimeString();
       const wasCacheHit = response.headers.get('x-cache-hit') === 'true';
       set((wasCacheHit ? text.replace('Current', 'Cached').replace('Raw data from server', 'Cached content') : text) + '\nActual time is: ' + new Date().toLocaleTimeString());
     } catch (e) {
@@ -428,7 +428,7 @@ const NetworkFirstDemo = () => {
         <p className="text-gray-600 dark:text-gray-300 mb-6">
           This strategy tries to fetch fresh data from the network first, falling back to the cache if the network is unavailable.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 mb-6 md:text-sm font-semibold">
+        <div className="flex flex-col sm:flex-row gap-4 gap-y-2.5 mb-6 md:text-sm font-semibold">
           <Button
             variant="outline"
             color="red"
@@ -439,7 +439,7 @@ const NetworkFirstDemo = () => {
           </Button>
           <Button
             onClick={clearCache}
-            variant="ghost"
+            variant="solid"
             color="yellow"
             className="md:text-sm"
           >

@@ -24,6 +24,7 @@ export const ButtonGroup: FC<ButtonGroupProps> = ({
 
   const groupClasses = cn(
     'inline-flex w-full',
+    // 'gap-y-2',
     vertical ? 'flex-col' : 'flex-col sm:flex-row',
     !join && gapSizes[gap],
     join && 'overflow-hidden',
