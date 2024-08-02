@@ -38,7 +38,7 @@ export const ButtonGroup: FC<ButtonGroupProps> = ({
           return cloneElement(child as ReactElement<ButtonHTMLAttributes<HTMLButtonElement>, string | React.JSXElementConstructor<any>>, {
             className: cn(
               child.props.className,
-              join && 'rounded-none',
+              join && 'rounded-none ring-0 ring-offset-0',
               join && {
                 'first:rounded-t-md last:rounded-b-md': vertical,
                 'first:rounded-l-md last:rounded-r-md': !vertical,

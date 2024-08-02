@@ -29,6 +29,10 @@ export const handle = {
     {
       title: 'Stale While Revalidate',
       id: 'stale-while-revalidate',
+    },
+    {
+      title: 'Conclusion',
+      id: 'conclusion',
     }
   ]
 } as { tableOfContents: TableOfContents };
@@ -433,18 +437,6 @@ const NetworkFirstDemo = () => {
           >
             Clear Cache
           </button>
-          <button
-            onClick={() => setConfig(c => ({ ...c, networkTimeout: c.networkTimeout === 2 ? 3 : 2 }))}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
-          >
-            Set Network Timeout: {config.networkTimeout === 2 ? '3s' : '2s'}
-          </button>
-          <button
-            onClick={() => setConfig(c => ({ ...c, throttleNetwork: c.throttleNetwork === '2g' ? '3g' : c.throttleNetwork === '3g' ? '4g' : '2g' }))}
-            className="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
-          >
-            Throttle Network: {config.throttleNetwork === '2g' ? '3g' : config.throttleNetwork === '3g' ? '4g' : '2g'}
-          </button>
         </div>
         <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-3 mb-6">
           <pre className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
@@ -465,26 +457,48 @@ const NetworkFirstDemo = () => {
         <div className="text-sm text-gray-600 dark:text-gray-400">
           <p className="mb-2">Network Status: <span className="font-semibold">{config.isOffline ? 'Offline' : 'Online'}</span></p>
           {/* <p className="mb-2">Current Network Timeout: <span className="font-semibold">{config.networkTimeout}s</span></p> */}
-          <p className="mb-2 flex">
-            <span>Current Network Timeout:&nbsp;</span>
-            <ButtonGroup join className="">
+          <div className="mb-2 flex items-center gap-2">
+            <span className="whitespace-nowrap max-w-min">Current Network Timeout:</span>
+            <ButtonGroup join className="inline-flex border-collapse">
               {[2, 3].map(timeout => (
                 <Button
                   key={timeout}
                   size="sm"
-                  variant={config.networkTimeout === timeout ? 'primary' : 'outline'}
+                  variant={config.networkTimeout === timeout ? 'solid' : 'outline'}
                   onClick={() => setConfig(c => ({ ...c, networkTimeout: timeout }))}
                   className={cn(
-                    'py-0 ring-0 outline-none focus:shadow-none',
-                    config.networkTimeout === timeout && ''
+                    'ring-0 outline-none focus:shadow-none ring-offset-0',
+                    'focus:ring-offset-0 focus:ring-0',
+                    config.networkTimeout === timeout ? 'font-semibold' : 'font-normal'
                   )}
                 >
                   {timeout}s
                 </Button>
               ))}
             </ButtonGroup>
-          </p>
-          <p>Current Network Speed: <span className="font-semibold">{config.throttleNetwork}</span></p>
+          </div>
+          {/* <p>Current Network Speed: <span className="font-semibold">{config.throttleNetwork}</span></p> */}
+          <div className="mb-2 flex items-center gap-2">
+            <span className="whitespace-nowrap max-w-min">Current Network Speed:</span>
+            <ButtonGroup join className="inline-flex border-collapse">
+              {(['2g', '3g', '4g'] as const).map(speed => (
+                <Button
+                  key={speed}
+                  size="sm"
+                  color="purple"
+                  variant={config.throttleNetwork === speed ? 'solid' : 'outline'}
+                  onClick={() => setConfig(c => ({ ...c, throttleNetwork: speed }))}
+                  className={cn(
+                    'ring-0 outline-none focus:shadow-none ring-offset-0',
+                    'focus:ring-offset-0 focus:ring-0',
+                    config.throttleNetwork === speed ? 'font-semibold' : 'font-normal'
+                  )}
+                >
+                  {speed}
+                </Button>
+              ))}
+            </ButtonGroup>
+          </div>
         </div>
       </div>
     </Iframe>
@@ -547,7 +561,8 @@ const StaleWhileRevalidateDemo = () => {
           </Button>
           <Button
             onClick={clearCache}
-            variant="secondary"
+            variant="solid"
+            color="secondary"
           // className="bg-neon hover:bg-yellow-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
           >
             Clear Cache
