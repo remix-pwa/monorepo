@@ -2,11 +2,15 @@ import { Iframe } from "~/components/Iframe";
 import Markdown from "~/components/Markdown";
 import { Page, PageContent, PageFooter, PageTitle } from "~/components/Page";
 import { CacheFirst, CacheOnly, NetworkFirst, StaleWhileRevalidate } from '@remix-pwa/sw';
-import { useCallback, useEffect, useState } from "react";
-import { createMockFetchWrapper } from "~/utils";
+import { Suspense, useCallback, useEffect, useState } from "react";
+import { cn, createMockFetchWrapper } from "~/utils";
 import { useRefresh } from '~/hooks/useRefresh';
 import { Codeblock } from "~/components/Codeblock";
 import { TableOfContents } from '~/types';
+import { Button } from "~/components/Button";
+import { usePromise } from '../../../hooks/usePromise';
+import { Await } from "@remix-run/react";
+import { ButtonGroup } from "~/components/ButtonGroup";
 
 export const handle = {
   tableOfContents: [
@@ -223,12 +227,13 @@ const CacheFirstDemo = () => {
           This strategy checks the cache first and only goes to the network if it can't find what it needs locally.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <button
+          <Button
+            variant="outline"
+            className="bg-transparent hover:bg-red-50 text-red-600 border-2 outline-none border-red-500 dark:text-red-400 dark:hover:bg-red-900/25 focus:ring-red-500"
             onClick={() => setConfig(c => ({ ...c, isOffline: !c.isOffline }))}
-            className="bg-red-500 hover:bg-red-600 text-white font-semibold py-1.5 px-4 rounded-lg transition duration-300 ease-in-out"
           >
             {config.isOffline ? 'Come Online' : 'Go Offline'}
-          </button>
+          </Button>
           <button
             onClick={clearCache}
             className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-1.5 px-4 rounded-lg transition duration-300 ease-in-out"
@@ -309,12 +314,13 @@ const CacheOnlyDemo = () => {
           This strategy checks the cache first and only goes to the network if it can't find what it needs locally.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <button
+          <Button
+            variant="outline"
+            className="bg-transparent hover:bg-red-50 text-red-600 border-2 outline-none border-red-500 dark:text-red-400 dark:hover:bg-red-900/25 focus:ring-red-500"
             onClick={() => setConfig(c => ({ ...c, isOffline: !c.isOffline }))}
-            className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
           >
             {config.isOffline ? 'Come Online' : 'Go Offline'}
-          </button>
+          </Button>
           <button
             onClick={clearCache}
             className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
@@ -360,7 +366,7 @@ const CacheOnlyDemo = () => {
 
 const NetworkFirstDemo = () => {
   const { refreshCounter, refresh } = useRefresh()
-  const [data, setData] = useState<string | undefined>(undefined)
+  const { promise, reset, set } = usePromise<string>()
   const [config, setConfig] = useState({
     isOffline: false,
     networkTimeout: 2,
@@ -376,7 +382,7 @@ const NetworkFirstDemo = () => {
     });
     const response = await cache.handleRequest(URL);
     const text = await response.text();
-    setData(text + '\nActual time is: ' + new Date().toLocaleTimeString());
+    set(text + '\nActual time is: ' + new Date().toLocaleTimeString());
   }, []);
 
   const fetchLoader = async () => {
@@ -404,7 +410,7 @@ const NetworkFirstDemo = () => {
     <Iframe
       title="Network First"
       handleRefresh={() =>
-        refresh(() => setData(undefined))
+        refresh(() => reset())
       }
     >
       <div className="px-4 py-2.5 overflow-hidden" key={refreshCounter}>
@@ -412,13 +418,15 @@ const NetworkFirstDemo = () => {
         <p className="text-gray-600 dark:text-gray-300 mb-6">
           This strategy tries to fetch fresh data from the network first, falling back to the cache if the network is unavailable.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <button
+        {/* className="flex flex-col sm:flex-row gap-4 mb-6" */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-6 md:text-sm">
+          <Button
+            variant="outline"
+            className="bg-transparent hover:bg-red-50 text-red-600 border-2 outline-none border-red-500 dark:text-red-400 dark:hover:bg-red-900/25 focus:ring-red-500"
             onClick={() => setConfig(c => ({ ...c, isOffline: !c.isOffline }))}
-            className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
           >
             {config.isOffline ? 'Come Online' : 'Go Offline'}
-          </button>
+          </Button>
           <button
             onClick={clearCache}
             className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
@@ -440,12 +448,42 @@ const NetworkFirstDemo = () => {
         </div>
         <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-3 mb-6">
           <pre className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
-            <code>{data}</code>
+            <Suspense fallback={<div>Page Loading...</div>}>
+              <Await resolve={promise}>
+                {(resolvedData) => (
+                  // <div>
+                  //   <p>{resolvedData}</p>
+                  //   <button onClick={() => set("New data")}>Update Data</button>
+                  //   <button onClick={reset}>Reset Data</button>
+                  // </div>
+                  <code>{resolvedData}</code>
+                )}
+              </Await>
+            </Suspense>
           </pre>
         </div>
         <div className="text-sm text-gray-600 dark:text-gray-400">
           <p className="mb-2">Network Status: <span className="font-semibold">{config.isOffline ? 'Offline' : 'Online'}</span></p>
-          <p className="mb-2">Current Network Timeout: <span className="font-semibold">{config.networkTimeout}s</span></p>
+          {/* <p className="mb-2">Current Network Timeout: <span className="font-semibold">{config.networkTimeout}s</span></p> */}
+          <p className="mb-2 flex">
+            <span>Current Network Timeout:&nbsp;</span>
+            <ButtonGroup join className="">
+              {[2, 3].map(timeout => (
+                <Button
+                  key={timeout}
+                  size="sm"
+                  variant={config.networkTimeout === timeout ? 'primary' : 'outline'}
+                  onClick={() => setConfig(c => ({ ...c, networkTimeout: timeout }))}
+                  className={cn(
+                    'py-0 ring-0 outline-none focus:shadow-none',
+                    config.networkTimeout === timeout && ''
+                  )}
+                >
+                  {timeout}s
+                </Button>
+              ))}
+            </ButtonGroup>
+          </p>
           <p>Current Network Speed: <span className="font-semibold">{config.throttleNetwork}</span></p>
         </div>
       </div>
@@ -500,18 +538,20 @@ const StaleWhileRevalidateDemo = () => {
           This serves cached content immediately while fetching updates in the background. It's perfect for balancing speed and freshness.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <button
+          <Button
+            variant="outline"
+            className="bg-transparent hover:bg-red-50 text-red-600 border-2 outline-none border-red-500 dark:text-red-400 dark:hover:bg-red-900/25 focus:ring-red-500"
             onClick={() => setConfig(c => ({ ...c, isOffline: !c.isOffline }))}
-            className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
           >
             {config.isOffline ? 'Come Online' : 'Go Offline'}
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={clearCache}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
+            variant="secondary"
+          // className="bg-neon hover:bg-yellow-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 ease-in-out"
           >
             Clear Cache
-          </button>
+          </Button>
         </div>
         <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-3 mb-6">
           <pre className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">

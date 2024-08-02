@@ -19,7 +19,7 @@ export const PageTitle = ({ children }: { children: ReactNode }) => {
 
 export const PageContent = ({ children }: { children: ReactNode }) => {
   return (
-    <main className="[&>*+*]:mt-5 [&>*+*]:min-w-12 grid whitespace-pre-wrap">
+    <main className="flex flex-col space-y-5 whitespace-pre-wrap text-text">
       {children}
     </main>
   )

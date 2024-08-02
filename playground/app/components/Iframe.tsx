@@ -34,7 +34,8 @@ export const Iframe = ({
             {title}
           </div>}
           <div className="space-x-3 flex items-center text-dark dark:text-white">
-            {handleRefresh && <Icon onClick={handleRefresh} name="refresh" className="size-4 md:size-5 lg:size-6 cursor-pointer" />}
+            <Icon name="code" className="size-4 md:size-5 cursor-pointer" />
+            {handleRefresh && <Icon onClick={handleRefresh} name="refresh" className="size-4 md:size-5 cursor-pointer" />}
             {config && <button
               onClick={() => setIsConfigVisible(!isConfigVisible)}
               className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
@@ -81,7 +82,7 @@ export const Iframe = ({
         </div>
       </div>
       {/* Code View */}
-      {isCodeVisible && 
+      {isCodeVisible &&
         <div className="border h-[400px] max-h-[400px] flex flex-col border-gray-200 dark:border-gray-800 dark:shadow-gray-900 rounded-lg shadow-lg bg-white text-dark dark:bg-dark dark:text-white"></div>
       }
     </Fragment>
