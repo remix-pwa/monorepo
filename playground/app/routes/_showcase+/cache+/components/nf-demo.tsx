@@ -1,7 +1,7 @@
 import { NetworkFirst } from "@remix-pwa/sw"
 import { Await } from "@remix-run/react"
 import { useState, startTransition, useCallback, useEffect, Suspense } from "react"
-import { Iframe, Button, ButtonGroup } from "~/components"
+import { Button, IframeWrapper } from "~/components"
 import { usePromise } from "~/hooks/usePromise"
 import { useRefresh } from "~/hooks/useRefresh"
 import { createMockFetchWrapper, cn } from "~/utils"
@@ -66,7 +66,7 @@ export const NetworkFirstDemo = () => {
   }
 
   return (
-    <Iframe
+    <IframeWrapper
       title="Network First"
       handleRefresh={() =>
         refresh(() => reset())
@@ -127,6 +127,6 @@ export const NetworkFirstDemo = () => {
           </div>
         </div>
       </div>
-    </Iframe>
+    </IframeWrapper>
   )
 }

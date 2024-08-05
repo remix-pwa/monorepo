@@ -95,9 +95,7 @@ export default function Component() {
             This strategy tries to fetch fresh data from the network first, falling back to the cache if the network is unavailable. It's ideal for content that updates frequently but where having slightly outdated information is better than having none at all.
           `}
         </Markdown>
-        <ClientOnly fallback={<div>Loading</div>}>
-          {() => <NetworkFirstDemo />}
-        </ClientOnly>
+        <NetworkFirstDemo />
         <Markdown>
           {`
             With network first strategy, we always try to get the freshest content from the network. If the network is down, we fall back to the cache.

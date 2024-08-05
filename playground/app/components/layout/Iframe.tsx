@@ -2,6 +2,15 @@ import { Fragment, type ReactNode, useState } from "react";
 import { ResizableBox } from "react-resizable";
 import { cn } from "~/utils";
 import { Icon } from "../core/Icon";
+import { ClientOnly } from "remix-utils/client-only";
+
+interface IFrameProps {
+  children: ReactNode;
+  title?: string;
+  config?: ReactNode | null;
+  handleRefresh?: (() => void) | null;
+  codeSandboxUrl?: string | null;
+}
 
 export const Iframe = ({
   children,
@@ -9,13 +18,7 @@ export const Iframe = ({
   config = null,
   handleRefresh = null,
   // codeSandboxUrl = null,
-}: {
-  children: ReactNode;
-  title?: string;
-  config?: ReactNode | null;
-  handleRefresh?: (() => void) | null;
-  codeSandboxUrl?: string | null;
-}) => {
+}: IFrameProps) => {
   const [isConfigVisible, setIsConfigVisible] = useState(false);
   const [isCodeVisible, setIsCodeVisible] = useState(false);
   const [configWidth, setConfigWidth] = useState(0);
@@ -87,4 +90,38 @@ export const Iframe = ({
       }
     </Fragment>
   );
+}
+
+export const IframeWrapper = (props: IFrameProps) => {
+  return (
+    <ClientOnly fallback={<IframeFallback />}>
+      {() => (
+        <Iframe {...props} />
+      )}
+    </ClientOnly>
+  )
+}
+
+export const IframeFallback = () => {
+  return (
+    <div className="border h-[400px] max-h-[400px] flex flex-col border-gray-200 dark:border-gray-800 dark:shadow-gray-900 rounded-lg shadow-lg bg-white text-dark dark:bg-dark dark:text-white">
+      <div className={cn("px-3 py-2.5 flex items-center justify-between text-sm sm:text-base dark:bg-gray-800 bg-gray-100 rounded-t-lg")}>
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 rounded-full bg-red-500"></div>
+          <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+          <div className="w-3 h-3 rounded-full bg-green-500"></div>
+        </div>
+        <div className="hidden min-w-64 text-center relative md:block mx-auto px-12 py-1 bg-white cursor-default bg-opacity-80 dark:bg-opacity-10 rounded-md text-dark/50 dark:text-white/75">
+          <Icon name="search" className="absolute left-2 size-4 top-1/2 -translate-y-1/2" />
+          Loading Window...
+        </div>
+        <div className="space-x-3 flex items-center text-dark dark:text-white">
+          <Icon name="refresh" className="size-4 md:size-5 cursor-pointer" />
+        </div>
+      </div>
+      <div className="flex flex-col lg:flex-row relative w-full flex-1 overflow-hidden rounded-b-lg">
+        <div className="flex-grow overflow-auto w-full h-full" />
+      </div>
+    </div>
+  )
 }
