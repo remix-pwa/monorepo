@@ -17,15 +17,15 @@ interface ToggleBarProps<T = any> extends Omit<ButtonProps, 'color' | 'value' | 
 export const ToggleBar = ({
   children,
   className,
-  color = 'primary',
   value,
-  renderItem = (item) => item as ReactNode,
-  getKey = (item) => item as string | number,
   items,
   onChange,
-  variant = 'solid',
-  size = 'sm',
+  color = 'primary',
   fullWidth = false,
+  size = 'sm',
+  variant = 'solid',
+  renderItem = (item) => item as ReactNode,
+  getKey = (item) => item as string | number,
   ...props
 }: ToggleBarProps) => {
   return (
@@ -44,6 +44,7 @@ export const ToggleBar = ({
           <Button
             key={key}
             size={size}
+            color={color}
             variant={isActive ? 'solid' : 'outline'}
             onClick={() => onChange(item)}
             className={cn(

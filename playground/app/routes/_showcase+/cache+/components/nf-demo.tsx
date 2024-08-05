@@ -1,16 +1,15 @@
 import { NetworkFirst } from "@remix-pwa/sw"
 import { Await } from "@remix-run/react"
 import { useState, startTransition, useCallback, useEffect, Suspense } from "react"
-import { Button, IframeWrapper } from "~/components"
+import { Button, IframeWrapper, ToggleBar } from "~/components"
 import { usePromise } from "~/hooks/usePromise"
 import { useRefresh } from "~/hooks/useRefresh"
-import { createMockFetchWrapper, cn } from "~/utils"
-import { ToggleBar } from '../../../../components/ui/ToggleBar';
-
+import { createMockFetchWrapper } from "~/utils"
 export const NetworkFirstDemo = () => {
   const { refreshCounter, refresh } = useRefresh()
   const { promise, reset, set } = usePromise<string>()
   const [config, setConfig] = useState({
+    cacheHit: false,
     isOffline: false,
     networkTimeout: 2,
     throttleNetwork: '3g' as '2g' | '3g' | '4g'
@@ -26,7 +25,7 @@ export const NetworkFirstDemo = () => {
     }
   }
 
-  const SERVER_DATA = 'Raw data from server.\nCurrent time is: ';
+  const SERVER_DATA = 'Raw data from server.\nCurrent time is: ' + new Date().toLocaleTimeString();
   const URL = '/api/network-first';
 
   const fetchData = useCallback(async () => {
@@ -36,9 +35,15 @@ export const NetworkFirstDemo = () => {
 
     try {
       const response = await cache.handleRequest(URL);
-      const text = (await response.text()) + new Date().toLocaleTimeString();
       const wasCacheHit = response.headers.get('x-cache-hit') === 'true';
-      setData((wasCacheHit ? text.replace('Current', 'Cached').replace('Raw data from server', 'Cached content') : text) + '\nActual time is: ' + new Date().toLocaleTimeString());
+      const text = await response.text();
+
+      const data = wasCacheHit 
+        ? text
+        : text.replace(/Current time is: .+/, `Current time is: ${new Date().toLocaleTimeString()}`);
+
+      setConfig(c => ({ ...c, cacheHit: wasCacheHit }));
+      setData((wasCacheHit ? data.replace('Current', 'Cached').replace('Raw data from server', 'Cached content') : data) + '\nActual time is: ' + new Date().toLocaleTimeString());
     } catch (e) {
       setData('Error! Network timeout and no response found in cache either.');
     }
@@ -106,6 +111,7 @@ export const NetworkFirstDemo = () => {
         </div>
         <div className="text-sm text-gray-600 dark:text-gray-400">
           <p className="mb-2">Network Status: <span className="font-semibold text-gray-700 dark:text-gray-300">{config.isOffline ? 'Offline' : 'Online'}</span></p>
+          <p className="mb-2">Was Cache Hit: <span className="font-semibold text-gray-700 dark:text-gray-300">{config.cacheHit ? 'Yes' : 'No'}</span></p>
           <div className="mb-2 flex items-center gap-2">
             <span className="whitespace-nowrap max-w-min">Current Network Timeout:</span>
             <ToggleBar
