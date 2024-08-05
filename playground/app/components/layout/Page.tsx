@@ -1,5 +1,5 @@
-import { ReactNode } from "react";
-import { Icon } from "./Icon";
+import type { ReactNode } from "react";
+import { Icon } from "../core/Icon";
 
 export const Page = ({ children }: { children: ReactNode }) => {
   return (

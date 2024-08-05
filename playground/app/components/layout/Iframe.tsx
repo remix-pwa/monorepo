@@ -1,7 +1,7 @@
-import { Fragment, ReactNode, useState } from "react";
+import { Fragment, type ReactNode, useState } from "react";
 import { ResizableBox } from "react-resizable";
 import { cn } from "~/utils";
-import { Icon } from "./Icon";
+import { Icon } from "../core/Icon";
 
 export const Iframe = ({
   children,

@@ -3,9 +3,9 @@ import remarkGfm from 'remark-gfm';
 import slug from 'rehype-slug';
 import slugify from '@sindresorhus/slugify'
 import { cn } from '~/utils';
-import { MouseEvent, useCallback, useEffect } from 'react';
+import { type MouseEvent, useCallback, useEffect } from 'react';
 
-const Markdown = ({ children }: { children: string }) => {
+export const Markdown = ({ children }: { children: string }) => {
   const formatted = children
     .split('\n')
     .map(line => line.trim())
@@ -163,5 +163,3 @@ const Markdown = ({ children }: { children: string }) => {
     </ReactMarkdown>
   );
 };
-
-export default Markdown;

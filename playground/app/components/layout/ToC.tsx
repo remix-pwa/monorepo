@@ -1,7 +1,7 @@
 import { useLocation, useMatches } from "@remix-run/react";
-import { MouseEvent, useEffect, useState } from "react";
-import { useTableOfContents } from '../hooks/useTableOfContents';
-import { TableOfContents } from "~/types";
+import { type MouseEvent, useEffect, useState } from "react";
+import { useTableOfContents } from '~/hooks/useTableOfContents';
+import type { TableOfContents } from "~/types";
 import { cn } from "~/utils";
 
 export const ToC = () => {

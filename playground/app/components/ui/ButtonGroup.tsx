@@ -1,4 +1,12 @@
-import { ButtonHTMLAttributes, Children, cloneElement, FC, isValidElement, ReactElement, ReactNode } from "react";
+import {
+  Children,
+  cloneElement,
+  isValidElement,
+  type FC,
+  type ButtonHTMLAttributes,
+  type ReactElement,
+  type ReactNode
+} from "react";
 import { cn } from "~/utils";
 
 interface ButtonGroupProps {
