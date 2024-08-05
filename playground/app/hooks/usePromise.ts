@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 
 type PromiseState<T> = {
   promise: Promise<T>;
@@ -8,22 +8,35 @@ type PromiseState<T> = {
 
 export function usePromise<T>(initialValue?: T): PromiseState<T> {
   const [data, setData] = useState<T | undefined>(initialValue);
+  const promiseRef = useRef<Promise<T> | null>(null);
+  const resolveRef = useRef<((value: T) => void) | null>(null);
 
-  const promise = useMemo(() => {
-    if (data === undefined) {
-      return new Promise<T>(() => {});
-    } else {
-      return Promise.resolve(data);
-    }
-  }, [data]);
+  if (!promiseRef.current) {
+    promiseRef.current = new Promise<T>((resolve) => {
+      resolveRef.current = resolve;
+      if (data !== undefined) {
+        resolve(data);
+      }
+    });
+  }
 
   const set = useCallback((value: T) => {
     setData(value);
+
+    if (value !== undefined && resolveRef.current) {
+      resolveRef.current(value);
+      resolveRef.current = null;
+    }
   }, []);
 
   const reset = useCallback(() => {
     setData(undefined);
+    promiseRef.current = null;
   }, []);
 
-  return { promise, set, reset };
+  return { 
+    promise: promiseRef.current, 
+    set, 
+    reset 
+  };
 }

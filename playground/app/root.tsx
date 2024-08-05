@@ -8,7 +8,7 @@ import {
 } from "@remix-run/react";
 import { getTheme } from './.server/theme';
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { ClientHints, getHints } from "./components/ClientHint";
+import { ClientHints, getHints } from "./components";
 
 import './tailwind.css';
 import { useTheme } from './hooks/useTheme';

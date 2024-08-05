@@ -1,8 +1,8 @@
 import { Outlet } from "@remix-run/react"
 import { Header } from "./__header"
-import { ReactNode } from "react"
+import type { ReactNode } from "react"
 import { Sidebar } from "./__sidebar"
-import { ToC } from "~/components/ToC"
+import { ToC } from "~/components"
 
 const MainWrapper = ({
   sidebar,

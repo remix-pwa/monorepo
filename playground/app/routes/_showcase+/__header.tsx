@@ -1,5 +1,5 @@
 import { Disclosure } from '@headlessui/react'
-import { ThemeSwitcher } from '~/components/ThemeSwitcher'
+import { ThemeSwitcher } from '~/components'
 import { cn } from '~/utils'
 
 export const Header = () => {
