@@ -1,6 +1,6 @@
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { Icon } from "../core/Icon";
-import { Link } from "@remix-run/react";
+import { Await, Link } from "@remix-run/react";
 
 export const Page = ({ children }: { children: ReactNode }) => {
   return (
@@ -66,6 +66,24 @@ export const PageFooter = ({
           </svg>
         </Link>}
       </div>
+    </div>
+  )
+}
+
+export const MockPage = ({
+  promise,
+}: {
+  promise: Promise<any>
+}) => {
+  return (
+    <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-3 mb-6">
+      <pre className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
+        <Suspense fallback={<div>Page Loading...</div>}>
+          <Await resolve={promise}>
+            {(resolvedData) => <code>{resolvedData}</code>}
+          </Await>
+        </Suspense>
+      </pre>
     </div>
   )
 }

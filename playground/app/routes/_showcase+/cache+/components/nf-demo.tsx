@@ -1,7 +1,7 @@
 import { NetworkFirst } from "@remix-pwa/sw"
 import { Await } from "@remix-run/react"
 import { useState, startTransition, useCallback, useEffect, Suspense } from "react"
-import { Button, IframeWrapper, ToggleBar } from "~/components"
+import { Button, IframeWrapper, MockPage, ToggleBar } from "~/components"
 import { usePromise } from "~/hooks/usePromise"
 import { useRefresh } from "~/hooks/useRefresh"
 import { createMockFetchWrapper } from "~/utils"
@@ -127,15 +127,7 @@ export const NetworkFirstDemo = () => {
             Clear Cache
           </Button>
         </div>
-        <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-3 mb-6">
-          <pre className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
-            <Suspense fallback={<div>Page Loading...</div>}>
-              <Await resolve={promise}>
-                {(resolvedData) => <code>{resolvedData}</code>}
-              </Await>
-            </Suspense>
-          </pre>
-        </div>
+        <MockPage promise={promise} />
         <div className="text-sm text-gray-600 dark:text-gray-400">
           <p className="mb-2">Network Status: <span className="font-semibold text-gray-700 dark:text-gray-300">{config.isOffline ? 'Offline' : 'Online'}</span></p>
           <p className="mb-2">Was Cache Hit: <span className="font-semibold text-gray-700 dark:text-gray-300">{config.cacheHit ? 'Yes' : 'No'}</span></p>

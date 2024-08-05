@@ -3,10 +3,8 @@ import { CacheFirst, CacheOnly, StaleWhileRevalidate } from '@remix-pwa/sw';
 import { useCallback, useEffect, useState } from "react";
 import { createMockFetchWrapper } from "~/utils";
 import { useRefresh } from '~/hooks/useRefresh';
-import { Codeblock } from "~/components/layout/Codeblock";
 import type { TableOfContents } from '~/types';
 import { Button } from "~/components/ui/Button";
-import { ClientOnly } from 'remix-utils/client-only'
 import { NetworkFirstDemo } from "./components/nf-demo";
 
 export const handle = {

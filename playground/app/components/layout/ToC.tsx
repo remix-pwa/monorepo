@@ -41,7 +41,7 @@ export const ToC = () => {
   return (
     <div className="fixed bottom-0 right-[max(0px,calc(50%-48rem))] top-[48px] z-20 hidden w-[19.5rem] overflow-y-auto py-8 xl:block">
       <nav aria-labelledby="table-of-contents" className="px-8 gap-4 flex flex-col overflow-auto [&::-webkit-scrollbar]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-transparent">
-        <ul className="border-l border-l-gray-400 text-sm">
+        <ul className="border-l-[1.5px] border-l-gray-400 text-sm">
           {/* @ts-ignore */}
           {currentToC.map((heading) => (
             <li key={heading.id} className="flex">
@@ -49,7 +49,7 @@ export const ToC = () => {
                 href={`#${heading.id}`}
                 onClick={(e) => scrollIntoView(e, heading.id)}
                 className={cn(
-                  "toc-anchor flex flex-row items-baseline left-[-1px] relative text-sm py-1 ps-3 transition-all border-l border-transparent",
+                  "toc-anchor flex flex-row items-baseline left-[-1px] relative text-sm py-1 ps-3 transition-all border-l-2 border-transparent",
                   currentSection === heading.id ? 'border-l-current text-blue-500 hover:text-blue-700 dark:hover:text-blue-600' : 'hover:text-gray-500',
                 )}
               >
