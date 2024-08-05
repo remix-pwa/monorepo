@@ -1,6 +1,5 @@
 import { NetworkFirst } from "@remix-pwa/sw"
-import { Await } from "@remix-run/react"
-import { useState, startTransition, useCallback, useEffect, Suspense } from "react"
+import { useState, startTransition, useCallback, useEffect } from "react"
 import { Button, IframeWrapper, MockPage, ToggleBar } from "~/components"
 import { usePromise } from "~/hooks/usePromise"
 import { useRefresh } from "~/hooks/useRefresh"
