@@ -5,6 +5,7 @@ import { Button, IframeWrapper, ToggleBar } from "~/components"
 import { usePromise } from "~/hooks/usePromise"
 import { useRefresh } from "~/hooks/useRefresh"
 import { createMockFetchWrapper } from "~/utils"
+
 export const NetworkFirstDemo = () => {
   const { refreshCounter, refresh } = useRefresh()
   const { promise, reset, set } = usePromise<string>()
@@ -24,6 +25,28 @@ export const NetworkFirstDemo = () => {
       set(result);
     }
   }
+
+  const DEMO_CODE = `
+import { NetworkFirst } from "@remix-pwa/sw"
+import { Await } from "@remix-run/react"
+
+export const NetworkFirstDemo = () => {
+  const { promise, reset, set } = usePromise<string>()
+  const [config, setConfig] = useState({
+    cacheHit: false,
+    isOffline: false,
+    networkTimeout: 2,
+    throttleNetwork: '3g' as '2g' | '3g' | '4g'
+  })
+
+  return (
+    <div>
+      <Await resolve={promise}>
+        {(resolvedData) => <code>{resolvedData}</code>}
+      </Await>
+    </div>
+  )
+}`
 
   const SERVER_DATA = 'Raw data from server.\nCurrent time is: ' + new Date().toLocaleTimeString();
   const URL = '/api/network-first';
@@ -73,6 +96,10 @@ export const NetworkFirstDemo = () => {
   return (
     <IframeWrapper
       title="Network First"
+      code={{
+        lang: 'ts',
+        content: DEMO_CODE
+      }}
       handleRefresh={() =>
         refresh(() => reset())
       }

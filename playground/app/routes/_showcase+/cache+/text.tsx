@@ -42,16 +42,6 @@ export default function Component() {
         Caching Text Content
       </PageTitle>
       <PageContent>
-        <Codeblock>
-          {`
-        \`\`\`js
-        const cache = new CacheFirst(\'cache-text-demo\', {maxAgeSeconds: 20 });
-        const response = await cache.handleRequest(\'/api/cache-first\');
-        const text = await response.text();
-        setData(text);
-        \`\`\`
-        `}
-        </Codeblock>
         <Markdown>
           {/* <!-- Think of caching as your app's personal assistant, always one step ahead, anticipating what you need before you even ask. It's not just about speed (though that's a big part of it); it's about creating smooth, responsive experiences for your users, even when the network decides to take a coffee break. --> */}
           {`
@@ -146,7 +136,7 @@ export default function Component() {
           `}
         </Markdown>
       </PageContent>
-      <PageFooter />
+      <PageFooter next={{ title: 'Caching Images', url: '/' }} />
     </Page>
   )
 }
