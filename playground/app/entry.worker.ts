@@ -3,7 +3,7 @@
 import { Logger } from '@remix-pwa/sw';
 
 const logger = new Logger({
-  prefix: 'remix-pwa'
+  prefix: 'showcase'
 });
 
 declare let self: ServiceWorkerGlobalScope & { logger: Logger };
