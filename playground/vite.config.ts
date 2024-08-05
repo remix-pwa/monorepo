@@ -17,7 +17,8 @@ export default defineConfig({
           ignoredRouteFiles: [
             '**/__*.*',
             '**/*.component.*',
-            '**/*.components.*'
+            '**/*.components.*',
+            '**/components/*'
           ],
         });
       },
