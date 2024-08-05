@@ -1,31 +1,40 @@
-import { Fragment, type ReactNode, useState } from "react";
-import { ResizableBox } from "react-resizable";
+import { type ReactNode, useState } from "react";
 import { cn } from "~/utils";
 import { Icon } from "../core/Icon";
 import { ClientOnly } from "remix-utils/client-only";
+import { Codeblock } from "./Codeblock";
 
 interface IFrameProps {
   children: ReactNode;
   title?: string;
-  config?: ReactNode | null;
   handleRefresh?: (() => void) | null;
   codeSandboxUrl?: string | null;
+  code?: {
+    lang: 'js' | 'ts' | 'tsx';
+    content: string;
+  };
 }
 
 export const Iframe = ({
   children,
   title,
-  config = null,
+  code,
   handleRefresh = null,
   // codeSandboxUrl = null,
 }: IFrameProps) => {
-  const [isConfigVisible, setIsConfigVisible] = useState(false);
   const [isCodeVisible, setIsCodeVisible] = useState(false);
-  const [configWidth, setConfigWidth] = useState(0);
 
   return (
-    <Fragment>
-      <div className="border h-[400px] max-h-[400px] flex flex-col border-gray-200 dark:border-gray-800 dark:shadow-gray-900 rounded-lg shadow-lg bg-white text-dark dark:bg-dark dark:text-white">
+    <div className={cn(
+      "relative h-[400px] overflow-hidden rounded-lg",
+      isCodeVisible && 'dark:shadow-gray-900 shadow-lg'
+    )}>
+      <div className={cn(
+        "border h-full flex flex-col transition-all duration-500 border-gray-200 dark:border-gray-800 dark:shadow-gray-900 rounded-lg shadow-lg bg-white text-dark dark:bg-dark dark:text-white",
+        isCodeVisible
+          ? '-translate-y-full opacity-0 invisible h-0'
+          : 'translate-y-0 opacity-100 visible'
+      )}>
         <div className={cn("px-3 py-2.5 flex items-center justify-between text-sm sm:text-base dark:bg-gray-800 bg-gray-100 rounded-t-lg", !title && 'py-3')}>
           <div className="flex space-x-2">
             <div className="w-3 h-3 rounded-full bg-red-500"></div>
@@ -37,58 +46,29 @@ export const Iframe = ({
             {title}
           </div>}
           <div className="space-x-3 flex items-center text-dark dark:text-white">
-            <Icon name="code" className="size-4 md:size-5 cursor-pointer" />
+            {code && <Icon onClick={() => setIsCodeVisible(true)} name="code" className="size-4 md:size-5 cursor-pointer" />}
             {handleRefresh && <Icon onClick={handleRefresh} name="refresh" className="size-4 md:size-5 cursor-pointer" />}
-            {config && <button
-              onClick={() => setIsConfigVisible(!isConfigVisible)}
-              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-            >
-              Config Icon
-            </button>}
           </div>
         </div>
         <div className="flex flex-col lg:flex-row relative w-full flex-1 overflow-hidden rounded-b-lg">
-          {isConfigVisible && <div className="block lg:hidden lg:w-60 lg:bg-gray-50 dark:bg-gray-900">
-            <div className="lg:hidden px-4 py-2.5 bg-gray-50 dark:bg-gray-900">
-              <h2 className="text-lg font-semibold">Configuration</h2>
-              {/* Add your config options here */}
-            </div>
-          </div>}
           <div className="flex-grow overflow-auto">{children}</div>
-          {config && <div className={'hidden lg:block relative'}>
-            <ResizableBox
-              width={configWidth}
-              height={Infinity}
-              minConstraints={[14, Infinity]}
-              maxConstraints={[500, Infinity]}
-              axis="x"
-              resizeHandles={['w']}
-              handle={
-                <div className="px-1 bg-gray-300 dark:bg-gray-700 cursor-ew-resize absolute left-0 top-0 bottom-0 flex items-center inset-y-0">
-                  <div className="h-8 w-1.5 rounded-full bg-slate-400" />
-                </div>
-              }
-              onResize={(e, { size }) => setConfigWidth(size.width)}
-              className="h-full min-w-[14px]"
-            >
-              {configWidth > 0 && (
-                // <div className="px-4 h-full bg-gray-50 dark:bg-gray-900">
-                //   <h2 className="text-lg font-semibold">Configuration</h2>
-                //   {/* Add your config options here */}
-                // </div>
-                <Fragment>
-                  {config}
-                </Fragment>
-              )}
-            </ResizableBox>
-          </div>}
         </div>
       </div>
       {/* Code View */}
-      {isCodeVisible &&
-        <div className="border h-[400px] max-h-[400px] flex flex-col border-gray-200 dark:border-gray-800 dark:shadow-gray-900 rounded-lg shadow-lg bg-white text-dark dark:bg-dark dark:text-white"></div>
-      }
-    </Fragment>
+      {code && <Codeblock lang={code.lang} onCodeSwitch={() => setIsCodeVisible(false)} className={cn(
+        'absolute bottom-0 left-0 right-0 h-full overflow-auto z-50 transition-all duration-500 ease-in-out',
+        isCodeVisible
+          ? 'translate-y-0 opacity-100 visible'
+          : 'translate-y-full opacity-0 invisible'
+      )
+      }>
+        {`
+\`\`\`${code.lang}
+${code.content.trim()}
+\`\`\`
+        `}
+      </Codeblock>}
+    </div>
   );
 }
 
