@@ -20,6 +20,9 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
+    "verbatimModuleSyntax": false,
+    "noUncheckedIndexedAccess": true,
+    "moduleDetection": "force",
     "paths": {
       "~/*": ["app/*"]
     },
