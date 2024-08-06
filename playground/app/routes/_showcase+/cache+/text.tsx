@@ -39,20 +39,19 @@ export default function Component() {
         Caching Text Content
       </PageTitle>
       <PageContent>
-        <Disclaimer>
-          Yoo hoo! This showcase isn't a guide but rather a showy way to demonstrate the concept of caching. 🎉
-        </Disclaimer>
         <Markdown>
           {/* <!-- Think of caching as your app's personal assistant, always one step ahead, anticipating what you need before you even ask. It's not just about speed (though that's a big part of it); it's about creating smooth, responsive experiences for your users, even when the network decides to take a coffee break. --> */}
           {`
-            // Start out with smthg like: Aren't you just curious about - smthg, smthg, remix, smthg, pwa -? blah, blah
-
             Welcome to our first showcase on caching strategies with text! 🎉 Let's dive into the world of caching and see how it can make our web apps faster and more reliable.
 
             Caching is like having a secret stash of your favorite snacks. When you need a quick bite, you grab from your stash instead of running to the store. Similarly, caching stores data locally so that we can quickly access it without making a round trip to the server. This is super handy for improving performance and making our apps feel snappy. It's not just about speed (though that's a big part of it); it's about creating smooth, responsive experiences for your users, even when the network decides to take a coffee break.
-
-            // Disclamer: This showcase site isn't a guide but rather a showy way to demonstrate the concept of caching.
-
+          `}
+        </Markdown>
+        <Disclaimer>
+          Remix PWA Showcase isn't necessarily a guide document, but rather a show-off of various possibilities.
+        </Disclaimer>
+        <Markdown>
+          {`
             Caching can be summed up as storing data in a temporary location so that it can be retrieved quickly when needed. This can be anything from images and videos to JSON responses and HTML pages. The location could also be in a variety of places, such as the browser, a CDN, or a server.
 
             This showcase is all Remix PWA though 💫, so we'll be focusing on caching content in the browser with Remix PWA! Remix PWA provides four strategies for caching text content: *Cache First*, *Network First*, *Stale While Revalidate*, and *Cache Only*.
@@ -64,15 +63,18 @@ export default function Component() {
             Imagine you get your morning coffee from your favorite cafe every day. One day, the barista sees you coming and already has your coffee ready before you even ask. That's cache-first for you! We check our local stash first, and if it's there, we use it.
 
             In web terms, this strategy checks the cache first and only goes to the network if it can't find what it needs locally. It's perfect for content that doesn't change often, like your app's logo or base CSS.
-            `}
+          `}
         </Markdown>
         <CacheFirstDemo />
+        <Disclaimer>
+          {`
+            The demo window like the one above would be a regular occurence within Showcase. Meet the demo \`Iframe\`!
+
+            The \`Iframe\` component allows us to show off live demos without the need to leave the page or alter the site's behaviour. It's a neat way to showcase interactive content, like the caching strategies above, without any hassle. It's like having a mini browser inside the page! 🚀
+          `}
+        </Disclaimer>
         <Markdown>
           {`
-            // Disclaimer about the flicker being as a result of mocking the server in the client.
-
-            // Add another info (here or above), explaining what exactly the demo window is all about.
-
             Play around with the demo. Try going offline, clearing the cache, and changing the cache expiration time. See how it falls back to cache when offline? Or how it automatically goes back to the server when the content becomes stale (expires)? That's the magic of caching strategies! This is like grabbing your favorite coffee that's already made before deciding to brew a new one. If the coffee has gone weird or is not there, you brew a fresh one. ☕
           `}
         </Markdown>
