@@ -6,6 +6,7 @@ export const iconNames = [
   "refresh",
   "pencil",
   "moon",
+  "info",
   "copy",
   "copy-check",
   "cog",
