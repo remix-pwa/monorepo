@@ -55,8 +55,8 @@ export const Markdown = ({ children }: { children: string }) => {
               <a
                 onClick={(e) => scrollIntoView(e, id)}
                 href={`#${id}`}
-                className="absolute -left-6 flex items-center justify-center w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity mt-[.875em]"
-                aria-hidden="true"
+                className="absolute -left-6 flex items-center justify-center size-6 opacity-0 group-hover:opacity-100 transition-opacity mt-[.875em]"
+                // aria-hidden="true"
               >
                 <svg
                   fill="none"
@@ -98,18 +98,19 @@ export const Markdown = ({ children }: { children: string }) => {
               <a
                 onClick={(e) => scrollIntoView(e, id)}
                 href={`#${id}`}
-                className="absolute -left-6 flex items-center justify-center w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity mt-[0.625em]"
-                aria-hidden="true"
+                className="absolute -left-6 flex items-center justify-center size-6 opacity-0 group-hover:opacity-100 transition-opacity mt-[0.625em]"
+                // aria-hidden="true"
+                inertia-hidden="true"
               >
                 <svg
                   fill="none"
                   stroke="currentColor"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth="1.5"
+                  strokeWidth="1.75"
                   shapeRendering="geometricPrecision"
                   viewBox="0 0 24 24"
-                  className="w-3.5 h-3.5 transition-colors stroke-slate-400 group-hover:stroke-slate-600 dark:group-hover:stroke-slate-300"
+                  className="size-3.5 md:size-4 transition-colors stroke-slate-400 group-hover:stroke-slate-600 dark:group-hover:stroke-slate-300"
                 >
                   <path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18"></path>
                 </svg>

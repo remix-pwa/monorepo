@@ -1,5 +1,5 @@
 import { NetworkFirst } from "@remix-pwa/sw"
-import { useState, startTransition, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { Button, IframeWrapper, MockPage, ToggleBar } from "~/components"
 import { usePromise } from "~/hooks/usePromise"
 import { useRefresh } from "~/hooks/useRefresh"
@@ -14,16 +14,6 @@ export const NetworkFirstDemo = () => {
     networkTimeout: 2,
     throttleNetwork: '3g' as '2g' | '3g' | '4g'
   })
-
-  const setData = (result: any) => {
-    if (typeof startTransition === 'function') {
-      startTransition(() => {
-        set(result);
-      });
-    } else {
-      set(result);
-    }
-  }
 
   const DEMO_CODE = `
 import { NetworkFirst } from "@remix-pwa/sw"
@@ -65,9 +55,9 @@ export const NetworkFirstDemo = () => {
         : text.replace(/Current time is: .+/, `Current time is: ${new Date().toLocaleTimeString()}`);
 
       setConfig(c => ({ ...c, cacheHit: wasCacheHit }));
-      setData((wasCacheHit ? data.replace('Current', 'Cached').replace('Raw data from server', 'Cached content') : data) + '\nActual time is: ' + new Date().toLocaleTimeString());
+      set((wasCacheHit ? data.replace('Current', 'Cached').replace('Raw data from server', 'Cached content') : data) + '\nActual time is: ' + new Date().toLocaleTimeString());
     } catch (e) {
-      setData('Error! Network timeout and no response found in cache either.');
+      set('Error! Network timeout and no response found in cache either.');
     }
   }, []);
 
