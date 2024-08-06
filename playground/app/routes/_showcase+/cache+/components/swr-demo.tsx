@@ -13,6 +13,20 @@ export const StaleWhileRevalidateDemo = () => {
   const SERVER_DATA = 'Raw data from server.\nCurrent time is: ' + new Date().toLocaleTimeString()
   const URL = '/api/stale-while-revalidate';
 
+  const DEMO_CODE = `
+import { StaleWhileRevalidate } from "@remix-pwa/sw"
+
+const cache = new StaleWhileRevalidate('cache-name');
+
+const response = await cache.handleRequest(request);
+
+// cache can also be manually updated
+cache.updateCache(request, response);
+
+// cache hit detection
+response.headers.get('x-cache-hit') === 'true'; // true if cache
+`
+
   const fetchData = useCallback(async () => {
     const cache = new StaleWhileRevalidate('cache-text-demo');
 
@@ -49,6 +63,10 @@ export const StaleWhileRevalidateDemo = () => {
   return (
     <IframeWrapper
       title="Stale While Revalidate"
+      code={{
+        content: DEMO_CODE,
+        lang: 'ts'
+      }}
       handleRefresh={() =>
         refresh(() => reset())
       }

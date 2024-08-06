@@ -44,7 +44,7 @@ export const Codeblock = ({
       >
         {formatted}
       </ReactMarkdown>
-      <div className='absolute top-1 right-3 text-sm text-gray-600 dark:text-gray-400'>{lang}</div>
+      <div className='absolute top-1 right-3 text-sm text-gray-600 dark:text-gray-400 select-none'>{lang}</div>
       <div className='absolute top-0 right-0 h-16 w-28 bg-transparent group flex gap-2 justify-end'>
         <button
           onClick={onCodeSwitch}

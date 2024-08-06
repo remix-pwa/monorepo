@@ -17,25 +17,24 @@ export const NetworkFirstDemo = () => {
 
   const DEMO_CODE = `
 import { NetworkFirst } from "@remix-pwa/sw"
-import { Await } from "@remix-run/react"
 
-export const NetworkFirstDemo = () => {
-  const { promise, reset, set } = usePromise<string>()
-  const [config, setConfig] = useState({
-    cacheHit: false,
-    isOffline: false,
-    networkTimeout: 2,
-    throttleNetwork: '3g' as '2g' | '3g' | '4g'
-  })
+const cache = new NetworkFirst('cache-name', {
+  /* options, */
+  // allows you to throttle fetch times
+  networkTimeoutInSeconds: 2
+});
 
-  return (
-    <div>
-      <Await resolve={promise}>
-        {(resolvedData) => <code>{resolvedData}</code>}
-      </Await>
-    </div>
-  )
-}`
+// within your app
+try {
+  const response = await cache.handleRequest(request);
+} catch (error) {
+  // timeout with no cache fallback
+  // other possible errors
+}
+
+// also supports cache hit checking
+response.headers.get('x-cache-hit') === 'true'; // true if cache
+`
 
   const SERVER_DATA = 'Raw data from server.\nCurrent time is: ' + new Date().toLocaleTimeString();
   const URL = '/api/network-first';

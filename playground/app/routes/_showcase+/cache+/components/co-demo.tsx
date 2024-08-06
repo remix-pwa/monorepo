@@ -13,6 +13,24 @@ export const CacheOnlyDemo = () => {
 
   const URL = '/api/cache-only';
 
+  const DEMO_CODE = `
+import { CacheOnly } from "@remix-pwa/sw"
+
+const cache = new CacheOnly('cache-name', {/* options */});
+
+// cache must be populated before usage
+cache.addToCache(request.url, response);
+
+// within a try-catch block
+const res = await cache.handleRequest(request)
+
+// also supports cache hit detection, but it's either a cache hit
+// or an error
+
+// utilise the response as needed
+res.body()
+`
+
   const fetchData = useCallback(async () => {
     const cache = new CacheOnly('cache-text-demo', { maxAgeSeconds: config.expiration });
 
@@ -45,6 +63,10 @@ export const CacheOnlyDemo = () => {
   return (
     <IframeWrapper
       title="Cache Only"
+      code={{
+        lang: 'ts',
+        content: DEMO_CODE
+      }}
       handleRefresh={() =>
         refresh(() => reset())
       }

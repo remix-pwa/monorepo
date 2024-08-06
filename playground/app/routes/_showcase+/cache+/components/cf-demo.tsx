@@ -14,6 +14,25 @@ export const CacheFirstDemo = () => {
   const SERVER_DATA = 'Raw data from server.\nCurrent time is: ' + new Date().toLocaleTimeString()
   // Endpoint mock
   const URL = '/api/cache-first';
+  const DEMO_CODE = `
+import { CacheFirst } from '@remix-pwa/sw';
+
+const cache = new CacheFirst('cache-name', {/* options */});
+
+// within your browser/worker thread
+try {
+  response: Promise<Response> = await cache.handleRequest(request)
+} catch (error) {
+  /* handle anomalies here */
+}
+
+// detect cache hit (was this from the server or cache?)
+response.headers.get('x-cache-hit') === 'true' // true if cache
+
+// utilise the response as needed
+const text = await response.text();
+console.log(text);
+`
 
   // Simulates fetching data from a server with configurable behavior.
   //
@@ -68,6 +87,10 @@ export const CacheFirstDemo = () => {
       handleRefresh={() =>
         refresh(() => reset())
       }
+      code={{
+        content: DEMO_CODE,
+        lang: 'ts'
+      }}
       title="Cache First"
     >
       <div className="px-4 py-2.5" key={refreshCounter}>
