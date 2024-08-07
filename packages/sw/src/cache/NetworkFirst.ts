@@ -36,8 +36,9 @@ export class NetworkFirst extends BaseStrategy {
       return res as Response;
     } catch (error) {
       const cache = await this.openCache();
-      const response = await cache.match(request);
+      const response = await cache.match(request, this.options.matchOptions);
 
+      console.log('NetworkFirst: ', this.options.matchOptions);
       if (response)
         return new Response(response.body, {
           status: response.status,

@@ -132,7 +132,9 @@ export class EnhancedCache {
     if (typeof request === 'string' || request instanceof URL) request = new Request(request);
 
     const cache = await caches.open(this.cacheName);
-    await cache.delete(request);
+    // Forcibly accessing private methods
+    // eslint-disable-next-line dot-notation
+    await cache.delete(request, this.strategy['options']['matchOptions']);
   }
 
   /**
@@ -145,7 +147,9 @@ export class EnhancedCache {
     if (typeof request === 'string') request = new Request(request);
 
     const cache = await caches.open(this.cacheName);
-    return await cache.match(request);
+    // Forcibly accessing private methods
+    // eslint-disable-next-line dot-notation
+    return await cache.match(request, this.strategy['options']['matchOptions']);
   }
 
   /**
@@ -169,7 +173,9 @@ export class EnhancedCache {
     const entries = await Promise.all(
       requests.map(async request => ({
         request,
-        response: (await cache.match(request))?.clone(),
+        // Forcibly accessing private methods
+        // eslint-disable-next-line dot-notation
+        response: (await cache.match(request, this.strategy['options']['matchOptions']))?.clone(),
       }))
     );
 

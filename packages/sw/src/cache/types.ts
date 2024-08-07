@@ -14,6 +14,11 @@ export interface CacheOptions {
    * A list of routes to ignore when caching.
    */
   ignoreRoutes?: string[] | RegExp[];
+  /**
+   * The [CacheQueryOptions](https://w3c.github.io/ServiceWorker/#dictdef-cachequeryoptions) passed to any `cache.match()` or
+   * `cache.delete()` call made by this strategy.
+   */
+  matchOptions?: CacheQueryOptions;
 }
 
 export type CacheableResponseOptions = {

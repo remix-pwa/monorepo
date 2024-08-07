@@ -14,9 +14,9 @@ export abstract class BaseStrategy implements CacheStrategy {
    * @param {string} cacheName - The name of the cache.
    * @param {Object} options - Configuration options for the strategy.
    */
-  constructor(cacheName: string, options: CacheOptions = { maxEntries: 50 }) {
+  constructor(cacheName: string, options: CacheOptions = { maxEntries: 50, matchOptions: {} }) {
     this.cacheName = cacheName;
-    this.options = options;
+    this.options = { matchOptions: {}, ...options };
   }
 
   /**

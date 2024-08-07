@@ -31,7 +31,7 @@ export class StaleWhileRevalidate extends BaseStrategy {
     }
 
     const cache = await this.openCache();
-    let cachedResponse = await cache.match(request.clone());
+    let cachedResponse = await cache.match(request.clone(), this.options.matchOptions);
 
     if (cachedResponse) {
       cachedResponse = new Response(cachedResponse.body, {

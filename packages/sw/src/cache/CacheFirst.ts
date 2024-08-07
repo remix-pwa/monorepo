@@ -28,7 +28,7 @@ export class CacheFirst extends BaseStrategy {
     }
 
     const cache = await this.openCache();
-    const response = await cache.match(request.clone());
+    const response = await cache.match(request.clone(), this.options.matchOptions);
 
     if (!response || !(await this.validateResponse(response.clone())) || !(await this.shouldMatch(response.clone()))) {
       const _response = await fetch(request);
