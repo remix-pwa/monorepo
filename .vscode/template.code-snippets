@@ -23,5 +23,16 @@
       "",
       "$5"
     ]
+  },
+  "Markdown Component": {
+    "prefix": "mdc",
+    "scope": "typescript,typescriptreact,javascript,javascriptreact",
+    "body": [
+      "<Markdown>",
+      "  {`",
+      "    $1",
+      "  `}",
+      "</Markdown>"
+    ]
   }
 }
