@@ -37,7 +37,7 @@ export const Button: FC<ButtonProps> = ({
   const variantClasses = {
     solid: {
       primary: 'bg-primary-500 hover:bg-primary-600 text-white focus:ring-primary-500 dark:bg-primary-600 dark:hover:bg-primary-700',
-      secondary: 'bg-secondary-500 hover:bg-secondary-600 text-white focus:ring-secondary-500 dark:bg-secondary-600 dark:hover:bg-secondary-700',
+      secondary: 'bg-secondary-500 hover:bg-secondary-600 text-white focus:ring-secondary-500 dark:text-slate-900 dark:bg-secondary-600 dark:hover:bg-secondary-700',
       green: 'bg-green-500 hover:bg-green-600 text-white focus:ring-green-500 dark:bg-green-600 dark:hover:bg-green-700',
       red: 'bg-red-500 hover:bg-red-600 text-white focus:ring-red-500 dark:bg-red-600 dark:hover:bg-red-700',
       yellow: 'bg-yellow-500 hover:bg-yellow-600 text-white focus:ring-yellow-500 dark:bg-yellow-600 dark:hover:bg-yellow-700',
