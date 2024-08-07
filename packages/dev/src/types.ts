@@ -70,6 +70,17 @@ export interface PWAOptions {
    * @default '@remix-pwa/worker-runtime'
    */
   workerEntryPoint: string;
+  /**
+   * Build/Environment variables to be injected into the worker file.
+   *
+   * @default
+   * ```
+   * {
+   *   'process.env.NODE_ENV': "development" | "production",
+   * }
+   * ```
+   */
+  buildVariables: Record<string, string>;
   // future: unknown;
   // injectManifest: boolean; // wether manifest should also be injected. Do we handle manifest??
 }
@@ -77,15 +88,16 @@ export interface PWAOptions {
 export interface ResolvedPWAOptions
   extends Pick<
     Required<PWAOptions>,
-    | 'registerSW'
+    | 'buildVariables'
     | 'entryWorkerFile'
-    | 'workerBuildDirectory'
+    | 'ignoredSWRouteFiles'
+    | 'registerSW'
     | 'scope'
+    | 'workerBuildDirectory'
+    | 'workerEntryPoint'
     | 'workerMinify'
     | 'workerName'
     | 'workerSourceMap'
-    | 'ignoredSWRouteFiles'
-    | 'workerEntryPoint'
   > {
   rootDirectory: string;
   appDirectory: string;

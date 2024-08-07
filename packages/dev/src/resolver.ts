@@ -19,11 +19,16 @@ export async function resolveOptions(
   const isDev = process.env.NODE_ENV === 'development';
 
   const {
+    buildVariables = options.buildVariables
+      ? options.buildVariables
+      : {
+          'process.env.NODE_ENV': isDev ? 'development' : 'production',
+        },
     entryWorkerFile: serviceWorkerFile = (options.entryWorkerFile || 'entry.worker.ts').trim(),
     ignoredSWRouteFiles = options.ignoredSWRouteFiles || [],
     registerSW = options.registerSW ?? 'script',
-    scope = options.scope || viteConfig.base,
     // If it isn't 'public', or 'build/client' then the user input their own override 📌
+    scope = options.scope || viteConfig.base,
     workerBuildDirectory = options.workerBuildDirectory || isDev ? 'public' : 'build/client',
     workerEntryPoint = options.workerEntryPoint || '@remix-pwa/worker-runtime',
     workerMinify = options.workerMinify || false,
@@ -43,6 +48,7 @@ export async function resolveOptions(
     workerBuildDirectory: resolve(viteConfig.root, removeTrailingSlashes(workerBuildDirectory)),
     registerSW,
     scope,
+    buildVariables,
     routes,
     entryWorkerFile: removeTrailingSlashes(serviceWorkerFile),
     serviceWorkerPath: resolve(appDirectory, removeTrailingSlashes(serviceWorkerFile)),

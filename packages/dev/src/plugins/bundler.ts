@@ -9,15 +9,16 @@ import { compareHash, getWorkerHash } from '../hash.js';
 import type { PWAPluginContext } from '../types.js';
 import { VirtualSWPlugins } from './virtual-sw.js';
 
+const transformedObject = (obj: Record<string, string>) =>
+  Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, JSON.stringify(value)]));
+
 export async function buildWorker(_ctx: PWAPluginContext) {
   try {
     await build({
       logLevel: 'error',
       configFile: false,
       appType: undefined,
-      define: {
-        'process.env.NODE_ENV': JSON.stringify(_ctx.isDev ? 'development' : 'production'),
-      },
+      define: transformedObject(_ctx.options.buildVariables),
       plugins: [
         esbuild({
           platform: 'browser',
@@ -27,9 +28,7 @@ export async function buildWorker(_ctx: PWAPluginContext) {
           logLevel: 'error',
           sourcefile: _ctx.options.workerEntryPoint,
           charset: 'utf8',
-          define: {
-            'process.env.NODE_ENV': JSON.stringify(_ctx.isDev ? 'development' : 'production'),
-          },
+          define: transformedObject(_ctx.options.buildVariables),
           supported: {
             'import-meta': true,
           },
