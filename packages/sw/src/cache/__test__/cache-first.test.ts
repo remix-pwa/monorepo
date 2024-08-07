@@ -165,6 +165,33 @@ describe('CacheFirst Strategy Testing Suite', () => {
     expect(keys.length).toBe(10);
   });
 
+  test('should utilise cache query options when provided', async () => {
+    const strategy = new CacheFirst('test-cache', {
+      matchOptions: { ignoreSearch: true },
+    });
+    const cache = await caches.open('test-cache');
+    const spiedOnCache = vi.spyOn(cache, 'match');
+
+    await strategy.handleRequest('http://localhost/test?query=1');
+
+    expect(spiedOnCache).toHaveBeenCalled();
+    expect(spiedOnCache).toHaveBeenCalledWith(new Request('http://localhost/test?query=1'), {
+      ignoreSearch: true,
+    });
+
+    strategy.putInCache(new Request('http://localhost/test?query=1'), new Response('cached response'));
+
+    const response = await strategy.handleRequest('http://localhost/test?query=2');
+
+    expect(response).toBeInstanceOf(Response);
+    // It's not undefined because there's no difference between the first and
+    // second request whilst the `ignoreSearch` flag is enabled
+    expect(response).not.toBeUndefined();
+    expect(await cache.keys()).toHaveLength(2);
+
+    spiedOnCache.mockRestore();
+  });
+
   afterEach(() => {
     fetchMocker.resetMocks();
     vi.restoreAllMocks();

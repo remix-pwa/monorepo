@@ -51,7 +51,6 @@ describe('NetworkFirst Strategy Testing Suite', () => {
   test('should fetch from cache if network fails', async () => {
     const strategy = new NetworkFirst('test-cache', { networkTimeoutInSeconds: 1 });
     const cache = await caches.open('test-cache');
-
     const spiedOnCache = vi.spyOn(cache, 'match');
 
     const responseString = 'fake response';
@@ -66,7 +65,7 @@ describe('NetworkFirst Strategy Testing Suite', () => {
 
     expect(response).toBeInstanceOf(Response);
     // expect(response).toEqual(mockedResponse); X-Cache-Hit makes this fail
-    expect(spiedOnCache).toHaveBeenCalledWith(new Request('http://localhost/test'));
+    expect(spiedOnCache).toHaveBeenCalledWith(new Request('http://localhost/test'), {});
 
     spiedOnCache.mockRestore();
   });
@@ -148,7 +147,7 @@ describe('NetworkFirst Strategy Testing Suite', () => {
 
     expect(response).toBeInstanceOf(Response);
     // expect(response).toEqual(mockedResponse); X-Cache-Hit makes this fail
-    expect(spiedOnCache).toHaveBeenCalledWith(new Request('http://localhost/test'));
+    expect(spiedOnCache).toHaveBeenCalledWith(new Request('http://localhost/test'), {});
 
     spiedOnCache.mockRestore();
   });
@@ -182,7 +181,7 @@ describe('NetworkFirst Strategy Testing Suite', () => {
 
     expect(response).toBeInstanceOf(Response);
     // expect(response).toEqual(mockedResponse); X-Cache-Hit makes this fail
-    expect(spiedOnCache).toHaveBeenCalledWith(new Request('http://localhost/test'));
+    expect(spiedOnCache).toHaveBeenCalledWith(new Request('http://localhost/test'), {});
 
     spiedOnCache.mockRestore();
   });
@@ -261,6 +260,40 @@ describe('NetworkFirst Strategy Testing Suite', () => {
 
     expect(text).toBe('network response');
     expect(spiedOnCache).toHaveBeenCalled();
+
+    spiedOnCache.mockRestore();
+  });
+
+  test('should utilise cache match options when provided', { timeout: 15_000 }, async () => {
+    const strategy = new NetworkFirst('test-cache', {
+      matchOptions: { ignoreSearch: true },
+      networkTimeoutInSeconds: 2,
+    });
+    const cache = await caches.open('test-cache');
+    const spiedOnCache = vi.spyOn(cache, 'match');
+
+    const responseString = 'fake response';
+    const responseInit = { status: 200, 'sw-cache-timestamp': Date.now().toString() };
+
+    const mockedResponse = new Response(responseString, responseInit);
+    await cache.put(new Request('http://localhost/test'), mockedResponse);
+
+    fetchMocker.mockRejectOnce();
+
+    await strategy.handleRequest('http://localhost/test?q=1');
+
+    expect(spiedOnCache).toHaveBeenCalled();
+    expect(spiedOnCache).toHaveBeenCalledWith(new Request('http://localhost/test?q=1'), {
+      ignoreSearch: true,
+    });
+
+    const response = await strategy.handleRequest('http://localhost/test?q=2');
+
+    expect(response).toBeInstanceOf(Response);
+    // It's not undefined because there's no difference between the first and
+    // second request whilst the `ignoreSearch` flag is enabled
+    expect(response).not.toBeUndefined();
+    expect(await cache.keys()).toHaveLength(2);
 
     spiedOnCache.mockRestore();
   });
