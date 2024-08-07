@@ -22,6 +22,7 @@ export default defineConfig({
           ],
         });
       },
+      ssr: true,
     }),
     tsconfigPaths(),
     remixPWA(<Partial<PWAViteOptions>>{

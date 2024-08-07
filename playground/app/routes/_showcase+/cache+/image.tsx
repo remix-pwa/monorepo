@@ -1,4 +1,4 @@
-import { Page, PageContent, PageFooter, PageTitle } from "~/components";
+import { Markdown, Page, PageContent, PageFooter, PageTitle } from "~/components";
 import { TableOfContents } from "~/types";
 
 export const handle = {
@@ -9,14 +9,18 @@ export default function Component() {
   return (
     <Page>
       <PageTitle>
-        Caching Images
+      Image Caching: Pic Preserver
       </PageTitle>
       <PageContent>
-        {''}
+        <Markdown>
+        {`
+          
+        `}
+        </Markdown>
       </PageContent>
       <PageFooter
-        prev={{ title: 'Caching Text Content', url: '/cache/text' }}
-        next={{ title: 'Media stuffs', url: '/cache/media' }}
+        prev={{ title: 'Text Caching: Word Vault', url: '/cache/text' }}
+        next={{ title: 'A/V Caching: Media Vault', url: '/cache/media' }}
       />
     </Page>
   )

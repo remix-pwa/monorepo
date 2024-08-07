@@ -12,8 +12,6 @@ export const Disclaimer = ({
     .map(line => line.trim())
     .join('\n')
     .trim();
-  
-    console.log(formatted)
 
   return (
     // <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 my-4">
@@ -26,7 +24,7 @@ export const Disclaimer = ({
         </div>
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
-          className="flex-1 [&amp;>code]:font-mono [&amp;>p]:text-sm [&amp;>p]:leading-snug [&amp;>a]:text-cyan-700 [&amp;>a:hover]:text-cyan-800 dark:[&amp;>a]:text-cyan-400 dark:[&amp;>a:hover]:text-cyan-600"
+          className="flex-1 flex flex-col space-y-4 [&amp;>code]:font-mono [&amp;>p]:text-sm [&amp;>p]:leading-snug [&amp;>a]:text-cyan-700 [&amp;>a:hover]:text-cyan-800 dark:[&amp;>a]:text-cyan-400 dark:[&amp;>a:hover]:text-cyan-600"
           components={{
             p: ({ node, ...props }) => (
               <p

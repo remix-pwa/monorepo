@@ -112,9 +112,9 @@ res.body()
         </div>
         <MockPage promise={promise} />
         <div className="text-sm text-gray-600 dark:text-gray-400">
-          <p className="mb-2">Network Status: <span className="font-semibold">{config.isOffline ? 'Offline' : 'Online'}</span></p>
+          <p className="mb-2">Network Status: <span className="font-semibold text-gray-700 dark:text-gray-300">{config.isOffline ? 'Offline' : 'Online'}</span></p>
           <div className="mb-2 flex items-center gap-2">
-            <span className="whitespace-nowrap max-w-min">Current Cache Expiration:</span>
+            <span className="whitespace-nowrap max-w-min">Cache Expiration:</span>
             <ToggleBar
               items={[20, 30, 60, 120]}
               value={config.expiration}

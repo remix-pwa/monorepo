@@ -70,7 +70,7 @@ export const Button: FC<ButtonProps> = ({
   const buttonClasses = cn(
     baseClasses,
     // @ts-ignore
-    variantClasses[variant][color],
+    variantClasses[variant][color ?? 'primary'],
     sizeClasses[size],
     fullWidth && 'w-full',
     className

@@ -45,7 +45,7 @@ export const Codeblock = ({
         {formatted}
       </ReactMarkdown>
       <div className='absolute top-1 right-3 text-sm text-gray-600 dark:text-gray-400 select-none'>{lang}</div>
-      <div className='absolute top-0 right-0 h-16 w-28 bg-transparent group flex gap-2 justify-end'>
+      <div className='absolute top-0 right-0 size-32 sm:h-28 sm:w-48 lg:h-16 lg:w-28 bg-transparent group flex gap-2 justify-end'>
         <button
           onClick={onCodeSwitch}
           className="mt-2 p-2 h-min bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md transition-opacity opacity-0 group-hover:opacity-70 hover:!opacity-100 group-hover:text-slate-950/85 hover:!text-slate-950 dark:group-hover:text-white/85 dark:hover:!text-white"

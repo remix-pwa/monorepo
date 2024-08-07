@@ -18,13 +18,13 @@ export const Sidebar = () => {
       section: 'Caching Carnival'
     },
     {
-      name: 'Image Caching',
+      name: 'Image Caching: Pic Preserver',
       slug: '/cache/image',
       section: 'Caching Carnival'
     },
     {
-      name: 'A/V Caching',
-      slug: '/##',
+      name: 'A/V Caching: Media Vault',
+      slug: '/cache/media',
       section: 'Caching Carnival'
     },
     {

@@ -96,7 +96,7 @@ response.headers.get('x-cache-hit') === 'true'; // true if cache
         </div>
         <MockPage promise={promise} />
         <div className="text-sm text-gray-600 dark:text-gray-400">
-          <p className="mb-2">Network Status: <span className="font-semibold">{config.isOffline ? 'Offline' : 'Online'}</span></p>
+          <p className="mb-2">Network Status: <span className="font-semibold text-gray-700 dark:text-gray-300">{config.isOffline ? 'Offline' : 'Online'}</span></p>
           <p className="mb-0">Was Cache Hit: <span className="font-semibold text-gray-700 dark:text-gray-300">{config.cacheHit ? 'Yes' : 'No'}</span></p>
         </div>
       </div>

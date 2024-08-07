@@ -120,7 +120,7 @@ response.headers.get('x-cache-hit') === 'true'; // true if cache
           <p className="mb-2">Network Status: <span className="font-semibold text-gray-700 dark:text-gray-300">{config.isOffline ? 'Offline' : 'Online'}</span></p>
           <p className="mb-2">Was Cache Hit: <span className="font-semibold text-gray-700 dark:text-gray-300">{config.cacheHit ? 'Yes' : 'No'}</span></p>
           <div className="mb-2 flex items-center gap-2">
-            <span className="whitespace-nowrap max-w-min">Current Network Timeout:</span>
+            <span className="whitespace-nowrap max-w-min">Network Timeout:</span>
             <ToggleBar
               items={[2, 3]}
               value={config.networkTimeout}
@@ -130,7 +130,7 @@ response.headers.get('x-cache-hit') === 'true'; // true if cache
             />
           </div>
           <div className="mb-2 flex items-center gap-2">
-            <span className="whitespace-nowrap max-w-min">Current Network Speed:</span>
+            <span className="whitespace-nowrap max-w-min">Network Speed:</span>
             <ToggleBar
               items={['2g', '3g', '4g']}
               value={config.throttleNetwork}
