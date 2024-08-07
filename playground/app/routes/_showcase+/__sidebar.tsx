@@ -2,27 +2,35 @@ import { NavLink } from "@remix-run/react"
 import { cn } from "~/utils"
 
 export const Sidebar = () => {
-  const sections = ['Caching', 'Test']
+  const sections = [
+    'Caching Carnival',
+    'Native PWA Toolbox',
+    'Ping! Push Notifications',
+    'Sync or Swim',
+    'Offline Oasis',
+    'App Lifecycle Magic'
+  ]
+
   const nav = [
     {
-      name: 'Caching (Text)',
+      name: 'Text Caching: Word Vault',
       slug: '/cache/text',
-      section: 'Caching'
+      section: 'Caching Carnival'
     },
     {
-      name: 'Caching (JSON)',
-      slug: '/#',
-      section: 'Caching'
+      name: 'Image Caching',
+      slug: '/cache/image',
+      section: 'Caching Carnival'
     },
     {
-      name: 'Caching (Media)',
+      name: 'A/V Caching',
       slug: '/##',
-      section: 'Caching'
+      section: 'Caching Carnival'
     },
     {
       name: 'New Page',
       slug: '/',
-      section: 'Test'
+      section: 'Native PWA Toolbox'
     },
   ]
   return (

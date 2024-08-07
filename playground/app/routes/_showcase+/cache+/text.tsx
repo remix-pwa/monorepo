@@ -35,8 +35,7 @@ export default function Component() {
   return (
     <Page>
       <PageTitle>
-        {/* Text in a Flash: Content Caching */}
-        Caching Text Content
+        Text Caching: Word Vault
       </PageTitle>
       <PageContent>
         <Markdown>
@@ -48,6 +47,7 @@ export default function Component() {
           `}
         </Markdown>
         <Disclaimer>
+          // Dumb this down.
           Remix PWA Showcase isn't necessarily a guide document, but rather a show-off of various possibilities.
         </Disclaimer>
         <Markdown>
@@ -95,6 +95,13 @@ export default function Component() {
             This is one of the most common strategies for dynamic content like news articles, social media feeds, or weather updates. It ensures that users always get the latest information, with something to show even when the network has gone for a snooze. 🛰️
           `}
         </Markdown>
+        <Disclaimer>
+          {`
+          Do you know you can use strategies as one-time wrappers for requests?
+
+          Do you also know that you can use strategies in the browser as well (and not just Service Workers)?
+          `}
+        </Disclaimer>
         <Markdown>
           {`
             ### Cache Only
@@ -138,7 +145,7 @@ export default function Component() {
           `}
         </Markdown>
       </PageContent>
-      <PageFooter next={{ title: 'Caching Images', url: '/' }} />
+      <PageFooter next={{ title: 'Image Caching: Pic Preserver', url: '/cache/image' }} />
     </Page>
   )
 }
