@@ -19,10 +19,10 @@ export class NetworkFirst extends BaseStrategy {
   /**
    * Handles fetch requests by trying to fetch from the network first.
    * Falls back to cache if the network fails or times out.
-   * @param {Request} request - The request to handle.
+   * @param {RequestInfo} request - The request to handle.
    * @returns {Promise<Response>} The network or cached response.
    */
-  async handleRequest(req: Request | string): Promise<Response> {
+  async handleRequest(req: RequestInfo): Promise<Response> {
     const request = this.ensureRequest(req);
 
     if (!isHttpRequest(request) || !this.isRouteSupported(request)) {

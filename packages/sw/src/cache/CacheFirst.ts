@@ -20,7 +20,7 @@ export class CacheFirst extends BaseStrategy {
    * @param {Request} req - The request to handle.
    * @returns {Promise<Response>} The cached or network response.
    */
-  async handleRequest(req: Request | string): Promise<Response> {
+  async handleRequest(req: RequestInfo): Promise<Response> {
     const request = this.ensureRequest(req);
 
     if (!isHttpRequest(request) || !this.isRouteSupported(request)) {

@@ -26,7 +26,7 @@ export class CacheOnly extends BaseStrategy {
    * @param {Request} request - The request to handle.
    * @returns {Promise<Response>} The cached or network response.
    */
-  async handleRequest(req: Request | string): Promise<Response> {
+  async handleRequest(req: RequestInfo): Promise<Response> {
     const request = this.ensureRequest(req);
 
     if (!isHttpRequest(request) || !this.isRouteSupported(request)) {

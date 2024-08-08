@@ -33,7 +33,7 @@ export abstract class BaseStrategy implements CacheStrategy {
    * @param request - The request to ensure.
    * @returns The request as a `Request` object.
    */
-  protected ensureRequest(request: Request | string | URL): Request {
+  protected ensureRequest(request: RequestInfo | URL): Request {
     if (request instanceof URL || typeof request === 'string') {
       return new Request(request);
     }
@@ -70,10 +70,10 @@ export abstract class BaseStrategy implements CacheStrategy {
   /**
    * Abstract method to handle requests.
    * Must be implemented by subclasses.
-   * @param {Request} request - The request to handle.
+   * @param {RequestInfo} request - The request to handle.
    * @returns {Promise<Response>} The response from the cache or network.
    */
-  abstract handleRequest(request: Request | string | URL): Promise<Response>;
+  abstract handleRequest(request: RequestInfo | URL): Promise<Response>;
 
   /**
    * Optional method to clean up the cache based on the defined options.

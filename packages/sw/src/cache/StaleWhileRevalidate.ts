@@ -23,7 +23,7 @@ export class StaleWhileRevalidate extends BaseStrategy {
    * @param {Request} request - The request to handle.
    * @returns {Promise<Response>} The response from the cache or network.
    */
-  async handleRequest(req: Request | string): Promise<Response> {
+  async handleRequest(req: RequestInfo): Promise<Response> {
     const request = this.ensureRequest(req);
 
     if (!isHttpRequest(request) || !this.isRouteSupported(request)) {
