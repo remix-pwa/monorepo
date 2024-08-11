@@ -68,7 +68,8 @@ describe('Plugin resolver test suite', () => {
       workerBuildDirectory: '/Users/ryan/Projects/remix-pwa/build/client',
       registerSW: 'script',
       buildVariables: {
-        'process.env.NODE_ENV': JSON.stringify('development'),
+        'process.env.NODE_ENV': 'production',
+        'process.env.__REMIX_PWA_SPA_MODE': 'false',
       },
       workerSourceMap: false,
       publicPath: '/build/',
@@ -104,7 +105,8 @@ describe('Plugin resolver test suite', () => {
       registerSW: null,
       scope: '/pwa',
       buildVariables: {
-        'process.env.NODE_ENV': JSON.stringify('development'),
+        'process.env.NODE_ENV': 'production',
+        'process.env.__REMIX_PWA_SPA_MODE': 'false',
       },
       rootDirectory: '/Users/ryan/Projects/remix-pwa',
       appDirectory: '/Users/ryan/Projects/remix-pwa/app',
@@ -138,7 +140,8 @@ describe('Plugin resolver test suite', () => {
       workerSourceMap: false,
       publicPath: '/build/',
       buildVariables: {
-        'process.env.NODE_ENV': JSON.stringify('development'),
+        'process.env.NODE_ENV': 'production',
+        'process.env.__REMIX_PWA_SPA_MODE': 'false',
       },
       entryWorkerFile: 'entry.worker.ts',
       workerEntryPoint: '@remix-pwa/worker-runtime',
@@ -160,7 +163,7 @@ describe('Plugin resolver test suite', () => {
       {
         entryWorkerFile: '/entry.worker.ts',
         buildVariables: {
-          'process.env.NODE_ENV': 'development',
+          'process.env.__REMIX_PWA_SPA_MODE': 'false',
           'process.env.API_URL': 'https://api.example.com',
         },
         workerBuildDirectory: '/out/dist/',
@@ -175,7 +178,7 @@ describe('Plugin resolver test suite', () => {
       workerSourceMap: false,
       publicPath: '/build/',
       buildVariables: {
-        'process.env.NODE_ENV': 'development',
+        'process.env.__REMIX_PWA_SPA_MODE': 'false',
         'process.env.API_URL': 'https://api.example.com',
       },
       entryWorkerFile: 'entry.worker.ts',
