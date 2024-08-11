@@ -20,7 +20,7 @@ export class CacheFirst extends BaseStrategy {
    * @param {Request} req - The request to handle.
    * @returns {Promise<Response>} The cached or network response.
    */
-  async handleRequest(req: Request | string): Promise<Response> {
+  async handleRequest(req: RequestInfo): Promise<Response> {
     const request = this.ensureRequest(req);
 
     if (!isHttpRequest(request) || !this.isRouteSupported(request)) {
@@ -28,7 +28,7 @@ export class CacheFirst extends BaseStrategy {
     }
 
     const cache = await this.openCache();
-    const response = await cache.match(request.clone());
+    const response = await cache.match(request.clone(), this.options.matchOptions);
 
     if (!response || !(await this.validateResponse(response.clone())) || !(await this.shouldMatch(response.clone()))) {
       const _response = await fetch(request);

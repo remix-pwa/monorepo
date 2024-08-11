@@ -26,7 +26,7 @@ export class CacheOnly extends BaseStrategy {
    * @param {Request} request - The request to handle.
    * @returns {Promise<Response>} The cached or network response.
    */
-  async handleRequest(req: Request | string): Promise<Response> {
+  async handleRequest(req: RequestInfo): Promise<Response> {
     const request = this.ensureRequest(req);
 
     if (!isHttpRequest(request) || !this.isRouteSupported(request)) {
@@ -34,7 +34,7 @@ export class CacheOnly extends BaseStrategy {
     }
 
     const cache = await this.openCache();
-    const response = await cache.match(request.clone());
+    const response = await cache.match(request.clone(), this.options.matchOptions);
 
     if (!response) {
       throw new Error(`Couldn't locate ${request.url} in the cache!`);

@@ -1,3 +1,10 @@
+## @remix-pwa/cli 1.2.5-dev.1 (2024-08-11)
+
+
+### Bug Fixes
+
+* **cli:** added new `--dev` flag to the `upgrade` command - for updating to latest `dev` candidate d4f4414
+
 ## @remix-pwa/cli 1.2.4 (2024-07-21)
 
 
