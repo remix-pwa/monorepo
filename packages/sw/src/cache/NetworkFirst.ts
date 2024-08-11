@@ -19,10 +19,10 @@ export class NetworkFirst extends BaseStrategy {
   /**
    * Handles fetch requests by trying to fetch from the network first.
    * Falls back to cache if the network fails or times out.
-   * @param {Request} request - The request to handle.
+   * @param {RequestInfo} request - The request to handle.
    * @returns {Promise<Response>} The network or cached response.
    */
-  async handleRequest(req: Request | string): Promise<Response> {
+  async handleRequest(req: RequestInfo): Promise<Response> {
     const request = this.ensureRequest(req);
 
     if (!isHttpRequest(request) || !this.isRouteSupported(request)) {
@@ -36,8 +36,9 @@ export class NetworkFirst extends BaseStrategy {
       return res as Response;
     } catch (error) {
       const cache = await this.openCache();
-      const response = await cache.match(request);
+      const response = await cache.match(request, this.options.matchOptions);
 
+      console.log('NetworkFirst: ', this.options.matchOptions);
       if (response)
         return new Response(response.body, {
           status: response.status,

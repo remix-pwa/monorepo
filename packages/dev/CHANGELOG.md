@@ -1,3 +1,34 @@
+# @remix-pwa/dev 3.1.0 (2024-08-11)
+
+
+### Bug Fixes
+
+* **dev:** pre-rc-candidate: adding (minimal) global support for Remix SPA mode a035c49
+
+
+### Features
+
+* **dev:** added injectable vars cac1206
+
+# @remix-pwa/dev 3.1.0-dev.1 (2024-08-11)
+
+
+### Bug Fixes
+
+* **dev:** pre-rc-candidate: adding (minimal) global support for Remix SPA mode a035c49
+
+
+### Features
+
+* **dev:** added injectable vars cac1206
+
+## @remix-pwa/dev 3.0.7 (2024-07-21)
+
+
+### Bug Fixes
+
+* **dev:** upgraded dependencies 2acc972
+
 ## @remix-pwa/dev 3.0.7-dev.1 (2024-07-20)
 
 

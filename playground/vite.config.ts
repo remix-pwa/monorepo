@@ -25,7 +25,12 @@ export default defineConfig({
       ssr: true,
     }),
     tsconfigPaths(),
-    remixPWA(<Partial<PWAViteOptions>>{
+    remixPWA({
+      buildVariables: {
+        'process.env.NODE_ENV': process.env.NODE_ENV ?? 'production',
+        'process.env.API_URL': 'https://api.example.com',
+        'miscellaneous': 'value',
+      }
       // workerEntryPoint: './runtime.js'
     }),
     iconsSpritesheet({
