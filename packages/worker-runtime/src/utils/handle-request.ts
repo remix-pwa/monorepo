@@ -57,6 +57,8 @@ export async function handleRequest({
   loadContext,
   routes,
 }: HandleRequestArgs): Promise<Response> {
+  const isSPAMode = process.env.__REMIX_PWA_SPA_MODE === 'true';
+
   const url = new URL(event.request.url);
   const routeId = url.searchParams.get('_data');
   // if the request is not a loader or action request, we call the default handler and the routeId will be undefined
@@ -68,7 +70,7 @@ export async function handleRequest({
   };
 
   try {
-    if (isLoaderRequest(event.request) && route?.module.workerLoader) {
+    if (isLoaderRequest(event.request, isSPAMode) && route?.module.workerLoader) {
       return await handleLoader({
         event,
         loader: route.module.workerLoader,
@@ -78,7 +80,7 @@ export async function handleRequest({
       }).then(responseHandler);
     }
 
-    if (isActionRequest(event.request) && route?.module?.workerAction) {
+    if (isActionRequest(event.request, isSPAMode) && route?.module?.workerAction) {
       return await handleAction({
         event,
         action: route.module.workerAction,
