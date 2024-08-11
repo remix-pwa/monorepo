@@ -13,12 +13,20 @@ const transformedObject = (obj: Record<string, string>) =>
   Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, JSON.stringify(value)]));
 
 export async function buildWorker(_ctx: PWAPluginContext) {
+  const DEFAULT_VARS = {
+    'process.env.NODE_ENV': _ctx.isDev ? 'development' : 'production',
+    'process.env.__REMIX_PWA_SPA_MODE': _ctx.__remixPluginContext.remixConfig.ssr ? 'false' : 'true',
+  };
+
   try {
     await build({
       logLevel: 'error',
       configFile: false,
       appType: undefined,
-      define: transformedObject(_ctx.options.buildVariables),
+      define: {
+        ...transformedObject(DEFAULT_VARS),
+        ...transformedObject(_ctx.options.buildVariables),
+      },
       plugins: [
         esbuild({
           platform: 'browser',
@@ -28,7 +36,10 @@ export async function buildWorker(_ctx: PWAPluginContext) {
           logLevel: 'error',
           sourcefile: _ctx.options.workerEntryPoint,
           charset: 'utf8',
-          define: transformedObject(_ctx.options.buildVariables),
+          define: {
+            ...DEFAULT_VARS,
+            ...transformedObject(_ctx.options.buildVariables),
+          },
           supported: {
             'import-meta': true,
           },

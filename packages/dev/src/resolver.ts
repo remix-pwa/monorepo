@@ -23,6 +23,9 @@ export async function resolveOptions(
       ? options.buildVariables
       : {
           'process.env.NODE_ENV': isDev ? 'development' : 'production',
+          // Secret vars! Do not even think about it! 🤫
+          // Used by runtimes for detecting application metadata.
+          'process.env.__REMIX_PWA_SPA_MODE': viteConfig.__remixPluginContext.remixConfig.ssr ? 'false' : 'true',
         },
     entryWorkerFile: serviceWorkerFile = (options.entryWorkerFile || 'entry.worker.ts').trim(),
     ignoredSWRouteFiles = options.ignoredSWRouteFiles || [],
