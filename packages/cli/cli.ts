@@ -202,9 +202,11 @@ program
   .description('Update all `@remix-pwa/*` packages to latest')
   .option('-p, --packages <packages...>', 'Individual packages to update')
   .option('-r, --root <root>', "Location of app's root directory (where package.json is located)", '.')
+  .option('-D, --dev', "Update packages to the latest 'dev' version")
   .action(async options => {
     const root = resolve(process.cwd(), options.root);
     const packagesToUpdate = options.packages ?? [];
+    const TAG = options.dev ? 'dev' : 'latest';
 
     let packageJSON: any;
     console.log(blue('🔃 Reading package.json file...'));
@@ -244,7 +246,7 @@ program
 
       console.log(blue('Found the following `@remix-pwa/*` packages:'));
       allPackages.forEach(pkg => pkg !== '|' && console.log(green(`- ${pkg}`)));
-      console.log('\n', blue(`🚀 Updating all packages to ${italic('latest')}...`));
+      console.log('\n', blue(`🚀 Updating all packages to ${italic(TAG)}...`));
 
       allPackages.forEach(pkg => {
         if (pkg === '|') return;
@@ -253,13 +255,13 @@ program
 
         if (depType === 'dep') {
           try {
-            execSync(`npm i ${pkg}@latest`);
+            execSync(`npm i ${pkg}@${TAG}`);
           } catch (err) {
             console.error(`${red(`💥 Error occured whilst installing ${pkg}:`)}\n\n${err}`);
           }
         } else {
           try {
-            execSync(`npm i -D ${pkg}@latest`);
+            execSync(`npm i -D ${pkg}@${TAG}`);
           } catch (err) {
             console.error(`${red(`💥 Error occured whilst installing ${pkg}:`)}\n\n${err}`);
           }
@@ -274,7 +276,7 @@ program
 
     console.log(blue('Confirmed and updating the following packages:'));
     packagesToUpdate.forEach(pkg => console.log(green(`- @remix-pwa/${pkg}`)));
-    console.log('\n', blue(`🚀 Updating all confirmed packages to ${italic('latest')}...`));
+    console.log('\n', blue(`🚀 Updating all confirmed packages to ${italic(TAG)}...`));
 
     packagesToUpdate.forEach(dep => {
       let depType: 'dep' | 'devDep' = 'dep';
@@ -284,13 +286,13 @@ program
 
       if (depType === 'dep') {
         try {
-          execSync(`npm i ${dep}@latest`);
+          execSync(`npm i ${dep}@${TAG}`);
         } catch (err) {
           console.error(`${red(`💥 Error occured whilst installing ${dep}:`)}\n\n${err}`);
         }
       } else {
         try {
-          execSync(`npm i -D ${dep}@latest`);
+          execSync(`npm i -D ${dep}@${TAG}`);
         } catch (err) {
           console.error(`${red(`💥 Error occured whilst installing ${dep}:`)}\n\n${err}`);
         }

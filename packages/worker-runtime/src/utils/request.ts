@@ -89,17 +89,33 @@ function isMethod(request: Request, methods: Array<string>) {
 }
 
 /**
+ * Checks if given request is a loader (`GET`) method.
+ */
+export function isLoaderMethod(request: Request) {
+  return isMethod(request, ['get']);
+}
+
+/**
+ * Checks if given request is a action (non-`GET`) method.
+ */
+export function isActionMethod(request: Request) {
+  return isMethod(request, ['post', 'delete', 'put', 'patch', 'head']);
+}
+
+/**
  * Checks if given request is a action request.
  */
-export function isActionRequest(request: Request) {
+export function isActionRequest(request: Request, spaMode = false) {
   const url = new URL(request.url);
-  return isMethod(request, ['post', 'delete', 'put', 'patch']) && url.searchParams.get('_data');
+  const qualifies = spaMode ? true : url.searchParams.get('_data');
+  return isActionMethod(request) && qualifies;
 }
 
 /**
  * Checks if given request is a loader request.
  */
-export function isLoaderRequest(request: Request) {
+export function isLoaderRequest(request: Request, spaMode = false) {
   const url = new URL(request.url);
-  return isMethod(request, ['get']) && url.searchParams.get('_data');
+  const qualifies = spaMode ? true : url.searchParams.get('_data');
+  return isLoaderMethod(request) && qualifies;
 }

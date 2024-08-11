@@ -23,7 +23,7 @@ export class StaleWhileRevalidate extends BaseStrategy {
    * @param {Request} request - The request to handle.
    * @returns {Promise<Response>} The response from the cache or network.
    */
-  async handleRequest(req: Request | string): Promise<Response> {
+  async handleRequest(req: RequestInfo): Promise<Response> {
     const request = this.ensureRequest(req);
 
     if (!isHttpRequest(request) || !this.isRouteSupported(request)) {
@@ -31,7 +31,7 @@ export class StaleWhileRevalidate extends BaseStrategy {
     }
 
     const cache = await this.openCache();
-    let cachedResponse = await cache.match(request.clone());
+    let cachedResponse = await cache.match(request.clone(), this.options.matchOptions);
 
     if (cachedResponse) {
       cachedResponse = new Response(cachedResponse.body, {

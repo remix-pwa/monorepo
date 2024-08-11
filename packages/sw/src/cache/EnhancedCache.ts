@@ -60,7 +60,7 @@ export class EnhancedCache {
    * @param request - The request to dynamically handle.
    * @returns {Promise<Response>} The response from the cache or network.
    */
-  async handleRequest(request: Request | string | URL): Promise<Response> {
+  async handleRequest(request: RequestInfo | URL): Promise<Response> {
     this.totalRequests++;
 
     const response = await this.strategy.handleRequest(request);
@@ -96,7 +96,7 @@ export class EnhancedCache {
    * @param {Request} request - The request to cache.
    * @param {Response} response - The response to cache.
    */
-  async addToCache(request: Request | string | URL, response: Response) {
+  async addToCache(request: RequestInfo | URL, response: Response) {
     if (typeof request === 'string' || request instanceof URL) request = new Request(request);
 
     const cache = await caches.open(this.cacheName);
@@ -114,7 +114,7 @@ export class EnhancedCache {
    * @param {Request} request - The request to cache.
    * @param {Response} response - The response to cache.
    */
-  async __putInCache(request: Request | string, response: Response) {
+  async __putInCache(request: RequestInfo, response: Response) {
     if (typeof request === 'string') request = new Request(request);
 
     const cache = await caches.open(this.cacheName);
@@ -125,14 +125,16 @@ export class EnhancedCache {
    * Manually removes a response from the cache.
    * Useful for removing responses from external sources.
    *
-   * @param {Request | string | URL} request - The request to remove from the cache.
+   * @param {RequestInfo | URL} request - The request to remove from the cache.
    * @returns {Promise<void>}
    */
-  async removeFromCache(request: Request | string | URL): Promise<void> {
+  async removeFromCache(request: RequestInfo | URL): Promise<void> {
     if (typeof request === 'string' || request instanceof URL) request = new Request(request);
 
     const cache = await caches.open(this.cacheName);
-    await cache.delete(request);
+    // Forcibly accessing private methods
+    // eslint-disable-next-line dot-notation
+    await cache.delete(request, this.strategy['options']['matchOptions']);
   }
 
   /**
@@ -141,11 +143,13 @@ export class EnhancedCache {
    * @param request - The request to match against the cache.
    * @returns - The cached response or undefined if not found.
    */
-  async match(request: Request | string): Promise<Response | undefined> {
+  async match(request: RequestInfo): Promise<Response | undefined> {
     if (typeof request === 'string') request = new Request(request);
 
     const cache = await caches.open(this.cacheName);
-    return await cache.match(request);
+    // Forcibly accessing private methods
+    // eslint-disable-next-line dot-notation
+    return await cache.match(request, this.strategy['options']['matchOptions']);
   }
 
   /**
@@ -169,7 +173,9 @@ export class EnhancedCache {
     const entries = await Promise.all(
       requests.map(async request => ({
         request,
-        response: (await cache.match(request))?.clone(),
+        // Forcibly accessing private methods
+        // eslint-disable-next-line dot-notation
+        response: (await cache.match(request, this.strategy['options']['matchOptions']))?.clone(),
       }))
     );
 

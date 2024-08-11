@@ -1,3 +1,10 @@
+## @remix-pwa/client 3.0.6 (2024-07-21)
+
+
+### Bug Fixes
+
+* **client:** upgraded dependencies 59a99c8
+
 ## @remix-pwa/client 3.0.6-dev.1 (2024-07-20)
 
 

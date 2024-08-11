@@ -1,3 +1,10 @@
+## @remix-pwa/sw 3.0.8 (2024-07-21)
+
+
+### Bug Fixes
+
+* **sw:** upgraded dependencies 197fc70
+
 ## @remix-pwa/sw 3.0.8-dev.1 (2024-07-20)
 
 

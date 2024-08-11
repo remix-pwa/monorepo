@@ -7,6 +7,10 @@ declare let self: ServiceWorkerGlobalScope;
 
 self.logger = logger;
 
+console.log('Hello from service worker!');
+// @ts-ignore
+console.log(process.env.NODE_ENV, process.env.API_URL, miscellaneous);
+
 const documentCache = new EnhancedCache('document-cache', {
   version: 'v1',
   strategy: 'NetworkFirst',

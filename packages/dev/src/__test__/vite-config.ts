@@ -25,6 +25,7 @@ export const mockViteConfig = <Partial<ResolvedConfig>>{
       assetsBuildDirectory: '/Users/ryan/Projects/remix-pwa/public/build',
       ignoredRouteFiles: ['**/.*'],
       publicPath: '/build/',
+      ssr: true,
     },
   },
 };

@@ -1,3 +1,10 @@
+## @remix-pwa/dev 3.0.7 (2024-07-21)
+
+
+### Bug Fixes
+
+* **dev:** upgraded dependencies 2acc972
+
 ## @remix-pwa/dev 3.0.7-dev.1 (2024-07-20)
 
 
