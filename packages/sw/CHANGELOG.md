@@ -1,3 +1,10 @@
+## @remix-pwa/sw 3.0.9 (2024-08-11)
+
+
+### Bug Fixes
+
+* **sw:** added `matchOptions` for adding querying options to cache operations c87e507
+
 ## @remix-pwa/sw 3.0.9-dev.1 (2024-08-11)
 
 
