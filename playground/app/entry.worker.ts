@@ -1,18 +1,35 @@
 /// <reference lib="WebWorker" />
 
-import { Logger } from '@remix-pwa/sw';
+import { DefaultFetchHandler, EnhancedCache, Logger } from '@remix-pwa/sw';
 
 const logger = new Logger({
-  prefix: 'showcase'
+  prefix: 'showcase',
 });
 
 declare let self: ServiceWorkerGlobalScope & { logger: Logger };
-self.logger = logger
+self.logger = logger;
+
+const imageCache = new EnhancedCache('image-cache', {
+  strategy: 'CacheFirst',
+  strategyOptions: {
+    matchOptions: {
+      ignoreSearch: false,
+    },
+    maxAgeSeconds: 60 * 60 * 24 * 365,
+  },
+  version: 'v1',
+});
 
 self.addEventListener('install', (event: ExtendableEvent) => {
   logger.log('installing service worker');
   logger.warn('This is a playground service worker 📦. It is not intended for production use.');
-  event.waitUntil(self.skipWaiting());
+
+  event.waitUntil(
+    Promise.all([
+      imageCache.preCacheUrls(self.__workerManifest.assets.filter(url => url.includes('/images/'))),
+      self.skipWaiting(),
+    ])
+  );
 });
 
 self.addEventListener('activate', event => {
@@ -29,3 +46,16 @@ export const getLoadContext = () => {
     logger: self.logger,
   };
 };
+
+export const defaultFetchHandler: DefaultFetchHandler = async ({ context }) => {
+  const { event, fetchFromServer } = context;
+
+  const req = event.request;
+  const url = new URL(req.url);
+
+  if (req.destination === 'image' && url.pathname.includes('/images/')) {
+    return imageCache.handleRequest(event.request);
+  }
+
+  return fetchFromServer()
+}
