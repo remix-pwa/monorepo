@@ -47,12 +47,14 @@ const Carousel: React.FC<CarouselProps> = ({ images, autoplayInterval = 5000 }) 
 
   const handleDragStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     setIsDragging(true);
+    // @ts-ignore
     setStartX('touches' in e ? e.touches[0].clientX : e.clientX);
   };
 
   const handleDragEnd = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     if (!isDragging) return;
     setIsDragging(false);
+    // @ts-ignore
     const endX = 'changedTouches' in e ? e.changedTouches[0].clientX : e.clientX;
     const diff = endX - startX;
     if (Math.abs(diff) > 50) {
@@ -66,7 +68,7 @@ const Carousel: React.FC<CarouselProps> = ({ images, autoplayInterval = 5000 }) 
 
   return (
     <div className="relative w-full h-full overflow-hidden">
-      <div 
+      <div
         ref={carouselRef}
         className="flex w-full h-full transition-transform duration-500 ease-in-out"
         onMouseDown={handleDragStart}
@@ -76,14 +78,12 @@ const Carousel: React.FC<CarouselProps> = ({ images, autoplayInterval = 5000 }) 
         onTouchEnd={handleDragEnd}
       >
         <div className="flex w-full h-full justify-center items-center">
-          <div className={`relative flex-shrink-0 w-1/4 h-full transition-all duration-500 ease-in-out ${isTransitioning ? 'opacity-50 scale-90' : 'opacity-100 scale-100'}`}>
-            <img src={images[getImageIndex(-1)]} alt="Previous" className="w-full h-full object-cover rounded-lg" />
-          </div>
-          <div className={`relative flex-shrink-0 w-1/2 h-full transition-all duration-500 ease-in-out ${isTransitioning ? 'scale-95' : 'scale-100'}`}>
-            <img src={images[currentIndex]} alt="Current" className="w-full h-full object-cover rounded-lg" />
-          </div>
-          <div className={`relative flex-shrink-0 w-1/4 h-full transition-all duration-500 ease-in-out ${isTransitioning ? 'opacity-50 scale-90' : 'opacity-100 scale-100'}`}>
-            <img src={images[getImageIndex(1)]} alt="Next" className="w-full h-full object-cover rounded-lg" />
+          <div className={'relative flex-shrink-0 flex w-full h-full justify-center transition-all duration-500 ease-in-out px-4 py-6 carousel-container'}>
+            <img onClick={prevSlide} src={images[getImageIndex(-1)]} alt="Previous" className="h-72 w-80 object-cover rounded-lg rotate-left-img absolute left-0 top-0 bottom-0 mx-0 my-auto" />
+            <div className="h-full rounded-lg z-30 mx-auto max-w-96">
+              <img src={images[currentIndex]} alt="Current" className="max-w-full max-h-full object-cover rounded-lg" />
+            </div>
+            <img onClick={nextSlide} src={images[getImageIndex(1)]} alt="Next" className="h-72 w-80 object-cover rounded-lg rotate-right-img absolute right-0 top-0 bottom-0 mx-0 my-auto" />
           </div>
         </div>
       </div>

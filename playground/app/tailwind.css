@@ -84,6 +84,21 @@
     --color-background: 26 27 30;       /* Dark background (#1a1b1e) */
     --color-text: 248 250 252;          /* Light text */
   }
+
+  .carousel-container {
+    perspective: 1000px; /* Controls the depth of the 3D effect */
+  }
+
+  .rotate-left-img {
+    transform-style: preserve-3d;
+    transform: perspective(1000px) rotateY(20deg) skewY(4deg) scale(.8) translateZ(-100px);
+}
+
+
+  .rotate-right-img {
+    transform-style: preserve-3d;
+    transform: perspective(1000px) rotateY(-20deg) skewY(-5deg) scale(.8) translateZ(-100px);
+  }
 }
 
 .background {
