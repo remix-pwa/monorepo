@@ -47,7 +47,7 @@ const LazyLoadImage = ({ src }) => (
         '/images/image-3.jpg',
         '/images/image-4.jpg',
         '/images/image-5.jpg',
-        '/images/image-7.jpg', // fails
+        // '/images/image-7.jpg', // fails
       ];
       setImages(imageUrls);
     };
