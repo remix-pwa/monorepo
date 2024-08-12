@@ -15,7 +15,7 @@ import { EnhancedCache } from '@remix-pwa/sw';
 // within the install event (using enhanced cache)
 event.waitUntil(
   Promise.all([
-    cache.preCacheUrls([PLACEHOLDER_URL]),
+    imgCache.preCacheUrls([PLACEHOLDER_IMG_URL]),
     // ...
   ])
 );
@@ -25,7 +25,7 @@ if (
   req.destination === 'image' &&
   url.pathname.includes(/* if applicable */)
 ) {
-    return cache.handleRequest(event.request);
+    return imgCache.handleRequest(event.request);
 }
 
 // in your component

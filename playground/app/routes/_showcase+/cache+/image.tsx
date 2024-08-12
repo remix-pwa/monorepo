@@ -1,6 +1,7 @@
 import { Markdown, Page, PageContent, PageFooter, PageTitle } from "~/components";
 import { TableOfContents } from "~/types";
 import { LazyLoadingDemo } from "./components/lazy-demo";
+import { ImageFallbackDemo } from "./components/fb-demo";
 
 export const handle = {
   tableOfContents: [
@@ -44,6 +45,8 @@ export default function Component() {
         <LazyLoadingDemo />
         <Markdown>
           {`
+            The first demo of this page showcases lazy loading in action with the help of service workers. As you scroll down, the images are loaded dynamically, but with a twist—thanks to our service worker, if the user has viewed the image before, it’s cached and loads instantly, even if they’re offline. This not only speeds up the initial page load but also saves bandwidth by loading only the images that the user will see.
+
             ### Bookmarking Images
 
             Imagine you're browsing an online gallery, and you find a picture you want to keep. What if you could bookmark it and have it available offline? Better yet, what if you could download it for offline viewing?
@@ -61,7 +64,7 @@ export default function Component() {
             In a web application, this is especially important. We can use service workers to detect when an image fails to load and automatically serve a cached placeholder instead.
           `}
         </Markdown>
-        {/* Demo */}
+        <ImageFallbackDemo />
         <Markdown>
           {`
             ### Rounding Up
