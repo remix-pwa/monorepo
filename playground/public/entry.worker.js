@@ -5000,9 +5000,11 @@ const isAssetRequest = (request) => {
 };
 const defaultFetchHandler = async ({ request, context }) => {
   const req = context.event.request;
-  console.log(req);
   req.referrer;
   req.headers.get("referer");
+  if (req.destination === "image") {
+    console.log("Image request", req);
+  }
   if (isAssetRequest(request)) {
     return assetCache.handleRequest(request);
   }
@@ -9414,13 +9416,21 @@ function createArgumentsFrom({ event, loadContext, path }) {
 function isMethod(request, methods) {
   return methods.includes(request.method.toLowerCase());
 }
-function isActionRequest(request) {
-  const url = new URL(request.url);
-  return isMethod(request, ["post", "delete", "put", "patch"]) && url.searchParams.get("_data");
+function isLoaderMethod(request) {
+  return isMethod(request, ["get"]);
 }
-function isLoaderRequest(request) {
+function isActionMethod(request) {
+  return isMethod(request, ["post", "delete", "put", "patch", "head"]);
+}
+function isActionRequest(request, spaMode = false) {
   const url = new URL(request.url);
-  return isMethod(request, ["get"]) && url.searchParams.get("_data");
+  const qualifies = spaMode ? true : url.searchParams.get("_data");
+  return isActionMethod(request) && qualifies;
+}
+function isLoaderRequest(request, spaMode = false) {
+  const url = new URL(request.url);
+  const qualifies = spaMode ? true : url.searchParams.get("_data");
+  return isLoaderMethod(request) && qualifies;
 }
 function errorResponseToJson(errorResponse) {
   return json_1(errorResponse.error || { message: "Unexpected Server Error" }, {
@@ -9436,6 +9446,7 @@ function isRemixResponse(response) {
 }
 async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, event, loadContext, routes: routes2 }) {
   var _a;
+  const isSPAMode = true === "true";
   const url = new URL(event.request.url);
   const routeId = url.searchParams.get("_data");
   const route = routeId ? routes2[routeId] : void 0;
@@ -9445,7 +9456,7 @@ async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, ev
     context: loadContext
   };
   try {
-    if (isLoaderRequest(event.request) && (route == null ? void 0 : route.module.workerLoader)) {
+    if (isLoaderRequest(event.request, isSPAMode) && (route == null ? void 0 : route.module.workerLoader)) {
       return await handleLoader({
         event,
         loader: route.module.workerLoader,
@@ -9454,7 +9465,7 @@ async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, ev
         loadContext
       }).then(responseHandler);
     }
-    if (isActionRequest(event.request) && ((_a = route == null ? void 0 : route.module) == null ? void 0 : _a.workerAction)) {
+    if (isActionRequest(event.request, isSPAMode) && ((_a = route == null ? void 0 : route.module) == null ? void 0 : _a.workerAction)) {
       return await handleAction({
         event,
         action: route.module.workerAction,

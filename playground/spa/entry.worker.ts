@@ -53,13 +53,17 @@ const isAssetRequest = (request: Request)=> {
 export const defaultFetchHandler = async ({ request, context }: any) => {
   const req = context.event.request;
 
-  console.log(req)
+  // console.log(req)
 
   // The referrer (the URL of the page that made the request)
   const referrer = req.referrer; // This is usually the full URL of the document
 
   // You can also check the 'Referer' header (note the different spelling)
   const refererHeader = req.headers.get('referer');
+
+  if ((req as Request).destination === 'image') {
+    console.log('Image request', req);
+  }
 
   // console.log('Referrer (page making the request):', referrer, req.url, refererHeader, Object.fromEntries(req.headers));
 

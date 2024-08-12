@@ -1,5 +1,4 @@
 import { usePWAManager } from "@remix-pwa/client";
-import { spaFetch } from "@remix-pwa/sw";
 import { ClientLoaderFunctionArgs, Form, Link, useFetcher } from "@remix-run/react";
 
 export const meta = () => {
@@ -24,7 +23,7 @@ export const clientAction = async ({ request, context }: ClientLoaderFunctionArg
   console.log('Client action called');
   console.log(request, context)
 
-  await spaFetch('https://example.com', { method: 'POST', mode: 'no-cors' });
+  await fetch('https://example.com', { method: 'POST', mode: 'no-cors' });
 
   return null;
 }
@@ -55,6 +54,7 @@ export default function Index() {
       <Form method="POST">
         <button type="submit">Yes</button>
       </Form>
+      <img src='https://avatars.githubusercontent.com/u/69679506?v=4' alt="Get out" />
       <div className="bg-amber-500/40 w-full flex-1 rounded-2xl mb-10 px-4 py-6 overflow-y-auto">
         <div>
           <h3 className="text-lg pb-2 font-medium">Basic Worker Loaders</h3>
