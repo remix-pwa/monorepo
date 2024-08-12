@@ -1,18 +1,43 @@
-import { Button, Carousel, IframeWrapper, Image } from "~/components"
-import { usePromise } from "~/hooks/usePromise"
+import { Carousel, IframeWrapper } from "~/components"
 import { useRefresh } from "~/hooks/useRefresh"
 import { useEffect, useState } from "react";
 
 export const LazyLoadingDemo = () => {
   const { refreshCounter, refresh } = useRefresh()
-  const { promise, reset, set } = usePromise<string>()
-  const [config, setConfig] = useState({
-    cacheHit: false,
-    isOffline: false,
-  })
   const [images, setImages] = useState<string[]>([]);
   const [loadedImages, setLoadedImages] = useState<string[]>([]);
 
+  const DEMO_CODE = `
+// in your service worker
+
+import { EnhancedCache } from '@remix-pwa/sw';
+
+// within the install event (using enhanced cache)
+event.waitUntil(
+  Promise.all([
+    cache.preCacheUrls([PLACEHOLDER_URL]),
+    // ...
+  ])
+);
+
+// within default fetch handler
+if (
+  req.destination === 'image' &&
+  url.pathname.includes(/* if applicable */)
+) {
+    return cache.handleRequest(event.request);
+}
+
+// in your component
+
+const LazyLoadImage = ({ src }) => (
+  <img
+    src={src}
+    alt="Lazy Loaded"
+    loading="lazy" // standard lazy loading
+  />
+);
+`
   useEffect(() => {
     // Mock fetching image URLs
     const fetchImages = async () => {
@@ -22,6 +47,7 @@ export const LazyLoadingDemo = () => {
         '/images/image-3.jpg',
         '/images/image-4.jpg',
         '/images/image-5.jpg',
+        '/images/image-7.jpg', // fails
       ];
       setImages(imageUrls);
     };
@@ -51,9 +77,11 @@ export const LazyLoadingDemo = () => {
           return [...prev];
         });
       });
-
-    console.log("Loaded images", loadedImages, url);
   };
+
+  const reset = () => {
+    setLoadedImages([]);
+  }
 
   return (
     <IframeWrapper
@@ -61,12 +89,16 @@ export const LazyLoadingDemo = () => {
       handleRefresh={() =>
         refresh(() => reset())
       }
+      code={{
+        content: DEMO_CODE,
+        lang: 'ts',
+      }}
     >
       {/* <div className="relative w-full justify-center hidden items-center mt-0">
         <Button variant="solid" color="secondary" className="mx-auto">
           Clear Cache
         </Button> */}
-        {/* <div
+      {/* <div
           onClick={() => setConfig(c => ({ ...c, isOffline: !c.isOffline }))}
           className={cn(
             "p-2 cursor-pointer flex content-center justify-center rounded-full bg-neon absolute right-4 text-white",
@@ -76,7 +108,7 @@ export const LazyLoadingDemo = () => {
           <Icon name={config.isOffline ? "wifi-off" : "wifi"} className="size-5" />
         </div> */}
       {/* </div> */}
-      <div className="px-0 md:px-4 py-3 relative">
+      <div className="px-0 md:px-4 py-3 relative" key={refreshCounter}>
         <Carousel
           images={
             images.map((url, index) => (
@@ -86,6 +118,7 @@ export const LazyLoadingDemo = () => {
                 src={loadedImages[index] || "/images/placeholder.jpg"}
                 alt={`Sample ${index + 1}`}
                 onLoad={() => handleLazyLoad(url)}
+                onError={e => e.currentTarget.src = '/images/fallback.jpg'}
                 loading="lazy"
               />
             ))
