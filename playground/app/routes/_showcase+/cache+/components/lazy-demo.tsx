@@ -76,14 +76,15 @@ export const LazyLoadingDemo = () => {
           <Icon name={config.isOffline ? "wifi-off" : "wifi"} className="size-5" />
         </div> */}
       {/* </div> */}
-      <div className="px-0 md:px-4 py-6 relative">
+      <div className="px-0 md:px-4 py-3 relative">
         <Carousel
           images={
             images.map((url, index) => (
               <img
                 key={index}
+                className="object-cover size-full"
                 src={loadedImages[index] || "/images/placeholder.jpg"}
-                alt={`Sample ${index}`}
+                alt={`Sample ${index + 1}`}
                 onLoad={() => handleLazyLoad(url)}
                 loading="lazy"
               />
