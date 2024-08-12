@@ -1,4 +1,5 @@
 import { useLocation, useMatches } from "@remix-run/react";
+import slugify from "@sindresorhus/slugify";
 import { type MouseEvent, useEffect, useState } from "react";
 import { useTableOfContents } from '~/hooks/useTableOfContents';
 import type { TableOfContents } from "~/types";
@@ -44,13 +45,13 @@ export const ToC = () => {
         <ul className="border-l-[1.5px] border-l-gray-400 text-sm">
           {/* @ts-ignore */}
           {currentToC.map((heading) => (
-            <li key={heading.id} className="flex">
+            <li key={slugify(heading.title)} className="flex">
               <a
-                href={`#${heading.id}`}
-                onClick={(e) => scrollIntoView(e, heading.id)}
+                href={`#${slugify(heading.title)}`}
+                onClick={(e) => scrollIntoView(e, slugify(heading.title))}
                 className={cn(
                   "toc-anchor flex flex-row items-baseline left-[-1px] relative text-sm py-1 ps-3 transition-all border-l-2 border-transparent",
-                  currentSection === heading.id ? 'border-l-current text-blue-500 hover:text-blue-700 dark:hover:text-blue-600' : 'hover:text-gray-500',
+                  currentSection === slugify(heading.title) ? 'border-l-current text-blue-500 hover:text-blue-700 dark:hover:text-blue-600' : 'hover:text-gray-500',
                 )}
               >
                 {heading.title}

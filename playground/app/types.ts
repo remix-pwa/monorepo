@@ -1,5 +1,5 @@
 export type TableOfContents = {
   title: string;
-  id: string;
+  id?: string;
   top?: number;
 }[];

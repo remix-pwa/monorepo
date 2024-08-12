@@ -27,12 +27,12 @@ export function useTableOfContents(tableOfContents: any) {
       scrollMt = scrollMt * fontSize
 
       const sortedHeadings = headings.concat([]).sort((a, b) => a.top - b.top)
-      const top = window.pageYOffset + scrollMt + 64
-      let current = sortedHeadings[0].id
+      const top = window.scrollY + scrollMt + 64
+      let current = sortedHeadings[0]!.id
 
       for (let i = 0; i < sortedHeadings.length; i++) {
-        if (top >= sortedHeadings[i].top) {
-          current = sortedHeadings[i].id
+        if (top >= sortedHeadings[i]!.top) {
+          current = sortedHeadings[i]!.id
         }
       }
 

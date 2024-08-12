@@ -28,9 +28,34 @@ export const Sidebar = () => {
       section: 'Caching Carnival'
     },
     {
-      name: 'New Page',
+      name: 'Contacts: People Picker',
+      slug: '/native-pwa/contacts',
+      section: 'Native PWA Toolbox'
+    },
+    {
+      name: 'Files',
       slug: '/',
       section: 'Native PWA Toolbox'
+    },
+    {
+      name: 'Location',
+      slug: '/',
+      section: 'Native PWA Toolbox'
+    },
+    {
+      name: 'Feat',
+      slug: '/',
+      section: 'Native PWA Toolbox'
+    },
+    {
+      name: 'Basic Notifications',
+      slug: '/push/basic',
+      section: 'Ping! Push Notifications'
+    },
+    {
+      name: 'Advanced Notifications',
+      slug: '/push/advanced',
+      section: 'Ping! Push Notifications'
     },
   ]
   return (
