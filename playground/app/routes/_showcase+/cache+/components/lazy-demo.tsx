@@ -8,7 +8,6 @@ interface CarouselProps {
   autoplayInterval?: number;
 }
 
-
 const Carousel: React.FC<CarouselProps> = ({ images, autoplayInterval = 5000 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -66,7 +65,7 @@ const Carousel: React.FC<CarouselProps> = ({ images, autoplayInterval = 5000 }) 
   };
 
   return (
-    <div className="relative size-full overflow-hidden">
+    <div className="relative w-full h-full overflow-hidden">
       <div 
         ref={carouselRef}
         className="flex w-full h-full transition-transform duration-500 ease-in-out"
@@ -76,14 +75,16 @@ const Carousel: React.FC<CarouselProps> = ({ images, autoplayInterval = 5000 }) 
         onTouchStart={handleDragStart}
         onTouchEnd={handleDragEnd}
       >
-        <div className={`absolute w-3/5 h-full transition-all duration-500 ease-in-out ${isTransitioning ? '-translate-x-full scale-90' : '-translate-x-1/2 scale-90'}`}>
-          <img src={images[getImageIndex(-1)]} alt="Previous" className="w-full h-full object-cover rounded-lg" />
-        </div>
-        <div className={`absolute w-3/5 h-full left-1/2 transition-all duration-500 ease-in-out ${isTransitioning ? 'translate-x-full scale-90' : '-translate-x-1/2 scale-100'}`}>
-          <img src={images[currentIndex]} alt="Current" className="w-full h-full object-cover rounded-lg" />
-        </div>
-        <div className={`absolute w-3/5 h-full transition-all duration-500 ease-in-out ${isTransitioning ? 'translate-x-0 scale-100' : 'translate-x-1/2 scale-90'}`}>
-          <img src={images[getImageIndex(1)]} alt="Next" className="w-full h-full object-cover rounded-lg" />
+        <div className="flex w-full h-full justify-center items-center">
+          <div className={`relative flex-shrink-0 w-1/4 h-full transition-all duration-500 ease-in-out ${isTransitioning ? 'opacity-50 scale-90' : 'opacity-100 scale-100'}`}>
+            <img src={images[getImageIndex(-1)]} alt="Previous" className="w-full h-full object-cover rounded-lg" />
+          </div>
+          <div className={`relative flex-shrink-0 w-1/2 h-full transition-all duration-500 ease-in-out ${isTransitioning ? 'scale-95' : 'scale-100'}`}>
+            <img src={images[currentIndex]} alt="Current" className="w-full h-full object-cover rounded-lg" />
+          </div>
+          <div className={`relative flex-shrink-0 w-1/4 h-full transition-all duration-500 ease-in-out ${isTransitioning ? 'opacity-50 scale-90' : 'opacity-100 scale-100'}`}>
+            <img src={images[getImageIndex(1)]} alt="Next" className="w-full h-full object-cover rounded-lg" />
+          </div>
         </div>
       </div>
       <button className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full" onClick={prevSlide}>&lt;</button>
