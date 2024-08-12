@@ -67,6 +67,10 @@ export default function Component() {
         <ImageFallbackDemo />
         <Markdown>
           {`
+            In the final demo, we implemented fallbacks for missing images. If an image fails to load within a certain, we display a cached fallback image instead. This ensures that the user always sees something and never a broken image icon again.
+
+            Note that we could expand this situation even further, by performing additional checks and fallbacks for different types of images. For example, we could have different fallbacks for different image types, or even different fallbacks based on the error/error code.
+ 
             ### Rounding Up
 
             Efficient image caching is a game-changer for PWAs. From lazy loading to offline bookmarking and smart fallbacks, these strategies ensure that your images are always there when your users need them. Not only does this improve performance, but it also creates a smoother, more enjoyable user experience.
