@@ -1,13 +1,14 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, ReactElement, cloneElement, Fragment } from "react";
 import { cn } from "~/utils";
 
-interface Image {
+export type Image = {
   src: string;
-  alt: string;
+  alt?: string;
+  loading?: 'lazy' | 'eager';
 }
 
 interface CarouselProps {
-  images: string[];
+  images: Array<string | ReactElement<HTMLImageElement>>;
   size?: 'sm' | 'md' | 'lg';
   autoplay?: boolean;
   autoplayInterval?: number;
@@ -85,45 +86,109 @@ export const Carousel: React.FC<CarouselProps> = ({ images, autoplayInterval = 5
         onTouchEnd={handleDragEnd}
       >
         <div className="flex w-full h-full justify-center items-center">
-          <div className={'relative flex-shrink-0 flex w-full h-full justify-center transition-all duration-500 ease-in-out carousel-container'}>
-            <img
-              onClick={prevSlide}
-              src={images[getImageIndex(-1)]}
-              alt="Previous"
-              className={cn(
-                "object-cover rounded-lg rotate-left-img absolute left-0 top-0 bottom-0 mx-0 my-auto",
-                size === 'sm' && 'h-48 w-56 left-14 md:h-72 md:w-80 lg:h-48 lg:w-56',
-                size === 'md' && 'h-72 w-80',
-                size === 'lg' && 'h-96 w-96',
-              )}
-              loading="lazy"
-            />
-            <div className={cn(
-              "h-80 rounded-lg z-30 mx-auto max-w-96",
-              size === 'sm' && 'h-64',
-              size === 'md' && 'h-80',
-              size === 'lg' && 'h-96',  
-            )}>
+          {typeof images === 'string' ? (
+            <div className={'relative flex-shrink-0 flex w-full h-full justify-center transition-all duration-500 ease-in-out carousel-container'}>
               <img
-                src={images[currentIndex]}
-                alt="Current"
-                className={cn("max-w-full max-h-full object-cover rounded-lg")}
+                onClick={prevSlide}
+                src={images[getImageIndex(-1)]}
+                loading='lazy'
+                alt='Previous'
+                className={cn(
+                  "object-cover rounded-lg rotate-left-img absolute left-0 top-0 bottom-0 mx-0 my-auto",
+                  size === 'sm' && 'h-48 w-56 left-14 md:h-72 md:w-80 lg:h-48 lg:w-56',
+                  size === 'md' && 'h-72 w-80',
+                  size === 'lg' && 'h-96 w-96',
+                )}
+              />
+              <div className={cn(
+                "h-80 rounded-lg z-30 mx-auto max-w-96",
+                size === 'sm' && 'h-64',
+                size === 'md' && 'h-80',
+                size === 'lg' && 'h-96',
+              )}>
+                <img
+                  src={images[currentIndex]}
+                  alt="Current"
+                  className={cn("max-w-full max-h-full object-cover rounded-lg")}
+                />
+              </div>
+              <img
+                onClick={nextSlide}
+                src={images[getImageIndex(1)]}
+                alt='Next'
+                loading='lazy'
+                className={cn(
+                  "object-cover rounded-lg rotate-right-img absolute right-0 top-0 bottom-0 mx-0 my-auto",
+                  size === 'sm' && 'h-48 w-56 right-14 md:h-72 md:w-80 lg:h-48 lg:w-56',
+                  size === 'md' && 'h-72 w-80',
+                  size === 'lg' && 'h-96 w-96',
+                )}
               />
             </div>
-            <img
-              onClick={nextSlide}
-              src={images[getImageIndex(1)]}
-              alt="Next"
-              // className="h-72 w-80 object-cover rounded-lg rotate-right-img absolute right-0 top-0 bottom-0 mx-0 my-auto"
-              className={cn(
-                "object-cover rounded-lg rotate-right-img absolute right-0 top-0 bottom-0 mx-0 my-auto",
-                size === 'sm' && 'h-48 w-56 right-14 md:h-72 md:w-80 lg:h-48 lg:w-56',
-                size === 'md' && 'h-72 w-80',
-                size === 'lg' && 'h-96 w-96',
-              )}
-              loading="lazy"
-            />
-          </div>
+          ) : (
+            (images as ReactElement<HTMLImageElement, string | React.JSXElementConstructor<any>>[])
+              .map((image, index) => {
+                console.log(currentIndex, 'current index')
+                if (index === currentIndex) {
+                  // console.log('current', index);
+                  return (
+                    <div
+                      key={index}
+                      className={cn(
+                        "h-80 rounded-lg z-30 mx-auto max-w-96",
+                        size === 'sm' && 'h-64',
+                        size === 'md' && 'h-80',
+                        size === 'lg' && 'h-96',
+                      )}
+                    >
+                      {cloneElement(image, {
+                        className: cn(image.props.className, "max-w-full max-h-full object-cover rounded-lg")
+                      })}
+                    </div>
+                  )
+                }
+
+                if (index === getImageIndex(-1)) {
+                  // console.log('prev', index, image);
+                  return (
+                    <Fragment key={index}>
+                      {cloneElement(image, {
+                        className: cn(
+                          image.props.className,
+                          "object-cover rounded-lg rotate-left-img absolute left-0 top-0 bottom-0 mx-0 my-auto",
+                          size === 'sm' && 'h-48 w-56 left-14 md:h-72 md:w-80 lg:h-48 lg:w-56',
+                          size === 'md' && 'h-72 w-80',
+                          size === 'lg' && 'h-96 w-96',
+                        ),
+                        // @ts-ignore
+                        onClick: prevSlide,
+                      })}
+                    </Fragment>
+                  )
+                }
+
+                if (index === getImageIndex(1)) {
+                  // console.log('next', index, image);
+                  return (
+                    <Fragment key={index}>
+                      {cloneElement(image, {
+                        className: cn(
+                          image.props.className,
+                          "object-cover rounded-lg rotate-right-img absolute right-0 top-0 bottom-0 mx-0 my-auto",
+                          size === 'sm' && 'h-48 w-56 right-14 md:h-72 md:w-80 lg:h-48 lg:w-56',
+                          size === 'md' && 'h-72 w-80',
+                          size === 'lg' && 'h-96 w-96',
+                        ),
+                        // @ts-ignore
+                        onClick: nextSlide
+                      })}
+                    </Fragment>
+                  )
+                }
+
+                return null
+              })
+          )}
         </div>
       </div>
       <button className="absolute top-1/2 left-2 md:left-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full" onClick={prevSlide}>Prev</button>
