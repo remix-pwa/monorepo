@@ -1,25 +1,38 @@
 import { useState, useRef, useEffect, ReactElement, cloneElement, Fragment } from "react";
+import { CarouselState } from "~/hooks/useCarousel";
 import { cn } from "~/utils";
-
-export type Image = {
-  src: string;
-  alt?: string;
-  loading?: 'lazy' | 'eager';
-}
 
 interface CarouselProps {
   images: Array<string | ReactElement<HTMLImageElement>>;
   size?: 'sm' | 'md' | 'lg';
   autoplay?: boolean;
   autoplayInterval?: number;
+  className?: string;
+  onSlideChange?: (index: number) => void;
+  carouselState?: CarouselState;
+  controls?: boolean;
 }
 
-export const Carousel: React.FC<CarouselProps> = ({ images, autoplayInterval = 5000, autoplay = true, size = 'md' }) => {
+export const Carousel: React.FC<CarouselProps> = ({
+  images,
+  onSlideChange,
+  autoplayInterval = 5000,
+  autoplay = true,
+  size = 'md',
+  className = '',
+  controls = true,
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [startX, setStartX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (onSlideChange) {
+      onSlideChange(currentIndex);
+    }
+  }, [currentIndex, onSlideChange]);
 
   useEffect(() => {
     if (!carouselRef.current || !autoplay) return;
@@ -78,7 +91,10 @@ export const Carousel: React.FC<CarouselProps> = ({ images, autoplayInterval = 5
     <div className="relative select-none w-full h-full overflow-hidden">
       <div
         ref={carouselRef}
-        className="flex w-full h-full transition-transform duration-500 ease-in-out"
+        className={cn(
+          "flex w-full h-full transition-transform duration-500 ease-in-out",
+          className,
+        )}
         onMouseDown={handleDragStart}
         onMouseUp={handleDragEnd}
         onMouseLeave={handleDragEnd}
@@ -189,8 +205,12 @@ export const Carousel: React.FC<CarouselProps> = ({ images, autoplayInterval = 5
           )}
         </div>
       </div>
-      <button className="absolute top-1/2 left-2 md:left-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full" onClick={prevSlide}>Prev</button>
-      <button className="absolute top-1/2 right-2 md:right-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full" onClick={nextSlide}>Next</button>
+      {controls &&
+        <Fragment>
+          <button className="absolute top-1/2 left-2 md:left-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full" onClick={prevSlide}>Prev</button>
+          <button className="absolute top-1/2 right-2 md:right-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full" onClick={nextSlide}>Next</button>
+        </Fragment>
+      }
     </div>
   );
 };

@@ -6,6 +6,13 @@ export const ImageFallbackDemo = () => {
   const { refreshCounter, refresh } = useRefresh()
   const [images, setImages] = useState<string[]>([]);
 
+  const IMAGE_URLS = [
+    '/images/image-1.jpg',
+    '/images/invalid.jpg',  // intentionaly broken URL — fails
+    '/images/image-3.jpg',
+    '/images/image-4.jpg',
+  ];
+
   const DEMO_CODE = `
 // in your service worker
 
@@ -41,17 +48,12 @@ const FallbackImage = ({ src }) => (
     onError={e => e.target.src = '/images/fallback.png'}
   />
 );
-`
+`;
+
   useEffect(() => {
     // Mock fetching image URLs
     const fetchImages = async () => {
-      const imageUrls = [
-        '/images/image-1.jpg',
-        '/images/invalid.jpg',  // intentionaly broken URL — fails
-        '/images/image-3.jpg',
-        '/images/image-4.jpg',
-      ];
-      setImages(imageUrls);
+      setImages(IMAGE_URLS);
     };
 
     fetchImages();
@@ -64,15 +66,8 @@ const FallbackImage = ({ src }) => (
   };
 
   const reset = () => {
-    // reset
-    const imageUrls = [
-      '/images/image-1.jpg',
-      '/images/invalid.jpg',
-      '/images/image-3.jpg',
-      '/images/image-4.jpg',
-    ];
-
-    setImages(imageUrls);
+    // reset images
+    setImages(IMAGE_URLS);
   }
 
   return (

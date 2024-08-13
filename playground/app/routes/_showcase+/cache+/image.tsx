@@ -2,6 +2,7 @@ import { Markdown, Page, PageContent, PageFooter, PageTitle } from "~/components
 import { TableOfContents } from "~/types";
 import { LazyLoadingDemo } from "./components/lazy-demo";
 import { ImageFallbackDemo } from "./components/fb-demo";
+import { BookmarkingImagesDemo } from "./components/bookmark";
 
 export const handle = {
   tableOfContents: [
@@ -54,7 +55,7 @@ export default function Component() {
             In a PWA, we can use service workers to cache these bookmarked images locally. This not only makes them available offline but also allows you to download and save them permanently on your device.
           `}
         </Markdown>
-        {/* Demo */}
+        <BookmarkingImagesDemo />
         <Markdown>
           {`
             ### Fallbacks for Missing Images
