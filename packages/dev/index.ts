@@ -1,6 +1,6 @@
 // Vite ✨
-export { remixPWA } from "./src/index.js";
-export type { PWAOptions as PWAViteOptions } from "./src/types.js";
+export { remixPWA } from './src/index.js';
+export type { PWAOptions as PWAViteOptions } from './src/types.js';
 
 export interface WebAppManifest {
   /**
@@ -26,7 +26,7 @@ export interface WebAppManifest {
     src: string;
     sizes?: string;
     type?: string;
-    purpose?: "any" | "maskable" | "monochrome";
+    purpose?: 'any' | 'maskable' | 'monochrome';
   }>;
   /**
    * The start_url member is a string that represents the start URL of the web application — the preferential URL that
@@ -47,8 +47,8 @@ export interface WebAppManifest {
    * - `minimal-ui`: The application will look and feel like a standalone application, but will have a minimal set of UI elements for controlling navigation.
    * - `browser`: The application opens in a conventional browser tab or new window, depending on the browser and platform.
    */
-  display?: "fullscreen" | "standalone" | "minimal-ui" | "browser";
-  display_override?: Array<"window-controls-overlay" | "bordered" | "standard">;
+  display?: 'fullscreen' | 'standalone' | 'minimal-ui' | 'browser';
+  display_override?: Array<'window-controls-overlay' | 'bordered' | 'standard'>;
   /**
    * The orientation member is a string that represents the default orientation of the web application.
    * The value must be a string set to one of the following values:
@@ -62,14 +62,14 @@ export interface WebAppManifest {
    * - `portrait-secondary`
    */
   orientation?:
-    | "any"
-    | "natural"
-    | "landscape"
-    | "landscape-primary"
-    | "landscape-secondary"
-    | "portrait"
-    | "portrait-primary"
-    | "portrait-secondary";
+    | 'any'
+    | 'natural'
+    | 'landscape'
+    | 'landscape-primary'
+    | 'landscape-secondary'
+    | 'portrait'
+    | 'portrait-primary'
+    | 'portrait-secondary';
   /**
    * The dir member is a string that represents the directionality of the web application.
    *
@@ -78,7 +78,7 @@ export interface WebAppManifest {
    * - `rtl`: Right to left
    * - `auto`: Let the user agent decide based on the value of the `lang` attribute on the root element
    */
-  dir?: "ltr" | "rtl" | "auto";
+  dir?: 'ltr' | 'rtl' | 'auto';
   /**
    * The lang member is a string that represents the primary language for the [localizable members](https://www.w3.org/TR/appmanifest/#dfn-localizable-members)
    * of the manifest (as knowing the language can also help with directionality).
@@ -105,7 +105,7 @@ export interface WebAppManifest {
     type?: string;
     platform?: string;
     label?: string;
-    form_factor?: "narrow" | "wide";
+    form_factor?: 'narrow' | 'wide';
   }>;
   shortcuts?: Array<{
     name?: string;
@@ -116,12 +116,12 @@ export interface WebAppManifest {
       src: string;
       sizes?: string;
       type?: string;
-      purpose?: "any" | "maskable" | "monochrome";
+      purpose?: 'any' | 'maskable' | 'monochrome';
     }>;
   }>;
   share_target?: {
     action?: string;
-    method?: "GET" | "POST";
+    method?: 'GET' | 'POST';
     enctype?: string;
     params?: {
       [key: string]: {
