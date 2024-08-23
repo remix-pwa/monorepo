@@ -1,3 +1,10 @@
+## @remix-pwa/worker-runtime 2.1.4 (2024-08-11)
+
+
+### Bug Fixes
+
+* **worker-runtime:** added minimal support for runtimes in Remix SPA mode 6dd95e6
+
 ## @remix-pwa/worker-runtime 2.1.4-dev.1 (2024-08-11)
 
 

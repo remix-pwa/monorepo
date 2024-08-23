@@ -1,3 +1,13 @@
+## @remix-pwa/sync 3.0.4 (2024-08-11)
+
+
+
+
+
+### Dependencies
+
+* **@remix-pwa/sw:** upgraded to 3.0.9
+
 ## @remix-pwa/sync 3.0.4-dev.1 (2024-08-11)
 
 
