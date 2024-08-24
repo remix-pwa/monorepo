@@ -105,6 +105,7 @@ export interface WebAppManifest {
     type?: string;
     platform?: string;
     label?: string;
+    form_factor?: 'narrow' | 'wide';
   }>;
   shortcuts?: Array<{
     name?: string;
