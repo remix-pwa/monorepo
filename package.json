@@ -23,6 +23,7 @@
     "lint": "turbo lint -- --fix",
     "format": "turbo format -- --write",
     "postclone": "npm install && npm run test && npm run build",
+    "publish:pr": "npx pkg-pr-new publish './packages/*'",
     "test": "turbo test -- --coverage"
   },
   "devDependencies": {
@@ -41,6 +42,7 @@
     "husky": "^9.1.1",
     "lint-staged": "^15.2.2",
     "npm-run-all": "^4.1.5",
+    "pkg-pr-new": "^0.0.25",
     "prettier": "^3.3.3",
     "prettier-plugin-organize-imports": "^4.0.0",
     "semver": "^7.6.3",
