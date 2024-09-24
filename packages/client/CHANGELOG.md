@@ -1,3 +1,10 @@
+## @remix-pwa/client 3.0.7-dev.1 (2024-08-23)
+
+
+### Bug Fixes
+
+* stop useNetworkConnectivity from causing hydration errors. 9cf2978
+
 ## @remix-pwa/client 3.0.6 (2024-07-21)
 
 

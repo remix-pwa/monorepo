@@ -1,7 +1,18 @@
 /* eslint-disable n/no-callback-literal */
-import { useEffect, useState } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 
-import { isWindowAvailable } from '../lib/user-agent.js';
+const subscribeToNetworkConnectivity = (callback: () => void) => {
+  window.addEventListener('online', callback);
+  window.addEventListener('offline', callback);
+  return () => {
+    window.removeEventListener('online', callback);
+    window.removeEventListener('offline', callback);
+  };
+};
+
+const getNetworkConnectivitySnapshot = () => window.navigator.onLine;
+
+const getNetworkConnectivityServerSnapshot = () => false;
 
 export const useNetworkConnectivity = (
   options: {
@@ -9,29 +20,19 @@ export const useNetworkConnectivity = (
     onOffline?: (isOnline: boolean) => void;
   } = {}
 ) => {
-  const [isOnline, setIsOnline] = useState(isWindowAvailable() ? navigator.onLine : false);
-
-  const handleOnline = () => {
-    setIsOnline(true);
-    options.onOnline && options.onOnline(true);
-  };
-
-  const handleOffline = () => {
-    setIsOnline(false);
-    options.onOffline && options.onOffline(false);
-  };
+  const isOnline = useSyncExternalStore(
+    subscribeToNetworkConnectivity,
+    getNetworkConnectivitySnapshot,
+    getNetworkConnectivityServerSnapshot
+  );
 
   useEffect(() => {
-    if (isWindowAvailable()) {
-      window.addEventListener('online', handleOnline);
-      window.addEventListener('offline', handleOffline);
-
-      return () => {
-        window.removeEventListener('online', handleOnline);
-        window.removeEventListener('offline', handleOffline);
-      };
+    if (isOnline) {
+      options.onOnline && options.onOnline(true);
+    } else if (options.onOnline) {
+      options.onOffline && options.onOffline(false);
     }
-  }, []);
+  }, [isOnline, options]);
 
   return isOnline;
 };
