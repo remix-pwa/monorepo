@@ -6,12 +6,14 @@ import { remixPWA } from '@remix-pwa/dev';
 
 installGlobals();
 
+const spaMode = true;
+
 export default defineConfig({
   plugins: [
     remix({
       ignoredRouteFiles: ["**/.*"],
-      appDirectory: './src/app',
-      // ssr: false,
+      appDirectory: spaMode ? './spa' : './src/app',
+      ssr: !spaMode,
     }),
     tsconfigPaths(),
     remixPWA({

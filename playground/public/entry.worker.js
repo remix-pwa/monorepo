@@ -4969,7 +4969,6 @@ class PushManager {
     console.error("Notification error:", event);
   }
 }
-self.logger = logger;
 console.log("Hello from service worker!");
 console.log("development", "https://api.example.com", "value");
 const documentCache = new EnhancedCache("document-cache", {
@@ -5000,6 +4999,12 @@ const isAssetRequest = (request) => {
   return self.__workerManifest.assets.includes(url.pathname) && hasNoParams;
 };
 const defaultFetchHandler = async ({ request, context }) => {
+  const req = context.event.request;
+  req.referrer;
+  req.headers.get("referer");
+  if (req.destination === "image") {
+    console.log("Image request", req);
+  }
   if (isAssetRequest(request)) {
     return assetCache.handleRequest(request);
   }
@@ -5032,63 +5037,107 @@ const entryWorker = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineP
   defaultFetchHandler,
   getLoadContext
 }, Symbol.toStringTag, { value: "Module" }));
-var __getOwnPropNames$2 = Object.getOwnPropertyNames;
-var __commonJS$2 = (cb, mod) => function __require() {
-  return mod || (0, cb[__getOwnPropNames$2(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+var __getOwnPropNames$1 = Object.getOwnPropertyNames;
+var __commonJS$1 = (cb, mod) => function __require() {
+  return mod || (0, cb[__getOwnPropNames$1(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
-var require_worker_runtime$2 = __commonJS$2({
+var require_worker_runtime$1 = __commonJS$1({
   "@remix-pwa/worker-runtime"(exports, module) {
     module.exports = {};
   }
 });
-var worker_runtime_default$2 = require_worker_runtime$2();
+var worker_runtime_default$1 = require_worker_runtime$1();
 const route0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: worker_runtime_default$2
+  default: worker_runtime_default$1
 }, Symbol.toStringTag, { value: "Module" }));
-const workerAction$2 = async ({ context }) => {
-  const { fetchFromServer } = context;
-  console.log("Worker action called");
-  try {
-    const response = await fetchFromServer();
-    console.log(Object.fromEntries(response.headers.entries()));
-  } catch (error) {
-    console.error(error);
-  }
-  return new Response(JSON.stringify({
-    message: "Modified action response, Remix Actions are quite out of the picture here"
-  }), {
-    headers: {
-      "Content-Type": "application/json; charset=utf-8"
-    }
-  });
+const workerLoader$1 = () => {
+  console.log("Worker loader called in logout");
+  return null;
 };
 const route1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  workerAction: workerAction$2
+  workerLoader: workerLoader$1
 }, Symbol.toStringTag, { value: "Module" }));
-async function workerLoader$3({ context }) {
-  const { fetchFromServer } = context;
-  const message = await Promise.race([
-    fetchFromServer().then((response) => response.json()).then(({ message: message2 }) => message2).catch(() => new Promise((resolve) => setTimeout(() => resolve(null), 5e3))),
-    // utilizing a slower one even when cached
-    new Promise((resolve) => setTimeout(resolve, 500, "Hello World!\n\n• This message is sent to you from the client 😜 (Edited, again ---)!"))
-  ]);
-  return new Response(
-    JSON.stringify({
-      message
-    }),
-    {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    }
-  );
-}
+const workerLoader = () => {
+  console.log("Worker loader called");
+  return null;
+};
 const route2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  workerLoader: workerLoader$3
+  workerLoader
 }, Symbol.toStringTag, { value: "Module" }));
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __commonJS = (cb, mod) => function __require() {
+  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+};
+var require_worker_runtime = __commonJS({
+  "@remix-pwa/worker-runtime"(exports, module) {
+    module.exports = {};
+  }
+});
+var worker_runtime_default = require_worker_runtime();
+const route3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: worker_runtime_default
+}, Symbol.toStringTag, { value: "Module" }));
+const assets = [
+  "/entry.worker.css",
+  "/entry.worker.js",
+  "/favicon.ico",
+  "/manifest.json"
+];
+const routes = {
+  "root": {
+    id: "root",
+    parentId: void 0,
+    path: "",
+    index: void 0,
+    caseSensitive: void 0,
+    hasLoader: false,
+    hasAction: false,
+    hasWorkerLoader: false,
+    hasWorkerAction: false,
+    module: route0
+  },
+  "routes/logout": {
+    id: "routes/logout",
+    parentId: "root",
+    path: "logout",
+    index: void 0,
+    caseSensitive: void 0,
+    hasLoader: false,
+    hasAction: false,
+    hasWorkerLoader: true,
+    hasWorkerAction: false,
+    module: route1
+  },
+  "routes/_index": {
+    id: "routes/_index",
+    parentId: "root",
+    path: void 0,
+    index: true,
+    caseSensitive: void 0,
+    hasLoader: false,
+    hasAction: false,
+    hasWorkerLoader: true,
+    hasWorkerAction: false,
+    module: route2
+  },
+  "routes/test": {
+    id: "routes/test",
+    parentId: "root",
+    path: "test",
+    index: void 0,
+    caseSensitive: void 0,
+    hasLoader: false,
+    hasAction: false,
+    hasWorkerLoader: false,
+    hasWorkerAction: false,
+    module: route3
+  }
+};
+const entry = { module: entryWorker };
 /**
  * @remix-run/router v1.18.0
  *
@@ -9114,233 +9163,6 @@ const router$2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProp
   resolveTo,
   stripBasename
 }, Symbol.toStringTag, { value: "Module" }));
-const workerAction$1 = async ({ request, context }) => {
-  const formData = await request.formData();
-  const { database, fetchFromServer } = context;
-  try {
-    fetchFromServer();
-    await database.selections.add(Object.fromEntries(formData.entries()));
-    return redirect$1("/selection");
-  } catch (error) {
-    throw json$1({ message: "Something went wrong", error }, 500);
-  }
-};
-const workerLoader$2 = async ({ context }) => {
-  try {
-    const { fetchFromServer, database } = context;
-    const [serverResult, clientResult] = await Promise.allSettled([
-      // NOTE: If the user decides to use the server loader, must use the `context.event.request` object instead of `request`.
-      // This is because we strip the `_data` and `index` from the request object just to follow what Remix does.
-      fetchFromServer().then((response) => response.json()).then(({ flights: flights2 }) => flights2),
-      database.flights.toArray()
-    ]);
-    const flights = serverResult.value || clientResult.value;
-    if (serverResult.value) {
-      await database.flights.bulkPut(
-        flights.map((f) => ({
-          ...f,
-          flightNumber: `${f.flightNumber.split("-")[0].trim()} - client`
-        }))
-      );
-    }
-    return defer$1({ flights });
-  } catch (error) {
-    console.error(error);
-    throw json$1({ message: "Something went wrong", error }, 500);
-  }
-};
-const route3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  workerAction: workerAction$1,
-  workerLoader: workerLoader$2
-}, Symbol.toStringTag, { value: "Module" }));
-async function workerLoader$1({ context }) {
-  const { database } = context;
-  const selections = await database.selections.toArray();
-  return json$1({ selections });
-}
-const route4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  workerLoader: workerLoader$1
-}, Symbol.toStringTag, { value: "Module" }));
-const workerAction = async ({ context }) => {
-  const { fetchFromServer, event } = context;
-  try {
-    await fetchFromServer();
-  } catch (error) {
-    console.error(error);
-  }
-  return new Response(JSON.stringify({
-    message: "Offline or Online. I shall always respond!"
-  }), {
-    headers: {
-      "Content-Type": "application/json; charset=utf-8"
-    }
-  });
-};
-const route5 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  workerAction
-}, Symbol.toStringTag, { value: "Module" }));
-var __getOwnPropNames$1 = Object.getOwnPropertyNames;
-var __commonJS$1 = (cb, mod) => function __require() {
-  return mod || (0, cb[__getOwnPropNames$1(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
-};
-var require_worker_runtime$1 = __commonJS$1({
-  "@remix-pwa/worker-runtime"(exports, module) {
-    module.exports = {};
-  }
-});
-var worker_runtime_default$1 = require_worker_runtime$1();
-const route6 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  default: worker_runtime_default$1
-}, Symbol.toStringTag, { value: "Module" }));
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __commonJS = (cb, mod) => function __require() {
-  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
-};
-var require_worker_runtime = __commonJS({
-  "@remix-pwa/worker-runtime"(exports, module) {
-    module.exports = {};
-  }
-});
-var worker_runtime_default = require_worker_runtime();
-const route7 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  default: worker_runtime_default
-}, Symbol.toStringTag, { value: "Module" }));
-async function workerLoader({ context }) {
-  const { fetchFromServer } = context;
-  const data = await fetchFromServer().then((response) => response.json());
-  console.log(data);
-  return new Response(JSON.stringify(data), {
-    headers: {
-      "Content-Type": "application/json"
-    }
-  });
-}
-const route8 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  workerLoader
-}, Symbol.toStringTag, { value: "Module" }));
-const assets = [
-  "/entry.worker.css",
-  "/entry.worker.js",
-  "/favicon.ico",
-  "/manifest.json"
-];
-const routes = {
-  "root": {
-    id: "root",
-    parentId: void 0,
-    path: "",
-    index: void 0,
-    caseSensitive: void 0,
-    hasLoader: false,
-    hasAction: false,
-    hasWorkerLoader: false,
-    hasWorkerAction: false,
-    module: route0
-  },
-  "routes/basic-action": {
-    id: "routes/basic-action",
-    parentId: "root",
-    path: "basic-action",
-    index: void 0,
-    caseSensitive: void 0,
-    hasLoader: true,
-    hasAction: true,
-    hasWorkerLoader: false,
-    hasWorkerAction: true,
-    module: route1
-  },
-  "routes/basic-loader": {
-    id: "routes/basic-loader",
-    parentId: "root",
-    path: "basic-loader",
-    index: void 0,
-    caseSensitive: void 0,
-    hasLoader: true,
-    hasAction: false,
-    hasWorkerLoader: true,
-    hasWorkerAction: false,
-    module: route2
-  },
-  "routes/_app.flights": {
-    id: "routes/_app.flights",
-    parentId: "routes/_app",
-    path: "flights",
-    index: void 0,
-    caseSensitive: void 0,
-    hasLoader: true,
-    hasAction: true,
-    hasWorkerLoader: true,
-    hasWorkerAction: true,
-    module: route3
-  },
-  "routes/selection": {
-    id: "routes/selection",
-    parentId: "root",
-    path: "selection",
-    index: void 0,
-    caseSensitive: void 0,
-    hasLoader: true,
-    hasAction: false,
-    hasWorkerLoader: true,
-    hasWorkerAction: false,
-    module: route4
-  },
-  "routes/sync-away": {
-    id: "routes/sync-away",
-    parentId: "root",
-    path: "sync-away",
-    index: void 0,
-    caseSensitive: void 0,
-    hasLoader: false,
-    hasAction: true,
-    hasWorkerLoader: false,
-    hasWorkerAction: true,
-    module: route5
-  },
-  "routes/_index": {
-    id: "routes/_index",
-    parentId: "root",
-    path: void 0,
-    index: true,
-    caseSensitive: void 0,
-    hasLoader: true,
-    hasAction: false,
-    hasWorkerLoader: false,
-    hasWorkerAction: false,
-    module: route6
-  },
-  "routes/push": {
-    id: "routes/push",
-    parentId: "root",
-    path: "push",
-    index: void 0,
-    caseSensitive: void 0,
-    hasLoader: false,
-    hasAction: false,
-    hasWorkerLoader: false,
-    hasWorkerAction: false,
-    module: route7
-  },
-  "routes/_app": {
-    id: "routes/_app",
-    parentId: "root",
-    path: void 0,
-    index: void 0,
-    caseSensitive: void 0,
-    hasLoader: true,
-    hasAction: false,
-    hasWorkerLoader: true,
-    hasWorkerAction: false,
-    module: route8
-  }
-};
-const entry = { module: entryWorker };
 var mode$2 = {};
 /**
  * @remix-run/server-runtime v2.10.3
@@ -9594,13 +9416,21 @@ function createArgumentsFrom({ event, loadContext, path }) {
 function isMethod(request, methods) {
   return methods.includes(request.method.toLowerCase());
 }
-function isActionRequest(request) {
-  const url = new URL(request.url);
-  return isMethod(request, ["post", "delete", "put", "patch"]) && url.searchParams.get("_data");
+function isLoaderMethod(request) {
+  return isMethod(request, ["get"]);
 }
-function isLoaderRequest(request) {
+function isActionMethod(request) {
+  return isMethod(request, ["post", "delete", "put", "patch", "head"]);
+}
+function isActionRequest(request, spaMode = false) {
   const url = new URL(request.url);
-  return isMethod(request, ["get"]) && url.searchParams.get("_data");
+  const qualifies = spaMode ? true : url.searchParams.get("_data");
+  return isActionMethod(request) && qualifies;
+}
+function isLoaderRequest(request, spaMode = false) {
+  const url = new URL(request.url);
+  const qualifies = spaMode ? true : url.searchParams.get("_data");
+  return isLoaderMethod(request) && qualifies;
 }
 function errorResponseToJson(errorResponse) {
   return json_1(errorResponse.error || { message: "Unexpected Server Error" }, {
@@ -9616,6 +9446,7 @@ function isRemixResponse(response) {
 }
 async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, event, loadContext, routes: routes2 }) {
   var _a;
+  const isSPAMode = true === "true";
   const url = new URL(event.request.url);
   const routeId = url.searchParams.get("_data");
   const route = routeId ? routes2[routeId] : void 0;
@@ -9625,7 +9456,7 @@ async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, ev
     context: loadContext
   };
   try {
-    if (isLoaderRequest(event.request) && (route == null ? void 0 : route.module.workerLoader)) {
+    if (isLoaderRequest(event.request, isSPAMode) && (route == null ? void 0 : route.module.workerLoader)) {
       return await handleLoader({
         event,
         loader: route.module.workerLoader,
@@ -9634,7 +9465,7 @@ async function handleRequest({ defaultHandler: defaultHandler2, errorHandler, ev
         loadContext
       }).then(responseHandler);
     }
-    if (isActionRequest(event.request) && ((_a = route == null ? void 0 : route.module) == null ? void 0 : _a.workerAction)) {
+    if (isActionRequest(event.request, isSPAMode) && ((_a = route == null ? void 0 : route.module) == null ? void 0 : _a.workerAction)) {
       return await handleAction({
         event,
         action: route.module.workerAction,
