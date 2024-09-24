@@ -1,3 +1,31 @@
+## @remix-pwa/sw 3.0.10 (2024-09-24)
+
+
+### Bug Fixes
+
+* **sw:** changed manifest link `rel` from `manifest` to `webmanifest` 942f76a
+
+## @remix-pwa/sw 3.0.10-dev.1 (2024-09-24)
+
+
+### Bug Fixes
+
+* **sw:** changed manifest link `rel` from `manifest` to `webmanifest` 942f76a
+
+## @remix-pwa/sw 3.0.9 (2024-08-11)
+
+
+### Bug Fixes
+
+* **sw:** added `matchOptions` for adding querying options to cache operations c87e507
+
+## @remix-pwa/sw 3.0.9-dev.1 (2024-08-11)
+
+
+### Bug Fixes
+
+* **sw:** added `matchOptions` for adding querying options to cache operations c87e507
+
 ## @remix-pwa/sw 3.0.8 (2024-07-21)
 
 
