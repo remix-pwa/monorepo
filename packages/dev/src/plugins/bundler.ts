@@ -13,10 +13,21 @@ const transformedObject = (obj: Record<string, string>) =>
   Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, JSON.stringify(value)]));
 
 export async function buildWorker(_ctx: PWAPluginContext) {
-  const DEFAULT_VARS = {
+  const DEFAULT_VARS: Record<string, string | any> = {
     'process.env.NODE_ENV': _ctx.isDev ? 'development' : 'production',
     'process.env.__REMIX_PWA_SPA_MODE': _ctx.__remixPluginContext.remixConfig.ssr ? 'false' : 'true',
+    'process.env.__REMIX_SINGLE_FETCH': _ctx.__remixPluginContext.remixConfig.future.unstable_singleFetch
+      ? 'true'
+      : 'false',
   };
+
+  DEFAULT_VARS['process.env'] = JSON.stringify(
+    Object.fromEntries(
+      Object.entries(DEFAULT_VARS)
+        .filter(([key]) => key.startsWith('process.env.'))
+        .map(([key, value]) => [key.replace('process.env.', ''), value])
+    )
+  );
 
   try {
     await build({
@@ -122,7 +133,7 @@ export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
           return testString.startsWith('.');
         },
         followSymlinks: false,
-        disableGlobbing: false,
+        // disableGlobbing: false, // if an error arises 👈
       });
 
       const shouldAppReload = (path: string) => {
