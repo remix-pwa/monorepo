@@ -9,6 +9,7 @@ describe('handleRequest', () => {
     const routes = {
       route1: {
         id: 'route1',
+        hasWorkerLoader: true,
         module: {
           workerLoader: vi.fn(() => Promise.resolve({ message: 'Hello, world!' })),
         },
@@ -31,6 +32,7 @@ describe('handleRequest', () => {
     const routes = {
       route1: {
         id: 'route1',
+        hasWorkerLoader: true,
         module: {
           workerLoader: vi.fn().mockReturnValue(new Response('mock-response', { status: 200 })),
         },
@@ -53,6 +55,7 @@ describe('handleRequest', () => {
     const routes = {
       route1: {
         id: 'route1',
+        hasWorkerAction: true,
         module: {
           workerAction: vi.fn(() => Promise.resolve({ message: 'Hello, world!' })),
         },
@@ -97,6 +100,7 @@ describe('handleRequest', () => {
     const routes = {
       route1: {
         id: 'route1',
+        hasWorkerLoader: true,
         module: {
           workerLoader: vi.fn(() => Promise.reject(error)),
         },
@@ -124,6 +128,7 @@ describe('handleRequest', () => {
     const routes = {
       route1: {
         id: 'route1',
+        hasWorkerAction: true,
         module: {
           workerAction: vi.fn().mockReturnValue(new Response(null, { status: 302, headers: { Location: '/route2' } })),
         },
@@ -147,6 +152,7 @@ describe('handleRequest', () => {
     const routes = {
       route1: {
         id: 'route1',
+        hasWorkerAction: true,
         module: {
           workerAction: vi
             .fn()
@@ -176,6 +182,7 @@ describe('handleRequest', () => {
     const routes = {
       route1: {
         id: 'route1',
+        hasWorkerAction: true,
         module: {
           workerAction: vi.fn().mockReturnValue(new Response('Remix response', { status: 200 })),
         },
@@ -200,6 +207,7 @@ describe('handleRequest', () => {
     const routes = {
       route1: {
         id: 'route1',
+        hasWorkerAction: true,
         module: {
           workerAction: mockWorkerAction,
         },
@@ -225,6 +233,7 @@ describe('handleRequest', () => {
     const routes = {
       route1: {
         id: 'route1',
+        hasWorkerAction: true,
         module: {
           workerAction: mockWorkerAction,
         },
@@ -254,6 +263,7 @@ describe('handleRequest', () => {
     const routes = {
       route1: {
         id: 'route1',
+        hasWorkerAction: true,
         module: {
           workerAction: mockWorkerAction,
         },
@@ -283,6 +293,7 @@ describe('handleRequest', () => {
     const routes = {
       route1: {
         id: 'route1',
+        hasWorkerAction: true,
         module: {
           workerAction: mockWorkerAction,
         },
@@ -326,6 +337,7 @@ describe('handleRequest', () => {
     const routes = {
       route1: {
         id: 'route1',
+        hasWorkerAction: true,
         module: {
           workerAction: mockWorkerAction,
         },
@@ -364,6 +376,7 @@ describe('handleRequest', () => {
     const routes = {
       route1: {
         id: 'route1',
+        hasWorkerAction: true,
         module: {
           workerAction: mockWorkerAction,
         },
@@ -392,6 +405,7 @@ describe('handleRequest', () => {
     const routes = {
       route1: {
         id: 'route1',
+        hasWorkerAction: true,
         module: {
           workerAction: mockWorkerAction,
         },
@@ -420,6 +434,7 @@ describe('handleRequest', () => {
     const routes = {
       route1: {
         id: 'route1',
+        hasWorkerLoader: true,
         module: {
           workerLoader: mockWorkerLoader,
         },
@@ -446,6 +461,7 @@ describe('handleRequest', () => {
     const routes = {
       route1: {
         id: 'route1',
+        hasWorkerLoader: true,
         module: {
           workerLoader: mockWorkerLoader,
         },
@@ -480,6 +496,7 @@ describe('handleRequest', () => {
     const routes = {
       route1: {
         id: 'route1',
+        hasWorkerLoader: true,
         module: {
           workerLoader: mockWorkerLoader,
         },

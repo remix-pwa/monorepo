@@ -6,20 +6,20 @@ import type {
   WorkerRouteManifest,
 } from '@remix-pwa/dev/worker-build.js';
 import { isRouteErrorResponse } from '@remix-run/router';
-import { ServerMode } from '@remix-run/server-runtime/dist/mode.js';
-import type { TypedResponse } from '@remix-run/server-runtime/dist/responses.js';
+
+import type { TypedResponse } from './remix.js';
 import {
-  createDeferredReadableStream,
   isDeferredData,
   isRedirectResponse,
   isRedirectStatusCode,
   isResponse,
   json,
   redirect,
-} from '@remix-run/server-runtime/dist/responses.js';
-
+  ServerMode,
+} from './remix.js';
 import { createArgumentsFrom, getURLParameters, isActionRequest, isLoaderRequest } from './request.js';
 import { errorResponseToJson, isRemixResponse } from './response.js';
+import { createDeferredReadableStream } from './unstable.js';
 
 interface HandleRequestArgs {
   defaultHandler: DefaultFetchHandler;
@@ -47,6 +47,7 @@ interface HandleError {
 
 /**
  * A FetchEvent handler for Remix.
+ *
  * If the `event.request` has a worker loader/action defined, it will call it and return the response.
  * Otherwise, it will call the default handler...
  */
@@ -57,11 +58,23 @@ export async function handleRequest({
   loadContext,
   routes,
 }: HandleRequestArgs): Promise<Response> {
-  const isSPAMode = process.env.__REMIX_PWA_SPA_MODE === 'true';
+  const isSPAMode = String(process.env.__REMIX_PWA_SPA_MODE) === 'true';
+  const isSingleFetchMode = String(process.env.__REMIX_SINGLE_FETCH) === 'true';
 
   const url = new URL(event.request.url);
-  const routeId = url.searchParams.get('_data');
-  // if the request is not a loader or action request, we call the default handler and the routeId will be undefined
+
+  let routeId: string | null;
+
+  if (!isSPAMode) {
+    routeId = url.searchParams.get('_data');
+  } else {
+    routeId = url.searchParams.get('_route');
+  }
+
+  if (isSingleFetchMode) routeId = null;
+
+  // if the request is not a loader or action request, we call
+  // the default handler and the routeId will be undefined
   const route = routeId ? routes[routeId] : undefined;
   const _arguments = {
     request: event.request,
@@ -70,7 +83,7 @@ export async function handleRequest({
   };
 
   try {
-    if (isLoaderRequest(event.request, isSPAMode) && route?.module.workerLoader) {
+    if (isLoaderRequest(event.request, isSPAMode) && route?.hasWorkerLoader && route?.module?.workerLoader) {
       return await handleLoader({
         event,
         loader: route.module.workerLoader,
@@ -80,7 +93,7 @@ export async function handleRequest({
       }).then(responseHandler);
     }
 
-    if (isActionRequest(event.request, isSPAMode) && route?.module?.workerAction) {
+    if (isActionRequest(event.request, isSPAMode) && route?.hasWorkerAction && route?.module?.workerAction) {
       return await handleAction({
         event,
         action: route.module.workerAction,
