@@ -15,7 +15,6 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
     impliedStrict: true,
-    project: ['../../../tsconfig.json'],
   },
   plugins: ['@typescript-eslint', 'import', 'disable', 'jsdoc', 'sort-destructure-keys', 'node'],
   settings: {
