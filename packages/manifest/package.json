@@ -1,0 +1,51 @@
+{
+  "name": "@remix-pwa/manifest",
+  "version": "1.0.0",
+  "description": "Manifest-related APIs and utilities for your Remix applications",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/remix-pwa/monorepo.git",
+    "directory": "packages/manifest"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "type": "module",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "rimraf ./dist && tsc && node ./minify.mjs",
+    "format": "prettier --write \"**/*.ts\"",
+    "lint": "TIMING=1 eslint --fix \"src/**/*.ts\"",
+    "prepublish": "npm run build",
+    "test": "cross-env VITEST_WORKSPACE=true vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests"
+  },
+  "peerDependencies": {
+    "@remix-run/dev": "^1.15.0 || ^2.0.0",
+    "@remix-run/react": "^2.5.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "peerDependenciesMeta": {
+    "@remix-run/dev": {
+      "optional": true
+    }
+  },
+  "homepage": "https://remix-pwa.run",
+  "devDependencies": {
+    "@remix-pwa/eslint-config": "^0.0.0",
+    "@remix-pwa/lint-staged-config": "^0.0.0",
+    "@remix-run/dev": "^2.10.3",
+    "@remix-run/react": "^2.10.3",
+    "@types/react": "^18.3.3",
+    "react": "^18.3.1",
+    "rimraf": "^6.0.1"
+  }
+}
