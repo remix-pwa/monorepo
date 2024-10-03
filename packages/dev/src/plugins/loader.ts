@@ -11,6 +11,14 @@ export function LoaderPlugin(ctx: PWAPluginContext): Plugin {
         Array.isArray(id.match(/root\.(tsx|jsx)$/)) &&
         (ctx.options.registerSW === 'script' || ctx.options.injectSWRegister)
       ) {
+        if (code.includes('<PWAScripts')) {
+          ctx.viteConfig.logger.warnOnce(
+            '💥 Usage of `PWAScripts` disables Service Worker injection! Either remove it or disable `injectSWRegister`'
+          );
+
+          return code;
+        }
+
         return code.replace(
           '</head>',
           [
