@@ -3,7 +3,7 @@ import React from 'react';
 
 export const ManifestLink = ({
   crossOrigin,
-  href = '/manifest.webmanifest',
+  href,
 }: {
   href: string;
   crossOrigin?: LinkHTMLAttributes<HTMLLinkElement>['crossOrigin'];
