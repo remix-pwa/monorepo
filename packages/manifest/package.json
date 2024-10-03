@@ -7,6 +7,15 @@
     "url": "git+ssh://git@github.com/remix-pwa/monorepo.git",
     "directory": "packages/manifest"
   },
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./types/index.d.ts"
+    },
+    "./schema.json": {
+      "default": "./schema.json"
+    }
+  },
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
@@ -17,6 +26,7 @@
   "types": "dist/index.d.ts",
   "files": [
     "dist/",
+    "schema.json",
     "README.md",
     "CHANGELOG.md"
   ],
