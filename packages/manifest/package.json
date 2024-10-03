@@ -21,7 +21,7 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "rimraf ./dist && tsc && node ./minify.mjs",
+    "build": "rimraf ./dist && tsc",
     "format": "prettier --write \"**/*.ts\"",
     "lint": "TIMING=1 eslint --fix \"src/**/*.ts\"",
     "prepublish": "npm run build",
