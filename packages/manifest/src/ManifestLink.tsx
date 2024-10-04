@@ -5,7 +5,7 @@ export const ManifestLink = ({
   crossOrigin,
   href,
 }: {
-  href: string;
+  href: '/manifest.webmanifest' | (string & object);
   crossOrigin?: LinkHTMLAttributes<HTMLLinkElement>['crossOrigin'];
 }) => {
   return <link rel="manifest" href={href} crossOrigin={crossOrigin} />;
