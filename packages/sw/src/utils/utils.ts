@@ -132,11 +132,3 @@ export const toJSON = async (response: Response | any) => {
 export const messageSW = (worker: ServiceWorker, message: any) => {
   worker.postMessage(message);
 };
-
-/**
- * A short-hand utility function to send a `SKIP_WAITING` message to a service worker.
- * @param worker The service worker to send the message to.
- */
-export const sendSkipWaitingMessage = (worker: ServiceWorker) => {
-  messageSW(worker, { type: 'SKIP_WAITING' });
-};
