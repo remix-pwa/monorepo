@@ -3,6 +3,8 @@ import type { Logger } from '../logger/logger.js';
 import { logger } from '../logger/logger.js';
 import { MessageHandler } from './MessageHandler.js';
 
+// declare let self: ServiceWorkerGlobalScope;
+
 /**
  * The options the `NavigationHandler` expects.
  */
@@ -43,7 +45,7 @@ export class NavigationHandler extends MessageHandler {
   private logger: Logger;
 
   constructor(options: NavigationHandlerOptions) {
-    super('REMIX_NAVIGATION');
+    super('REMIX_NAVIGATION_UPDATE');
 
     this.allowList = options.allowList || [];
     this.denyList = options.denyList || [];
@@ -51,11 +53,41 @@ export class NavigationHandler extends MessageHandler {
     this.logger = options.logger || logger;
 
     this.bind(this.handleNavigation.bind(this));
+
+    // self.addEventListener('install', event => {
+    //   event.waitUntil(this.precacheDocuments());
+    // });
+  }
+
+  private async _precacheDocuments(): Promise<void> {
+    try {
+      this.logger.log('Precaching documents...');
+
+      const precacheUrls: string[] = [];
+
+      for (const url of precacheUrls) {
+        const cacheMatch = await this.documentCache.match(url);
+
+        // Only fetch if the document is not already in the cache
+        if (!cacheMatch) {
+          const response = await fetch(url);
+          if (response.ok) {
+            await this.documentCache.addToCache(url, response.clone());
+            this.logger.log(`Precached document: ${url} successfully`);
+          } else {
+            this.logger.warn(`Failed to precache document: ${url}`);
+          }
+        }
+      }
+    } catch (error) {
+      this.logger.error('Error precaching documents:', error);
+    }
   }
 
   private async handleNavigation(event: any) {
+    console.log('Invoked message recieve');
     const { data } = event;
-    const { isSsr, location } = data.payload;
+    const { location } = data.payload;
     const documentUrl: string = location.pathname + location.search + location.hash;
 
     if (
@@ -81,14 +113,6 @@ export class NavigationHandler extends MessageHandler {
         }
 
         return await this.documentCache.addToCache(documentUrl, response.clone());
-      }
-
-      if (isSsr) {
-        this.logger.setLogLevel('warn');
-        this.logger.log(`Document request for ${documentUrl} handled.`);
-        this.logger.setLogLevel('debug');
-
-        // Todo: Handle loader events on document request
       }
     } catch (error) {
       this.logger.error(`Error handling document request for ${documentUrl}:`, error);
