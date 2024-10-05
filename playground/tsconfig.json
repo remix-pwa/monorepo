@@ -1,5 +1,5 @@
 {
-  "include": ["env.d.ts/*.ts", "**/*.tsx", "sw.ts"],
+  "include": ["./**/*.d.ts", "./**/*.ts", "**/*.tsx", "sw.ts"],
   "ts-node": {
     "compilerOptions": {
       "target": "ES2022",

@@ -1,6 +1,12 @@
+export const workerLoader = async () => {
+  console.log('worker loader in test');
+
+  return null;
+}
+
 export const clientLoader = async () => {
   console.log('Client loader called in test');
-  await fetch('https://hashnode.com', { method: 'POST', mode: 'no-cors' });
+  await fetch('https://hashnode.com', { mode: 'no-cors' });
   return null;
 }
 

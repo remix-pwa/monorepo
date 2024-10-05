@@ -14,6 +14,9 @@ export default defineConfig({
       ignoredRouteFiles: ["**/.*"],
       appDirectory: spaMode ? './spa' : './src/app',
       ssr: !spaMode,
+      future: {
+        unstable_singleFetch: false
+      }
     }),
     tsconfigPaths(),
     remixPWA({

@@ -60,6 +60,17 @@ export function stripDataParameter(request: Request): Request {
 }
 
 /**
+ * Removes the route parameter from a request.
+ */
+export function stripRouteParameter(request: Request): Request {
+  const url = new URL(request.url);
+  url.searchParams.delete('_route');
+  // We need to set the duplex property, otherwise the request will fail in the worker.
+  // @ts-expect-error The duplex property is not defined in the Request type, yet. See: https://github.com/whatwg/fetch/pull/1493
+  return new Request(url.href, { ...clone(request), duplex: 'half' });
+}
+
+/**
  * Creates arguments for the Worker Actions and Loaders.
  */
 export function createArgumentsFrom({
@@ -71,7 +82,7 @@ export function createArgumentsFrom({
   loadContext: WorkerLoadContext;
   path?: string;
 }) {
-  const request = stripDataParameter(stripIndexParameter(event.request.clone()));
+  const request = stripRouteParameter(stripDataParameter(stripIndexParameter(event.request.clone())));
   const parameters = getURLParameters(request, path);
 
   return {
@@ -107,7 +118,7 @@ export function isActionMethod(request: Request) {
  */
 export function isActionRequest(request: Request, spaMode = false) {
   const url = new URL(request.url);
-  const qualifies = spaMode ? true : url.searchParams.get('_data');
+  const qualifies = spaMode ? url.searchParams.get('_route') : url.searchParams.get('_data');
   return isActionMethod(request) && qualifies;
 }
 
@@ -116,6 +127,6 @@ export function isActionRequest(request: Request, spaMode = false) {
  */
 export function isLoaderRequest(request: Request, spaMode = false) {
   const url = new URL(request.url);
-  const qualifies = spaMode ? true : url.searchParams.get('_data');
+  const qualifies = spaMode ? url.searchParams.get('_route') : url.searchParams.get('_data');
   return isLoaderMethod(request) && qualifies;
 }

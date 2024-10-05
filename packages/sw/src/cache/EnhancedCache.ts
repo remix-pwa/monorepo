@@ -147,7 +147,7 @@ export class EnhancedCache {
     if (typeof request === 'string') request = new Request(request);
 
     const cache = await caches.open(this.cacheName);
-    // Forcibly accessing private methods
+    // Forcibly accessing "private" methods
     // eslint-disable-next-line dot-notation
     return await cache.match(request, this.strategy['options']['matchOptions']);
   }

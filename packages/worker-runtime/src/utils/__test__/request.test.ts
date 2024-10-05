@@ -8,6 +8,7 @@ import {
   isActionRequest,
   stripDataParameter,
   stripIndexParameter,
+  stripRouteParameter,
 } from '../request.js';
 
 describe('clone', () => {
@@ -62,10 +63,20 @@ describe('stripDataParam', () => {
   });
 });
 
+describe('stripRouteParam', () => {
+  test('should remove _route parameter from the URL', () => {
+    const request = new Request('https://example.com/test?_route=root');
+    const stripped = stripRouteParameter(request);
+
+    expect(stripped.url).toBe('https://example.com/test');
+    expect(stripped.headers).toEqual(request.headers);
+  });
+});
+
 describe('createArgumentsFrom', () => {
   test('should create an object with request, params, and context properties', () => {
     const event = {
-      request: new Request('https://example.com/test?a=1&b=2&index&_data=test'),
+      request: new Request('https://example.com/test?a=1&_route=test&b=2&index&_data=test'),
     } as FetchEvent;
     const loadContext = {} as WorkerLoadContext;
 
@@ -81,6 +92,13 @@ describe('isActionRequest', () => {
   test('should return true for action requests', () => {
     const request = new Request('https://example.com/test?_data=test', { method: 'POST' });
     const isAction = isActionRequest(request);
+
+    expect(isAction).toBeTruthy();
+  });
+
+  test('should return true for clientAction requests in SPA mode', () => {
+    const request = new Request('https://example.com/test?_route=test', { method: 'POST' });
+    const isAction = isActionRequest(request, true);
 
     expect(isAction).toBeTruthy();
   });

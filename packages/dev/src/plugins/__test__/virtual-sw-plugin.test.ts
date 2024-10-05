@@ -238,6 +238,33 @@ describe('Remix PWA Vite VirtualSW Plugin', () => {
           caseSensitive: true,`
         );
       });
+
+      test('should skip worker route APIs if single fetch is enabled', async () => {
+        const { createRouteManifest } = await import('../virtual-sw');
+        const routes = {
+          'routes/home': {
+            id: 'routes/home',
+            parentId: 'root',
+            path: '/home',
+            index: false,
+            caseSensitive: true,
+            file: 'home.tsx',
+          },
+          'routes/about': {
+            id: 'routes/about',
+            parentId: 'root',
+            path: '/about',
+            index: false,
+            caseSensitive: true,
+            file: 'about.tsx',
+          },
+        } as RouteManifest;
+
+        const result = await createRouteManifest(routes, '/', [], true);
+
+        expect(result).not.contain('workerLoader');
+        expect(result).not.contain('workerAction');
+      });
     });
   });
 
@@ -270,10 +297,18 @@ describe('Remix PWA Vite VirtualSW Plugin', () => {
             },
           } as RouteManifest,
         },
+        viteConfig: {
+          logger: {
+            warnOnce: (str: string) => str,
+          },
+        },
         isRemixDevServer: true,
         __remixPluginContext: {
           remixConfig: {
             buildDirectory: '/build/',
+            future: {
+              unstable_singleFetch: false,
+            },
           },
         },
       } as unknown as PWAPluginContext;
@@ -344,6 +379,21 @@ const a = 1;`);
         expect(await plugin[1].load('\0virtual:entry-sw')).toContain('export const routes = {');
         expect(await plugin[1].load('\0virtual:entry-sw')).toContain('export const entry = { module: entryWorker }');
       });
+
+      test('should not include worker route module imports when single fetch is enabled', async () => {
+        mockContext.__remixPluginContext.remixConfig = {
+          ...mockContext.__remixPluginContext.remixConfig,
+          // @ts-ignore We don't care about the rest
+          future: {
+            unstable_singleFetch: true,
+          },
+        };
+
+        const _plugin = (await import('../virtual-sw')).VirtualSWPlugins;
+        plugin = _plugin(mockContext as PWAPluginContext);
+
+        expect(await plugin[1].load('\0virtual:entry-sw')).not.contain('import * as route');
+      });
     });
 
     describe('Virtual Routes Plugin', () => {
@@ -370,6 +420,25 @@ const a = 1;`);
         const result = await plugin[2].load('virtual:worker:routes/home.tsx');
 
         expect(result).toBe('module.exports = {}');
+      });
+
+      test('should return an empty module always if the single fetch is enabled', async () => {
+        mockContext.__remixPluginContext.remixConfig = {
+          ...mockContext.__remixPluginContext.remixConfig,
+          // @ts-ignore We don't care about the rest
+          future: {
+            unstable_singleFetch: true,
+          },
+        };
+
+        const _plugin = (await import('../virtual-sw')).VirtualSWPlugins;
+        plugin = _plugin(mockContext as PWAPluginContext);
+
+        const homeResult = await plugin[2].load('virtual:worker:routes/home.tsx');
+        const aboutResult = await plugin[2].load('virtual:worker:routes/about.tsx');
+
+        expect(homeResult).toBe(undefined);
+        expect(aboutResult).toBe(undefined);
       });
     });
 

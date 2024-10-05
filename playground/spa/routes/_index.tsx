@@ -1,5 +1,6 @@
 import { usePWAManager } from "@remix-pwa/client";
 import { ClientLoaderFunctionArgs, Form, Link, useFetcher } from "@remix-run/react";
+import { useEffect } from "react";
 
 export const meta = () => {
   return [
@@ -14,8 +15,13 @@ const CustomLink = ({ href, children }: any) => {
   )
 }
 
-export const workerLoader = () => {
-  console.log('Worker loader called');
+export const workerLoader = ({ request }) => {
+  console.log('Worker loader called in index', request.url);
+  return null;
+}
+
+export const workerAction = ({ request }) => {
+  console.log('Worker action called in index', request.url);
   return null;
 }
 
@@ -32,6 +38,10 @@ export default function Index() {
   const fetcher = useFetcher();
   const { promptInstall } = usePWAManager();
 
+  // useEffect(() => {
+  //   if (typeof window !== 'undefined') console.log(window.__remixManifest, window.__remixContext, import.meta)
+  // }, [])
+
   return (
     <div className="w-full h-screen flex flex-col px-6 mx-auto max-w-3xl">
       <div className="py-8 flex justify-between">
@@ -41,8 +51,8 @@ export default function Index() {
           onClick={async () => {
             // alert("You're logged in!\n\nActually nothing happened 😅. Yet.");
             const doSMthg = () => console.log('Hehehe')
-            fetcher.submit('login', { method: 'POST' });
-            fetch('https://example.com', { method: 'POST' });
+            // fetcher.submit('login', { method: 'POST' });
+            // fetch('https://example.com', { method: 'POST' });
             fetcher.submit('logout', { method: 'POST', action: '/logout' });
             // await promptInstall(doSMthg);
           }}
@@ -51,9 +61,11 @@ export default function Index() {
           Log In
         </button>
       </div>
-      <Form method="POST">
+      <Form method="POST" action="/?index">
         <button type="submit">Yes</button>
       </Form>
+      <Link to={'/test'}>Test</Link>
+      <Link to={'/smthg'}>Something</Link>
       <img src='https://avatars.githubusercontent.com/u/69679506?v=4' alt="Get out" />
       <div className="bg-amber-500/40 w-full flex-1 rounded-2xl mb-10 px-4 py-6 overflow-y-auto">
         <div>

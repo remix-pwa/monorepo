@@ -1,4 +1,5 @@
 {
+  "$schema": "https://remix-pwa.run/manifest.schema.json",
   "short_name": "PWA",
   "name": "Remix PWA",
   "start_url": "/",

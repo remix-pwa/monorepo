@@ -8,6 +8,7 @@
     "packages/dev",
     "packages/eslint-config",
     "packages/lint-staged-config",
+    "packages/manifest",
     "packages/push",
     "packages/sw",
     "packages/sync",

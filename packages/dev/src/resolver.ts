@@ -6,8 +6,6 @@ import type { PWAOptions, ResolvedPWAOptions } from './types.js';
 
 const removeTrailingSlashes = (str: string): string => str.replace(/^\/|\/$/g, '');
 
-// hmr support -/- auto-register, prompt or do nothing
-
 export async function resolveOptions(
   options: Partial<PWAOptions>,
   viteConfig: ResolvedConfig & { __remixPluginContext?: any }
@@ -29,6 +27,7 @@ export async function resolveOptions(
         },
     entryWorkerFile: serviceWorkerFile = (options.entryWorkerFile || 'entry.worker.ts').trim(),
     ignoredSWRouteFiles = options.ignoredSWRouteFiles || [],
+    injectSWRegister = options.injectSWRegister ?? true,
     registerSW = options.registerSW ?? 'script',
     // If it isn't 'public', or 'build/client' then the user input their own override 📌
     scope = options.scope || viteConfig.base,
@@ -59,5 +58,6 @@ export async function resolveOptions(
     ignoredSWRouteFiles,
     rootDirectory,
     workerName,
+    injectSWRegister,
   } as ResolvedPWAOptions;
 }

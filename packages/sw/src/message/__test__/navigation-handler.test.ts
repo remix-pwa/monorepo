@@ -53,7 +53,7 @@ describe('NavigationHandler testing Suite', () => {
 
     const event = {
       data: {
-        type: 'REMIX_NAVIGATION',
+        type: 'REMIX_NAVIGATION_UPDATE',
         payload: {
           location: {
             pathname: '/',
@@ -80,7 +80,7 @@ describe('NavigationHandler testing Suite', () => {
 
     const event = {
       data: {
-        type: 'REMIX_NAVIGATION',
+        type: 'REMIX_NAVIGATION_UPDATE',
         payload: {
           location: {
             pathname: '/about',
@@ -106,7 +106,7 @@ describe('NavigationHandler testing Suite', () => {
 
     const event = {
       data: {
-        type: 'REMIX_NAVIGATION',
+        type: 'REMIX_NAVIGATION_UPDATE',
         payload: {
           location: {
             pathname: '/',
@@ -135,7 +135,7 @@ describe('NavigationHandler testing Suite', () => {
     const event = {
       data: {
         payload: {
-          type: 'REMIX_NAVIGATION',
+          type: 'REMIX_NAVIGATION_UPDATE',
           location: {
             pathname: '/home',
             search: '',

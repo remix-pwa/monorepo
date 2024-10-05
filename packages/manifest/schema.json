@@ -1,0 +1,266 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the web application."
+    },
+    "short_name": {
+      "type": "string",
+      "description": "The short name of the web application."
+    },
+    "description": {
+      "type": "string",
+      "description": "The description of the web application."
+    },
+    "icons": {
+      "type": "array",
+      "description": "The `icons` manifest member is used to specify one or more image files that define the icons to represent your web application.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "src": {
+            "type": "string",
+            "description": "A string that specifies the path to the icon image file. If `src` is relative, the path is resolved relative to the manifest file's URL."
+          },
+          "sizes": {
+            "type": "string",
+            "description": "A string that specifies one or more sizes at which the icon file can be used. Each size is specified as `<width in pixels>`x`<height in pixels>`."
+          },
+          "type": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string",
+            "enum": ["any", "maskable", "monochrome"]
+          }
+        },
+        "required": ["src"]
+      }
+    },
+    "start_url": {
+      "type": "string",
+      "description": "The start URL of the web application."
+    },
+    "display": {
+      "type": "string",
+      "enum": ["fullscreen", "standalone", "minimal-ui", "browser"],
+      "description": "The display mode of the web application."
+    },
+    "display_override": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["window-controls-overlay", "bordered", "standard"]
+      }
+    },
+    "orientation": {
+      "type": "string",
+      "enum": [
+        "any", "natural", "landscape", "landscape-primary", 
+        "landscape-secondary", "portrait", "portrait-primary", 
+        "portrait-secondary"
+      ]
+    },
+    "dir": {
+      "type": "string",
+      "enum": ["ltr", "rtl", "auto"]
+    },
+    "lang": {
+      "type": "string"
+    },
+    "prefer_related_applications": {
+      "type": "boolean"
+    },
+    "related_applications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "platform": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "min_version": {
+            "type": "string"
+          },
+          "fingerprints": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": ["type", "value"]
+            }
+          }
+        },
+        "required": ["platform"]
+      }
+    },
+    "scope": {
+      "type": "string",
+      "description": "The `scope` member is a string that defines the navigation scope of this web application's application context. It restricts what web pages can be viewed while the manifest is applied."
+    },
+    "screenshots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "src": {
+            "type": "string"
+          },
+          "sizes": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "form_factor": {
+            "type": "string",
+            "enum": ["narrow", "wide"]
+          }
+        },
+        "required": ["src"]
+      }
+    },
+    "shortcuts": {
+      "type": "array",
+      "description": "The `shortcuts` member defines an array of shortcuts or links to key tasks or pages within a web app.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "short_name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "icons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "src": {
+                  "type": "string"
+                },
+                "sizes": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "purpose": {
+                  "type": "string",
+                  "enum": ["any", "maskable", "monochrome"]
+                }
+              },
+              "required": ["src"]
+            }
+          }
+        },
+        "required": ["url"]
+      }
+    },
+    "share_target": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "method": {
+          "type": "string",
+          "enum": ["GET", "POST"]
+        },
+        "enctype": {
+          "type": "string"
+        },
+        "params": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "protocol_handlers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "protocol": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": ["protocol", "url"]
+      }
+    },
+    "note": {
+      "type": "string"
+    },
+    "background_color": {
+      "type": "string",
+      "description": "The background_color member defines a placeholder background color for the application page to display before its stylesheet is loaded."
+    },
+    "theme_color": {
+      "type": "string",
+      "description": "The theme_color member is a string that defines the default theme color for the application."
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "iarc_rating_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "name",
+    "start_url",
+    "scope",
+    "icons"
+  ],
+  "additionalProperties": true
+}

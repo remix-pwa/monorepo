@@ -7,6 +7,8 @@ import type { ResolvedConfig } from 'vite';
  */
 export interface PWAOptions {
   /**
+   * @deprecated Use `injectSWRegister` instead.
+   *
    * Auto-inject service worker registration script into root.tsx or not.
    * Possible values are:
    * - '**script**': inject script tag into root.tsx automatically.
@@ -16,6 +18,12 @@ export interface PWAOptions {
    * @default 'script'
    */
   registerSW: 'script' | null;
+  /**
+   * Wether to inject a service worker registration script into your app or not.
+   *
+   * *Use this instead of `registerSW`*
+   */
+  injectSWRegister: boolean;
   /**
    * The path to your entry worker file. Relative to the
    * `app` directory. *No trailing slashes please!*
@@ -92,6 +100,7 @@ export interface ResolvedPWAOptions
     | 'entryWorkerFile'
     | 'ignoredSWRouteFiles'
     | 'registerSW'
+    | 'injectSWRegister'
     | 'scope'
     | 'workerBuildDirectory'
     | 'workerEntryPoint'

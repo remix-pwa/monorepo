@@ -3,10 +3,10 @@ import React from 'react';
 
 export const ManifestLink = ({
   crossOrigin,
-  manifestUrl = '/manifest.webmanifest',
+  href,
 }: {
-  manifestUrl?: string;
+  href: '/manifest.webmanifest' | (string & object);
   crossOrigin?: LinkHTMLAttributes<HTMLLinkElement>['crossOrigin'];
 }) => {
-  return <link rel="webmanifest" href={manifestUrl} crossOrigin={crossOrigin} />;
+  return <link rel="manifest" href={href} crossOrigin={crossOrigin} />;
 };
