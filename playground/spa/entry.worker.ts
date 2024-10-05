@@ -52,20 +52,22 @@ const isAssetRequest = (request: Request)=> {
 
 export const defaultFetchHandler = async ({ request, context }: any) => {
   const req = context.event.request;
-
+  // const url = new URL(req.url)
   // console.log(req)
 
   // The referrer (the URL of the page that made the request)
   const referrer = req.referrer; // This is usually the full URL of the document
 
   // You can also check the 'Referer' header (note the different spelling)
-  const refererHeader = req.headers.get('referer');
+  const refererHeader = req.headers.get('X-Route-Id');
 
-  if ((req as Request).destination === 'image') {
-    console.log('Image request', req);
-  }
+  // if ((req as Request).destination === 'image') {
+  //   console.log('Image request', req);
+  //   console.log(self.__workerManifest, 'manifest')
+  // }
 
-  // console.log('Referrer (page making the request):', referrer, req.url, refererHeader, Object.fromEntries(req.headers));
+
+  // console.log('Referrer (page making the request):', refererHeader, req.url);
 
   if (isAssetRequest(request)) {
     return assetCache.handleRequest(request);
@@ -76,6 +78,7 @@ export const defaultFetchHandler = async ({ request, context }: any) => {
   }
 
   const url = new URL(context.event.request.url);
+  // url.searchParams.get('_route') && console.log(url.searchParams.get('_route'), '_route', req.url)
 
   // If it is loader request, and there's no worker route API for it,
   // we have to run it ourselves
