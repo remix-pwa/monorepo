@@ -35,7 +35,7 @@ module.exports = {
   },
   processor: 'disable/disable',
   rules: {
-    '@typescript-eslint/consistent-type-imports': 'error',
+    // '@typescript-eslint/consistent-type-imports': 'error',
     '@typescript-eslint/ban-ts-comment': 'off',
     'import/order': [
       'error',

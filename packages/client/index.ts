@@ -45,6 +45,6 @@ export {
 export { useBadgeApi } from './hooks/useBadgeApi.js';
 export { useBatteryManager } from './hooks/useBatteryManager.js';
 export { useNetworkConnectivity } from './hooks/useNetworkConnectivity.js';
-export { usePWAManager } from './hooks/usePWAManager.js';
 export { usePermission } from './hooks/usePermission.js';
 export type { PermissionName, PermissionState, PermissionStatus } from './hooks/usePermission.js';
+export { usePWAManager } from './hooks/usePWAManager.js';

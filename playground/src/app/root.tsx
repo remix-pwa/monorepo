@@ -1,7 +1,5 @@
 import {
-  logger,
-  ManifestLink,
-  useSWEffect,
+  installPWAGlobals,
 } from "@remix-pwa/sw";
 import {
   Links,
@@ -10,11 +8,12 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import { usePWAManager } from "@remix-pwa/client";
+import { ManifestLink } from "@remix-pwa/manifest";
 // import { msg } from "virtual:sw"
 // import { routes } from 'virtual:pwa-entry-module';
 
 import './tailwind.css';
-import { usePWAManager } from "@remix-pwa/client";
 
 // const usePWAHMR = () => {
 //   const [currentHash, setCurrentHash] = useState<string | null>(null);
@@ -43,7 +42,7 @@ import { usePWAManager } from "@remix-pwa/client";
 // }
 
 export default function App() {
-  useSWEffect()
+  installPWAGlobals()
   const { updateAvailable } = usePWAManager();
   // usePWAHMR()
 
@@ -58,7 +57,7 @@ export default function App() {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
-        <ManifestLink manifestUrl="/manifest.json" />
+        <ManifestLink href="/manifest.json" />
         <Links />
       </head>
       <body>

@@ -1,37 +1,48 @@
 import {
-  ManifestLink,
-  useSWEffect,
-} from "@remix-pwa/sw";
-import {
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-import { useEffect } from "react";
+import { installPWAGlobals } from "@remix-pwa/sw";
 
-export default function App() {
-  useSWEffect()
+export function Layout({ children }: { children: React.ReactNode }) {
+  installPWAGlobals()
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') console.log(window.__remixContext)
-  }, [])
+  // useActivityMonitor()
+
+  // useEffect(() => console.log(navigation), [navigation.location])
+
+  // useEffect(() => {
+  //   console.log('Something happened! in navigation', location, navigation, matches)
+  // }, [navigation])
+
+  // useEffect(() => {
+  //   console.log('Something happened! in fetchers', fetchers)
+  // }, [fetchers])
 
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
-        <ManifestLink manifestUrl="/manifest.json" />
         <Links />
       </head>
       <body>
-        <Outlet />
+        {children}
         <ScrollRestoration />
         <Scripts />
       </body>
     </html>
   );
+}
+
+export default function App() {
+  return <Outlet />;
+}
+
+export function HydrateFallback() {
+  return <p>Loading...</p>;
 }

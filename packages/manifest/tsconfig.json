@@ -3,7 +3,7 @@
   "exclude": ["dist", "./**/__tests__",  "./**/__test__", "node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
-    "lib": ["ES2022", "WebWorker", "DOM", "DOM.Iterable"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "jsx": "react",
     "composite": true,
     "target": "es2022",

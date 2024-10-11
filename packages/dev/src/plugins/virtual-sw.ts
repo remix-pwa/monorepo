@@ -66,7 +66,9 @@ export const createRouteImports = (routes: RouteManifest, ignoredRoutes: string[
 export const createRouteManifest = async (
   routes: RouteManifest,
   appDirectory: string,
-  ignoredRoutes: string[] = []
+  ignoredRoutes: string[] = [],
+  singleFetchEnabld = false,
+  spaMode = false
 ): Promise<string> => {
   return (
     await Promise.all(
@@ -79,7 +81,8 @@ export const createRouteManifest = async (
           plugins: ['jsx', 'typescript'],
         });
 
-        const { hasAction, hasLoader, hasWorkerAction, hasWorkerLoader } = resolveRouteModules(sourceAst);
+        const { hasAction, hasClientAction, hasClientLoader, hasLoader, hasWorkerAction, hasWorkerLoader } =
+          resolveRouteModules(sourceAst);
 
         return `${JSON.stringify(key)}: {
           id: "${route.id}",
@@ -87,11 +90,13 @@ export const createRouteManifest = async (
           path: ${JSON.stringify(route.path)},
           index: ${JSON.stringify(route.index)},
           caseSensitive: ${JSON.stringify(route.caseSensitive)},
-          hasLoader: ${hasLoader},
-          hasAction: ${hasAction},
-          hasWorkerLoader: ${hasWorkerLoader},
-          hasWorkerAction: ${hasWorkerAction},
-          module: route${index}
+          ${spaMode ? '' : `hasLoader: ${hasLoader},`}
+          ${spaMode ? '' : `hasAction: ${hasAction},`}
+          hasClientLoader: ${hasClientLoader},
+          hasClientAction: ${hasClientAction},
+          ${singleFetchEnabld ? '' : `hasWorkerLoader: ${hasWorkerLoader},`}
+          ${singleFetchEnabld ? '' : `hasWorkerAction: ${hasWorkerAction},`}
+          ${singleFetchEnabld ? '' : `module: route${index}`}
         },`;
       })
     )
@@ -115,8 +120,9 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
       async load(id) {
         if (
           id === emptyFileName ||
-          id.match(/@remix-run\/(deno|cloudflare|node|react)(\/.*)/g) ||
+          id.match(/@remix-run\/(deno|cloudflare|node|react|server-runtime)(\/.*)/g) ||
           id.match(/react(-dom)?(\/.*)?$/g) ||
+          id.match(/react-router(-dom|-native)?(\/.*)?$/g) ||
           id.match(/\.server/g) ||
           id.match(/web-push?$/g)
         ) {
@@ -145,14 +151,17 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
         }
       },
       async load(id) {
+        const singleFetchEnabled = ctx.__remixPluginContext.remixConfig.future.unstable_singleFetch;
+        const spaMode = !ctx.__remixPluginContext.remixConfig.ssr;
+
         if (id === VirtualModule.resolve(entryId)) {
           const entryVirtualContents = [
             `import * as entryWorker from ${JSON.stringify(ctx.options.serviceWorkerPath)};`,
             '',
-            `${createRouteImports(ctx.options.routes, ctx.options.ignoredSWRouteFiles)}`,
+            singleFetchEnabled ? '' : `${createRouteImports(ctx.options.routes, ctx.options.ignoredSWRouteFiles)}`,
             '',
             'export const routes = {',
-            `  ${await createRouteManifest(ctx.options.routes, ctx.options.appDirectory, ctx.options.ignoredSWRouteFiles)}`,
+            `  ${await createRouteManifest(ctx.options.routes, ctx.options.appDirectory, ctx.options.ignoredSWRouteFiles, singleFetchEnabled, spaMode)}`,
             '};',
             '',
             "export { assets } from 'virtual:assets-sw';",
@@ -174,6 +183,13 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
       },
       async load(id) {
         if (id.startsWith('virtual:worker:') && ctx.isRemixDevServer) {
+          if (ctx.__remixPluginContext.remixConfig.future.unstable_singleFetch) {
+            // update this warning PLEASE!
+            ctx.viteConfig.logger.warnOnce("💥 Worker route modules aren't applicable in Single Fetch apps!");
+            // return 'module.exports = {}';
+            return;
+          }
+
           const filePath = id.replace('virtual:worker:', '');
 
           if (workerRouteCache.has(filePath)) {

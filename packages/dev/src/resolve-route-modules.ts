@@ -3,6 +3,8 @@ import { t, traverse, type ParseResult } from './babel.js';
 type RouteModules = {
   hasLoader: boolean;
   hasAction: boolean;
+  hasClientLoader: boolean;
+  hasClientAction: boolean;
   hasWorkerLoader: boolean;
   hasWorkerAction: boolean;
 };
@@ -11,6 +13,8 @@ export const resolveRouteModules = (ast: ParseResult): RouteModules => {
   const routeModules = {
     hasLoader: false,
     hasAction: false,
+    hasClientLoader: false,
+    hasClientAction: false,
     hasWorkerLoader: false,
     hasWorkerAction: false,
   };
@@ -25,6 +29,14 @@ export const resolveRouteModules = (ast: ParseResult): RouteModules => {
 
       if (functionName === 'action') {
         routeModules.hasAction = true;
+      }
+
+      if (functionName === 'clientLoader') {
+        routeModules.hasClientLoader = true;
+      }
+
+      if (functionName === 'clientAction') {
+        routeModules.hasClientAction = true;
       }
 
       if (functionName === 'workerLoader') {
@@ -46,6 +58,14 @@ export const resolveRouteModules = (ast: ParseResult): RouteModules => {
 
         if (functionName === 'action') {
           routeModules.hasAction = true;
+        }
+
+        if (functionName === 'clientLoader') {
+          routeModules.hasClientLoader = true;
+        }
+
+        if (functionName === 'clientAction') {
+          routeModules.hasClientAction = true;
         }
 
         if (functionName === 'workerLoader') {

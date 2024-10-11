@@ -104,4 +104,8 @@ declare global {
       assets: string[];
     };
   }
+
+  interface Window {
+    $ServiceWorkerHMRHandler$: () => Promise<void>;
+  }
 }
