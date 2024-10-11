@@ -1,3 +1,11 @@
+# @remix-pwa/dev 3.2.0-dev.1 (2024-10-11)
+
+
+### Features
+
+* **dev:** automatically disables auto-injection once the script is manually registered 7273868
+* **dev:** first v5 release candidate for `dev` f41696e
+
 # @remix-pwa/dev 3.1.0 (2024-08-11)
 
 
