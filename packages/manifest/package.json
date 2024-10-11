@@ -48,6 +48,9 @@
       "optional": true
     }
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "homepage": "https://remix-pwa.run",
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
