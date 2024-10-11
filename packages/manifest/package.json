@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/manifest",
-  "version": "3.0.1-dev.1",
+  "version": "3.0.1-dev.2",
   "description": "Manifest-related APIs and utilities for your Remix applications",
   "repository": {
     "type": "git",
