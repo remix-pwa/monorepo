@@ -1,3 +1,10 @@
+# @remix-pwa/worker-runtime 2.2.0-dev.1 (2024-10-11)
+
+
+### Features
+
+* **worker-runtime:** runtime v5 release candidate 1d778a7
+
 ## @remix-pwa/worker-runtime 2.1.4 (2024-08-11)
 
 
