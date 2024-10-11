@@ -1,3 +1,10 @@
+# @remix-pwa/dev 3.2.0-dev.2 (2024-10-11)
+
+
+### Features
+
+* **dev:** fixed version bump error a3de03a
+
 # @remix-pwa/dev 3.2.0-dev.1 (2024-10-11)
 
 
