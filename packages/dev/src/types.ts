@@ -14,7 +14,6 @@ export interface PWAOptions {
    * - '**script**': inject script tag into root.tsx automatically.
    * - **null**: do not inject, you can manually inject it yourself via `loadServiceWorker` in your
    * entry client file.
-   *
    * @default 'script'
    */
   registerSW: 'script' | null;
