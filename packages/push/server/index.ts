@@ -1,4 +1,4 @@
-export { sendNotifications } from './notifications.js';
+export { getNotificationResults, sendNotifications, type NotificationResult } from './notifications.js';
 export { compareSubscriptionId, generateSubscriptionId } from './utils.js';
 
 export type { SubscriptionStorageProvider } from './storage.js';
