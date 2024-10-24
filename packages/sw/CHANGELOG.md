@@ -1,3 +1,14 @@
+# @remix-pwa/sw 3.1.0-dev.1 (2024-10-11)
+
+
+### Features
+
+* **sw:** `@remix-pwa/sw` v5 first release candidate e88aedb
+* **sw:** moved `ManifestLink` + new component: `PWAScripts` 7e9030b
+* **sw:** new global hook + removed `SkipWaitHandler` e2c462e
+* **sw:** removed `useSWEffect` hook 2088a57
+* **sw:** removed manual sw loader - entirely cf2f10c
+
 ## @remix-pwa/sw 3.0.10 (2024-09-24)
 
 
