@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/push",
-  "version": "2.10.3",
+  "version": "2.10.4-dev.1",
   "description": "A package to handle everything Push API in the browser and server",
   "repository": {
     "type": "git",

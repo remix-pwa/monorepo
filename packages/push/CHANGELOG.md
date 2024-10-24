@@ -1,3 +1,10 @@
+## @remix-pwa/push 2.10.4-dev.1 (2024-10-24)
+
+
+### Bug Fixes
+
+* **push:** pushing fix for `sendNotifications` 13961c1
+
 ## @remix-pwa/push 2.10.3 (2024-07-21)
 
 
