@@ -1,4 +1,4 @@
-import type { WebAppManifest } from '@remix-pwa/dev';
+import type { WebAppManifest } from '@remix-pwa/manifest';
 import { json } from '@remix-run/node';
 
 export const loader = () => {
