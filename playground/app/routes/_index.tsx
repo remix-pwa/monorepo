@@ -22,75 +22,75 @@ export const meta = () => {
 const links = [
   {
     title: "Route Worker Modules",
-    description: "Learn how to integrate our tools with your app",
+    description: "Learn about service worker route modules",
     href: "/worker-modules",
     icon: Route,
     gradient: "from-pink-500 via-purple-500 to-pink-500",
-    details: "Our comprehensive documentation covers everything from quick starts to advanced topics. Find tutorials, API references, and best practices all in one place."
+    details: "Route Worker Modules allow you to handle specific routes in your service worker. Learn how to implement caching strategies, handle offline fallbacks, and manage network requests on a per-route basis."
   },
   {
     title: "Caching",
-    description: "A complete API reference for our libraries",
-    href: "#",
+    description: "Implement strategic caching for your PWA",
+    href: "/caching",
     icon: Database,
     gradient: "from-orange-400 via-pink-600 to-orange-400",
-    details: "Dive deep into our API documentation. Explore endpoints, request/response formats, authentication methods, and example code snippets for seamless integration."
+    details: "Explore different caching strategies like Cache-First, Network-First, and Stale-While-Revalidate. Learn how to cache assets, API responses, and dynamic content to improve performance and offline capabilities."
   },
   {
     title: "Background Sync",
-    description: "Installation guides that cover popular setups",
-    href: "#",
+    description: "Handle offline data synchronization",
+    href: "/background-sync",
     icon: RotateCw,
     gradient: "from-green-400 via-cyan-500 to-green-400",
-    details: "Step-by-step guides for various setups and use cases. Whether you're a beginner or an expert, find tailored instructions for your specific needs."
+    details: "Implement background synchronization to handle offline form submissions, data updates, and API calls. Ensure your app maintains data consistency even when users go offline and reconnect."
   },
   {
     title: "Offline",
-    description: "Read our latest news and articles",
-    href: "#",
+    description: "Build reliable offline experiences",
+    href: "/offline",
     icon: Wifi,
     gradient: "from-blue-400 via-indigo-500 to-blue-400",
-    details: "Stay up-to-date with our latest features, industry insights, and success stories. Our blog is a hub for learning, inspiration, and community engagement."
+    details: "Create seamless offline experiences with custom offline pages, fallback content, and offline-first data strategies. Learn how to detect network status and adapt your app's behavior accordingly."
   },
   {
     title: "Layout Routes",
-    description: "Read our latest news and articles",
-    href: "#",
+    description: "Structure your PWA with nested layouts",
+    href: "/layouts",
     icon: LayoutDashboard,
     gradient: "from-purple-500 via-violet-600 to-indigo-500",
-    details: "Stay up-to-date with our latest features, industry insights, and success stories. Our blog is a hub for learning, inspiration, and community engagement."
+    details: "Understand how to use Remix's nested routing with PWA features. Learn to structure your app with shared layouts while maintaining optimal service worker caching and offline capabilities."
   },
   {
     title: "Device Features",
-    description: "Read our latest news and articles",
-    href: "#",
+    description: "Access native device capabilities",
+    href: "/device-features",
     icon: Smartphone,
     gradient: "from-lime-500 via-amber-500 to-lime-500",
-    details: "Stay up-to-date with our latest features, industry insights, and success stories. Our blog is a hub for learning, inspiration, and community engagement."
+    details: "Integrate native device features like camera, geolocation, and sensors into your PWA. Learn how to request permissions and provide fallbacks for unsupported features."
   },
   {
     title: "Installability",
-    description: "Read our latest news and articles",
-    href: "#",
+    description: "Make your app installable",
+    href: "/install",
     icon: Download,
     gradient: "from-sky-400 via-indigo-600 to-sky-400",
-    details: "Stay up-to-date with our latest features, industry insights, and success stories. Our blog is a hub for learning, inspiration, and community engagement."
+    details: "Configure your PWA for installation with proper manifests, icons, and installation prompts. Learn how to customize the installation experience and track installation metrics."
   },
   {
     title: "Push Notifications",
-    description: "Read our latest news and articles",
-    href: "#",
+    description: "Implement push notifications",
+    href: "/notifications",
     icon: Bell,
     gradient: "from-amber-400 via-orange-500 to-red-500",
-    details: "Stay up-to-date with our latest features, industry insights, and success stories. Our blog is a hub for learning, inspiration, and community engagement."
+    details: "Add push notifications to your PWA using the Push API and Notification API. Learn to handle notification permissions, send notifications, and respond to notification interactions."
   },
   {
     title: "Web Share",
-    description: "Read our latest news and articles",
-    href: "#",
+    description: "Enable native sharing features",
+    href: "/web-share",
     icon: Share2,
     gradient: "from-cyan-400 via-sky-500 to-blue-500",
-    details: "Stay up-to-date with our latest features, industry insights, and success stories. Our blog is a hub for learning, inspiration, and community engagement."
+    details: "Implement the Web Share API to allow users to share content using their device's native sharing capabilities. Learn how to share text, links, files, and handle sharing targets."
   },
 ]
 
@@ -121,7 +121,7 @@ export default function Index() {
 
       <div className="container mx-auto px-4">
         <main className="flex-1">
-          <section className="py-20 text-center">
+          <section className="py-20 lg:py-24 2xl:py-40 text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl mb-4 text-foreground">
               📦 Remix PWA Sandbox
             </h1>

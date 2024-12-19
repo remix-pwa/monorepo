@@ -5,30 +5,26 @@ import { APIExplorerDemo, Demo, DemoDescription, DemoPlayground } from "~/compon
 const PageContent = {
   title: "Route Worker Modules",
   gradient: "from-pink-500 via-purple-500 to-pink-500",
-  description: "The Route module is used to define the routes for your application.",
-  details: "The Route module is used to define the routes for your application. It is used to define the routes for your application. It is used to define the routes for your application.",
+  description: "Handle specific routes in your service worker",
+  details: "Route Worker Modules provide a powerful way to handle specific routes in your service worker. Learn how to implement different caching strategies, handle offline fallbacks, and manage network requests on a per-route basis.",
   icon: <RouteIcon size={32} />
 }
 
-export default function Route() {
+export default function WorkerModules() {
   return (
-    <Page
-      {...PageContent}
-    >
-      <PageDetails
-        {...PageContent}
-      />
-
+    <Page {...PageContent}>
+      <PageDetails {...PageContent} />
       <Demo>
         <DemoDescription>
-        Here you can find an interactive demo of our stuffs. Explore different sections, try out code snippets, and see how our documentation can help you build better applications.
+          Explore how Route Worker Modules work in practice. Try out different caching strategies
+          and see how they affect your application's behavior under various network conditions.
         </DemoDescription>
         <DemoPlayground>
           <APIExplorerDemo
             invokeApi={() => {}}
             apiResponse={null}
             name="Worker Loader"
-            btnText="Demo"
+            btnText="Test Loader"
             isLoading={false}
             loadingText="Loading..."
           />
@@ -36,7 +32,7 @@ export default function Route() {
             invokeApi={() => {}}
             apiResponse={null}
             name="Worker Action"
-            btnText="Worker Action"
+            btnText="Test Action"
             isLoading={false}
             loadingText="Loading..."
           />

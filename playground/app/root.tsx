@@ -1,6 +1,6 @@
 import {
   installPWAGlobals,
-} from "@remix-pwa/sw";
+} from "@remix-pwa/sw/install-pwa-globals";
 import {
   Links,
   Meta,
