@@ -1,12 +1,12 @@
 {
-  "name": "@remix-pwa/playground",
+  "name": "@remix-pwa/remix-sandbox",
   "type": "module",
   "version": "0.0.0",
-  "description": "A Playground for Remix PWA 3.0",
+  "description": "A sandbox for Remix PWA",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/remix-pwa/monorepo.git",
-    "directory": "playground"
+    "directory": "remix-sandbox"
   },
   "license": "MIT",
   "sideEffects": false,
@@ -16,7 +16,7 @@
     "buildt": "remix vite:build",
     "dev:ssr": "cross-env SPA=false remix vite:dev",
     "dev:spa": "cross-env SPA=true remix vite:dev",
-    "preinstall": "echo \"Updating @remix-pwa/* packages\" && node ../scripts/update-sandbox.js",
+    "preinstall": "echo \"Updating @remix-pwa/* packages\" && node ../../scripts/update-sandbox.js",
     "preview": "npx vite preview",
     "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc",
