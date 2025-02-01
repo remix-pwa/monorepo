@@ -14,14 +14,34 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "exports": {
+    "./remix": {
+      "default": "./dist/src/remix/index.js",
+      "types": "./dist/src/remix/index.d.ts"
+    },
+    "./react-router": {
+      "default": "./dist/src/react-router/index.js",
+      "types": "./dist/src/react-router/index.d.ts"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "./remix": [
+        "./dist/src/remix/index.d.ts"
+      ],
+      "./react-router": [
+        "./dist/src/react-router/index.d.ts"
+      ]
+    }
+  },
+
   "scripts": {
     "build": "rimraf ./dist && tsc",
     "prepublishOnly": "npm run build",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "TIMING=1 eslint --fix src",
     "prepublish": "npm run build",
+
     "test": "cross-env VITEST_WORKSPACE=true vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests --config ../../vitest.config.ts"
   },
   "funding": [

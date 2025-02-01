@@ -17,8 +17,8 @@ export async function buildWorker(_ctx: PWAPluginContext) {
     'process.env.NODE_ENV': _ctx.isDev ? 'development' : 'production',
     'process.env.__REMIX_PWA_SPA_MODE': _ctx.__remixPluginContext.remixConfig.ssr ? 'false' : 'true',
     'process.env.__REMIX_SINGLE_FETCH':
+      // @ts-expect-error - unstable_singleFetch is no longer available in post-2.13.x
       _ctx.__remixPluginContext.remixConfig.future.unstable_singleFetch ||
-      // @ts-expect-error - v3_singleFetch is not typed in pre-2.13.x
       _ctx.__remixPluginContext.remixConfig.future.v3_singleFetch
         ? 'true'
         : 'false',

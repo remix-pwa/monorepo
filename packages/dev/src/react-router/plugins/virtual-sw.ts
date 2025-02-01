@@ -151,7 +151,10 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
         }
       },
       async load(id) {
-        const singleFetchEnabled = ctx.__remixPluginContext.remixConfig.future.unstable_singleFetch;
+        const singleFetchEnabled =
+          // @ts-expect-error - unstable_singleFetch is no longer available in post-2.13.x
+          ctx.__remixPluginContext.remixConfig.future.unstable_singleFetch ||
+          ctx.__remixPluginContext.remixConfig.future.v3_singleFetch;
         const spaMode = !ctx.__remixPluginContext.remixConfig.ssr;
 
         if (id === VirtualModule.resolve(entryId)) {
@@ -183,7 +186,11 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
       },
       async load(id) {
         if (id.startsWith('virtual:worker:') && ctx.isRemixDevServer) {
-          if (ctx.__remixPluginContext.remixConfig.future.unstable_singleFetch) {
+          if (
+            // @ts-expect-error - unstable_singleFetch is no longer available in post-2.13.x
+            ctx.__remixPluginContext.remixConfig.future.unstable_singleFetch ||
+            ctx.__remixPluginContext.remixConfig.future.v3_singleFetch
+          ) {
             // update this warning PLEASE!
             ctx.viteConfig.logger.warnOnce("💥 Worker route modules aren't applicable in Single Fetch apps!");
             // return 'module.exports = {}';

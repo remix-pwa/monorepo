@@ -11,3 +11,5 @@ export function remixPWA(pwaOptions: Partial<PWAOptions> = {}): Plugin[] {
 
   return <Plugin[]>[EntryPlugin(ctx, pwaOptions), BundlerPlugin(ctx), LoaderPlugin(ctx)];
 }
+
+export type { PWAOptions as PWAViteOptions };
