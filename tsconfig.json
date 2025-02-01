@@ -10,5 +10,5 @@
     { "path": "packages/sync" },
     { "path": "packages/worker-runtime" }
   ],
-  "exclude": ["node_modules", "templates/**/*"]
+  "exclude": ["node_modules", "templates/**/*", "sandboxes/rr7"]
 }
