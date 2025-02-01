@@ -13,8 +13,7 @@
     "packages/sw",
     "packages/sync",
     "packages/worker-runtime",
-    "sandboxes/remix",
-    "sandboxes/rr7"
+    "sandboxes/remix"
   ],
   "type": "module",
   "scripts": {
@@ -22,7 +21,7 @@
     "commit": "commit",
     "dev:ssr": "npm run dev:ssr --workspace @remix-pwa/remix-sandbox",
     "dev:spa": "npm run dev:spa --workspace @remix-pwa/remix-sandbox",
-    "dev:rr": "npm run dev --workspace @remix-pwa/rr7-sandbox",
+    "dev:rr": "npm run dev --prefix sandboxes/rr7",
     "lint-staged": "lint-staged",
     "lint": "turbo lint -- --fix",
     "format": "turbo format -- --write",

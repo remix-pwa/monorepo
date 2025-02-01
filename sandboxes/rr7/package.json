@@ -11,6 +11,9 @@
   "dependencies": {
     "@react-router/node": "^7.1.1",
     "@react-router/serve": "^7.1.1",
+    "@remix-pwa/sw": "file:../../packages/sw",
+    "@remix-pwa/dev": "file:../../packages/dev",
+    "@remix-pwa/worker-runtime": "file:../../packages/worker-runtime",
     "isbot": "^5.1.17",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
