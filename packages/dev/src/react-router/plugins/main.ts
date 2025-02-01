@@ -10,10 +10,10 @@ export function EntryPlugin(ctx: PWAPluginContext, pwaOptions: Partial<PWAOption
     async configResolved(config) {
       ctx.isDev = process.env.NODE_ENV === 'development';
       // @ts-ignore - Utilizing remix special config here
-      ctx.isRemixDevServer = config.__remixPluginContext !== undefined;
-      ctx.viteConfig = config;
-      // @ts-ignore - Also utilizing remix special config here
-      ctx.__remixPluginContext = config.__remixPluginContext ?? undefined;
+      // ctx.isRemixDevServer = config.__remixPluginContext !== undefined;
+      // ctx.viteConfig = config;
+      // // @ts-ignore - Also utilizing remix special config here
+      // ctx.__remixPluginContext = config.__remixPluginContext ?? undefined;
       ctx.options = await resolveOptions(pwaOptions, config);
     },
   };

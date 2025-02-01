@@ -2,15 +2,18 @@ import { resolve } from 'pathe';
 import type { ResolvedConfig } from 'vite';
 import { normalizePath } from 'vite';
 
+import type { ReactRouterPluginContext } from './patch.d.ts';
 import type { PWAOptions, ResolvedPWAOptions } from './types.js';
 
 const removeTrailingSlashes = (str: string): string => str.replace(/^\/|\/$/g, '');
 
 export async function resolveOptions(
   options: Partial<PWAOptions>,
-  viteConfig: ResolvedConfig & { __remixPluginContext?: any }
+  viteConfig: ResolvedConfig & {
+    __reactRouterPluginContext?: ReactRouterPluginContext;
+  }
 ): Promise<ResolvedPWAOptions> {
-  if (!viteConfig.__remixPluginContext) {
+  if (!viteConfig.__reactRouterPluginContext) {
     return {} as ResolvedPWAOptions;
   }
 
@@ -23,7 +26,7 @@ export async function resolveOptions(
           'process.env.NODE_ENV': isDev ? 'development' : 'production',
           // Secret vars! Do not even think about it! 🤫
           // Used by runtimes for detecting application metadata.
-          'process.env.__REMIX_PWA_SPA_MODE': viteConfig.__remixPluginContext.remixConfig.ssr ? 'false' : 'true',
+          'process.env.__IS_SPA_MODE': viteConfig.__reactRouterPluginContext.reactRouterConfig.ssr ? 'false' : 'true',
         },
     entryWorkerFile: serviceWorkerFile = (options.entryWorkerFile || 'entry.worker.ts').trim(),
     ignoredSWRouteFiles = options.ignoredSWRouteFiles || [],
@@ -40,12 +43,12 @@ export async function resolveOptions(
 
   const rootDirectory = viteConfig.root ?? process.env.REMIX_ROOT ?? process.cwd();
 
-  const { appDirectory, publicPath, routes } = viteConfig.__remixPluginContext.remixConfig;
+  const { appDirectory, routes } = viteConfig.__reactRouterPluginContext.reactRouterConfig;
 
   return {
     workerMinify,
     workerEntryPoint,
-    publicPath,
+    publicPath: viteConfig.__reactRouterPluginContext.publicPath,
     workerSourceMap,
     workerBuildDirectory: resolve(viteConfig.root, removeTrailingSlashes(workerBuildDirectory)),
     registerSW,
