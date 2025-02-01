@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export type PermissionName =
-  | 'geolocation'
-  | 'notifications'
-  | 'persistent-storage'
-  | 'push'
-  | 'screen-wake-lock'
-  | 'xr-spatial-tracking';
+export type PermissionName = 'geolocation' | 'notifications' | 'persistent-storage' | 'push' | 'screen-wake-lock';
 
 export type PermissionState = 'granted' | 'denied' | 'prompt';
 
