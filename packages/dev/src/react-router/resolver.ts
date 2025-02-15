@@ -31,7 +31,6 @@ export async function resolveOptions(
     entryWorkerFile: serviceWorkerFile = (options.entryWorkerFile || 'entry.worker.ts').trim(),
     ignoredSWRouteFiles = options.ignoredSWRouteFiles || [],
     injectSWRegister = options.injectSWRegister ?? true,
-    registerSW = options.registerSW ?? 'script',
     // If it isn't 'public', or 'build/client' then the user input their own override 📌
     scope = options.scope || viteConfig.base,
     workerBuildDirectory = options.workerBuildDirectory || isDev ? 'public' : 'build/client',
@@ -48,10 +47,9 @@ export async function resolveOptions(
   return {
     workerMinify,
     workerEntryPoint,
-    publicPath: viteConfig.__reactRouterPluginContext.publicPath,
+    publicPath: viteConfig.__reactRouterPluginContext.publicPath ?? '/',
     workerSourceMap,
     workerBuildDirectory: resolve(viteConfig.root, removeTrailingSlashes(workerBuildDirectory)),
-    registerSW,
     scope,
     buildVariables,
     routes,

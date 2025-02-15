@@ -159,7 +159,7 @@ type ResolvedReactRouterConfig = Readonly<{
    */
   ssr: boolean;
 }>;
-type ReactRouterPluginContext = Readonly<{
+type ReactRouterPluginContext = {
   reactRouterConfig: ResolvedReactRouterConfig;
   publicPath: string;
   rootDirectory: string;
@@ -167,7 +167,7 @@ type ReactRouterPluginContext = Readonly<{
   entryServerFilePath: string;
   viteManifestEnabled: boolean;
   isSsrBuild: boolean;
-}>;
+};
 export type {
   BuildManifest,
   ReactRouterConfig as Config,
