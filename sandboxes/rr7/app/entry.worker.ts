@@ -1,12 +1,12 @@
 /// <reference lib="WebWorker" />
 
-import { logger } from '@remix-pwa/sw';
+import { logger } from '@remix-pwa/sw/logger';
 
 declare let self: ServiceWorkerGlobalScope;
 
-console.log('Hello from service worker!');
-// @ts-ignore
-console.log(process.env.NODE_ENV, process.env.API_URL, miscellaneous);
+// console.log('Hello from service worker!');
+// // @ts-ignore
+// console.log(process.env.NODE_ENV, process.env.API_URL, miscellaneous);
 
 self.addEventListener('install', (event: ExtendableEvent) => {
   logger.log('installing service worker');
@@ -17,3 +17,5 @@ self.addEventListener('install', (event: ExtendableEvent) => {
 self.addEventListener('activate', event => {
   event.waitUntil(self.clients.claim());
 });
+
+// console.log('Hello from service worker!');
