@@ -58,8 +58,7 @@ export async function handleRequest({
   loadContext,
   routes,
 }: HandleRequestArgs): Promise<Response> {
-  const isSPAMode =
-    String(process.env.__REMIX_PWA_SPA_MODE) === 'true' || String(process.env.__REACT_ROUTER_PWA_SPA_MODE) === 'true';
+  const isSPAMode = String(process.env.__REMIX_PWA_SPA_MODE) === 'true' || String(process.env.__IS_SPA_MODE) === 'true';
   const isSingleFetchMode = String(process.env.__REMIX_SINGLE_FETCH) === 'true';
 
   const url = new URL(event.request.url);
