@@ -1,5 +1,5 @@
 {
-  "include": ["./cli.ts"],
+  "include": ["**/*.ts", "package.json"],
   "exclude": ["dist", "**/__test__", "node_modules", "**/templates/**"],
   "compilerOptions": {
     "baseUrl": ".",

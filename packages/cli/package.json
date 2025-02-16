@@ -41,14 +41,15 @@
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
-    "@remix-run/dev": "^2.10.3"
+    "@remix-run/dev": "^2.12.1"
   },
   "dependencies": {
-    "@commander-js/extra-typings": "^12.0.1",
-    "commander": "^12.0.0",
+    "@commander-js/extra-typings": "^13.1.0",
+    "@inquirer/prompts": "^7.3.2",
+    "commander": "^13.1.0",
     "pathe": "^1.1.2",
-    "picocolors": "^1.0.1",
-    "typescript": "^5.5.3"
+    "picocolors": "^1.1.1",
+    "typescript": "^5.6.2"
   },
   "publishConfig": {
     "access": "public"

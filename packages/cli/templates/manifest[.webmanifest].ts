@@ -1,8 +1,7 @@
 import type { WebAppManifest } from '@remix-pwa/manifest';
-import { json } from '@remix-run/node';
 
 export const loader = () => {
-  return json(
+  return Response.json(
     {
       short_name: 'PWA',
       name: 'Remix PWA',
