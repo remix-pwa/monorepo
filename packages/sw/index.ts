@@ -15,13 +15,12 @@ export {
   isHttpRequest,
   isLoaderRequest,
   isMethod,
-  json,
   messageSW,
   redirect,
   timeout,
   toJSON,
 } from './src/utils/utils.js';
-export type { JsonFunction, RedirectFunction } from './src/utils/utils.js';
+export type { RedirectFunction } from './src/utils/utils.js';
 
 export { PWAScripts } from './src/components/PWAScripts.js';
 export type { ScriptProps } from './src/components/PWAScripts.js';
