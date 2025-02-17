@@ -1,5 +1,6 @@
-import type { WorkerLoadContext } from '@remix-pwa/dev/worker-build.js';
 import { matchPath } from '@remix-run/router';
+
+import type { WorkerLoadContext } from './worker-types.js';
 
 /**
  * Clones an object
