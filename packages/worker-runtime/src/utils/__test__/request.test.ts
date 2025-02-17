@@ -1,4 +1,3 @@
-import type { WorkerLoadContext } from '@remix-pwa/dev/worker-build.js';
 import { describe, expect, test } from 'vitest';
 
 import {
@@ -10,6 +9,7 @@ import {
   stripIndexParameter,
   stripRouteParameter,
 } from '../request.js';
+import type { WorkerLoadContext } from '../worker-types.js';
 
 describe('clone', () => {
   test('should create a shallow copy of an object', () => {

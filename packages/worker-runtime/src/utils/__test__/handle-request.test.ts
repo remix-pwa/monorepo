@@ -24,7 +24,7 @@ describe('handleRequest', () => {
     const response = await handleRequest({ routes, event, defaultHandler, errorHandler, loadContext });
 
     expect(response.status).toBe(200);
-    expect(response.headers.get('content-type')).toBe('application/json');
+    expect(response.headers.get('content-type')).toBe('application/json; charset=utf-8');
     await expect(response.json()).resolves.toEqual({ message: 'Hello, world!' });
   });
 
@@ -279,7 +279,7 @@ describe('handleRequest', () => {
 
     expect(mockWorkerAction).toHaveBeenCalled();
     expect(errorHandler).toHaveBeenCalled();
-    expect(response.headers.get('content-type')).toBe('application/json');
+    expect(response.headers.get('content-type')).toBe('application/json; charset=utf-8');
     expect(response.headers.get('x-remix-error')).toBe('yes');
     expect(response.status).toBe(500);
     await expect(response.json()).resolves.toEqual({ message: 'mock-error' });
@@ -315,7 +315,7 @@ describe('handleRequest', () => {
         _data: 'route1',
       },
     });
-    expect(response.headers.get('content-type')).toBe('application/json');
+    expect(response.headers.get('content-type')).toBe('application/json; charset=utf-8');
     expect(response.headers.get('x-remix-error')).toBe('yes');
     expect(response.status).toBe(500);
     await expect(response.json()).resolves.toEqual({ message: 'mock-error-original' });
@@ -353,7 +353,7 @@ describe('handleRequest', () => {
 
     expect(mockWorkerAction).toHaveBeenCalled();
     expect(errorHandler).not.toHaveBeenCalled();
-    expect(response.headers.get('content-type')).toBe('application/json');
+    expect(response.headers.get('content-type')).toBe('application/json; charset=utf-8');
     expect(response.headers.get('x-remix-error')).toBe('yes');
     expect(response.status).toBe(500);
     await expect(response.json()).resolves.toEqual({ message: 'Unexpected Server Error' });
@@ -393,7 +393,7 @@ describe('handleRequest', () => {
     expect(mockWorkerAction).toHaveBeenCalled();
     expect(errorHandler).toHaveBeenCalled();
 
-    expect(response.headers.get('content-type')).toBe('application/json');
+    expect(response.headers.get('content-type')).toBe('application/json; charset=utf-8');
     expect(response.headers.get('x-remix-error')).toBe('yes');
     expect(response.status).toBe(500);
   });
