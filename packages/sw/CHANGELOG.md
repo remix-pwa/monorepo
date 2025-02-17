@@ -1,3 +1,15 @@
+# @remix-pwa/sw 4.0.0-dev.1 (2024-11-06)
+
+
+### Bug Fixes
+
+* **sw:** attempted to remove barrel files 6ad7008
+
+
+### BREAKING CHANGES
+
+* **sw:** Removal of some barrel files
+
 # @remix-pwa/sw 3.1.0-dev.1 (2024-10-11)
 
 
