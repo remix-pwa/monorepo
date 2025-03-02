@@ -16,7 +16,7 @@ const importJson = async (/** @type {string} */ path) => {
   }
 };
 
-const sandboxPackageJson = await importJson('../playground/package.json');
+const sandboxPackageJson = await importJson('../sandboxes/remix/package.json');
 const deps = sandboxPackageJson.default.dependencies;
 const devDeps = sandboxPackageJson.default.devDependencies;
 

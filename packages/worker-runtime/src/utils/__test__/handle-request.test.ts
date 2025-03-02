@@ -1,8 +1,8 @@
-import type { WorkerLoadContext, WorkerRoute, WorkerRouteManifest } from '@remix-pwa/dev/worker-build.js';
 import { defer } from '@remix-run/router';
 import { describe, expect, test, vi } from 'vitest';
 
 import { handleRequest } from '../handle-request.js';
+import type { WorkerLoadContext, WorkerRoute, WorkerRouteManifest } from '../worker-types.js';
 
 describe('handleRequest', () => {
   test('should handle loader requests', async () => {
@@ -47,7 +47,7 @@ describe('handleRequest', () => {
     const response = await handleRequest({ routes, event, defaultHandler, errorHandler, loadContext });
 
     expect(response.status).toBe(200);
-    expect(response.headers.get('content-type')).not.toBe('application/json; charset=utf-8');
+    expect(response.headers.get('content-type')).not.toBe('application/json');
     expect(await response.text()).toBe('mock-response');
   });
 
