@@ -1,3 +1,10 @@
+## @remix-pwa/client 3.0.8-dev.1 (2025-03-02)
+
+
+### Bug Fixes
+
+* **client:** updated permissions 7abafe5
+
 ## @remix-pwa/client 3.0.7 (2024-09-24)
 
 
