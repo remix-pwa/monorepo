@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/dev",
-  "version": "4.0.0-dev.1",
+  "version": "4.0.0-dev.2",
   "description": "An esbuild compiler for Service Workers in Remix.run",
   "repository": {
     "type": "git",
@@ -40,7 +40,6 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "TIMING=1 eslint --fix src",
     "prepublish": "npm run build",
-
     "test": "cross-env VITEST_WORKSPACE=true vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests --config ../../vitest.config.ts"
   },
   "funding": [
@@ -87,7 +86,6 @@
     "@types/babel__generator": "^7.6.8",
     "@types/babel__traverse": "^7.20.6",
     "@types/fs-extra": "^11.0.4",
-
     "@types/lodash": "^4.17.0",
     "rimraf": "^6.0.1",
     "vite": "^5.3.4"

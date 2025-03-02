@@ -1,3 +1,17 @@
+# @remix-pwa/dev 4.0.0-dev.2 (2025-03-02)
+
+
+### Bug Fixes
+
+* **dev:** added support for stable single fetch 035563c
+
+
+### Features
+
+* **dev:** :fire: baseline working react router pwa plugin 17370aa
+* **dev:** adding basic framework for react router v7 dafe7d5
+* **dev:** started react router plugin re-write 5bc078c
+
 # @remix-pwa/dev 4.0.0-dev.1 (2024-11-05)
 
 
