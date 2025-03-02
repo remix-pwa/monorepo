@@ -36,25 +36,25 @@ export const PWAScripts = (props: ScriptProps) => {
   const registerSwHtml = `
   async function register() {
    const reg = await navigator.serviceWorker.register('/${props.workerName ?? 'entry.worker'}.js', {
-    scope: ${JSON.stringify(props.scope) ?? '/'},
-    type: ${JSON.stringify(props.serviceWorkerType) ?? 'classic'},
+    scope: '${JSON.stringify(props.scope) ?? '/'}',
+    type: '${JSON.stringify(props.serviceWorkerType) ?? 'classic'}',
     updateViaCache: 'none',
    });
    window.$ServiceWorkerHMRHandler$ = async () => {
     await reg.update();
    }
   }
-  if ('serviceWorker' in navigator) {,
-   if (document.readyState === 'complete' || document.readyState === 'interactive') {,
-    register();,
-   } else {,
-    window.addEventListener('load', register);,
-   },
+  if ('serviceWorker' in navigator) {
+   if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    register();
+   } else {
+    window.addEventListener('load', register);
+   }
   }
   `
     .trim()
     .split('\n')
-    .map(line => line.trim)
+    .map(line => line.trim())
     .join('\n');
 
   return (
