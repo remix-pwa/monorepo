@@ -1,3 +1,11 @@
+# @remix-pwa/sw 4.0.0-dev.2 (2025-03-02)
+
+
+### Bug Fixes
+
+* **sw:** fixed broken `PWAScripts` component ece0d1e
+* **sw:** removed `json` utilities 27dc467
+
 # @remix-pwa/sw 4.0.0-dev.1 (2024-11-06)
 
 
