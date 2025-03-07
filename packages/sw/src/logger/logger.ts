@@ -20,7 +20,7 @@ export interface LoggerOptions {
 
 export class Logger {
   static defaultOptions: LoggerOptions = {
-    prefix: 'remix-pwa',
+    prefix: 'react-router-pwa',
     styles: {
       debug: {
         background: '#7f8c8d',

@@ -45,7 +45,7 @@ export class NavigationHandler extends MessageHandler {
   private logger: Logger;
 
   constructor(options: NavigationHandlerOptions) {
-    super('REMIX_NAVIGATION_UPDATE');
+    super('REACT_ROUTER_PWA_NAVIGATION_UPDATE');
 
     this.allowList = options.allowList || [];
     this.denyList = options.denyList || [];
@@ -85,7 +85,6 @@ export class NavigationHandler extends MessageHandler {
   }
 
   private async handleNavigation(event: any) {
-    console.log('Invoked message recieve');
     const { data } = event;
     const { location } = data.payload;
     const documentUrl: string = location.pathname + location.search + location.hash;
