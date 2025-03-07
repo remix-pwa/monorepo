@@ -12,8 +12,7 @@
     "packages/push",
     "packages/sw",
     "packages/sync",
-    "packages/worker-runtime",
-    "sandboxes/remix"
+    "packages/worker-runtime"
   ],
   "type": "module",
   "scripts": {
@@ -27,15 +26,13 @@
     "build:sync": "npm run build --workspace @remix-pwa/sync",
     "build:worker-runtime": "npm run build --workspace @remix-pwa/worker-runtime",
     "commit": "commit",
-    "dev:remix:ssr": "npm run dev:ssr --workspace @remix-pwa/remix-sandbox",
-    "dev:remix:spa": "npm run dev:spa --workspace @remix-pwa/remix-sandbox",
-    "dev:rr:spa": "npm run dev --prefix sandboxes/rr7-spa",
+    "dev:spa": "npm run dev --prefix sandboxes/rr7-spa",
     "lint-staged": "lint-staged",
     "lint": "turbo lint -- --fix",
     "format": "turbo format -- --write",
-    "postclone": "npm run preinstall -w @remix-pwa/remix-sandbox && npm install && npm run test && npm run build",
+    "postclone": "npm install && npm run test && npm run build",
     "publish:pr": "npx pkg-pr-new publish './packages/*'",
-    "sandbox": "npm run build && npm run preinstall -w @remix-pwa/remix-sandbox",
+    "sandbox": "npm run build",
     "test": "turbo test -- --coverage"
   },
   "devDependencies": {
