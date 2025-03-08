@@ -1,3 +1,11 @@
+# @remix-pwa/dev 4.0.0-dev.3 (2025-03-08)
+
+
+### Features
+
+* **dev:** sunsetted Remix support 0909843
+* pure, native react router support 085a577
+
 # @remix-pwa/dev 4.0.0-dev.2 (2025-03-02)
 
 
