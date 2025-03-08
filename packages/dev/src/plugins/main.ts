@@ -5,15 +5,15 @@ import type { PWAOptions, PWAPluginContext } from '../types.js';
 
 export function EntryPlugin(ctx: PWAPluginContext, pwaOptions: Partial<PWAOptions>): Plugin {
   return <Plugin>{
-    name: 'vite-plugin-remix-pwa:entry',
+    name: 'vite-plugin-react-router-pwa:entry',
     enforce: 'pre',
     async configResolved(config) {
       ctx.isDev = process.env.NODE_ENV === 'development';
-      // @ts-ignore - Utilizing remix special config here
-      ctx.isRemixDevServer = config.__remixPluginContext !== undefined;
+      // @ts-ignore - Utilizing react-router special config here
+      ctx.isReactRouterDevServer = config.__reactRouterPluginContext !== undefined;
       ctx.viteConfig = config;
-      // @ts-ignore - Also utilizing remix special config here
-      ctx.__remixPluginContext = config.__remixPluginContext ?? undefined;
+      // @ts-ignore - Also utilizing react-router special config here
+      ctx.__reactRouterPluginContext = config.__reactRouterPluginContext ?? undefined;
       ctx.options = await resolveOptions(pwaOptions, config);
     },
   };

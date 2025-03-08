@@ -1,0 +1,46 @@
+{
+  "recipes": [
+    {
+      "title": "Classic Pancakes",
+      "description": "Fluffy and delicious breakfast pancakes",
+      "ingredients": [
+        "2 cups flour",
+        "2 eggs",
+        "1 cup milk",
+        "1 tbsp butter"
+      ],
+      "instructions": [
+        "Mix dry ingredients",
+        "Add wet ingredients",
+        "Cook on griddle"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1556909211-36987daf7b4d",
+      "cookingTime": 20,
+      "servings": 4,
+      "isSaved": false,
+      "id": 1,
+      "lastSynced": "2025-02-16T02:37:16.668Z"
+    },
+    {
+      "title": "Garden Salad",
+      "description": "Fresh and healthy garden salad",
+      "ingredients": [
+        "Lettuce",
+        "Tomatoes",
+        "Cucumber",
+        "Olive oil"
+      ],
+      "instructions": [
+        "Wash vegetables",
+        "Chop ingredients",
+        "Mix and serve"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1512058454905-6b841e7ad132",
+      "cookingTime": 10,
+      "servings": 2,
+      "isSaved": false,
+      "id": 2,
+      "lastSynced": "2025-02-16T02:58:14.211Z"
+    }
+  ]
+}

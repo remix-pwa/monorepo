@@ -13,7 +13,7 @@ vi.doMock('@remix-run/dev/dist/config.js', () => {
         routes: {},
         assetsBuildDirectory: '/Users/ryan/Projects/remix-pwa/public/build',
         ignoredRouteFiles: ['**/.*'],
-        publicPath: '/build/',
+        publicPath: '/',
       } as unknown as ResolvedRemixConfig),
     findConfig: () => './__test__/vite-config.ts',
   };
@@ -49,15 +49,6 @@ describe('Plugin context test suite', () => {
 });
 
 describe('Plugin resolver test suite', () => {
-  // beforeEach(() => {
-  //   vi.doMock('../resolver.js', () => {
-  //     return {
-  //       resolveOptions: (opts: Partial<PWAOptions>, config: ResolvedConfig) =>
-  //         Promise.resolve({ ...opts, config } as unknown as ResolvedPWAOptions),
-  //     };
-  //   });
-  // });
-
   test('should resolve options', async () => {
     const { resolveOptions } = await import('../resolver.js');
 
@@ -66,13 +57,13 @@ describe('Plugin resolver test suite', () => {
     assert(options);
     expect(options).toEqual(<ResolvedPWAOptions>{
       workerBuildDirectory: '/Users/ryan/Projects/remix-pwa/build/client',
-      registerSW: 'script',
       buildVariables: {
         'process.env.NODE_ENV': 'production',
-        'process.env.__REMIX_PWA_SPA_MODE': 'false',
+        'process.env.__IS_SPA_MODE': 'false',
       },
+      injectSWRegister: true,
       workerSourceMap: false,
-      publicPath: '/build/',
+      publicPath: '/',
       entryWorkerFile: 'entry.worker.ts',
       workerEntryPoint: '@remix-pwa/worker-runtime',
       scope: '/',
@@ -93,7 +84,7 @@ describe('Plugin resolver test suite', () => {
       {
         workerMinify: true,
         workerBuildDirectory: 'public',
-        registerSW: null,
+        injectSWRegister: false,
         scope: '/pwa',
       },
       mockViteConfig as ResolvedConfig
@@ -102,17 +93,17 @@ describe('Plugin resolver test suite', () => {
     assert(options);
     expect(options).toEqual(<ResolvedPWAOptions>{
       workerBuildDirectory: '/Users/ryan/Projects/remix-pwa/public',
-      registerSW: null,
       scope: '/pwa',
       buildVariables: {
         'process.env.NODE_ENV': 'production',
-        'process.env.__REMIX_PWA_SPA_MODE': 'false',
+        'process.env.__IS_SPA_MODE': 'false',
       },
       rootDirectory: '/Users/ryan/Projects/remix-pwa',
       appDirectory: '/Users/ryan/Projects/remix-pwa/app',
       ignoredSWRouteFiles: [],
       entryWorkerFile: 'entry.worker.ts',
-      publicPath: '/build/',
+      injectSWRegister: false,
+      publicPath: '/',
       workerEntryPoint: '@remix-pwa/worker-runtime',
       workerSourceMap: false,
       workerMinify: true,
@@ -136,14 +127,14 @@ describe('Plugin resolver test suite', () => {
     assert(options);
     expect(options).toEqual(<ResolvedPWAOptions>{
       workerBuildDirectory: '/Users/ryan/Projects/remix-pwa/out/dist',
-      registerSW: 'script',
       workerSourceMap: false,
-      publicPath: '/build/',
+      publicPath: '/',
       buildVariables: {
         'process.env.NODE_ENV': 'production',
-        'process.env.__REMIX_PWA_SPA_MODE': 'false',
+        'process.env.__IS_SPA_MODE': 'false',
       },
       entryWorkerFile: 'entry.worker.ts',
+      injectSWRegister: true,
       workerEntryPoint: '@remix-pwa/worker-runtime',
       scope: '/',
       rootDirectory: '/Users/ryan/Projects/remix-pwa',
@@ -163,7 +154,7 @@ describe('Plugin resolver test suite', () => {
       {
         entryWorkerFile: '/entry.worker.ts',
         buildVariables: {
-          'process.env.__REMIX_PWA_SPA_MODE': 'false',
+          'process.env.__IS_SPA_MODE': 'false',
           'process.env.API_URL': 'https://api.example.com',
         },
         workerBuildDirectory: '/out/dist/',
@@ -174,14 +165,14 @@ describe('Plugin resolver test suite', () => {
     assert(options);
     expect(options).toEqual(<ResolvedPWAOptions>{
       workerBuildDirectory: '/Users/ryan/Projects/remix-pwa/out/dist',
-      registerSW: 'script',
       workerSourceMap: false,
-      publicPath: '/build/',
+      publicPath: '/',
       buildVariables: {
-        'process.env.__REMIX_PWA_SPA_MODE': 'false',
+        'process.env.__IS_SPA_MODE': 'false',
         'process.env.API_URL': 'https://api.example.com',
       },
       entryWorkerFile: 'entry.worker.ts',
+      injectSWRegister: true,
       workerEntryPoint: '@remix-pwa/worker-runtime',
       scope: '/',
       rootDirectory: '/Users/ryan/Projects/remix-pwa',

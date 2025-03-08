@@ -1,3 +1,41 @@
+# @remix-pwa/sw 4.0.0-dev.3 (2025-03-08)
+
+
+### Features
+
+* **sw:** react ruter support + fixes 8da614e
+
+# @remix-pwa/sw 4.0.0-dev.2 (2025-03-02)
+
+
+### Bug Fixes
+
+* **sw:** fixed broken `PWAScripts` component ece0d1e
+* **sw:** removed `json` utilities 27dc467
+
+# @remix-pwa/sw 4.0.0-dev.1 (2024-11-06)
+
+
+### Bug Fixes
+
+* **sw:** attempted to remove barrel files 6ad7008
+
+
+### BREAKING CHANGES
+
+* **sw:** Removal of some barrel files
+
+# @remix-pwa/sw 3.1.0-dev.1 (2024-10-11)
+
+
+### Features
+
+* **sw:** `@remix-pwa/sw` v5 first release candidate e88aedb
+* **sw:** moved `ManifestLink` + new component: `PWAScripts` 7e9030b
+* **sw:** new global hook + removed `SkipWaitHandler` e2c462e
+* **sw:** removed `useSWEffect` hook 2088a57
+* **sw:** removed manual sw loader - entirely cf2f10c
+
 ## @remix-pwa/sw 3.0.10 (2024-09-24)
 
 

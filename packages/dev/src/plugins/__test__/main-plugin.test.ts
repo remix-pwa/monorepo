@@ -26,9 +26,9 @@ describe('Remix PWA Vite Main Plugin', () => {
   beforeEach(async () => {
     mockContext = {
       isDev: undefined,
-      isRemixDevServer: undefined,
+      isReactRouterDevServer: undefined,
       viteConfig: undefined,
-      __remixPluginContext: undefined,
+      __reactRouterPluginContext: undefined,
       options: undefined,
     } as unknown as PWAPluginContext;
     mockPWAOptions = {
@@ -36,7 +36,7 @@ describe('Remix PWA Vite Main Plugin', () => {
     };
     mockViteConfig = {
       mode: 'development',
-      __remixPluginContext: {},
+      __reactRouterPluginContext: {},
     };
 
     const _plugin = (await import('../main')).EntryPlugin;
@@ -50,7 +50,7 @@ describe('Remix PWA Vite Main Plugin', () => {
     });
 
     test('should have the correct name', () => {
-      expect(plugin.name).toBe('vite-plugin-remix-pwa:entry');
+      expect(plugin.name).toBe('vite-plugin-react-router-pwa:entry');
     });
 
     test('should enforce pre-transform', () => {
@@ -81,18 +81,18 @@ describe('Remix PWA Vite Main Plugin', () => {
       expect(mockContext.isDev).toBe(false);
     });
 
-    test('should set isRemixDevServer to true when __remixPluginContext is defined', async () => {
+    test('should set isReactRouterDevServer to true when __reactRouterPluginContext is defined', async () => {
       await plugin.configResolved(mockViteConfig);
 
-      expect(mockContext.isRemixDevServer).toBe(true);
+      expect(mockContext.isReactRouterDevServer).toBe(true);
     });
 
-    test('should set isRemixDevServer to false when __remixPluginContext is not defined', async () => {
-      mockViteConfig.__remixPluginContext = undefined;
+    test('should set isReactRouterDevServer to false when __reactRouterPluginContext is not defined', async () => {
+      mockViteConfig.__reactRouterPluginContext = undefined;
 
       await plugin.configResolved(mockViteConfig);
 
-      expect(mockContext.isRemixDevServer).toBe(false);
+      expect(mockContext.isReactRouterDevServer).toBe(false);
     });
 
     test('should set viteConfig to the config object', async () => {
@@ -101,10 +101,10 @@ describe('Remix PWA Vite Main Plugin', () => {
       expect(mockContext.viteConfig).toBe(mockViteConfig);
     });
 
-    test('should set __remixPluginContext to the remix plugin context object', async () => {
+    test('should set __reactRouterPluginContext to the react router plugin context object', async () => {
       await plugin.configResolved(mockViteConfig);
 
-      expect(mockContext.__remixPluginContext).toBe(mockViteConfig.__remixPluginContext);
+      expect(mockContext.__reactRouterPluginContext).toBe(mockViteConfig.__reactRouterPluginContext);
     });
 
     test('should set options to the resolved options', async () => {

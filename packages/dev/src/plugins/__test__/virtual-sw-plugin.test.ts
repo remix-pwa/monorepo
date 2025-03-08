@@ -270,9 +270,14 @@ describe('Remix PWA Vite VirtualSW Plugin', () => {
             },
           } as RouteManifest,
         },
-        isRemixDevServer: true,
-        __remixPluginContext: {
-          remixConfig: {
+        viteConfig: {
+          logger: {
+            warnOnce: (str: string) => str,
+          },
+        },
+        isReactRouterDevServer: true,
+        __reactRouterPluginContext: {
+          reactRouterConfig: {
             buildDirectory: '/build/',
           },
         },
@@ -289,7 +294,7 @@ describe('Remix PWA Vite VirtualSW Plugin', () => {
       });
 
       test('should resolve to the correct plugin name', () => {
-        expect(plugin[0].name).toBe('vite-plugin-remix-pwa:empty-modules-sw');
+        expect(plugin[0].name).toBe('vite-plugin-react-router-pwa:empty-modules-sw');
       });
 
       test('should run before vite build hooks', () => {
@@ -333,7 +338,7 @@ const a = 1;`);
       });
 
       test('should have the correct name', () => {
-        expect(plugin[1].name).toBe('vite-plugin-remix-pwa:virtual-entry-sw');
+        expect(plugin[1].name).toBe('vite-plugin-react-router-pwa:virtual-entry-sw');
       });
 
       test('should resolve the virtual entry id correctly', () => {
@@ -353,7 +358,7 @@ const a = 1;`);
       });
 
       test('should have the correct name', () => {
-        expect(plugin[2].name).toBe('vite-plugin-remix-pwa:virtual-routes-sw');
+        expect(plugin[2].name).toBe('vite-plugin-react-router-pwa:virtual-routes-sw');
       });
 
       test('should resolve the virtual routes id correctly', () => {
@@ -380,7 +385,7 @@ const a = 1;`);
       });
 
       test('should have the correct name', () => {
-        expect(plugin[3].name).toBe('vite-plugin-remix-pwa:virtual-assets-sw');
+        expect(plugin[3].name).toBe('vite-plugin-react-router-pwa:virtual-assets-sw');
       });
 
       test('should resolve the virtual entry id correctly', () => {

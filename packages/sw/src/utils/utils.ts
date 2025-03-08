@@ -21,26 +21,6 @@ export const redirect: RedirectFunction = (url, init = 302) => {
   });
 };
 
-export type JsonFunction = <Data>(data: Data, init?: number | ResponseInit) => Response;
-
-/**
- * This is a shortcut for creating `application/json` responses. Converts `data`
- * to JSON and sets the `Content-Type` header.
- */
-export const json: JsonFunction = (data, init = {}) => {
-  const responseInit = typeof init === 'number' ? { status: init } : init;
-
-  const headers = new Headers(responseInit.headers);
-  if (!headers.has('Content-Type')) {
-    headers.set('Content-Type', 'application/json; charset=utf-8');
-  }
-
-  return new Response(JSON.stringify(data), {
-    ...responseInit,
-    headers,
-  });
-};
-
 /**
  * Automatically check the method of a request against a list of methods.
  *
@@ -131,12 +111,4 @@ export const toJSON = async (response: Response | any) => {
  */
 export const messageSW = (worker: ServiceWorker, message: any) => {
   worker.postMessage(message);
-};
-
-/**
- * A short-hand utility function to send a `SKIP_WAITING` message to a service worker.
- * @param worker The service worker to send the message to.
- */
-export const sendSkipWaitingMessage = (worker: ServiceWorker) => {
-  messageSW(worker, { type: 'SKIP_WAITING' });
 };

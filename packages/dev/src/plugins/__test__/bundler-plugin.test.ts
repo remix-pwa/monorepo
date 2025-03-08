@@ -9,7 +9,7 @@ describe('Remix PWA Vite Bundler Plugin', () => {
   beforeEach(async () => {
     mockPWAContext = {
       isDev: true,
-      isRemixDevServer: true,
+      isReactRouterDevServer: true,
     } as unknown as PWAPluginContext;
 
     const _plugin = (await import('../bundler')).BundlerPlugin;
@@ -23,7 +23,7 @@ describe('Remix PWA Vite Bundler Plugin', () => {
     });
 
     test('should have the correct name', () => {
-      expect(plugin.name).toBe('vite-plugin-remix-pwa:bundler');
+      expect(plugin.name).toBe('vite-plugin-react-router-pwa:bundler');
     });
 
     test('should have a buildStart hook', () => {
@@ -36,8 +36,8 @@ describe('Remix PWA Vite Bundler Plugin', () => {
   });
 
   describe('configureServer hook suite', () => {
-    test('should not do anything if not in a Remix dev server', async () => {
-      mockPWAContext.isRemixDevServer = false;
+    test('should not do anything if not in a React Router dev server', async () => {
+      mockPWAContext.isReactRouterDevServer = false;
       const configureServerSpy = vi.spyOn(plugin, 'configureServer');
 
       await plugin.configureServer({ hot: { invalidate: vi.fn() } });
@@ -50,8 +50,8 @@ describe('Remix PWA Vite Bundler Plugin', () => {
   });
 
   describe('buildStart hook suite', () => {
-    test('should not do anything if not in a Remix dev server', async () => {
-      mockPWAContext.isRemixDevServer = false;
+    test('should not do anything if not in a React Router dev server', async () => {
+      mockPWAContext.isReactRouterDevServer = false;
       const buildStartSpy = vi.spyOn(plugin, 'buildStart');
 
       await plugin.buildStart();

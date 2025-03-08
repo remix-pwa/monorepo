@@ -6,8 +6,10 @@ import { LoaderPlugin } from './plugins/loader.js';
 import { EntryPlugin } from './plugins/main.js';
 import type { PWAOptions } from './types.js';
 
-export function remixPWA(pwaOptions: Partial<PWAOptions> = {}): Plugin[] {
+export function reactRouterPWA(pwaOptions: Partial<PWAOptions> = {}): Plugin[] {
   const ctx = createContext();
 
   return <Plugin[]>[EntryPlugin(ctx, pwaOptions), BundlerPlugin(ctx), LoaderPlugin(ctx)];
 }
+
+export type { PWAOptions as PWAViteOptions };

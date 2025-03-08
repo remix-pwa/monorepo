@@ -1,3 +1,23 @@
+# @remix-pwa/worker-runtime 3.0.0-dev.1 (2025-03-02)
+
+
+### Bug Fixes
+
+* **worker-runtime:** fixed missing import 93b93b2
+* **worker-runtime:** fixed react router SPA env a49e6f5
+
+
+### Features
+
+* **worker-runtime:** added support for react-router v7 ceb63d3
+
+# @remix-pwa/worker-runtime 2.2.0-dev.1 (2024-10-11)
+
+
+### Features
+
+* **worker-runtime:** runtime v5 release candidate 1d778a7
+
 ## @remix-pwa/worker-runtime 2.1.4 (2024-08-11)
 
 

@@ -17,8 +17,8 @@ export const mockViteConfig = <Partial<ResolvedConfig>>{
     preserveSymlinks: false,
     preferRelative: false,
   },
-  __remixPluginContext: {
-    remixConfig: {
+  __reactRouterPluginContext: {
+    reactRouterConfig: {
       appDirectory: '/Users/ryan/Projects/remix-pwa/app',
       rootDirectory: '/Users/ryan/Projects/remix-pwa',
       routes: {},

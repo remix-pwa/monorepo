@@ -1,3 +1,52 @@
+# @remix-pwa/dev 4.0.0-dev.3 (2025-03-08)
+
+
+### Features
+
+* **dev:** sunsetted Remix support 0909843
+* pure, native react router support 085a577
+
+# @remix-pwa/dev 4.0.0-dev.2 (2025-03-02)
+
+
+### Bug Fixes
+
+* **dev:** added support for stable single fetch 035563c
+
+
+### Features
+
+* **dev:** :fire: baseline working react router pwa plugin 17370aa
+* **dev:** adding basic framework for react router v7 dafe7d5
+* **dev:** started react router plugin re-write 5bc078c
+
+# @remix-pwa/dev 4.0.0-dev.1 (2024-11-05)
+
+
+### Bug Fixes
+
+* **dev:** added funding info 6f9325b
+
+
+### BREAKING CHANGES
+
+* **dev:** Testing this sht out
+
+# @remix-pwa/dev 3.2.0-dev.2 (2024-10-11)
+
+
+### Features
+
+* **dev:** fixed version bump error a3de03a
+
+# @remix-pwa/dev 3.2.0-dev.1 (2024-10-11)
+
+
+### Features
+
+* **dev:** automatically disables auto-injection once the script is manually registered 7273868
+* **dev:** first v5 release candidate for `dev` f41696e
+
 # @remix-pwa/dev 3.1.0 (2024-08-11)
 
 

@@ -1,21 +1,18 @@
 import type { RouteManifest } from '@remix-run/dev/dist/config/routes.js';
-import type { RemixPluginContext } from '@remix-run/dev/dist/vite/plugin.js';
 import type { ResolvedConfig } from 'vite';
+
+import type { ReactRouterPluginContext } from './patch.js';
 
 /**
  * The `@remix-pwa/dev` vite plugin options.
  */
 export interface PWAOptions {
   /**
-   * Auto-inject service worker registration script into root.tsx or not.
-   * Possible values are:
-   * - '**script**': inject script tag into root.tsx automatically.
-   * - **null**: do not inject, you can manually inject it yourself via `loadServiceWorker` in your
-   * entry client file.
+   * Wether to inject a service worker registration script into your app or not.
    *
-   * @default 'script'
+   * @default true
    */
-  registerSW: 'script' | null;
+  injectSWRegister: boolean;
   /**
    * The path to your entry worker file. Relative to the
    * `app` directory. *No trailing slashes please!*
@@ -91,7 +88,7 @@ export interface ResolvedPWAOptions
     | 'buildVariables'
     | 'entryWorkerFile'
     | 'ignoredSWRouteFiles'
-    | 'registerSW'
+    | 'injectSWRegister'
     | 'scope'
     | 'workerBuildDirectory'
     | 'workerEntryPoint'
@@ -118,8 +115,8 @@ export interface PWAPluginContext {
   viteConfig: ResolvedConfig;
   options: ResolvedPWAOptions;
   isDev: boolean;
-  isRemixDevServer: boolean;
-  __remixPluginContext: RemixPluginContext;
+  isReactRouterDevServer: boolean;
+  __reactRouterPluginContext: ReactRouterPluginContext;
 }
 
 export interface ResolvedEsbuildConfig {

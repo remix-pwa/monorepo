@@ -1,3 +1,3 @@
 **/node_modules/**/*
-cli.js
-cli.d.ts
+./cli.js
+./cli.d.ts

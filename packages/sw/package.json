@@ -1,6 +1,6 @@
 {
   "name": "@remix-pwa/sw",
-  "version": "3.0.10",
+  "version": "4.0.0-dev.3",
   "description": "Service Worker APIs and utilities for Remix PWA",
   "repository": {
     "type": "git",
@@ -16,17 +16,36 @@
       "default": "./dist/src/cache/index.js",
       "types": "./dist/src/cache/index.d.ts"
     },
+    "./enhanced-cache": {
+      "default": "./dist/src/cache/EnhancedCache.js",
+      "types": "./dist/src/cache/EnhancedCache.d.ts"
+    },
+    "./pwa-scripts": {
+      "default": "./dist/src/components/PWAScripts.js",
+      "types": "./dist/src/components/PWAScripts.d.ts"
+    },
     "./logger": {
-      "default": "./dist/src/logger/index.js",
-      "types": "./dist/src/logger/index.d.ts"
+      "default": "./dist/src/logger/logger.js",
+      "types": "./dist/src/logger/logger.d.ts"
     },
     "./message": {
       "default": "./dist/src/message/index.js",
       "types": "./dist/src/message/index.d.ts"
     },
-    "./use-sw-effect": {
-      "default": "./dist/src/hooks/useSWEffect.js",
-      "types": "./dist/src/hooks/useSWEffect.d.ts"
+    "./navigation-handler": {
+      "default": "./dist/src/message/NavigationHandler.js",
+      "types": "./dist/src/message/NavigationHandler.d.ts"
+    },
+    "./utils": {
+      "default": "./dist/src/utils/index.js",
+      "types": "./dist/src/utils/index.d.ts"
+    },
+    "./install-pwa-globals": {
+      "default": "./dist/src/utils/installPWAGlobals.js",
+      "types": "./dist/src/utils/installPWAGlobals.d.ts"
+    },
+    "./types": {
+      "types": "./dist/src/types.d.ts"
     }
   },
   "typesVersions": {
@@ -34,14 +53,29 @@
       "cache": [
         "./dist/src/cache/index.d.ts"
       ],
+      "enhanced-cache": [
+        "./dist/src/cache/EnhancedCache.d.ts"
+      ],
+      "pwa-scripts": [
+        "./dist/src/components/PWAScripts.d.ts"
+      ],
       "logger": [
         "./dist/src/logger/index.d.ts"
       ],
       "message": [
         "./dist/src/message/index.d.ts"
       ],
-      "use-sw-effect": [
-        "./dist/src/hooks/useSWEffect.d.ts"
+      "navigation-handler": [
+        "./dist/src/message/NavigationHandler.d.ts"
+      ],
+      "utils": [
+        "./dist/src/utils/index.d.ts"
+      ],
+      "install-pwa-globals": [
+        "./dist/src/utils/installPWAGlobals.d.ts"
+      ],
+      "types": [
+        "./dist/src/types.d.ts"
       ]
     }
   },
@@ -66,27 +100,25 @@
     "test": "cross-env VITEST_WORKSPACE=true vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests"
   },
   "peerDependencies": {
-    "@remix-run/dev": "^2.5.1",
-    "@remix-run/react": "^2.5.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0",
+    "react-router": "^7.0.0"
   },
   "homepage": "https://remix-pwa.run",
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
-    "@remix-run/dev": "^2.10.3",
-    "@remix-run/react": "^2.10.3",
     "@types/pako": "^2.0.3",
-    "@types/react": "^18.3.3",
-    "react": "^18.3.1",
+    "@types/react": "^19.0.10",
+    "@react-router/dev": "^7.3.0",
+    "react-router": "^7.3.0",
+    "react": "^19.0.0",
     "rimraf": "^6.0.1",
     "terser": "^5.31.3",
     "vitest-fetch-mock": "^0.3.0"
   },
   "dependencies": {
-    "@remix-run/server-runtime": "^2.10.3",
-    "idb": "^8.0.0",
+    "idb": "^8.0.2",
     "pako": "^2.1.0",
     "tiny-invariant": "^1.3.3"
   }

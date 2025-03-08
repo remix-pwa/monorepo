@@ -1,4 +1,4 @@
-import { afterAll, assert, assertType, beforeAll, describe, expect, test, vi } from 'vitest';
+import { afterAll, assertType, beforeAll, describe, expect, test, vi } from 'vitest';
 
 vi.doMock('@babel/core', () => {
   return {

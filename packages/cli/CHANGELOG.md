@@ -1,3 +1,15 @@
+# @remix-pwa/cli 2.0.0-dev.1 (2025-03-02)
+
+
+### Bug Fixes
+
+* **cli:** changed manifest template to `@remix-pwa/manifest` e7dab6e
+
+
+### Features
+
+* **cli:** new `init` command - plus extra fixes & tweaks c5b6b7b
+
 ## @remix-pwa/cli 1.2.5 (2024-08-11)
 
 

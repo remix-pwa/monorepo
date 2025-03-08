@@ -18,9 +18,6 @@ jobs:
           cache: npm
           node-version: 20
 
-      - name: Sync sandbox
-        run: npm run preinstall -w @remix-pwa/playground
-
       - name: Install dependencies
         run: npm clean-install
 

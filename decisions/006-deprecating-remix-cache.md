@@ -10,8 +10,8 @@ Status: Proposed
 
 ### Decision
 
-...
+Yeet `@remix-pwa/cache` package.
 
 ### Consequences
 
-...
+No more `@remix-pwa/cache` package.

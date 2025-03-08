@@ -9,7 +9,7 @@ describe('Remix PWA Vite Loader Plugin', () => {
   beforeEach(async () => {
     mockContext = {
       options: {
-        registerSW: 'script',
+        injectSWRegister: true,
         workerName: 'worker',
         scope: '/',
       },
@@ -27,7 +27,7 @@ describe('Remix PWA Vite Loader Plugin', () => {
     });
 
     test('should have the correct name', () => {
-      expect(plugin.name).toBe('vite-plugin-remix-pwa:loader');
+      expect(plugin.name).toBe('vite-plugin-react-router-pwa:loader');
     });
 
     test('should enforce pre-transform', () => {
@@ -56,12 +56,12 @@ describe('Remix PWA Vite Loader Plugin', () => {
 
       const transformed = plugin.transform(code, id);
 
-      expect(transformed).toContain('vite-plugin-remix-pwa:loader::inject-sw');
+      expect(transformed).toContain('vite-plugin-react-router-pwa:loader::inject-sw');
       expect(transformed).toContain('register();');
     });
 
-    test('should not transform target code when registerSW is not script', async () => {
-      mockContext.options.registerSW = null;
+    test('should not transform target code when injectSWRegister is false', async () => {
+      mockContext.options.injectSWRegister = false;
 
       const _plugin = (await import('../loader')).LoaderPlugin;
       plugin = _plugin(mockContext as PWAPluginContext);

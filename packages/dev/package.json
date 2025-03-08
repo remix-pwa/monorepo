@@ -1,7 +1,7 @@
 {
   "name": "@remix-pwa/dev",
-  "version": "3.1.0",
-  "description": "An esbuild compiler for Service Workers in Remix.run",
+  "version": "4.0.0-dev.3",
+  "description": "An esbuild compiler for Service Workers in React Router",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/remix-pwa/monorepo.git",
@@ -14,8 +14,8 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "scripts": {
     "build": "rimraf ./dist && tsc",
     "prepublishOnly": "npm run build",
@@ -24,16 +24,19 @@
     "prepublish": "npm run build",
     "test": "cross-env VITEST_WORKSPACE=true vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests --config ../../vitest.config.ts"
   },
+  "funding": [
+    "https://github.com/sponsors/ShafSpecs"
+  ],
   "files": [
     "dist/",
     "README.md",
     "CHANGELOG.md"
   ],
   "peerDependencies": {
-    "@remix-run/dev": "^1.15.0 || ^2.0.0"
+    "react-router": "^7.0.0"
   },
   "peerDependenciesMeta": {
-    "@remix-run/dev": {
+    "react-router": {
       "optional": true
     }
   },
@@ -43,7 +46,7 @@
     "@babel/traverse": "^7.24.8",
     "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
-    "chokidar": "^3.6.0",
+    "chokidar": "^4.0.1",
     "fast-glob": "^3.3.2",
     "fs-extra": "^11.2.0",
     "lodash": "^4.17.21",
@@ -54,7 +57,8 @@
   "devDependencies": {
     "@remix-pwa/eslint-config": "^0.0.0",
     "@remix-pwa/lint-staged-config": "^0.0.0",
-    "@remix-run/dev": "^2.10.3",
+    "react-router": "^7.3.0",
+    "@react-router/dev": "^7.3.0",
     "@types/babel__core": "^7.20.5",
     "@types/babel__generator": "^7.6.8",
     "@types/babel__traverse": "^7.20.6",

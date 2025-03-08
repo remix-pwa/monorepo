@@ -13,10 +13,18 @@ const transformedObject = (obj: Record<string, string>) =>
   Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, JSON.stringify(value)]));
 
 export async function buildWorker(_ctx: PWAPluginContext) {
-  const DEFAULT_VARS = {
+  const DEFAULT_VARS: Record<string, string | any> = {
     'process.env.NODE_ENV': _ctx.isDev ? 'development' : 'production',
-    'process.env.__REMIX_PWA_SPA_MODE': _ctx.__remixPluginContext.remixConfig.ssr ? 'false' : 'true',
+    'process.env.__REACT_ROUTER_PWA_SPA_MODE': _ctx.__reactRouterPluginContext.reactRouterConfig.ssr ? 'false' : 'true',
   };
+
+  DEFAULT_VARS['process.env'] = JSON.stringify(
+    Object.fromEntries(
+      Object.entries(DEFAULT_VARS)
+        .filter(([key]) => key.startsWith('process.env.'))
+        .map(([key, value]) => [key.replace('process.env.', ''), value])
+    )
+  );
 
   try {
     await build({
@@ -112,9 +120,9 @@ export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
   let hash: string;
 
   return <Plugin>{
-    name: 'vite-plugin-remix-pwa:bundler',
+    name: 'vite-plugin-react-router-pwa:bundler',
     async configureServer(server) {
-      if (!ctx.isRemixDevServer) return;
+      if (!ctx.isReactRouterDevServer) return;
 
       const watcher = watch(ctx.options.appDirectory, {
         ignoreInitial: true,
@@ -122,12 +130,13 @@ export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
           return testString.startsWith('.');
         },
         followSymlinks: false,
-        disableGlobbing: false,
+        // disableGlobbing: false, // if an error arises 👈
       });
 
       const shouldAppReload = (path: string) => {
         path = normalizePath(path);
 
+        // TODO: Should this logic be revisited for react router?
         return path === ctx.options.serviceWorkerPath || path.includes('/routes/') || path.endsWith('root.tsx');
       };
 
@@ -143,18 +152,16 @@ export function BundlerPlugin(ctx: PWAPluginContext): Plugin {
       });
     },
     async buildStart() {
-      if (!ctx.isRemixDevServer) return;
+      if (!ctx.isReactRouterDevServer) return;
 
-      if (ctx.isDev || ctx.__remixPluginContext.isSsrBuild) {
-        const TIME_LABEL = '💿 Built Service Worker in';
-        console.time(TIME_LABEL);
+      const TIME_LABEL = '💿 Built Service Worker in';
+      console.time(TIME_LABEL);
 
-        console.log(`🏗️  Building Service Worker in ${ctx.isDev ? 'development' : 'production'} mode...`);
-        await buildWorker(ctx);
-        hash = getWorkerHash(ctx.options);
+      console.log(`🏗️  Building Service Worker in ${ctx.isDev ? 'development' : 'production'} mode...`);
+      await buildWorker(ctx);
+      hash = getWorkerHash(ctx.options);
 
-        console.timeEnd(TIME_LABEL);
-      }
+      console.timeEnd(TIME_LABEL);
     },
   };
 }

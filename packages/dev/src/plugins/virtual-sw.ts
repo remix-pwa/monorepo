@@ -79,7 +79,8 @@ export const createRouteManifest = async (
           plugins: ['jsx', 'typescript'],
         });
 
-        const { hasAction, hasLoader, hasWorkerAction, hasWorkerLoader } = resolveRouteModules(sourceAst);
+        const { hasAction, hasClientAction, hasClientLoader, hasLoader, hasWorkerAction, hasWorkerLoader } =
+          resolveRouteModules(sourceAst);
 
         return `${JSON.stringify(key)}: {
           id: "${route.id}",
@@ -89,6 +90,8 @@ export const createRouteManifest = async (
           caseSensitive: ${JSON.stringify(route.caseSensitive)},
           hasLoader: ${hasLoader},
           hasAction: ${hasAction},
+          hasClientLoader: ${hasClientLoader},
+          hasClientAction: ${hasClientAction},
           hasWorkerLoader: ${hasWorkerLoader},
           hasWorkerAction: ${hasWorkerAction},
           module: route${index}
@@ -104,19 +107,20 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
   const entryId = VirtualModule.id('entry-sw');
   const assetsId = VirtualModule.id('assets-sw');
 
-  const emptyFileName = VirtualModule.resolve('remix_pwa_plugin_ignore_empty_module_placeholder');
+  const emptyFileName = VirtualModule.resolve('react_router_pwa_plugin_ignore_empty_module_placeholder');
 
   const workerRouteCache = new Map();
 
   return <Plugin[]>[
     {
-      name: 'vite-plugin-remix-pwa:empty-modules-sw',
+      name: 'vite-plugin-react-router-pwa:empty-modules-sw',
       enforce: 'pre',
       async load(id) {
         if (
           id === emptyFileName ||
-          id.match(/@remix-run\/(deno|cloudflare|node|react)(\/.*)/g) ||
+          id.match(/@remix-run\/(deno|cloudflare|node|react|server-runtime)(\/.*)/g) ||
           id.match(/react(-dom)?(\/.*)?$/g) ||
+          id.match(/react-router(-dom|-native)?(\/.*)?$/g) ||
           id.match(/\.server/g) ||
           id.match(/web-push?$/g)
         ) {
@@ -138,7 +142,7 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
       },
     },
     {
-      name: 'vite-plugin-remix-pwa:virtual-entry-sw',
+      name: 'vite-plugin-react-router-pwa:virtual-entry-sw',
       resolveId(id) {
         if (id === entryId) {
           return VirtualModule.resolve(entryId);
@@ -166,14 +170,14 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
       },
     },
     {
-      name: 'vite-plugin-remix-pwa:virtual-routes-sw',
+      name: 'vite-plugin-react-router-pwa:virtual-routes-sw',
       resolveId(id) {
         if (id.startsWith('virtual:worker:')) {
           return id;
         }
       },
       async load(id) {
-        if (id.startsWith('virtual:worker:') && ctx.isRemixDevServer) {
+        if (id.startsWith('virtual:worker:') && ctx.isReactRouterDevServer) {
           const filePath = id.replace('virtual:worker:', '');
 
           if (workerRouteCache.has(filePath)) {
@@ -201,15 +205,15 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
       },
     },
     {
-      name: 'vite-plugin-remix-pwa:virtual-assets-sw',
+      name: 'vite-plugin-react-router-pwa:virtual-assets-sw',
       resolveId(id) {
         if (id === assetsId) {
           return VirtualModule.resolve(assetsId);
         }
       },
       async load(id) {
-        if (id === VirtualModule.resolve(assetsId) && ctx.isRemixDevServer) {
-          const remixPluginContext = ctx.__remixPluginContext;
+        if (id === VirtualModule.resolve(assetsId) && ctx.isReactRouterDevServer) {
+          const reactRouterPluginContext = ctx.__reactRouterPluginContext;
 
           if (ctx.isDev) {
             const files = await glob(`**/*`, {
@@ -218,7 +222,7 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
               unique: true,
               caseSensitiveMatch: true,
               onlyFiles: true,
-              cwd: resolve(remixPluginContext.rootDirectory, 'public'),
+              cwd: resolve(reactRouterPluginContext.rootDirectory, 'public'),
             }).catch(() => []);
 
             return `export const assets = ${JSON.stringify(
@@ -234,7 +238,7 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
             unique: true,
             caseSensitiveMatch: true,
             onlyFiles: true,
-            cwd: resolve(remixPluginContext.remixConfig.buildDirectory, 'client'),
+            cwd: resolve(reactRouterPluginContext.reactRouterConfig.buildDirectory, 'client'),
           }).catch(() => []);
 
           const assetsVirtualContents = `export const assets = ${JSON.stringify(
