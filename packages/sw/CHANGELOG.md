@@ -1,3 +1,10 @@
+# @remix-pwa/sw 4.0.0-dev.3 (2025-03-08)
+
+
+### Features
+
+* **sw:** react ruter support + fixes 8da614e
+
 # @remix-pwa/sw 4.0.0-dev.2 (2025-03-02)
 
 
