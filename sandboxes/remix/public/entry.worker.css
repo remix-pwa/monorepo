@@ -1,8 +1,0 @@
-/* app/tailwind.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-.bg-custom {
-  background-color: #f3f4f6;
-}

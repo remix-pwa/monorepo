@@ -12,7 +12,7 @@ import { mergeHeaders } from './utils.js';
 /**
  * EnhancedCache is a wrapper around the different caching strategies.
  *
- * Enhances caching in Remix PWA with features like cache stats (for monitoring cache usage),
+ * Enhances caching in React Router PWA with features like cache stats (for monitoring cache usage),
  * cache inspection (for debugging), cache updates and versioning (for updating cached assets).
  *
  * ### Example

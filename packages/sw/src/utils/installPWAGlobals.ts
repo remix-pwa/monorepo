@@ -1,8 +1,32 @@
-import { useFetchers, useLocation, useNavigation } from '@remix-run/react';
-import type { EntryRoute, RouteManifest } from '@remix-run/react/dist/routes.js';
 import { useEffect, useRef } from 'react';
+import { useFetchers, useLocation, useNavigation } from 'react-router';
 
 import { messageSW } from './utils.js';
+
+interface Route {
+  index?: boolean;
+  caseSensitive?: boolean;
+  id: string;
+  parentId?: string;
+  path?: string;
+}
+interface EntryRoute extends Route {
+  hasAction: boolean;
+  hasLoader: boolean;
+  hasClientAction: boolean;
+  hasClientLoader: boolean;
+  hasErrorBoundary: boolean;
+  imports?: string[];
+  css?: string[];
+  module: string;
+  clientActionModule: string | undefined;
+  clientLoaderModule: string | undefined;
+  hydrateFallbackModule: string | undefined;
+  parentId?: string;
+}
+interface RouteManifest<Route> {
+  [routeId: string]: Route;
+}
 
 export function matchUrlToRoute(url: string, manifest: RouteManifest<EntryRoute>): string | null {
   const { pathname, searchParams } = new URL(url, window.location.origin);
@@ -62,7 +86,7 @@ export function installPWAGlobals() {
     const sendNavigationUpdate = () => {
       if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
         messageSW(navigator.serviceWorker.controller, {
-          type: 'REMIX_NAVIGATION_UPDATE',
+          type: 'REACT_ROUTER_PWA_NAVIGATION_UPDATE',
           payload: {
             location,
           },
@@ -105,7 +129,8 @@ export function installPWAGlobals() {
       };
     };
 
-    if (window.__remixContext.isSpaMode) {
+    // @ts-expect-error
+    if (window.__reactRouterContext.isSpaMode) {
       const fetchersState = fetchers.every(fetcher => fetcher.state === 'idle') ? 'idle' : 'active';
       const navigationState = navigation.state;
 
@@ -129,7 +154,8 @@ export function installPWAGlobals() {
           }
         }
 
-        const matchedRouteId = matchUrlToRoute(url, window.__remixManifest.routes) ?? 'unknown';
+        // @ts-expect-error
+        const matchedRouteId = matchUrlToRoute(url, window.__reactRouterManifest.routes) ?? 'unknown';
         overrideFetch(matchedRouteId);
       }
 

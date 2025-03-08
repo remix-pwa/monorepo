@@ -12,7 +12,6 @@ export const clearUpOldCaches = async (cacheNames: string[], version?: string) =
       cacheNames.forEach(cacheName => {
         const { cacheActualName } = getCacheNameAndVersion(cacheName);
         const cachesToDelete = allCacheNames.filter(cache => cache.startsWith(cacheActualName) && cache !== cacheName);
-        // console.log(cachesToDelete, allCacheNames);
         cachesToDelete.forEach(oldCacheName => {
           caches.delete(oldCacheName);
         });

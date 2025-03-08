@@ -66,9 +66,7 @@ export const createRouteImports = (routes: RouteManifest, ignoredRoutes: string[
 export const createRouteManifest = async (
   routes: RouteManifest,
   appDirectory: string,
-  ignoredRoutes: string[] = [],
-  singleFetchEnabld = false,
-  spaMode = false
+  ignoredRoutes: string[] = []
 ): Promise<string> => {
   return (
     await Promise.all(
@@ -90,13 +88,13 @@ export const createRouteManifest = async (
           path: ${JSON.stringify(route.path)},
           index: ${JSON.stringify(route.index)},
           caseSensitive: ${JSON.stringify(route.caseSensitive)},
-          ${spaMode ? '' : `hasLoader: ${hasLoader},`}
-          ${spaMode ? '' : `hasAction: ${hasAction},`}
+          hasLoader: ${hasLoader},
+          hasAction: ${hasAction},
           hasClientLoader: ${hasClientLoader},
           hasClientAction: ${hasClientAction},
-          ${singleFetchEnabld ? '' : `hasWorkerLoader: ${hasWorkerLoader},`}
-          ${singleFetchEnabld ? '' : `hasWorkerAction: ${hasWorkerAction},`}
-          ${singleFetchEnabld ? '' : `module: route${index}`}
+          hasWorkerLoader: ${hasWorkerLoader},
+          hasWorkerAction: ${hasWorkerAction},
+          module: route${index}
         },`;
       })
     )
@@ -151,8 +149,6 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
         }
       },
       async load(id) {
-        const spaMode = !ctx.__reactRouterPluginContext.reactRouterConfig.ssr;
-
         if (id === VirtualModule.resolve(entryId)) {
           const entryVirtualContents = [
             `import * as entryWorker from ${JSON.stringify(ctx.options.serviceWorkerPath)};`,
@@ -160,7 +156,7 @@ export function VirtualSWPlugins(ctx: PWAPluginContext): Plugin[] {
             `${createRouteImports(ctx.options.routes, ctx.options.ignoredSWRouteFiles)}`,
             '',
             'export const routes = {',
-            `  ${await createRouteManifest(ctx.options.routes, ctx.options.appDirectory, ctx.options.ignoredSWRouteFiles, spaMode)}`,
+            `  ${await createRouteManifest(ctx.options.routes, ctx.options.appDirectory, ctx.options.ignoredSWRouteFiles)}`,
             '};',
             '',
             "export { assets } from 'virtual:assets-sw';",
