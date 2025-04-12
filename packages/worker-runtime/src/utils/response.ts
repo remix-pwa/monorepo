@@ -1,18 +1,17 @@
 import type { ErrorResponse } from '@remix-run/router';
-import { json } from '@remix-run/server-runtime/dist/responses.js';
 
 /**
  * Converts an error response to a JSON response.
  */
 export function errorResponseToJson(errorResponse: ErrorResponse) {
   // @ts-expect-error
-  return json(errorResponse.error || { message: 'Unexpected Server Error' }, {
+  return errorResponse.error || { message: 'Unexpected Server Error' }, {
     status: errorResponse.status,
     statusText: errorResponse.statusText,
     headers: {
       'X-Remix-Error': 'yes',
     },
-  });
+  };
 }
 
 /**
