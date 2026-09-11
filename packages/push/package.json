@@ -45,7 +45,8 @@
     "build": "rimraf ./dist && tsc",
     "format": "prettier --write \"**/*.ts\"",
     "lint": "TIMING=1 eslint --fix \"**/*.ts\"",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "test": "vitest --run --environment node --pool=forks --poolOptions.threads.singleThread --pass-with-no-tests --config ../../vitest.config.ts"
   },
   "engines": {
     "node": ">=18.0.0"
