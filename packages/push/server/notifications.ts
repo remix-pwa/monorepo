@@ -2,7 +2,7 @@ import webpush from 'web-push';
 
 import type { SendNotificationParams } from './types.js';
 
-export const sendNotifications = ({
+export const sendNotifications = async ({
   notification,
   options = {},
   subscriptions,
@@ -13,14 +13,9 @@ export const sendNotifications = ({
     subject: vapidDetails.subject || 'mailto:user@example.org',
   };
 
-  subscriptions.forEach(subscription => {
-    webpush
-      .sendNotification(subscription, JSON.stringify(notification), { ...options, vapidDetails: details })
-      .then((result: { statusCode: any }) => {
-        return result;
-      })
-      .catch((error: any) => {
-        throw new Error(error);
-      });
-  });
+  return Promise.all(
+    subscriptions.map(subscription =>
+      webpush.sendNotification(subscription, JSON.stringify(notification), { ...options, vapidDetails: details })
+    )
+  );
 };
